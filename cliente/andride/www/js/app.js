@@ -1,4 +1,4 @@
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.directives'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.directives', 'ngCordova','ngSails'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -7,3 +7,9 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.directives']
     }
   });
 })
+
+.config(['$sailsProvider', function ($sailsProvider) {
+
+    $sailsProvider.url = 'http://localhost:1337';
+    
+}])

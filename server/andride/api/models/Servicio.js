@@ -12,7 +12,7 @@ module.exports = {
   	cliente:{
   		model:'Cliente',
   	
-  	}
+  	},
 
   }
 };

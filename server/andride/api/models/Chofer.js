@@ -44,7 +44,7 @@ module.exports = {
 			}
 		},
 		autos : {
-			collection: 'auto',
+			collection: 'Auto',
 			via:'choferes',
 			dominant: true
 		},
