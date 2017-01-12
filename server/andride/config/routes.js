@@ -34,7 +34,10 @@ module.exports.routes = {
 
   '/': {
     view: 'homepage'
-  }
+  },
+   'get /config': 'IndexController.getConfig',
+   'get /cliente/choferes': 'ClienteController.getChoferes',
+
 
   /***************************************************************************
   *                                                                          *

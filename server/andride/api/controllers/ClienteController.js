@@ -6,6 +6,11 @@
  */
 
 module.exports = {
+
+	getChoferes : function(req, res){
+
+		
+	},
 	
 };
 

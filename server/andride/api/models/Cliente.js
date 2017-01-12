@@ -4,16 +4,30 @@
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
-
 module.exports = {
-
-  attributes: {
-
-  	servicios:{
-  	  collection: 'Servicio',
-      via: 'cliente'
-  	}
-
-  }
+	attributes: {
+		nombre: {
+			type: "strig"
+		},
+		apellidos: {
+			type: "string"
+		},
+		email: {
+			type: "string"
+		},
+		password: {
+			type: "string"
+		},
+		numCel: {
+			type: 'string'
+		},
+		solicitudes: {
+			collection: 'Solicitud',
+			via: 'cliente'
+		},
+		servicios: {
+			collection: 'Servicio',
+			via: 'cliente'
+		}
+	}
 };
-
