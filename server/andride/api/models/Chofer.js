@@ -4,6 +4,7 @@
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
+var Q = require('q');
 module.exports = {
 	attributes: {
 		nombre: {
@@ -54,5 +55,54 @@ module.exports = {
 			collection: 'Servicio',
 			via: 'chofer'
 		}
+	},
+	beforeCreate: function (attrs, cb) {
+		console.log(attrs);
+		var location = {};
+		location.lat = attrs.lat || 0;
+		location.lon = attrs.lon || 0;
+		attrs.location = {
+			type: "Point",
+			coordinates: [parseFloat(location.lon), parseFloat(location.lat)]
+		};
+		cb();
+	},
+	beforeUpdate: function (attrs, cb) {
+		console.log(attrs);
+		var location = {};
+		location.lat = attrs.lat || 0;
+		location.lon = attrs.lon || 0;
+		attrs.location = {
+			type: "Point",
+			coordinates: [parseFloat(location.lon), parseFloat(location.lat)]
+		};
+		cb();
+	},
+	getChoferesCercanos: function (ClientCoordinates, maxDistance) {
+		var maxdist = maxDistance || 16093.4;
+		if (!ClientCoordinates) {
+			deferred.reject(new Error('se necesita un punto geografico'));
+		}
+		var deferred = Q.defer()
+		Chofer.native(function (err, collection) {
+			if (err) return res.serverError(err);
+			collection.find({
+				location: {
+					$near: {
+						$geometry: {
+							type: "Point",
+							coordinates: [parseFloat(ClientCoordinates.lon), parseFloat(ClientCoordinates.lat)]
+						},
+						$maxDistance: maxdist // 10 miles in meters
+					}
+				}
+			}, {}).toArray(function (err, results) {
+				if (err) {
+					deferred.reject(new Error(err));
+				}
+				deferred.resolve(results);
+			});
+		})
+		return deferred.promise;
 	}
 };
