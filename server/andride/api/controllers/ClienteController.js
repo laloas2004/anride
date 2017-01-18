@@ -25,7 +25,26 @@ module.exports = {
 			lat: req.param('lat')
 		};
 		Chofer.getChoferesCercanos(ClientCoordinates).then(function (result) {
-			return res.json(result);
+			var choferesRes = {};
+			choferesRes.choferes = result;
+			//console.log(result[0]);
+			var location1 = {
+				lat: req.param('lat'),
+				lon: req.param('lon')
+			}
+			var location2 = {
+				lat: result[0].lat,
+				lon: result[0].lon
+			}
+			console.log(location1);
+			console.log(location2);
+			GmapService.getMatrix(location1, location2).then(function (val) {
+				choferesRes.matrix = val;
+				return res.json(choferesRes);
+			}, function (err) {
+				return res.json(err);
+			});
+			//return res.json(result);
 		});
 	},
 };

@@ -30,12 +30,15 @@ module.exports = {
 			origins: loc1.toString(),
 			destinations: loc2.toString(),
 			mode: 'driving',
-			units: 'metric',
+			traffic_model: 'pessimistic',
+			departure_time: new Date(),
+			units: 'metric'
 		};
 		var deferred = Q.defer()
 		var gmAPI = new GoogleMapsAPI(this.publicConfig);
 		gmAPI.distance(paramsMatrix, function (err, results) {
 			if (err) {
+				console.error(err);
 				deferred.reject(new Error(err));
 			}
 			deferred.resolve(results);

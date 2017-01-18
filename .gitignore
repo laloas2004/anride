@@ -16,3 +16,5 @@ xcuserdata
 # svn & cvs
 .svn
 CVS
+/cliente/andride/nbproject/private/
+/chofer/DriverAndRide/nbproject/private/

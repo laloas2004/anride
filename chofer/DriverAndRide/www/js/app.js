@@ -1,4 +1,4 @@
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.directives'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.directives','ngSails',])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
