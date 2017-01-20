@@ -1,5 +1,5 @@
 angular.module('app.controllers', ['ngSails', 'ngCordova'])
-        .controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+        .controller('AppCtrl', function($scope, $ionicModal, $timeout, $sails) {
 
             console.log('AppCtrl');
             $scope.platform = ionic.Platform.platform();
@@ -43,14 +43,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
         })
         .controller('MapCtrl', function($scope, $rootScope, $sails, $stateParams, $ionicLoading, $http, $cordovaGeolocation, $ionicScrollDelegate, $ionicPlatform, choferService, $q) {
 
-
-
             $scope.choferesDisponibles = {};
 
             $scope.MarkerCoordenadas = {
                 coordinates: null,
-                direccion: null,
-                tiempoLlegada: null
+                direccion: "Selecciona origen de viaje",
+                tiempoLlegada: "10 min"
             };
 
 
@@ -146,7 +144,16 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
             };
-
+            $scope.creaSolicitud = function(){
+                
+            }
+            $scope.onSelectOrigen = function(){
+                if($scope.MarkerCoordenadas.coordinates){
+                    alert('no se ha selccionado');
+                }else{
+                    alert('se selecciona');
+                }
+            }
 
 
         })
@@ -162,7 +169,47 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     icon: "ion-pin",
                     level: 0,
                     state: 'app.map'
-                }];
+                },{
+                    id:2,
+                    name:'Viajes',
+                    level:0,
+                    icon:'',
+                    state:'app.viajes'
+                },{
+                    id:3,
+                    name:'Notificaciones',
+                    level:0,
+                    icon:'',
+                    state:'app.notificaciones'
+                },{
+                    id:4,
+                    name:'Destinos Guardados',
+                    level:0,
+                    icon:'',
+                    state:'app.destinos'
+                },
+                {
+                    id:4,
+                    name:'Mi Cuenta',
+                    level:0,
+                    icon:'',
+                    state:'app.micuenta'
+                },
+                {
+                    id:5,
+                    name:'Ayuda',
+                    level:0,
+                    icon:'',
+                    state:'app.ayuda'
+                }
+                
+            ];
 
+        })
+        
+        .controller('DestinoCtrl',function($scope){
+            
+            
+            
         })
 
