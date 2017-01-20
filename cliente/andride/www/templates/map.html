@@ -1,0 +1,10 @@
+<ion-view view-title="An Ride">
+    <ion-content>
+        <div id="centerInfoBubble">
+            <div id="tiempo"><span>{{MarkerCoordenadas.tiempoLlegada}}</span></div>
+            <span>{{MarkerCoordenadas.direccion}}</span>
+        </div>
+        <div id="centerMarker"></div>
+        <map on-create="mapCreated(map)" data-tap-disabled="true"></map>
+    </ion-content>
+</ion-view>
