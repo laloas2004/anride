@@ -1,7 +1,21 @@
 angular.module('app.controllers', ['ngSails', 'ngCordova'])
-        .controller('AppCtrl', function($scope, $ionicModal, $timeout, $sails) {
+        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout, $sails) {
 
-            console.log('AppCtrl');
+
+
+
+            $rootScope.solicitud = {
+                origen: {
+                    lat: 0,
+                    long: 0
+                },
+                destino: {
+                    lat: 0,
+                    long: 0
+                },
+            };
+
+
             $scope.platform = ionic.Platform.platform();
             // With the new view caching in Ionic, Controllers are only called
             // when they are recreated or on app start, instead of every page change.
@@ -43,12 +57,15 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
         })
         .controller('MapCtrl', function($scope, $rootScope, $sails, $stateParams, $ionicLoading, $http, $cordovaGeolocation, $ionicScrollDelegate, $ionicPlatform, choferService, $q) {
 
-            $scope.choferesDisponibles = {};
+//            console.log($rootScope.solicitud);
 
+
+            $scope.choferesDisponibles = {};
+            $scope.hideBubble = true;
             $scope.MarkerCoordenadas = {
                 coordinates: null,
-                direccion: "Selecciona origen de viaje",
-                tiempoLlegada: "10 min"
+                direccion: null,
+                tiempoLlegada: null
             };
 
 
@@ -95,9 +112,15 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             };
             $scope.crearChoferesMarkers = function(position) {
 
+                $scope.MarkerCoordenadas.direccion = "Ir al Marcador";
+                $scope.hideBubble = true;
                 choferService.getChoferes(position).then(function(response) {
+
                     $scope.choferesDisponibles = response;
-                    $scope.MarkerCoordenadas.direccion = response.data.matrix.origin_addresses[0];
+                    $scope.hideBubble = false;
+                    var direccion_origen = response.data.matrix.origin_addresses[0].split(',');
+
+                    $scope.MarkerCoordenadas.direccion = direccion_origen[0] + ' Col.' + direccion_origen[1];
 
                     var tiempo = Math.round((response.data.matrix.rows[0].elements[0].duration.value + response.data.matrix.rows[0].elements[0].duration_in_traffic.value) / 60)
 
@@ -132,6 +155,18 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             };
             $scope.centerOnMe = function() {
+
+                (function() {
+                    debugger;
+                    $sails.get("/cliente")
+                            .success(function(data, status, headers, jwr) {
+                                console.log(data);
+                            })
+                            .error(function(data, status, headers, jwr) {
+                                alert('Houston, we got a problem!');
+                            });
+                })();
+
                 if (!$scope.map) {
                     return;
                 }
@@ -144,13 +179,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
             };
-            $scope.creaSolicitud = function(){
-                
+            $scope.creaSolicitud = function() {
+
             }
-            $scope.onSelectOrigen = function(){
-                if($scope.MarkerCoordenadas.coordinates){
+            $scope.onSelectOrigen = function() {
+                console.log($scope.MarkerCoordenadas.coordinates);
+                if (!$scope.MarkerCoordenadas.coordinates) {
                     alert('no se ha selccionado');
-                }else{
+                } else {
                     alert('se selecciona');
                 }
             }
@@ -166,50 +202,50 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.tree = [{
                     id: 1,
                     name: 'Inicio',
-                    icon: "ion-pin",
+                    icon: "",
                     level: 0,
                     state: 'app.map'
-                },{
-                    id:2,
-                    name:'Viajes',
-                    level:0,
-                    icon:'',
-                    state:'app.viajes'
-                },{
-                    id:3,
-                    name:'Notificaciones',
-                    level:0,
-                    icon:'',
-                    state:'app.notificaciones'
-                },{
-                    id:4,
-                    name:'Destinos Guardados',
-                    level:0,
-                    icon:'',
-                    state:'app.destinos'
+                }, {
+                    id: 2,
+                    name: 'Viajes',
+                    level: 0,
+                    icon: '',
+                    state: 'app.viajes'
+                }, {
+                    id: 3,
+                    name: 'Notificaciones',
+                    level: 0,
+                    icon: '',
+                    state: 'app.notificaciones'
+                }, {
+                    id: 4,
+                    name: 'Destinos Guardados',
+                    level: 0,
+                    icon: '',
+                    state: 'app.destinos'
                 },
                 {
-                    id:4,
-                    name:'Mi Cuenta',
-                    level:0,
-                    icon:'',
-                    state:'app.micuenta'
+                    id: 4,
+                    name: 'Mi Cuenta',
+                    level: 0,
+                    icon: '',
+                    state: 'app.micuenta'
                 },
                 {
-                    id:5,
-                    name:'Ayuda',
-                    level:0,
-                    icon:'',
-                    state:'app.ayuda'
+                    id: 5,
+                    name: 'Ayuda',
+                    level: 0,
+                    icon: '',
+                    state: 'app.ayuda'
                 }
-                
+
             ];
 
         })
-        
-        .controller('DestinoCtrl',function($scope){
-            
-            
-            
+
+        .controller('DestinoCtrl', function($scope) {
+
+
+
         })
 

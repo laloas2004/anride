@@ -1,9 +1,19 @@
 <ion-view view-title="An Ride">
     <ion-content>
         <div class="row responsive-sm">
-            <div class="col"><i class="icon ion-search"></i><span>{{MarkerCoordenadas.direccion}}</span></div>
+            <div class="col">
+                <div id="h_origen">Punto de Origen</div>
+                <i class="icon ion-search"></i>
+                <span>{{MarkerCoordenadas.direccion}}</span>
+            </div>
         </div>
-        <div id="centerInfoBubble" ng-click="onSelectOrigen()">
+        <div class="row responsive-sm">
+            <div class="col">
+                <i class="icon ion-search"></i>
+                <span>{{MarkerCoordenadas.direccion}}</span>
+            </div>
+        </div>
+        <div id="centerInfoBubble" ng-click="onSelectOrigen()" ng-hide="hideBubble">
             <div id="tiempo"><span>{{MarkerCoordenadas.tiempoLlegada}}</span></div>
             <div>Selecciona origen de viaje</div>
         </div>

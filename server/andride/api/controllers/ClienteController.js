@@ -7,7 +7,12 @@
 var Q = require('q');
 module.exports = {
 	getChoferes: function (req, res) {
+
+		
 		var maxDistance = req.param('distance') || 1000;
+
+
+
 		try {
 			/*req.validate({
 				lat: {
@@ -47,4 +52,23 @@ module.exports = {
 			//return res.json(result);
 		});
 	},
+
+	registerCliente:function(req, res){
+
+		console.log('se ejecuto registrar');
+
+		if (req.isSocket){
+
+ 			sails.sockets.emit(req.socket.id, 'connect');
+ 			sails.sockets.join(req.socket, '');
+      		var subscribers = sails.sockets.subscribers('');
+      		console.log(sails.sockets.subscribers(''));
+      		sails.sockets.emit(req.socket.id, 'login', {numUsers: subscribers.length});
+
+      		
+			return res.json(req.socket);
+
+				}
+
+	}
 };

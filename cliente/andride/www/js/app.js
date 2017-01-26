@@ -3,13 +3,15 @@
 angular.module('app', ['ionic', 'ionic-sidemenu', 'app.controllers', 'app.directives', 'app.services', 'ngCordova', 'ngSails'])
         .run(function($ionicPlatform, $rootScope, $window) {
 //Validar que este conectado a internet.
-            alert($window.navigator.onLine);
+            
+            console.log('connectado a internet:'+$window.navigator.onLine);
+            
             $window.addEventListener('offline', function() {
-                alert('offline');
+                console.log('offline');
                 $rootScope.$digest();
             });
             $window.addEventListener('online', function() {
-                alert('online');
+                console.log('online');
                 $rootScope.$digest();
             });
 
@@ -60,7 +62,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'app.controllers', 'app.direct
             $urlRouterProvider.otherwise('/app/map');
         })
         .config(['$sailsProvider', function($sailsProvider) {
-                $sailsProvider.url = 'http://192.168.15.98:1337';
+                $sailsProvider.url = 'http://192.168.1.70:1337';
             }])
 
 

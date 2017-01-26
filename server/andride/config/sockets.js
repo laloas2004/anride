@@ -56,7 +56,7 @@ module.exports.sockets = {
    * unit tests)                                                              *
    *                                                                          *
    ***************************************************************************/
-  // grant3rdPartyCookie: true,
+   grant3rdPartyCookie: true,
   /***************************************************************************
    *                                                                          *
    * `beforeConnect`                                                          *
