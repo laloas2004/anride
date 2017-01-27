@@ -79,7 +79,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     showBackdrop: false
                 });
 
-                var posOptions = {timeout: 10000, enableHighAccuracy: true};
+                var posOptions = {timeout: 100000, enableHighAccuracy: true};
                 $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
                     $scope.position = position;
                     console.log(position);
@@ -157,7 +157,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.centerOnMe = function() {
 
                 (function() {
-                    debugger;
+                    
                     $sails.get("/cliente")
                             .success(function(data, status, headers, jwr) {
                                 console.log(data);

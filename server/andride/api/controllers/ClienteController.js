@@ -5,6 +5,8 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 var Q = require('q');
+
+
 module.exports = {
 	getChoferes: function (req, res) {
 
@@ -59,13 +61,17 @@ module.exports = {
 
 		if (req.isSocket){
 
- 			sails.sockets.emit(req.socket.id, 'connect');
+ 			sails.sockets.broadcast(req.socket.id, 'connect');
+
  			sails.sockets.join(req.socket, '');
+
       		var subscribers = sails.sockets.subscribers('');
+
       		console.log(sails.sockets.subscribers(''));
+
       		sails.sockets.emit(req.socket.id, 'login', {numUsers: subscribers.length});
 
-      		
+
 			return res.json(req.socket);
 
 				}
