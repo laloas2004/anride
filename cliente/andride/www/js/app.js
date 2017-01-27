@@ -62,7 +62,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'app.controllers', 'app.direct
             $urlRouterProvider.otherwise('/app/map');
         })
         .config(['$sailsProvider', function($sailsProvider) {
-                $sailsProvider.url = 'http://192.168.1.70:1337';
+                $sailsProvider.url = 'http://104.131.116.22:1337';
             }])
 
 
