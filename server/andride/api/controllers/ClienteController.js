@@ -32,17 +32,18 @@ module.exports = {
                 lon: req.param('lon')
             };
 
-
-            if (result.length == 0) {
-
-               choferesRes.error = "No contamos con servicio en esta area";
-            }
+//
+//            if (result.length == 0) {
+//
+//               var error = "No contamos con servicio en esta area";
+//            }
 
 
             var location2 = {
                 lat: result[0].lat,
                 lon: result[0].lon
             }
+            
             console.log(location1);
             console.log(location2);
 
