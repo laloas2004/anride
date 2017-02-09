@@ -79,14 +79,22 @@ module.exports = {
 		cb();
 	},
 	getChoferesCercanos: function (ClientCoordinates, maxDistance) {
+
 		var maxdist = maxDistance || 16093.4;
+
 		if (!ClientCoordinates) {
+
 			deferred.reject(new Error('se necesita un punto geografico'));
+
 		}
+
 		var deferred = Q.defer()
 		Chofer.native(function (err, collection) {
+
 			if (err) return res.serverError(err);
+
 			collection.find({
+
 				location: {
 					$near: {
 						$geometry: {
@@ -97,9 +105,12 @@ module.exports = {
 					}
 				}
 			}, {}).toArray(function (err, results) {
+
 				if (err) {
+
 					deferred.reject(new Error(err));
 				}
+				
 				deferred.resolve(results);
 			});
 		})

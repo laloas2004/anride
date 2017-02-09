@@ -1,29 +1,33 @@
 <ion-view view-title="An Ride">
     <ion-content>
-        <div class="row responsive-sm">
-            <div class="col">
-                <div id="h_origen">Punto de Origen</div>
-                <i class="icon ion-search"></i>
-                <span>{{MarkerCoordenadas.direccion}}</span>
+        
+        <div class="map-overlay list">
+            <div class="row responsive-sm">
+                <div class="list" ng-click="onSearchOrigen()">
+                    <div id="h_origen">Punto de Origen</div>
+                    <i class="icon ion-search" ></i>
+                    <span>{{solicitud.direccion_origen}}</span>
+                </div>
             </div>
-        </div>
-        <div class="row responsive-sm">
-            <div class="col">
-                <i class="icon ion-search"></i>
-                <span>{{MarkerCoordenadas.direccion}}</span>
+            <div class="row responsive-sm" ng-hide="hDestino">
+                <div class="list">
+                    <div id="h_destino">Punto de Destino</div>
+                    <i class="icon ion-search"></i>
+                    <span>{{solicitud.direccion_destino}}</span>
+                </div>
             </div>
         </div>
         <div id="centerInfoBubble" ng-click="onSelectOrigen()" ng-hide="hideBubble">
             <div id="tiempo"><span>{{MarkerCoordenadas.tiempoLlegada}}</span></div>
-            <div>Selecciona origen de viaje</div>
+            <div style="padding:10px;margin-left: 60px;">Selecciona origen de viaje</div>
         </div>
         <div id="centerMarker"></div>
         <map on-create="mapCreated(map)" data-tap-disabled="true"></map>
 
     </ion-content>
     <ion-footer-bar class="bar-dark">
-        
+
         <a ng-click="centerOnMe()" class="button button-icon icon ion-navigate" side="right"></a>
-    
+
     </ion-footer-bar>
 </ion-view>

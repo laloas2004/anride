@@ -35,7 +35,7 @@ module.exports.routes = {
   'get /config': 'IndexController.getConfig',
   'get /direccion': 'IndexController.getDireccion',
   'get /distancia': 'IndexController.getMatrix',
-  'get /cliente': 'ClienteController.registerCliente',
+  'get /cliente': 'ClienteController.registroCliente',
   'get /cliente/choferes': 'ClienteController.getChoferes',
   /***************************************************************************
    *                                                                          *
@@ -46,4 +46,13 @@ module.exports.routes = {
    * for configuration options and examples.                                  *
    *                                                                          *
    ***************************************************************************/
+  
+  'get /admin/clientes': 'AdminController.indexCliente',
+  'get /admin/solicitudes': 'AdminController.indexSolicitudes',
+  'get /admin/servicios': 'AdminController.indexServicios',
+  'get /admin/choferes': 'AdminController.indexChoferes',
+  'get /admin/autos': 'AdminController.indexAutos',
+  'get /admin/pagos': 'AdminController.indexPagos',
+  'get /admin/configuracion': 'AdminController.indexConfiguracion',
+  
 };

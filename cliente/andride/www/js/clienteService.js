@@ -1,5 +1,5 @@
 angular.module('app.services', [])
-        .factory('choferService', function($http, $q, $sails) {
+        .factory('choferService', function($http, $q, $sails,$rootScope) {
 
             return {
                 getChoferes: function(location) {

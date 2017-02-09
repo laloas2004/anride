@@ -8,73 +8,89 @@ var Q = require('q');
 
 
 module.exports = {
-	getChoferes: function (req, res) {
-
-		
-		var maxDistance = req.param('distance') || 1000;
+    getChoferes: function(req, res) {
 
 
-
-		try {
-			/*req.validate({
-				lat: {
-					type: 'string'
-				},
-				lon: {
-					type: 'string'
-				}
-			});*/
-		} catch (err) {
-			return res.send(400, err);
-		}
-		ClientCoordinates = {
-			lon: req.param('lon'),
-			lat: req.param('lat')
-		};
-		Chofer.getChoferesCercanos(ClientCoordinates).then(function (result) {
-			var choferesRes = {};
-			choferesRes.choferes = result;
-			//console.log(result[0]);
-			var location1 = {
-				lat: req.param('lat'),
-				lon: req.param('lon')
-			}
-			var location2 = {
-				lat: result[0].lat,
-				lon: result[0].lon
-			}
-			console.log(location1);
-			console.log(location2);
-			GmapService.getMatrix(location1, location2).then(function (val) {
-				choferesRes.matrix = val;
-				return res.json(choferesRes);
-			}, function (err) {
-				return res.json(err);
-			});
-			//return res.json(result);
-		});
-	},
-
-	registerCliente:function(req, res){
-
-		console.log('se ejecuto registrar');
-
-		if (req.isSocket){
-
- 			sails.sockets.broadcast(req.socket.id, 'connect');
-
- 			sails.sockets.join(req.socket, '');
-
-      		var subscribers = sails.sockets.subscribers('');
-
-      		console.log(sails.sockets.subscribers(''));
-
-      		sails.sockets.emit(req.socket.id, 'login', {numUsers: subscribers.length});
+        var maxDistance = req.param('distance') || 1000;
 
 
-			return res.json(req.socket);
+        ClientCoordinates = {
+            lon: req.param('lon'),
+            lat: req.param('lat')
+        };
 
-				}
 
-	}
+        Chofer.getChoferesCercanos(ClientCoordinates).then(function(result) {
+            var choferesRes = {};
+            choferesRes.choferes = result;
+            //console.log(result[0]);
+            var location1 = {
+                lat: req.param('lat'),
+                lon: req.param('lon')
+            };
+
+
+            if (result.length == 0) {
+
+                return res.json({error: "No contamos con servicio en esta area"});
+            }
+
+
+            var location2 = {
+                lat: result[0].lat,
+                lon: result[0].lon
+            }
+            console.log(location1);
+            console.log(location2);
+
+            GmapService.getMatrix(location1, location2).then(function(val) {
+                choferesRes.matrix = val;
+                return res.json(choferesRes);
+            }, function(err) {
+                return res.json(err);
+            });
+//			return res.json(result);
+        }, function(err) {
+            console.log('Error: En getChoferes .' + err)
+        });
+    },
+    registroCliente: function(req, res) {
+
+        console.log('se ejecuto registrar');
+
+        if (req.isSocket) {
+
+
+
+            return res.json(req.socket);
+
+        }
+
+    },
+    loginCliente: function(req, res) {
+
+        console.log('se ejecuto registrar');
+
+        if (req.isSocket) {
+
+
+
+            return res.json(req.socket);
+
+        }
+
+    },
+    logoutCliente: function(req, res) {
+
+        console.log('se ejecuto registrar');
+
+        if (req.isSocket) {
+
+
+
+            return res.json(req.socket);
+
+        }
+
+    }
 };

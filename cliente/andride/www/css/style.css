@@ -11,7 +11,7 @@ map {
 #centerInfoBubble {
   position: absolute;
   /*center the marker*/
- top: 30%;
+ top: 45%;
  left: 12%;
  z-index: 1;
  width: 80%;
@@ -33,7 +33,9 @@ map {
   z-index: 1;
   /*fix offset when needed*/
   margin-left: -16px;
-  margin-top: -32px;
+/*  margin-top: -32px;*/
+  margin-top: 35px;
+
   /*size of the image*/
   height: 32px;
   width: 32px;
@@ -51,10 +53,7 @@ map {
     padding-top: 10px;
 }
 
-#h_origen{
-    
-}
-
-#h_destino{
-    
+#h_origen, #h_destino{
+ text-align:center;
+ color: #080;
 }

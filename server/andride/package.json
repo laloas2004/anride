@@ -5,6 +5,7 @@
   "description": "a Sails application",
   "keywords": [],
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "conekta": "^2.2.0",
     "ejs": "2.3.4",
     "googlemaps": "^1.12.0",

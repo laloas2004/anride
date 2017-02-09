@@ -3,8 +3,9 @@
 angular.module('app', ['ionic', 'ionic-sidemenu', 'app.controllers', 'app.directives', 'app.services', 'ngCordova', 'ngSails'])
         .run(function($ionicPlatform, $rootScope, $window) {
 //Validar que este conectado a internet.
-            
-            console.log('connectado a internet:'+$window.navigator.onLine);
+            $rootScope.serverIp = "http://192.168.15.99:1337";
+                        
+            console.log('connectado a internet:'+ $window.navigator.onLine);
             
             $window.addEventListener('offline', function() {
                 console.log('offline');
@@ -49,6 +50,15 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'app.controllers', 'app.direct
                             }
                         }
                     })
+                    .state('app.origen', {
+                        url: '/origen',
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/punto_origen.html',
+                                controller: 'OrigenCtrl'
+                            }
+                        }
+                    })
                     .state('app.destino', {
                         url: '/destino',
                         views: {
@@ -62,7 +72,11 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'app.controllers', 'app.direct
             $urlRouterProvider.otherwise('/app/map');
         })
         .config(['$sailsProvider', function($sailsProvider) {
-                $sailsProvider.url = 'http://104.131.116.22:1337';
+                $sailsProvider.url = "http://192.168.15.99:1337";
+                                
+                //digital ocean.
+//                $sailsProvider.url = 'http://104.131.116.22:1337';
+
             }])
 
 

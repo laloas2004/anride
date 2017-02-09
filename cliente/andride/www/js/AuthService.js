@@ -1,12 +1,12 @@
 angular.module('app.services', [])
-        .factory('choferService', function($http, $q, $rootScope) {
+        .factory('authService', function($http, $q, $sails) {
 
             return {
-                getChoferes: function(location) {
+                isAuthenticated: function($) {
                     var q = $q.defer();
 
                     var config = {
-                        url: $rootScope.serverIp+"/cliente/choferes",
+                        url: "http://192.168.15.98:1337/cliente/choferes",
                         method: "GET",
                         params: {lat: location.coords.latitude, lon: location.coords.longitude}
                     };

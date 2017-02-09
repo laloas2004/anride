@@ -1,9 +1,7 @@
 angular.module('app.controllers', ['ngSails', 'ngCordova'])
-        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout, $sails) {
+        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout) {
 
-
-
-
+            debugger;
             $rootScope.solicitud = {
                 origen: {
                     lat: 0,
@@ -13,6 +11,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     lat: 0,
                     long: 0
                 },
+                direccion_origen: '',
+                direccion_destino: 'destino'
             };
 
 
@@ -55,13 +55,28 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 }, 1000);
             };
         })
-        .controller('MapCtrl', function($scope, $rootScope, $sails, $stateParams, $ionicLoading, $http, $cordovaGeolocation, $ionicScrollDelegate, $ionicPlatform, choferService, $q) {
+        .controller('MapCtrl', function($scope,
+                $rootScope,
+                $sails,
+                $stateParams,
+                $ionicLoading,
+                $http,
+                $cordovaGeolocation,
+                $ionicScrollDelegate,
+                $ionicPlatform,
+                choferService,
+                $q,
+                $ionicPopup) {
 
 //            console.log($rootScope.solicitud);
 
 
+            debugger;
+
             $scope.choferesDisponibles = {};
             $scope.hideBubble = true;
+            $scope.hDestino = true;
+
             $scope.MarkerCoordenadas = {
                 coordinates: null,
                 direccion: null,
@@ -96,15 +111,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                 longitude: $scope.map.getCenter().lng()
                             }});
 
-                        $scope.$apply();
+//                        $scope.$apply();
                     });
 
-//                    
-//                    google.maps.event.addListener($scope.map, "center_changed", function() {
-//                        
-//                       console.log('center_change'); 
-//                     $scope.$apply();   
-//                    });
+
 
                 }, function(err) {
                     console.log(err);
@@ -112,42 +122,55 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             };
             $scope.crearChoferesMarkers = function(position) {
 
-                $scope.MarkerCoordenadas.direccion = "Ir al Marcador";
+                $rootScope.solicitud.direccion_origen = "Ir al Marcador";
                 $scope.hideBubble = true;
                 choferService.getChoferes(position).then(function(response) {
 
-                    $scope.choferesDisponibles = response;
-                    $scope.hideBubble = false;
-                    var direccion_origen = response.data.matrix.origin_addresses[0].split(',');
+                    if (response.data.error) {
 
-                    $scope.MarkerCoordenadas.direccion = direccion_origen[0] + ' Col.' + direccion_origen[1];
+                        console.log("error - sin servicio");
 
-                    var tiempo = Math.round((response.data.matrix.rows[0].elements[0].duration.value + response.data.matrix.rows[0].elements[0].duration_in_traffic.value) / 60)
+                    } else {
 
-                    $scope.MarkerCoordenadas.tiempoLlegada = tiempo + 'Mins';
-                    var image = {
-                        url: 'img/car-icon.png',
-                        size: new google.maps.Size(32, 32),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(0, 32)
-                    };
 
-                    angular.forEach(response.data.choferes, function(chofer, index) {
-                        console.log('chofer');
-                        console.log(chofer);
-                        var myLatlng = new google.maps.LatLng(chofer.lat, chofer.lon);
+                        $scope.choferesDisponibles = response;
+                        $scope.hideBubble = false;
+                        if (response.data.matrix.origin_addresses[0]) {
+                            var direccion_origen = response.data.matrix.origin_addresses[0].split(',');
+                        } else {
+                            var direccion_origen = response.data.matrix.origin_addresses[0].split(',');
+                        }
 
-                        var marker = new google.maps.Marker({
-                            position: myLatlng,
-                            title: chofer.nombre,
-                            map: $scope.map,
-                            icon: image
+
+                        $rootScope.solicitud.direccion_origen = direccion_origen[0] + ' Col.' + direccion_origen[1];
+
+                        var tiempo = Math.round((response.data.matrix.rows[0].elements[0].duration.value + response.data.matrix.rows[0].elements[0].duration_in_traffic.value) / 60)
+
+                        $scope.MarkerCoordenadas.tiempoLlegada = tiempo + 'Mins';
+                        var image = {
+                            url: 'img/car-icon.png',
+                            size: new google.maps.Size(32, 32),
+                            origin: new google.maps.Point(0, 0),
+                            anchor: new google.maps.Point(0, 32)
+                        };
+
+                        angular.forEach(response.data.choferes, function(chofer, index) {
+                            console.log('chofer');
+                            console.log(chofer);
+                            var myLatlng = new google.maps.LatLng(chofer.lat, chofer.lon);
+
+                            var marker = new google.maps.Marker({
+                                position: myLatlng,
+                                title: chofer.nombre,
+                                map: $scope.map,
+                                icon: image
+                            });
+
+
+
                         });
 
-
-
-                    });
-
+                    }
 
                 });
 
@@ -156,25 +179,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             };
             $scope.centerOnMe = function() {
 
-                (function() {
-                    
-                    $sails.get("/cliente")
-                            .success(function(data, status, headers, jwr) {
-                                console.log(data);
-                            })
-                            .error(function(data, status, headers, jwr) {
-                                console.log(data);
-                                alert('Houston, we got a problem!');
-                            });
-                })();
-
                 if (!$scope.map) {
                     return;
                 }
-//    $scope.loading = $ionicLoading.show({
-//      content: 'Getting current location...',
-//      showBackdrop: false
-//    });
 
                 $scope.map.setCenter(new google.maps.LatLng($scope.position.coords.latitude, $scope.position.coords.longitude));
 
@@ -186,12 +193,21 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.onSelectOrigen = function() {
                 console.log($scope.MarkerCoordenadas.coordinates);
                 if (!$scope.MarkerCoordenadas.coordinates) {
-                    alert('no se ha selccionado');
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'No se eligio origen del viaje!',
+                        template: 'Por Favor elige un origen para el viaje.'
+                    });
+//                    alert('no se ha selccionado');
                 } else {
-                    alert('se selecciona');
+
+                    $scope.hDestino = false;
+
+
                 }
             }
-
+            $scope.onSearchOrigen = function() {
+                alert('abrir buscar direccion!');
+            }
 
         })
         .controller('SideMenuCtrl', function($scope) {
@@ -244,6 +260,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
         })
 
+        .controller('OrigenCtrl', function($scope) {
+
+        alert('origen');
+
+        })
         .controller('DestinoCtrl', function($scope) {
 
 
