@@ -22,8 +22,11 @@ module.exports = {
 
         Chofer.getChoferesCercanos(ClientCoordinates).then(function(result) {
             var choferesRes = {};
+            
             choferesRes.choferes = result;
-            //console.log(result[0]);
+            
+      
+            
             var location1 = {
                 lat: req.param('lat'),
                 lon: req.param('lon')
@@ -32,7 +35,7 @@ module.exports = {
 
             if (result.length == 0) {
 
-                return res.json({error: "No contamos con servicio en esta area"});
+               choferesRes.error = "No contamos con servicio en esta area";
             }
 
 
@@ -44,8 +47,11 @@ module.exports = {
             console.log(location2);
 
             GmapService.getMatrix(location1, location2).then(function(val) {
+                
                 choferesRes.matrix = val;
+                
                 return res.json(choferesRes);
+                
             }, function(err) {
                 return res.json(err);
             });

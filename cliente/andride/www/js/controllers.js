@@ -127,8 +127,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 choferService.getChoferes(position).then(function(response) {
 
                     if (response.data.error) {
+                        debugger;
 
-                        console.log("error - sin servicio");
+                        var alertPopup = $ionicPopup.alert({
+                            title: 'Sin servicio en esta area',
+                            template: 'No contamos con servicio en esta area, disculpe las molestias.'
+                        });
 
                     } else {
 
@@ -201,8 +205,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 } else {
 
                     $scope.hDestino = false;
-
-
                 }
             }
             $scope.onSearchOrigen = function() {
@@ -262,7 +264,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
         .controller('OrigenCtrl', function($scope) {
 
-        alert('origen');
+            alert('origen');
 
         })
         .controller('DestinoCtrl', function($scope) {
