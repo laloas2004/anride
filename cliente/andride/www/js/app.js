@@ -1,10 +1,17 @@
 
 
-angular.module('app', ['ionic', 'ionic-sidemenu', 'app.controllers', 'app.directives', 'app.services', 'ngCordova', 'ngSails'])
+angular.module('app', ['ionic', 'ionic-sidemenu', 
+    'app.controllers', 
+    'app.directives', 
+    'app.services', 
+    'ngCordova', 
+    'ngSails'])
         .run(function($ionicPlatform, $rootScope, $window) {
 //Validar que este conectado a internet.
             $rootScope.serverIp = "http://104.131.116.22:1337";
-                        
+            
+            $rootScope.google_key  = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
+            
             console.log('connectado a internet:'+ $window.navigator.onLine);
             
             $window.addEventListener('offline', function() {

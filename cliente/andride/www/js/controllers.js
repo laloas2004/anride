@@ -64,6 +64,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $cordovaGeolocation,
                 $ionicScrollDelegate,
                 $ionicPlatform,
+                clienteService,
                 choferService,
                 $q,
                 $ionicPopup) {
@@ -71,7 +72,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 //            console.log($rootScope.solicitud);
 
 
-            debugger;
 
             $scope.choferesDisponibles = {};
             $scope.hideBubble = true;
@@ -95,6 +95,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 });
 
                 var posOptions = {timeout: 100000, enableHighAccuracy: true};
+                
                 $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
                     $scope.position = position;
                     console.log(position);
@@ -110,7 +111,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                 latitude: $scope.map.getCenter().lat(),
                                 longitude: $scope.map.getCenter().lng()
                             }});
-
+                        
 //                        $scope.$apply();
                     });
 
@@ -181,12 +182,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
             };
+            
             $scope.centerOnMe = function() {
 
                 if (!$scope.map) {
                     return;
                 }
-
+                clienteService.getDireccion($scope.position).then(function(response){
+                  debugger;  
+                });
+                    
+                
                 $scope.map.setCenter(new google.maps.LatLng($scope.position.coords.latitude, $scope.position.coords.longitude));
 
 
