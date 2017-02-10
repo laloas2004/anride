@@ -226,7 +226,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             }
 
         })
-        .controller('SideMenuCtrl', function($scope) {
+        .controller('SideMenuCtrl', function($scope, $ionicHistory) {
 
 
 
@@ -274,6 +274,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             ];
 
+            $scope.myGoBack = function() {
+                $ionicHistory.goBack();
+            };
+
         })
 
         .controller('OrigenCtrl', function($scope) {
@@ -281,9 +285,15 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             alert("Origen Controller");
 
         })
-        .controller('DestinoCtrl', function($scope) {
+        .controller('DestinoCtrl', function($scope,$ionicSideMenuDelegate) {
 
-            alert("Destino Controller");
+            $ionicSideMenuDelegate.canDragContent(false);
+            $scope.backButton = function() {
+
+            };
+            $scope.onSearchChange= function(){
+               alert('cambio la busqueda');
+            }
 
         })
 
