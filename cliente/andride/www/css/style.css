@@ -12,9 +12,9 @@ map {
   position: absolute;
   /*center the marker*/
  top: 45%;
- left: 12%;
+ left: 5%;
  z-index: 1;
- width: 80%;
+ width: 90%;
  height: 10%;
  border-radius:5px;
  border: 1px solid #111;

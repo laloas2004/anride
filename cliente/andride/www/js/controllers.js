@@ -1,18 +1,12 @@
 angular.module('app.controllers', ['ngSails', 'ngCordova'])
         .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout) {
 
-            debugger;
+
             $rootScope.solicitud = {
-                origen: {
-                    lat: 0,
-                    long: 0
-                },
-                destino: {
-                    lat: 0,
-                    long: 0
-                },
+                origen: {},
+                destino: {},
                 direccion_origen: '',
-                direccion_destino: 'destino'
+                direccion_destino: 'SE REQUIERE UN DESTINO'
             };
 
 
@@ -59,6 +53,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $rootScope,
                 $sails,
                 $stateParams,
+                $state,
                 $ionicLoading,
                 $http,
                 $cordovaGeolocation,
@@ -103,7 +98,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                     google.maps.event.addListener($scope.map, "center_changed", function() {
 
-                        $scope.MarkerCoordenadas.coordinates = $scope.map.getCenter().toUrlValue();
+//                        $scope.MarkerCoordenadas.coordinates = $scope.map.getCenter().toUrlValue();
+
+                        $scope.hDestino = true;
                         $scope.crearChoferesMarkers({coords: {
                                 latitude: $scope.map.getCenter().lat(),
                                 longitude: $scope.map.getCenter().lng()
@@ -121,9 +118,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.crearChoferesMarkers = function(position) {
 
                 $rootScope.solicitud.direccion_origen = "Ir al Marcador";
+                $scope.MarkerCoordenadas.coordinates = position;
                 $scope.hideBubble = true;
-                clienteService.getDireccion($scope.position).then(function(response) {
-                    
+
+                clienteService.getDireccion(position).then(function(response) {
+
                     var calle = response.data.results[0].address_components[1].long_name;
                     var numero = response.data.results[0].address_components[0].long_name;
                     var colonia = response.data.results[0].address_components[2].long_name;
@@ -197,12 +196,15 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
             };
-            $scope.creaSolicitud = function() {
-
-            }
+//            $scope.creaSolicitud = function() {
+//
+//            }
             $scope.onSelectOrigen = function() {
+
                 console.log($scope.MarkerCoordenadas.coordinates);
+
                 if (!$scope.MarkerCoordenadas.coordinates) {
+
                     var alertPopup = $ionicPopup.alert({
                         title: 'No se eligio origen del viaje!',
                         template: 'Por Favor elige un origen para el viaje.'
@@ -210,17 +212,23 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 //                    alert('no se ha selccionado');
                 } else {
 
+                    $scope.hideBubble = true;
                     $scope.hDestino = false;
+
                 }
             }
-            $scope.onSearchOrigen = function() {
-                alert('abrir buscar direccion!');
+            $scope.searchOrigen = function() {
+
+                $state.go('app.origen');
+            }
+            $scope.searchDestino = function() {
+                $state.go('app.destino');
             }
 
         })
         .controller('SideMenuCtrl', function($scope) {
 
-            console.log('SideMenuCtrl');
+
 
             $scope.theme = 'ionic-sidemenu-dark';
             $scope.tree1 = [];
@@ -270,12 +278,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
         .controller('OrigenCtrl', function($scope) {
 
-            alert('origen');
+            alert("Origen Controller");
 
         })
         .controller('DestinoCtrl', function($scope) {
 
-
+            alert("Destino Controller");
 
         })
 

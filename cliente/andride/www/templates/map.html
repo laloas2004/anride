@@ -3,23 +3,26 @@
         
         <div class="map-overlay list">
             <div class="row responsive-sm">
-                <div class="list" ng-click="onSearchOrigen()">
-                    <div id="h_origen">Punto de Origen</div>
-                    <i class="icon ion-search" ></i>
+                <div class="list" ng-click="searchOrigen()">
+                    <div id="h_origen">Origen del viaje</div>
+                    <i class="icon ion-search" style="font-size: 25px;margin: 10px;" ></i>
                     <span>{{solicitud.direccion_origen}}</span>
                 </div>
             </div>
             <div class="row responsive-sm" ng-hide="hDestino">
                 <div class="list">
-                    <div id="h_destino">Punto de Destino</div>
-                    <i class="icon ion-search"></i>
+                    <div id="h_destino">Destino del viaje</div>
+                    <i class="icon ion-search" style="font-size: 25px;margin: 10px;" ng-click="searchDestino()"></i>
                     <span>{{solicitud.direccion_destino}}</span>
                 </div>
             </div>
         </div>
         <div id="centerInfoBubble" ng-click="onSelectOrigen()" ng-hide="hideBubble">
             <div id="tiempo"><span>{{MarkerCoordenadas.tiempoLlegada}}</span></div>
-            <div style="padding:10px;margin-left: 60px;">Selecciona origen de viaje</div>
+            <div style="padding:10px;margin-left: 60px;">FIJA EL PUNTO DE PARTIDA
+               <!-- <a class="button button-icon icon ion-android-arrow-dropright-circle"></a>-->
+            </div>
+            
         </div>
         <div id="centerMarker"></div>
         <map on-create="mapCreated(map)" data-tap-disabled="true"></map>
