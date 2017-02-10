@@ -69,9 +69,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $q,
                 $ionicPopup) {
 
-//            console.log($rootScope.solicitud);
-
-
 
             $scope.choferesDisponibles = {};
             $scope.hideBubble = true;
@@ -95,10 +92,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 });
 
                 var posOptions = {timeout: 100000, enableHighAccuracy: true};
-                
+
                 $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
+
                     $scope.position = position;
-                    console.log(position);
 
                     $scope.map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
                     $scope.crearChoferesMarkers(position);
@@ -111,7 +108,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                 latitude: $scope.map.getCenter().lat(),
                                 longitude: $scope.map.getCenter().lng()
                             }});
-                        
+
 //                        $scope.$apply();
                     });
 
@@ -125,10 +122,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 $rootScope.solicitud.direccion_origen = "Ir al Marcador";
                 $scope.hideBubble = true;
+                clienteService.getDireccion($scope.position).then(function(response) {
+                    
+                    var calle = response.data.results[0].address_components[1].long_name;
+                    var numero = response.data.results[0].address_components[0].long_name;
+                    var colonia = response.data.results[0].address_components[2].long_name;
+
+                    $rootScope.solicitud.direccion_origen = calle + ' ' + numero + ' ' + colonia;
+                });
                 choferService.getChoferes(position).then(function(response) {
 
                     if (response.data.error) {
-                        debugger;
 
                         var alertPopup = $ionicPopup.alert({
                             title: 'Sin servicio en esta area',
@@ -140,14 +144,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                         $scope.choferesDisponibles = response;
                         $scope.hideBubble = false;
-                        if (response.data.matrix.origin_addresses[0]) {
-                            var direccion_origen = response.data.matrix.origin_addresses[0].split(',');
-                        } else {
-                            var direccion_origen = response.data.matrix.origin_addresses[0].split(',');
-                        }
-
-
-                        $rootScope.solicitud.direccion_origen = direccion_origen[0] + ' Col.' + direccion_origen[1];
+//                        if (response.data.matrix.origin_addresses[0]) {
+//                            
+//                        } else {
+//                            var direccion_origen = response.data.matrix.origin_addresses[0].split(',');
+//                        }
+//
+//
+//                        $rootScope.solicitud.direccion_origen = direccion_origen[0] + ' Col.' + direccion_origen[1];
 
                         var tiempo = Math.round((response.data.matrix.rows[0].elements[0].duration.value + response.data.matrix.rows[0].elements[0].duration_in_traffic.value) / 60)
 
@@ -182,17 +186,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
             };
-            
+
             $scope.centerOnMe = function() {
 
                 if (!$scope.map) {
                     return;
                 }
-                clienteService.getDireccion($scope.position).then(function(response){
-                  debugger;  
-                });
-                    
-                
+
                 $scope.map.setCenter(new google.maps.LatLng($scope.position.coords.latitude, $scope.position.coords.longitude));
 
 
