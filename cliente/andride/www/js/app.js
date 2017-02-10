@@ -53,7 +53,10 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                         views: {
                             'menuContent': {
                                 templateUrl: 'templates/map.html',
-                                controller: 'MapCtrl'
+                                controller: 'MapCtrl',
+                                params:{
+                                    'regresoDestino':'false'
+                                }
                             }
                         }
                     })
@@ -72,6 +75,15 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                             'menuContent': {
                                 templateUrl: 'templates/punto_destino.html',
                                 controller: 'DestinoCtrl'
+                            }
+                        }
+                    })
+                     .state('app.confirmacion', {
+                        url: '/confirmacion',
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/confirmacion.html',
+                                controller: 'ConfirmaCtrl'
                             }
                         }
                     })

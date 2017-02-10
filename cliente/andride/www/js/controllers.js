@@ -68,7 +68,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.choferesDisponibles = {};
             $scope.hideBubble = true;
             $scope.hDestino = true;
-
+            $scope.hBtnPedir = true;
+            $scope.hCostoEstimado = true;
             $scope.MarkerCoordenadas = {
                 coordinates: null,
                 direccion: null,
@@ -114,7 +115,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 }, function(err) {
                     console.log(err);
                 });
+
+
+                debugger;
             };
+
             $scope.crearChoferesMarkers = function(position) {
 
                 $rootScope.solicitud.direccion_origen = "Ir al Marcador";
@@ -182,7 +187,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 });
 
+                if ($rootScope.seleccionoDestino) {
 
+                    $scope.hideBubble = true;
+                    $scope.hDestino = false;
+                    $scope.hBtnPedir = false;
+                    $scope.hCostoEstimado = false;
+
+                }
 
             };
 
@@ -200,8 +212,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 //
 //            }
             $scope.onSelectOrigen = function() {
-
+                $scope.hBtnPedir = true;
                 console.log($scope.MarkerCoordenadas.coordinates);
+
+                $rootScope.solicitud.origen = $scope.MarkerCoordenadas.coordinates;
 
                 if (!$scope.MarkerCoordenadas.coordinates) {
 
@@ -223,6 +237,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             }
             $scope.searchDestino = function() {
                 $state.go('app.destino');
+            }
+            $scope.crearsolicitud = function(){
+                $state.go('app.confirmacion');
             }
 
         })
@@ -285,15 +302,38 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             alert("Origen Controller");
 
         })
-        .controller('DestinoCtrl', function($scope,$ionicSideMenuDelegate) {
+        .controller('DestinoCtrl', function($scope, $rootScope, $ionicSideMenuDelegate, clienteService, $state) {
 
             $ionicSideMenuDelegate.canDragContent(false);
             $scope.backButton = function() {
-
+                $ionicHistory.goBack();
             };
-            $scope.onSearchChange= function(){
-               alert('cambio la busqueda');
+            $scope.onSearchChange = function() {
+
+
+                clienteService.searchDireccion($scope.busqueda).then(function(response) {
+                    $scope.response = response;
+                });
+
+
             }
 
+            $scope.onSelectItemDestino = function(res) {
+
+                $rootScope.solicitud.destino = {coords: {
+                        latitude: res.geometry.location.lat(),
+                        longitude: res.geometry.location.lng()
+                    }}
+
+                $rootScope.solicitud.direccion_destino = res.formatted_address;
+                $rootScope.seleccionoDestino = true;
+                $state.go('app.map', {regresoDestino: true});
+            }
+
+        })
+        .controller('ConfirmaCtrl', function($scope, $ionicHistory) {
+            
+            
+            
         })
 

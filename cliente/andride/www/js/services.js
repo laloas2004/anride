@@ -50,23 +50,25 @@ angular.module('app.services', [])
                     return q.promise;
                 },
                 searchDireccion: function(texto) {
-                      var q = $q.defer();
+                    var q = $q.defer();
+                    var geocoder = new google.maps.Geocoder();
 
-                    var config = {
-                        url: "https://maps.googleapis.com/maps/api/geocode/json?",
-                        method: "GET",
-                        params: {
-                            latlng: location.coords.latitude + ',' + location.coords.longitude,
-                            key: $rootScope.google_key
+
+                    geocoder.geocode({
+                        address: texto,
+                        region: 'MX'
+                    }, function(results, status) {
+
+                        if (status == google.maps.GeocoderStatus.OK) {
+
+                            q.resolve(results);
+                        } else {
+                            debugger;
+                            q.reject();
                         }
-                    };
-                    $http(config)
-                            .then(function(response) {
-                                q.resolve(response);
-                            }).catch(function(err) {
-                        q.reject(err);
 
                     });
+
 
                     return q.promise;
                 }
