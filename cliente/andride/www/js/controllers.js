@@ -238,7 +238,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.searchDestino = function() {
                 $state.go('app.destino');
             }
-            $scope.crearsolicitud = function(){
+            $scope.crearsolicitud = function() {
                 $state.go('app.confirmacion');
             }
 
@@ -299,7 +299,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
         .controller('OrigenCtrl', function($scope) {
 
-            alert("Origen Controller");
 
         })
         .controller('DestinoCtrl', function($scope, $rootScope, $ionicSideMenuDelegate, clienteService, $state) {
@@ -319,7 +318,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             }
 
             $scope.onSelectItemDestino = function(res) {
-
+                
+                clienteService.getDistancia().then(function(response){
+                    debugger;
+                });
+                
+                
                 $rootScope.solicitud.destino = {coords: {
                         latitude: res.geometry.location.lat(),
                         longitude: res.geometry.location.lng()
@@ -332,8 +336,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
         })
         .controller('ConfirmaCtrl', function($scope, $ionicHistory) {
-            
-            
-            
+
+
+
         })
 

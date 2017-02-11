@@ -48,6 +48,7 @@ module.exports.routes = {
    ***************************************************************************/
   
   'get /admin/clientes': 'AdminController.indexCliente',
+  'get /admin/clientes/new': 'AdminController.newCliente',
   'get /admin/solicitudes': 'AdminController.indexSolicitudes',
   'get /admin/servicios': 'AdminController.indexServicios',
   'get /admin/choferes': 'AdminController.indexChoferes',

@@ -71,9 +71,49 @@ angular.module('app.services', [])
 
 
                     return q.promise;
+                },
+                getDistancia:function(coords1,coords2){
+                    
+                    var q = $q.defer();
+
+                    var config = {
+                        url: "https://maps.googleapis.com/maps/api/distancematrix/json?",
+                        method: "GET",
+                        params: {origin:{},coords2:{}}
+                    };
+                    $http(config)
+                            .then(function(response) {
+                                q.resolve(response);
+                            }).catch(function(err) {
+                        q.reject(err);
+
+                    });
+
+                    return q.promise;
+                },
+                getConfiguracion:function(){
+                                     
+                    var q = $q.defer();
+
+                    var config = {
+                        url: $rootScope.serverIp + "/distancia",
+                        method: "GET",
+                        params: {coords1:{},coords2:{}}
+                    };
+                    $http(config)
+                            .then(function(response) {
+                                q.resolve(response);
+                            }).catch(function(err) {
+                        q.reject(err);
+
+                    });
+
+                    return q.promise;   
+                }
+                
                 }
 
-            }
+            
 
 
         })
