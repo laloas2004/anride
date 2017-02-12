@@ -6,114 +6,124 @@
  */
 var Q = require('q');
 module.exports = {
-	attributes: {
-		nombre: {
-			type: 'string',
-		},
-		apellido: {
-			type: 'string'
-		},
-		email: {
-			type: 'email',
-			unique: true,
-			required: true
-		},
-		password: {
-			type: 'string',
-			//required : true
-		},
-		numCel: {
-			type: 'string'
-		},
-		online: {
-			type: 'boolean',
-			defaultsTo: false
-		},
-		location: {
-			type: 'json',
-		},
-		autos: {
-			collection: 'Auto',
-			via: 'choferes',
-			dominant: true
-		},
-		status: {
-			type: 'string',
-			enum: ['activo', 'inactivo', 'enservicio'],
-			defaultsTo: 'inactivo'
-		},
-		socketId: {
-			type: 'string'
-		},
-		ultimaConexion: {
-			type: 'datetime'
-		},
-		autoActivo: {
-			type: 'string'
-		},
-		servicios: {
-			collection: 'Servicio',
-			via: 'chofer'
-		}
-	},
-	beforeCreate: function (attrs, cb) {
-		console.log(attrs);
-		var location = {};
-		location.lat = attrs.lat || 0;
-		location.lon = attrs.lon || 0;
-		attrs.location = {
-			type: "Point",
-			coordinates: [parseFloat(location.lon), parseFloat(location.lat)]
-		};
-		cb();
-	},
-	beforeUpdate: function (attrs, cb) {
-		console.log(attrs);
-		var location = {};
-		location.lat = attrs.lat || 0;
-		location.lon = attrs.lon || 0;
-		attrs.location = {
-			type: "Point",
-			coordinates: [parseFloat(location.lon), parseFloat(location.lat)]
-		};
-		cb();
-	},
-	getChoferesCercanos: function (ClientCoordinates, maxDistance) {
+    attributes: {
+        nombre: {
+            type: 'string',
+        },
+        apellido: {
+            type: 'string'
+        },
+        email: {
+            type: 'email',
+            unique: true,
+            required: true
+        },
+        password: {
+            type: 'string',
+            //required : true
+        },
+        numCel: {
+            type: 'string'
+        },
+        online: {
+            type: 'boolean',
+            defaultsTo: false
+        },
+        location: {
+            type: 'json',
+        },
+        autos: {
+            collection: 'Auto',
+            via: 'choferes',
+            dominant: true
+        },
+        status: {
+            type: 'string',
+            enum: ['activo', 'inactivo', 'enservicio'],
+            defaultsTo: 'inactivo'
+        },
+        socketId: {
+            type: 'string'
+        },
+        ultimaConexion: {
+            type: 'datetime'
+        },
+        autoActivo: {
+            type: 'string'
+        },
+        servicios: {
+            collection: 'Servicio',
+            via: 'chofer'
+        }
+    },
+    beforeCreate: function(attrs, cb) {
+        console.log(attrs);
+        var location = {};
+        location.lat = attrs.lat || 0;
+        location.lon = attrs.lon || 0;
+        attrs.location = {
+            type: "Point",
+            coordinates: [parseFloat(location.lon), parseFloat(location.lat)]
+        };
+        cb();
+    },
+    beforeUpdate: function(attrs, cb) {
+        console.log(attrs);
+        var location = {};
+        location.lat = attrs.lat || 0;
+        location.lon = attrs.lon || 0;
+        attrs.location = {
+            type: "Point",
+            coordinates: [parseFloat(location.lon), parseFloat(location.lat)]
+        };
+        cb();
+    },
+    getChoferesCercanos: function(ClientCoordinates, maxDistance) {
 
-		var maxdist = maxDistance || 16093.4;
+        var maxdist = maxDistance || 16093.4;
 
-		if (!ClientCoordinates) {
+        if (!ClientCoordinates) {
 
-			deferred.reject(new Error('se necesita un punto geografico'));
+            deferred.reject(new Error('se necesita un punto geografico'));
 
-		}
+        }
 
-		var deferred = Q.defer()
-		Chofer.native(function (err, collection) {
+        var deferred = Q.defer()
+        Chofer.native(function(err, collection) {
 
-			if (err) return res.serverError(err);
+            if (err)
+                return res.serverError(err);
 
-			collection.find({
+            collection.find({
+                location: {
+                    $near: {
+                        $geometry: {
+                            type: "Point",
+                            coordinates: [parseFloat(ClientCoordinates.lon), parseFloat(ClientCoordinates.lat)]
+                        },
+                        $maxDistance: maxdist // 10 miles in meters
+                    }
+                }
+            }, {}).toArray(function(err, results) {
 
-				location: {
-					$near: {
-						$geometry: {
-							type: "Point",
-							coordinates: [parseFloat(ClientCoordinates.lon), parseFloat(ClientCoordinates.lat)]
-						},
-						$maxDistance: maxdist // 10 miles in meters
-					}
-				}
-			}, {}).toArray(function (err, results) {
+                if (err) {
 
-				if (err) {
+                    deferred.reject(new Error(err));
+                }
 
-					deferred.reject(new Error(err));
-				}
-				
-				deferred.resolve(results);
-			});
-		})
-		return deferred.promise;
-	}
+                deferred.resolve(results);
+            });
+        })
+        return deferred.promise;
+    },
+    login: function() {
+    },
+    toJSON: function() {
+        var obj = this.toObject();
+        delete obj.password;
+//        delete obj.confirmation;
+//        delete obj.encryptedPassword;
+//        delete obj._csrf;
+        return obj;
+    }
 };

@@ -37,6 +37,9 @@ module.exports.routes = {
   'get /distancia': 'IndexController.getMatrix',
   'get /cliente': 'ClienteController.registroCliente',
   'get /cliente/choferes': 'ClienteController.getChoferes',
+  'post /choferes/posicion': 'ChoferController.trackChofer',
+
+  
   /***************************************************************************
    *                                                                          *
    * Custom routes here...                                                    *

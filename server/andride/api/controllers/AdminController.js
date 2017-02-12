@@ -20,8 +20,11 @@ module.exports = {
         res.view('servicios/home', {saludos: 'saludos!!'});
     },
     indexChoferes: function(req, res) {
-
-        res.view('choferes/home', {saludos: 'saludos!!'});
+       Chofer.find().exec(function(err,choferes){
+           console.log(choferes);
+           res.view('choferes/home', {choferes: choferes}); 
+        }); 
+        
     },
     indexAutos: function(req, res) {
 
@@ -34,6 +37,9 @@ module.exports = {
     indexConfiguracion: function(req, res) {
 
         res.view('configuracion/home', {saludos: 'saludos!!'});
+    },
+    newCliente: function(req,res){
+        
     }
 };
 

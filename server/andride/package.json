@@ -28,7 +28,10 @@
     "sails-disk": "~0.10.9",
     "sails-hook-autoreload": "^0.13.2",
     "sails-hook-req-validate": "^0.2.1",
-    "sails-mongo": "^0.12.2"
+    "sails-mongo": "^0.12.2",
+    "bcrypt": "~0.8.0",
+    "passport": "~0.2.1",
+    "passport-local": "~1.0.0"
   },
   "scripts": {
     "debug": "node debug app.js",
