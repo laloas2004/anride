@@ -5,6 +5,8 @@
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 var Q = require('q');
+var bcrypt = require('bcrypt');
+
 module.exports = {
     attributes: {
         nombre: {
@@ -65,7 +67,20 @@ module.exports = {
             type: "Point",
             coordinates: [parseFloat(location.lon), parseFloat(location.lat)]
         };
-        cb();
+
+        bcrypt.genSalt(10, function(err, salt) {
+            bcrypt.hash(attrs.password, salt, function(err, hash) {
+                if (err) {
+                    console.log(err);
+                    cb(err);
+                } else {
+                    attrs.password = hash;
+                    cb();
+                }
+            });
+        });
+
+
     },
     beforeUpdate: function(attrs, cb) {
         console.log(attrs);
@@ -116,14 +131,26 @@ module.exports = {
         })
         return deferred.promise;
     },
-    login: function() {
-    },
     toJSON: function() {
+        debugger;
         var obj = this.toObject();
         delete obj.password;
 //        delete obj.confirmation;
 //        delete obj.encryptedPassword;
 //        delete obj._csrf;
         return obj;
+    },
+    comparePassword: function(password, chofer, cb) {
+      
+        bcrypt.compare(password, chofer.password, function(err, match) {
+
+            if (err)
+                cb(err);
+            if (match) {
+                cb(null, true);
+            } else {
+                cb(err);
+            }
+        })
     }
 };

@@ -37,3 +37,22 @@ _.each(choferes,function(chofer){ %>
 
 
 </div>
+<script>
+$( document ).ready(function() {
+
+
+io.socket.on('connect', function onConnect (params) {
+
+  console.log("Socket connected!");
+
+});
+io.socket.on('disconnect', function(){
+      console.log('Lost connection to server');
+  });
+io.socket.on('algo', function onConnect (res) {
+debugger;
+  console.log("Has algo");
+});
+});
+
+</script>

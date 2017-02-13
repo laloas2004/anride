@@ -5,6 +5,7 @@
   "description": "a Sails application",
   "keywords": [],
   "dependencies": {
+    "bcrypt": "~0.8.0",
     "bcrypt-nodejs": "0.0.3",
     "conekta": "^2.2.0",
     "ejs": "2.3.4",
@@ -22,16 +23,16 @@
     "grunt-sails-linker": "~0.10.1",
     "grunt-sync": "0.5.2",
     "include-all": "^1.0.0",
+    "jsonwebtoken": "^7.3.0",
+    "passport": "~0.2.1",
+    "passport-local": "~1.0.0",
     "q": "^1.4.1",
     "rc": "1.0.1",
     "sails": "~0.12.11",
     "sails-disk": "~0.10.9",
     "sails-hook-autoreload": "^0.13.2",
     "sails-hook-req-validate": "^0.2.1",
-    "sails-mongo": "^0.12.2",
-    "bcrypt": "~0.8.0",
-    "passport": "~0.2.1",
-    "passport-local": "~1.0.0"
+    "sails-mongo": "^0.12.2"
   },
   "scripts": {
     "debug": "node debug app.js",

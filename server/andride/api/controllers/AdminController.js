@@ -16,15 +16,28 @@ module.exports = {
         res.view('solicitudes/home', {saludos: 'saludos!!'});
     },
     indexServicios: function(req, res) {
-
+        sails.sockets.blast('algo',{res:'haz algo socket!'});
         res.view('servicios/home', {saludos: 'saludos!!'});
     },
     indexChoferes: function(req, res) {
-       Chofer.find().exec(function(err,choferes){
-           console.log(choferes);
-           res.view('choferes/home', {choferes: choferes}); 
-        }); 
         
+       
+
+        if (req.isSocket) {
+            sails.sockets.join(req, "funSockets", function(err) {
+                return res.json({
+                    message: 'Subscribed to a fun room called ' + 'un grupo' + '!'
+                });
+            });
+           
+        }
+
+
+        Chofer.find().exec(function(err, choferes) {
+            console.log(choferes);
+            res.view('choferes/home', {choferes: choferes});
+        });
+
     },
     indexAutos: function(req, res) {
 
@@ -38,8 +51,8 @@ module.exports = {
 
         res.view('configuracion/home', {saludos: 'saludos!!'});
     },
-    newCliente: function(req,res){
-        
+    newCliente: function(req, res) {
+
     }
 };
 

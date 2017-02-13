@@ -37,6 +37,10 @@ module.exports.routes = {
   'get /distancia': 'IndexController.getMatrix',
   'get /cliente': 'ClienteController.registroCliente',
   'get /cliente/choferes': 'ClienteController.getChoferes',
+  
+  'post /chofer': 'ChoferController.create',
+  'post /choferes/login': 'ChoferController.login',
+  'post /choferes/logout': 'ChoferController.logout',
   'post /choferes/posicion': 'ChoferController.trackChofer',
 
   
