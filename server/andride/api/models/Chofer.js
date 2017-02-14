@@ -94,10 +94,8 @@ module.exports = {
         
         
         
-        attrs.location = {
-            type: "Point",
-            coordinates: [parseFloat(location.lon), parseFloat(location.lat)]
-        };
+        attrs.location.coordinates = [parseFloat(location.lon), parseFloat(location.lat)];
+        
         console.log(attrs.location);
         
         cb();
