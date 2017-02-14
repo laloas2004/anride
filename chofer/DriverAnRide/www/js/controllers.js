@@ -192,10 +192,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $scope.login();
             };
             $scope.login = function() {
+                
                 AuthService.login($scope.email, $scope.password).then(function(response) {
                     $ionicSideMenuDelegate.canDragContent(true);
                     
-                    AuthService.suscribe().then(function(){
+                    AuthService.suscribe().then(function(response){
                        $state.go('app.main', {});  
                     },function(){
                         
