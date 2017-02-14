@@ -81,7 +81,7 @@ angular.module('app.services', [])
                 suscribe: function() {
                     var q = $q.defer();
 
-                    $sails.get("/choferes/suscribe")
+                    $sails.post("/choferes/suscribe")
                             .success(function(data, status, headers, jwr) {
                                 debugger;
                             })

@@ -42,7 +42,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $ionicModal,
                 $localStorage,
                 $sessionStorage) {
-
+                    
+            $sails.on('solicitud',function(data){
+                alert('nuevo trabajo');
+            });
+            
             $scope.$storage = $localStorage;
             $scope.driver = {
                 id: 1,
