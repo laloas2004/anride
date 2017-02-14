@@ -86,15 +86,20 @@ module.exports = {
 
     },
     beforeUpdate: function(attrs, cb) {
-        console.log(attrs);
+        
         var location = {};
         location.lat = attrs.lat || 0;
         location.lon = attrs.lon || 0;
-        console.log(location);
+        
+        
+        
+        
         attrs.location = {
             type: "Point",
             coordinates: [parseFloat(location.lon), parseFloat(location.lat)]
         };
+        console.log(attrs.location);
+        
         cb();
     },
     getChoferesCercanos: function(ClientCoordinates, maxDistance) {
