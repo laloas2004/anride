@@ -66,7 +66,7 @@ module.exports = {
 //                            console.log('Se Actualizo el SocketId de ' + chofer.emial);
 //                        })
 //                    }
-
+                    
                     res.json({
                         chofer: chofer,
                         token: jwToken.issue({id: chofer.id})
@@ -98,12 +98,12 @@ module.exports = {
                 return res.serverError(err);
             }
 
-            Chofer.update({id: choferId}, {socketId: socketId}).exec(function() {
+            Chofer.update({id: choferId}, {socketId: socketId,online:true}).exec(function() {
                 if (err) {
                     return res.json({suscrito: false});
                 }
 
-                return res.json({suscrito: true});
+                return res.json({suscrito: true,socketId: socketId});
 
             });
         });

@@ -85,6 +85,7 @@ angular.module('app.services', [])
                     };
                     $sails.post("/choferes/suscribe", data)
                             .success(function(data, status, headers, jwr) {
+                                debugger;
                                 q.resolve();
                             })
                             .error(function(data, status, headers, jwr) {

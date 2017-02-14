@@ -42,14 +42,18 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $ionicModal,
                 $localStorage,
                 $sessionStorage) {
-                    
-            $sails.on('solicitud',function(data){
+
+            $sails.on('solicitud', function(data) {
                 alert('nuevo trabajo');
             });
-             $sails.on('servicio',function(data){
-                alert('nuevo trabajo');
+            $sails.on('connect', function(data) {
+                console.log(data);
+                alert('se conecto el websocket');
             });
-            
+            $sails.on('disconnect', function(data) {
+                alert('Se perdio la conexion');
+            });
+
             $scope.$storage = $localStorage;
             $scope.driver = {
                 id: 1,
@@ -199,17 +203,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $scope.login();
             };
             $scope.login = function() {
-                
+
                 AuthService.login($scope.email, $scope.password).then(function(response) {
                     $ionicSideMenuDelegate.canDragContent(true);
-                    
-                    AuthService.suscribe().then(function(response){
-                       $state.go('app.main', {});  
-                    },function(){
-                        
+
+                    AuthService.suscribe().then(function(response) {
+                        $state.go('app.main', {});
+                    }, function() {
+
                     });
-                    
-                   
+
+
                 }, function() {
 
                 })
