@@ -89,7 +89,7 @@ module.exports = {
         }
         var socketId = sails.sockets.getId(req);
         
-        console.log(sails.sockets);
+        console.log(req.allParams());
         
         sails.log('My socket ID is: ' + socketId);
 
