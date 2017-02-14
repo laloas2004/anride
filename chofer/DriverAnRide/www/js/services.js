@@ -107,7 +107,8 @@ angular.module('app.services', [])
                     
                   var q = $q.defer();
                     var data = {
-                        location:location
+                        lat:location.coords.latitude,
+                        lon:location.coords.longitude
                     };
                     $sails.post("/choferes/posicion",data)
                             .success(function(data, status, headers, jwr){
