@@ -1,13 +1,13 @@
 <ion-view view-title="Driver An Ride">
   <ion-content scroll="false" class="dark-bg">
     <div class="padding text-center">
-      <h3 class="light">{{ driver.name }}</h3>
-      <h4 class="gray">{{ driver.plate }}</h4>
+      <h3 class="light">{{ $storage.chofer.nombre + ''+ $storage.chofer.apellido }}</h3>
+      <h4 class="gray">{{ $storage.chofer.email }}</h4>
 
       <div class="row">
         <div class="col">
-          <span class="gray">Referral Code</span>
-          <h4 class="light">{{ driver.ref_code }}</h4>
+          <span class="gray">Activo</span>
+          <h4 class="light">{{ $storage.chofer.email }}</h4>
         </div>
         <div class="col">
           <span class="gray">Rating</span>
@@ -19,7 +19,7 @@
       </div>
 
       <div class="padding gray-bg">
-        <h3 class="no-margin light" ui-sref="app.wallet">{{ driver.balance }} USD</h3>
+        <h3 class="no-margin light" ui-sref="app.wallet">{{ driver.balance }} MXN</h3>
       </div>
 
       <div class="light">

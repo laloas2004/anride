@@ -84,6 +84,9 @@ module.exports = {
     },
     suscribe: function(req, res) {
 
+    res.json({suscrito:true
+                      
+                    });
 
 
 

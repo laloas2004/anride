@@ -41,6 +41,7 @@ module.exports.routes = {
   'post /chofer': 'ChoferController.create',
   'post /choferes/login': 'ChoferController.login',
   'post /choferes/logout': 'ChoferController.logout',
+  'post /choferes/suscribe': 'ChoferController.suscribe',
   'post /choferes/posicion': 'ChoferController.trackChofer',
   'post /choferes/validate': 'ChoferController.validateToken',
 

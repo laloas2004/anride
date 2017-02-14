@@ -113,7 +113,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                         url: '/salir',
                         views: {
                             'menuContent': {
-                                templateUrl: 'templates/ayuda.html',
+                                templateUrl: 'templates/logout.html',
                                 controller: 'LogOutCtrl',
                                 params:{
                                     
@@ -135,7 +135,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                     })
                   
 
-            $urlRouterProvider.otherwise('/app/main');
+            $urlRouterProvider.otherwise('/app/login');
         })
         .config(['$sailsProvider', function($sailsProvider) {
                 $sailsProvider.url = "http://104.131.116.22:1337";

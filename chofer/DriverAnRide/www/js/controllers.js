@@ -10,14 +10,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             //$scope.$on('$ionicView.enter', function(e) {
             //});
 
-            $state.go('app.login', {});
+            //$state.go('app.login', {});
 
             AuthService.isAuthenticated().then(function(response) {
                 $state.go('app.main', {});
-                debugger;
 
             }, function(err) {
-                debugger;
+
                 $state.go('app.login', {});
 
             });
@@ -33,17 +32,61 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $http,
                 $cordovaGeolocation,
                 $ionicScrollDelegate,
+                $ionicSideMenuDelegate,
+                $ionicNavBarDelegate,
                 $ionicPlatform,
                 AuthService,
+                choferService,
                 $q,
-                $ionicPopup) {
+                $ionicPopup,
+                $ionicModal,
+                $localStorage,
+                $sessionStorage) {
 
+            $scope.$storage = $localStorage;
+            $scope.driver = {
+                id: 1,
+                name: "Edward Thomas",
+                plate: "29A567.89",
+                brand: "Kia Morning",
+                ref_code: "486969",
+                rating: 4,
+                balance: "580",
+                balance_pending: 0
+            };
+            $ionicNavBarDelegate.showBackButton(false);
 
+            $scope.updatePosition = function() {
 
+                var watchOptions = {
+                    timeout: 3000,
+                    maximumAge: 3000,
+                    enableHighAccuracy: true // may cause errors if true
+                };
 
+                var watch = $cordovaGeolocation.watchPosition(watchOptions);
 
+                watch.then(
+                        null,
+                        function(err) {
+                            // error
+                        },
+                        function(position) {
+                            var lat = position.coords.latitude
+                            var long = position.coords.longitude
 
+                            choferService.updatePosition(position).then(function(response){
+                               console.log("Se actualizo posicion");   
+                            })
+                        });
 
+                $rootScope.watch = watch;
+
+//                          watch.clearWatch();
+
+            }
+
+            $scope.updatePosition();
         })
         .controller('SideMenuCtrl', function($scope, $ionicHistory) {
 
@@ -88,7 +131,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     name: 'Salir',
                     level: 0,
                     icon: '',
-                    state: 'app.logout'
+                    state: 'app.salir'
                 }
 
             ];
@@ -127,13 +170,48 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
         })
-        .controller('LogOutCtrl', function($scope, $ionicHistory) {
+        .controller('LogOutCtrl', function($scope, $rootScope, $ionicHistory, AuthService, $state) {
 
-
+            AuthService.logout().then(function() {
+                $rootScope.watch.clearWatch();
+                $state.go('app.login', {});
+            });
 
         })
-        .controller('LoginCtrl', function($scope, $ionicHistory) {
+        .controller('LoginCtrl', function($scope, $ionicHistory, $ionicSideMenuDelegate, $ionicPlatform, AuthService, $localStorage, $state) {
 
+            $scope.$storage = $localStorage;
 
+            $ionicSideMenuDelegate.canDragContent(false);
+
+            $ionicPlatform.registerBackButtonAction(function(event) {
+                event.preventDefault();
+                ionic.Platform.exitApp();
+            }, 100);
+            $scope.validate = function() {
+                $scope.login();
+            };
+            $scope.login = function() {
+                AuthService.login($scope.email, $scope.password).then(function(response) {
+                    $ionicSideMenuDelegate.canDragContent(true);
+                    
+                    AuthService.suscribe().then(function(){
+                       $state.go('app.main', {});  
+                    },function(){
+                        
+                    });
+                    
+                   
+                }, function() {
+
+                })
+
+            };
+            $scope.onOlvidastePass = function() {
+
+            };
+            $scope.onRegistrate = function() {
+
+            }
 
         })

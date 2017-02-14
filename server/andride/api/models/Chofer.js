@@ -56,6 +56,9 @@ module.exports = {
         servicios: {
             collection: 'Servicio',
             via: 'chofer'
+        },
+        rating:{
+           type:'float' 
         }
     },
     beforeCreate: function(attrs, cb) {

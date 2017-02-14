@@ -1,14 +1,14 @@
 <ion-view view-title="Login" hide-nav-bar="true" class="login-bg">
   <ion-content class="login-bg">
 
-    <div class="login-content">
+      <div class="login-content" ng-controller="LoginCtrl">
 
       <div class="light-bg">
 
         <!-- Logo -->
         <div class="padding text-center">
-          <div class="logo balanced-bg">
-            <i class=" light icon-sedan"></i>
+          <div class="logo">
+            
           </div>
           <h2 class="dark">
             AnRide
@@ -20,16 +20,16 @@
         <div class="list padding">
           <label class="item item-input">
             <i class="ion-ios-email-outline light icon-label"></i>
-            <input type="email" placeholder="Email">
+            <input type="email" placeholder="Email" ng-model="email" required value="chofer5@gmail.com">
           </label>
           <label class="item item-input">
             <i class="ion-ios-locked-outline light icon-label"></i>
-            <input type="password" placeholder="Password">
+            <input type="password" placeholder="Password" ng-model="password" required value="22222">
           </label>
         </div>
         <div class="padding">
-          <button class="button button-block button-balanced" ui-sref="app.home">
-            Login
+            <button class="button button-block button-balanced" ng-click="validate()">
+            Entrar
           </button>
         </div>
 
@@ -41,10 +41,10 @@
       <div class="row">
 
         <div class="col">
-          <span class="light">Forgot password?</span>
+          <span class="light">Olvidaste tu password?</span>
         </div>
         <div class="col text-right">
-          <a ui-sref="auth.register" class="light">New here? <span class="balanced">Sign up</span></a>
+          <a ui-sref="auth.register" class="light">Nuevo? <span class="balanced">Registrate como Conductor!</span></a>
         </div>
 
       </div>

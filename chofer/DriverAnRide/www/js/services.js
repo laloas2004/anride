@@ -1,6 +1,5 @@
-angular.module('app.services', ['ngStorage'])
-        .factory('AuthService', function($http, $q, $sails, $rootScope, $localStorage) {
-
+angular.module('app.services', [])
+        .factory('AuthService', function($http, $q, $sails, $rootScope, $localStorage, $sessionStorage) {
             return {
                 isAuthenticated: function() {
                     var q = $q.defer();
@@ -17,8 +16,13 @@ angular.module('app.services', ['ngStorage'])
 
                         $http(config)
                                 .then(function(response) {
-                                    debugger;
-                                    q.resolve(response);
+                                    if (response.data.valid) {
+                                        q.resolve(response);
+                                    } else {
+                                        q.reject('Token no Valido');
+                                    }
+
+
                                 }).catch(function(err) {
                             q.reject(err);
 
@@ -34,7 +38,11 @@ angular.module('app.services', ['ngStorage'])
                 login: function(email, password) {
 
                     var q = $q.defer();
-
+                    $localStorage.$reset();
+//                    $localStorage = $localStorage.$default({
+//                        token: '',
+//                        chofer:{}
+//                    });
 
                     var config = {
                         url: $rootScope.serverIp + "/choferes/login",
@@ -48,7 +56,8 @@ angular.module('app.services', ['ngStorage'])
                     $http(config)
                             .then(function(response) {
 
-                                $localStorage.token = response.token;
+                                $localStorage.token = response.data.token;
+                                $localStorage.chofer = response.data.chofer;
 
                                 q.resolve(response);
 
@@ -65,18 +74,33 @@ angular.module('app.services', ['ngStorage'])
 
                     var q = $q.defer();
 
-                    $localStorage.token = "";
+                    $localStorage.$reset();
                     q.resolve();
                     return q.promise;
+                },
+                suscribe: function() {
+                    var q = $q.defer();
+
+                    $sails.get("/chofer/suscribe")
+                            .success(function(data, status, headers, jwr) {
+                                debugger;
+                            })
+                            .error(function(data, status, headers, jwr) {
+                                alert('Houston, we got a problem!');
+                            });
+
                 }
-                    
+
             }
 
 
         })
-        .factory('clienteService', function($http, $q, $sails, $rootScope) {
+        .factory('choferService', function($http, $q, $sails, $rootScope) {
 
             return {
+                updatePosition: function(location) {
+
+                },
                 getDireccion: function(location) {
                     var q = $q.defer();
 
