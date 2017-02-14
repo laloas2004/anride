@@ -118,7 +118,20 @@ module.exports = {
     newChofer: function(req, res) {
     },
     trackChofer: function(req, res) {
+        
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
 
+        var socketId = sails.sockets.getId(req);
+        var location = req.param('location');
+        Chofer.update({socketId: socketId}, {lat: location.coords.latitude, lon: location.coords.longitude}).exec(function(err, updated) {
+            if (err) {
+                // handle error here- e.g. `res.serverError(err);`
+                return res.json({updated: false});
+            }
+            return res.json({updated: true});
+        })
 
     },
     getChoferes: function(req, res) {

@@ -85,7 +85,8 @@ angular.module('app.services', [])
                     };
                     $sails.post("/choferes/suscribe", data)
                             .success(function(data, status, headers, jwr) {
-                                debugger;
+                                
+                                $localStorage.socketId = data.socketId;
                                 q.resolve();
                             })
                             .error(function(data, status, headers, jwr) {
@@ -103,6 +104,21 @@ angular.module('app.services', [])
 
             return {
                 updatePosition: function(location) {
+                    
+                  var q = $q.defer();
+                    var data = {
+                        location:location
+                    };
+                    $sails.post("/choferes/posicion",data)
+                            .success(function(data, status, headers, jwr){
+                             debugger;
+                                q.resolve();
+                            })
+                            .error(function(data, status, headers, jwr){
+                                q.reject(jwr);
+                                
+                            });
+                    return q.promise;   
 
                 },
                 getDireccion: function(location) {
