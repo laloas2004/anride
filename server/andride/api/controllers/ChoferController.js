@@ -127,7 +127,9 @@ module.exports = {
         var lat = req.param('lat');
         var lon = req.param('lon');
         
-        Chofer.update({socketId: socketId}, {lat:lat, lon:lon}).exec(function(err, updated) {
+        Chofer.update({socketId: socketId}, 
+                      {lat:lat, lon:lon, location:{type: "Point", coordinates:[parseFloat(lon),parseFloat(lat)]}})
+              .exec(function(err, updated) {
             if (err) {
                 // handle error here- e.g. `res.serverError(err);`
                 return res.json({updated: false});
@@ -155,7 +157,14 @@ module.exports = {
         });
     },
     solicitud: function(req, res) {
-        console.log(req);
-        sails.sockets.blast('trabajo', {sockest: true});
+//        console.log(req);
+//        sails.sockets.blast('trabajo', {sockest: true});
+            Chofer.update({nombre:'mas'}, {lat:'25.7461718', lon:'-100.2967787',location:{type: "Point",coordinates:[-100.2967787,25.7461718]}}).exec(function(err, updated) {
+            if (err) {
+                // handle error here- e.g. `res.serverError(err);`
+                return res.json({updated: false,err:err});
+            }
+            return res.json({updated: true,updat:updated});
+        })
     }
 };  
