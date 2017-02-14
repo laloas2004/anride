@@ -80,16 +80,18 @@ angular.module('app.services', [])
                 },
                 suscribe: function() {
                     var q = $q.defer();
-
-                    $sails.post("/choferes/suscribe")
+                    var data = {
+                        choferId: $localStorage.chofer.id
+                    };
+                    $sails.post("/choferes/suscribe", data)
                             .success(function(data, status, headers, jwr) {
-                               q.resolve();
+                                q.resolve();
                             })
                             .error(function(data, status, headers, jwr) {
                                 q.reject(jwr);
-                                alert('Houston, we got a problem!');
+                                
                             });
-                        return q.promise;
+                    return q.promise;
                 }
 
             }

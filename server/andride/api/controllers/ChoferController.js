@@ -84,9 +84,20 @@ module.exports = {
     },
     suscribe: function(req, res) {
 
-    res.json({suscrito:true
-                      
-                    });
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+        var socketId = sails.sockets.getId(req);
+        
+        console.log(sails.sockets);
+        
+        sails.log('My socket ID is: ' + socketId);
+
+//        Chofer.update();
+        
+                res.json({suscrito: true
+
+                });
 
 
 

@@ -46,6 +46,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $sails.on('solicitud',function(data){
                 alert('nuevo trabajo');
             });
+             $sails.on('servicio',function(data){
+                alert('nuevo trabajo');
+            });
             
             $scope.$storage = $localStorage;
             $scope.driver = {
@@ -78,10 +81,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         function(position) {
                             var lat = position.coords.latitude
                             var long = position.coords.longitude
-
-                            choferService.updatePosition(position).then(function(response){
-                               console.log("Se actualizo posicion");   
-                            })
+//
+//                            choferService.updatePosition(position).then(function(response){
+//                               console.log("Se actualizo posicion");   
+//                            })
                         });
 
                 $rootScope.watch = watch;
