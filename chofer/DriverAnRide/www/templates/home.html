@@ -1,0 +1,30 @@
+<ion-view view-title="Driver An Ride">
+  <ion-content scroll="false" class="dark-bg">
+    <div class="padding text-center">
+      <h3 class="light">{{ driver.name }}</h3>
+      <h4 class="gray">{{ driver.plate }}</h4>
+
+      <div class="row">
+        <div class="col">
+          <span class="gray">Referral Code</span>
+          <h4 class="light">{{ driver.ref_code }}</h4>
+        </div>
+        <div class="col">
+          <span class="gray">Rating</span>
+          <h4>
+            <i class="ion-android-star energized" ng-repeat="start in range(driver.rating) track by $index"></i>
+            <i class="ion-android-star " ng-repeat="start in range(5 - driver.rating) track by $index"></i>
+          </h4>
+        </div>
+      </div>
+
+      <div class="padding gray-bg">
+        <h3 class="no-margin light" ui-sref="app.wallet">{{ driver.balance }} USD</h3>
+      </div>
+
+      <div class="light">
+        pending({{ driver.balance_pending }})
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

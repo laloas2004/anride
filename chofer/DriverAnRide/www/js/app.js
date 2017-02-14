@@ -5,7 +5,8 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
     'app.directives', 
     'app.services', 
     'ngCordova', 
-    'ngSails'])
+    'ngSails',
+    'ngStorage'])
         .run(function($ionicPlatform, $rootScope, $window) {
 //Validar que este conectado a internet.
             $rootScope.serverIp = "http://104.131.116.22:1337";
@@ -48,47 +49,93 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                         templateUrl: 'templates/menu.html',
                         controller: 'AppCtrl'
                     })
-                    .state('app.map', {
-                        url: '/map',
+                    .state('app.main', {
+                        url: '/main',
                         views: {
                             'menuContent': {
-                                templateUrl: 'templates/map.html',
-                                controller: 'MapCtrl',
+                                templateUrl: 'templates/home.html',
+                                controller: 'MainCtrl',
                                 params:{
                                     'regresoDestino':'false'
                                 }
                             }
                         }
                     })
-                    .state('app.origen', {
-                        url: '/origen',
+                    .state('app.cartera', {
+                        url: '/cartera',
                         views: {
                             'menuContent': {
-                                templateUrl: 'templates/punto_origen.html',
-                                controller: 'OrigenCtrl'
+                                templateUrl: 'templates/cartera.html',
+                                controller: 'CarteraCtrl',
+                                params:{
+                                    'regresoDestino':'false'
+                                }
                             }
                         }
                     })
-                    .state('app.destino', {
-                        url: '/destino',
+                      .state('app.historial', {
+                        url: '/historial',
                         views: {
                             'menuContent': {
-                                templateUrl: 'templates/punto_destino.html',
-                                controller: 'DestinoCtrl'
+                                templateUrl: 'templates/historial_viajes.html',
+                                controller: 'HistorialCtrl',
+                                params:{
+                                    'regresoDestino':'false'
+                                }
                             }
                         }
                     })
-                     .state('app.confirmacion', {
-                        url: '/confirmacion',
+                     .state('app.configuracion', {
+                        url: '/configuracion',
                         views: {
                             'menuContent': {
-                                templateUrl: 'templates/confirmacion.html',
-                                controller: 'ConfirmaCtrl'
+                                templateUrl: 'templates/configuracion.html',
+                                controller: 'ConfiguracionCtrl',
+                                params:{
+                                    'regresoDestino':'false'
+                                }
                             }
                         }
                     })
+                      .state('app.ayuda', {
+                        url: '/ayuda',
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/ayuda.html',
+                                controller: 'AyudaCtrl',
+                                params:{
+                                    
+                                }
+                            }
+                        }
+                    })
+                        .state('app.salir', {
+                        url: '/salir',
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/ayuda.html',
+                                controller: 'LogOutCtrl',
+                                params:{
+                                    
+                                }
+                            }
+                        }
+                    })
+                     .state('app.login', {
+                        url: '/login',
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/login.html',
+                                controller: 'LoginCtrl',
+                                params:{
+                                    
+                                }
+                            }
+                        }
+                    })
+                  
 
-            $urlRouterProvider.otherwise('/app/map');
+            $urlRouterProvider.otherwise('/app/main');
         })
         .config(['$sailsProvider', function($sailsProvider) {
                 $sailsProvider.url = "http://104.131.116.22:1337";

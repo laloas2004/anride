@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <widget id="com.ionicframework.andride856123" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <name>An Ride</name>
+  <name> Driver AnRide</name>
   <description>
-        App.
+        App para Driver An Ride.
     </description>
   <author email="abelardo@websiete.com" href="http://websiete.com/">
       Jesus Abelardo Acevedo Santos

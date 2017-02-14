@@ -41,7 +41,6 @@ module.exports = {
         }
 
         Chofer.findOne({email: req_email}).exec(function(err, chofer) {
-            debugger;
             if (!chofer) {
                 return res.json(401, {err: 'Usuario o contraseña Invalidos.'});
 
@@ -84,8 +83,8 @@ module.exports = {
         res.redirect('/');
     },
     suscribe: function(req, res) {
-        
-        
+
+
 
 
     },
@@ -104,5 +103,16 @@ module.exports = {
     },
     updateStatus: function(req, res) {
 
+    },
+    validateToken: function(req, res) {
+        var token = req.param('token');
+        jwToken.verify(token, function(err, token) {
+            if (err)
+                return res.json(401, {valid: false});
+
+//    req.token = token; // This is the decrypted token or the payload you provided
+
+            return res.json({valid: true});
+        });
     }
 };  

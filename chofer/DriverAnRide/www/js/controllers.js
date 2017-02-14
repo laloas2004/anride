@@ -1,13 +1,5 @@
 angular.module('app.controllers', ['ngSails', 'ngCordova'])
-        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout) {
-
-
-            $rootScope.solicitud = {
-                origen: {},
-                destino: {},
-                direccion_origen: '',
-                direccion_destino: 'SE REQUIERE UN DESTINO'
-            };
+        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout,AuthService,$state) {
 
 
             $scope.platform = ionic.Platform.platform();
@@ -20,36 +12,19 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             // Form data for the login modal
             $scope.loginData = {};
+            AuthService.isAuthenticated().then(function(response){
+                
+            debugger;    
+                
+            },function(err){
+            debugger;    
+            $state.go('app.login',{});    
+                
+            });       
+            
 
-            // Create the login modal that we will use later
-            $ionicModal.fromTemplateUrl('templates/login.html', {
-                scope: $scope
-            }).then(function(modal) {
-                $scope.modal = modal;
-            });
-
-            // Triggered in the login modal to close it
-            $scope.closeLogin = function() {
-                $scope.modal.hide();
-            };
-
-            // Open the login modal
-            $scope.login = function() {
-                $scope.modal.show();
-            };
-
-            // Perform the login action when the user submits the login form
-            $scope.doLogin = function() {
-                console.log('Doing login', $scope.loginData);
-
-                // Simulate a login delay. Remove this and replace with your login
-                // code if using a login system
-                $timeout(function() {
-                    $scope.closeLogin();
-                }, 1000);
-            };
         })
-        .controller('MapCtrl', function($scope,
+        .controller('MainCtrl', function($scope,
                 $rootScope,
                 $sails,
                 $stateParams,
@@ -59,188 +34,15 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $cordovaGeolocation,
                 $ionicScrollDelegate,
                 $ionicPlatform,
-                clienteService,
-                choferService,
+                AuthService,
                 $q,
                 $ionicPopup) {
 
 
-            $scope.choferesDisponibles = {};
-            $scope.hideBubble = true;
-            $scope.hDestino = true;
-            $scope.hBtnPedir = true;
-            $scope.hCostoEstimado = true;
-            $scope.MarkerCoordenadas = {
-                coordinates: null,
-                direccion: null,
-                tiempoLlegada: null
-            };
-
-
-            $scope.mapCreated = function(map) {
-
-
-                $scope.map = map;
-
-                $scope.loading = $ionicLoading.show({
-                    content: 'Obteniendo tu Ubicacion...',
-                    showBackdrop: false
-                });
-
-                var posOptions = {timeout: 100000, enableHighAccuracy: true};
-
-                $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
-
-                    $scope.position = position;
-
-                    $scope.map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
-                    $scope.crearChoferesMarkers(position);
-                    $ionicLoading.hide();
-
-                    google.maps.event.addListener($scope.map, "center_changed", function() {
-
-//                        $scope.MarkerCoordenadas.coordinates = $scope.map.getCenter().toUrlValue();
-
-                        $scope.hDestino = true;
-                        $scope.crearChoferesMarkers({coords: {
-                                latitude: $scope.map.getCenter().lat(),
-                                longitude: $scope.map.getCenter().lng()
-                            }});
-
-//                        $scope.$apply();
-                    });
 
 
 
-                }, function(err) {
-                    console.log(err);
-                });
 
-
-                debugger;
-            };
-
-            $scope.crearChoferesMarkers = function(position) {
-
-                $rootScope.solicitud.direccion_origen = "Ir al Marcador";
-                $scope.MarkerCoordenadas.coordinates = position;
-                $scope.hideBubble = true;
-
-                clienteService.getDireccion(position).then(function(response) {
-
-                    var calle = response.data.results[0].address_components[1].long_name;
-                    var numero = response.data.results[0].address_components[0].long_name;
-                    var colonia = response.data.results[0].address_components[2].long_name;
-
-                    $rootScope.solicitud.direccion_origen = calle + ' ' + numero + ' ' + colonia;
-                });
-                choferService.getChoferes(position).then(function(response) {
-
-                    if (response.data.error) {
-
-                        var alertPopup = $ionicPopup.alert({
-                            title: 'Sin servicio en esta area',
-                            template: 'No contamos con servicio en esta area, disculpe las molestias.'
-                        });
-
-                    } else {
-
-
-                        $scope.choferesDisponibles = response;
-                        $scope.hideBubble = false;
-//                        if (response.data.matrix.origin_addresses[0]) {
-//                            
-//                        } else {
-//                            var direccion_origen = response.data.matrix.origin_addresses[0].split(',');
-//                        }
-//
-//
-//                        $rootScope.solicitud.direccion_origen = direccion_origen[0] + ' Col.' + direccion_origen[1];
-
-                        var tiempo = Math.round((response.data.matrix.rows[0].elements[0].duration.value + response.data.matrix.rows[0].elements[0].duration_in_traffic.value) / 60)
-
-                        $scope.MarkerCoordenadas.tiempoLlegada = tiempo + 'Mins';
-                        var image = {
-                            url: 'img/car-icon.png',
-                            size: new google.maps.Size(32, 32),
-                            origin: new google.maps.Point(0, 0),
-                            anchor: new google.maps.Point(0, 32)
-                        };
-
-                        angular.forEach(response.data.choferes, function(chofer, index) {
-                            console.log('chofer');
-                            console.log(chofer);
-                            var myLatlng = new google.maps.LatLng(chofer.lat, chofer.lon);
-
-                            var marker = new google.maps.Marker({
-                                position: myLatlng,
-                                title: chofer.nombre,
-                                map: $scope.map,
-                                icon: image
-                            });
-
-
-
-                        });
-
-                    }
-
-                });
-
-                if ($rootScope.seleccionoDestino) {
-
-                    $scope.hideBubble = true;
-                    $scope.hDestino = false;
-                    $scope.hBtnPedir = false;
-                    $scope.hCostoEstimado = false;
-
-                }
-
-            };
-
-            $scope.centerOnMe = function() {
-
-                if (!$scope.map) {
-                    return;
-                }
-
-                $scope.map.setCenter(new google.maps.LatLng($scope.position.coords.latitude, $scope.position.coords.longitude));
-
-
-            };
-//            $scope.creaSolicitud = function() {
-//
-//            }
-            $scope.onSelectOrigen = function() {
-                $scope.hBtnPedir = true;
-                console.log($scope.MarkerCoordenadas.coordinates);
-
-                $rootScope.solicitud.origen = $scope.MarkerCoordenadas.coordinates;
-
-                if (!$scope.MarkerCoordenadas.coordinates) {
-
-                    var alertPopup = $ionicPopup.alert({
-                        title: 'No se eligio origen del viaje!',
-                        template: 'Por Favor elige un origen para el viaje.'
-                    });
-//                    alert('no se ha selccionado');
-                } else {
-
-                    $scope.hideBubble = true;
-                    $scope.hDestino = false;
-
-                }
-            }
-            $scope.searchOrigen = function() {
-
-                $state.go('app.origen');
-            }
-            $scope.searchDestino = function() {
-                $state.go('app.destino');
-            }
-            $scope.crearsolicitud = function() {
-                $state.go('app.confirmacion');
-            }
 
         })
         .controller('SideMenuCtrl', function($scope, $ionicHistory) {
@@ -254,39 +56,39 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     name: 'Inicio',
                     icon: "",
                     level: 0,
-                    state: 'app.map'
+                    state: 'app.main'
                 }, {
                     id: 2,
-                    name: 'Viajes',
+                    name: 'Cartera',
                     level: 0,
                     icon: '',
-                    state: 'app.viajes'
+                    state: 'app.cartera'
                 }, {
                     id: 3,
-                    name: 'Notificaciones',
+                    name: 'Historial de Viajes',
                     level: 0,
                     icon: '',
-                    state: 'app.notificaciones'
+                    state: 'app.historial'
                 }, {
                     id: 4,
-                    name: 'Destinos Guardados',
+                    name: 'Configuracion',
                     level: 0,
                     icon: '',
-                    state: 'app.destinos'
+                    state: 'app.configuracion'
                 },
                 {
                     id: 4,
-                    name: 'Mi Cuenta',
-                    level: 0,
-                    icon: '',
-                    state: 'app.micuenta'
-                },
-                {
-                    id: 5,
                     name: 'Ayuda',
                     level: 0,
                     icon: '',
                     state: 'app.ayuda'
+                },
+                {
+                    id: 5,
+                    name: 'Salir',
+                    level: 0,
+                    icon: '',
+                    state: 'app.logout'
                 }
 
             ];
@@ -297,42 +99,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
         })
 
-        .controller('OrigenCtrl', function($scope) {
+        .controller('CarteraCtrl', function($scope) {
 
 
         })
-        .controller('DestinoCtrl', function($scope, $rootScope, $ionicSideMenuDelegate, clienteService, $state) {
+        .controller('HistorialCtrl', function($scope, $rootScope, $ionicSideMenuDelegate, clienteService, $state) {
 
-            $ionicSideMenuDelegate.canDragContent(false);
-            $scope.backButton = function() {
-                $ionicHistory.goBack();
-            };
-            $scope.onSearchChange = function() {
-
-
-                clienteService.searchDireccion($scope.busqueda).then(function(response) {
-                    $scope.response = response;
-                });
-
-
-            }
-
-            $scope.onSelectItemDestino = function(res) {
-                
-                clienteService.getDistancia().then(function(response){
-                    debugger;
-                });
-                
-                
-                $rootScope.solicitud.destino = {coords: {
-                        latitude: res.geometry.location.lat(),
-                        longitude: res.geometry.location.lng()
-                    }}
-
-                $rootScope.solicitud.direccion_destino = res.formatted_address;
-                $rootScope.seleccionoDestino = true;
-                $state.go('app.map', {regresoDestino: true});
-            }
 
         })
         .controller('ConfirmaCtrl', function($scope, $ionicHistory) {
@@ -340,4 +112,23 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
         })
+        .controller('HistorialCtrl', function($scope, $ionicHistory) {
 
+
+
+        })
+        .controller('ConfiguracionCtrl', function($scope, $ionicHistory) {
+
+
+
+        })
+        .controller('AyudaCtrl', function($scope, $ionicHistory) {
+
+
+
+        })
+        .controller('LogOutCtrl', function($scope, $ionicHistory) {
+
+
+
+        })

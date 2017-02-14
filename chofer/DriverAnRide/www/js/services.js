@@ -1,26 +1,74 @@
 angular.module('app.services', [])
-        .factory('choferService', function($http, $q, $sails, $rootScope) {
+        .factory('AuthService', function($http, $q, $sails, $rootScope, $localStorage) {
 
             return {
-                getChoferes: function(location) {
+                isAuthenticated: function() {
                     var q = $q.defer();
 
+                    if ($localStorage.token !== null && $localStorage.token !== "") {
+
+                        var config = {
+                            url: $rootScope.serverIp + "/choferes/validate",
+                            method: "POST",
+                            params: {
+                                token: $localStorage.token
+                            }
+                        };
+
+                        $http(config)
+                                .then(function(response) {
+                                    q.resolve(response);
+                                }).catch(function(err) {
+                            q.reject(err);
+
+                        });
+
+                    } else {
+
+                        q.reject('No exite Token de Authenticacion');
+                    }
+
+                    return q.promise;
+                },
+                login: function(email, password) {
+
+                    var q = $q.defer();
+
+
                     var config = {
-                        url: $rootScope.serverIp + "/cliente/choferes",
-                        method: "GET",
-                        params: {lat: location.coords.latitude, lon: location.coords.longitude}
+                        url: $rootScope.serverIp + "/choferes/login",
+                        method: "POST",
+                        params: {
+                            email: email,
+                            password: password
+                        }
                     };
+
                     $http(config)
                             .then(function(response) {
+
+                                $localStorage.token = response.token;
+
                                 q.resolve(response);
+
                             }).catch(function(err) {
+
                         q.reject(err);
 
                     });
 
                     return q.promise;
-                }
 
+                },
+                logout: function() {
+
+                    var q = $q.defer();
+
+                    $localStorage.token = "";
+                    q.resolve();
+                    return q.promise;
+                }
+                    
             }
 
 
@@ -72,14 +120,14 @@ angular.module('app.services', [])
 
                     return q.promise;
                 },
-                getDistancia:function(coords1,coords2){
-                    
+                getDistancia: function(coords1, coords2) {
+
                     var q = $q.defer();
 
                     var config = {
                         url: "https://maps.googleapis.com/maps/api/distancematrix/json?",
                         method: "GET",
-                        params: {origin:{},coords2:{}}
+                        params: {origin: {}, coords2: {}}
                     };
                     $http(config)
                             .then(function(response) {
@@ -91,14 +139,14 @@ angular.module('app.services', [])
 
                     return q.promise;
                 },
-                getConfiguracion:function(){
-                                     
+                getConfiguracion: function() {
+
                     var q = $q.defer();
 
                     var config = {
                         url: $rootScope.serverIp + "/distancia",
                         method: "GET",
-                        params: {coords1:{},coords2:{}}
+                        params: {coords1: {}, coords2: {}}
                     };
                     $http(config)
                             .then(function(response) {
@@ -108,12 +156,12 @@ angular.module('app.services', [])
 
                     });
 
-                    return q.promise;   
-                }
-                
+                    return q.promise;
                 }
 
-            
+            }
+
+
 
 
         })

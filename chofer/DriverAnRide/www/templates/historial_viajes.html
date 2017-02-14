@@ -1,0 +1,61 @@
+<!--
+  This template loads for the 'job_history' state (app.js)
+  Show list of completed trips
+  jobs and stats are $scope variable in JobHistoryCtrl (controllers.js)
+  JobHistoryCtrl pull data from Jobs service (services.js)
+-->
+<ion-view view-title="History">
+  <ion-content class="dark-bg">
+
+    <div class="stats light-bg">
+      <div class="row">
+        <div class="col text-center">
+          <span class="label">Today</span>
+          <h4>{{ stats.today }}</h4>
+        </div>
+        <div class="col text-center">
+          <span class="label">This Week</span>
+          <h4>{{ stats.this_week }}</h4>
+        </div>
+        <div class="col text-center">
+          <span class="label">This Month</span>
+          <h4>{{ stats.this_month }}</h4>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col text-center">
+          <span class="label">Last Month</span>
+          <h4>{{ stats.last_month }}</h4>
+        </div>
+        <div class="col text-center">
+          <span class="label">This Year</span>
+          <h4>{{ stats.this_year }}</h4>
+        </div>
+        <div class="col text-center">
+          <span class="label">Last Year</span>
+          <h4>{{ stats.last_year }}</h4>
+        </div>
+      </div>
+    </div>
+
+    <!-- list of history records -->
+    <ion-list class="dark-list">
+      <ion-item class="no-border dark-bg light" ng-repeat="record in records">
+        <div>{{ record.date }}</div>
+        <div>
+          <span class="gray">ID</span>
+          {{ record.unique_id }}
+        </div>
+        <div class="bold">
+          {{ record.to.title }}
+        </div>
+        <div>
+          {{ record.to.address }}
+        </div>
+        <div class="uppercase balanced">
+          {{ record.payment_method }}
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

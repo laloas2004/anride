@@ -132,7 +132,7 @@ module.exports = {
         return deferred.promise;
     },
     toJSON: function() {
-        debugger;
+       
         var obj = this.toObject();
         delete obj.password;
 //        delete obj.confirmation;

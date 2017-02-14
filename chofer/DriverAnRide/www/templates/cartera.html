@@ -1,0 +1,32 @@
+
+<!--
+  This template loads for the 'transactions' state (app.js)
+  Show list transactions
+  record is a $scope variable in TransactionsController (controllers.js)
+  TransactionsController pull data Transactions Jobs service (services.js)
+-->
+<ion-view view-title="Cartera">
+  <ion-content class="wallet-content dark-bg light">
+    <div class="top-balance padding text-center light-bg balanced">
+      <span class="label">Current balance (USD)</span>
+      <h2 class="no-margin balanced">10.0</h2>
+
+      <button class="button button-block button-balanced">WITHDRAW</button>
+    </div>
+
+    <!-- list of transaction records -->
+    <ion-list class="dark-list">
+      <ion-item class="no-border dark-bg light" ng-repeat="record in records">
+        <div>{{ record.date }}</div>
+        <div>
+          <span class="gray">ID</span>
+          {{ record.unique_id }}
+        </div>
+        <div>
+          <span class="bold">${{ record.amount }}</span>
+        </div>
+        <span class="badge badge-balanced">{{ record.action }}</span>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>
