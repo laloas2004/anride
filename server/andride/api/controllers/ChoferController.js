@@ -88,16 +88,26 @@ module.exports = {
             return res.badRequest();
         }
         var socketId = sails.sockets.getId(req);
-        
+        var choferId = req.param('choferId');
         console.log(req.allParams());
-        
+
         sails.log('My socket ID is: ' + socketId);
 
-//        Chofer.update();
-        
-                res.json({suscrito: true
+        sails.sockets.join(req, 'Choferes', function(err) {
+            if (err) {
+                return res.serverError(err);
+            }
 
-                });
+            Chofer.update({id: choferId}, {socketId: socketId}).exec(function() {
+                if (err) {
+                    return res.json({suscrito: false});
+                }
+
+                return res.json({suscrito: true});
+
+            });
+        });
+      
 
 
 
@@ -129,8 +139,8 @@ module.exports = {
             return res.json({valid: true});
         });
     },
-    solicitud:function(req, res){
+    solicitud: function(req, res) {
         console.log(req);
-        sails.sockets.blast('trabajo', {sockest:true});
+        sails.sockets.blast('trabajo', {sockest: true});
     }
 };  
