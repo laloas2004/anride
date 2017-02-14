@@ -108,7 +108,7 @@ module.exports = {
         var token = req.param('token');
         jwToken.verify(token, function(err, token) {
             if (err)
-                return res.json(401, {valid: false});
+                return res.json({valid: false});
 
 //    req.token = token; // This is the decrypted token or the payload you provided
 

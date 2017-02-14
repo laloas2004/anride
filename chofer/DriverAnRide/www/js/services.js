@@ -1,4 +1,4 @@
-angular.module('app.services', [])
+angular.module('app.services', ['ngStorage'])
         .factory('AuthService', function($http, $q, $sails, $rootScope, $localStorage) {
 
             return {
@@ -17,6 +17,7 @@ angular.module('app.services', [])
 
                         $http(config)
                                 .then(function(response) {
+                                    debugger;
                                     q.resolve(response);
                                 }).catch(function(err) {
                             q.reject(err);

@@ -1,5 +1,5 @@
 angular.module('app.controllers', ['ngSails', 'ngCordova'])
-        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout,AuthService,$state) {
+        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout, AuthService, $state) {
 
 
             $scope.platform = ionic.Platform.platform();
@@ -10,18 +10,18 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             //$scope.$on('$ionicView.enter', function(e) {
             //});
 
-            // Form data for the login modal
-            $scope.loginData = {};
-            AuthService.isAuthenticated().then(function(response){
-                
-            debugger;    
-                
-            },function(err){
-            debugger;    
-            $state.go('app.login',{});    
-                
-            });       
-            
+            $state.go('app.login', {});
+
+            AuthService.isAuthenticated().then(function(response) {
+                $state.go('app.main', {});
+                debugger;
+
+            }, function(err) {
+                debugger;
+                $state.go('app.login', {});
+
+            });
+
 
         })
         .controller('MainCtrl', function($scope,
@@ -128,6 +128,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
         })
         .controller('LogOutCtrl', function($scope, $ionicHistory) {
+
+
+
+        })
+        .controller('LoginCtrl', function($scope, $ionicHistory) {
 
 
 
