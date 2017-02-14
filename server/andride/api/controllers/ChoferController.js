@@ -134,6 +134,7 @@ module.exports = {
                 // handle error here- e.g. `res.serverError(err);`
                 return res.json({updated: false});
             }
+            console.log(updated);
             return res.json({updated: true});
         })
 
