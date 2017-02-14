@@ -90,6 +90,7 @@ module.exports = {
         var location = {};
         location.lat = attrs.lat || 0;
         location.lon = attrs.lon || 0;
+        console.log(attrs);
         attrs.location = {
             type: "Point",
             coordinates: [parseFloat(location.lon), parseFloat(location.lat)]

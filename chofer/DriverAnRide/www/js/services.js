@@ -112,8 +112,7 @@ angular.module('app.services', [])
                     };
                     $sails.post("/choferes/posicion",data)
                             .success(function(data, status, headers, jwr){
-                             debugger;
-                                q.resolve();
+                                q.resolve(data);
                             })
                             .error(function(data, status, headers, jwr){
                                 q.reject(jwr);

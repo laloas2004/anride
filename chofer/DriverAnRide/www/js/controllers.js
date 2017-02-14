@@ -70,8 +70,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.updatePosition = function() {
 
                 var watchOptions = {
-                    timeout: 3000,
-                    maximumAge: 3000,
+                    timeout: 30000,
+                    maximumAge: 5000,
                     enableHighAccuracy: true // may cause errors if true
                 };
 
@@ -86,8 +86,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             var lat = position.coords.latitude
                             var long = position.coords.longitude
 
-                            choferService.updatePosition(position).then(function(response){
-                               console.log("Se actualizo posicion");   
+                            choferService.updatePosition(position).then(function(response) {
+                                console.log("Se actualizo posicion" + response);
                             })
                         });
 

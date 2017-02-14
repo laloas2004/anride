@@ -124,7 +124,6 @@ module.exports = {
         }
 
         var socketId = sails.sockets.getId(req);
-        console.log(req.allParams());
         var lat = req.param('lat');
         var lon = req.param('lon');
         
