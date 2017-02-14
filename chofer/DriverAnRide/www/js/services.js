@@ -83,12 +83,13 @@ angular.module('app.services', [])
 
                     $sails.post("/choferes/suscribe")
                             .success(function(data, status, headers, jwr) {
-                                debugger;
+                               q.resolve();
                             })
                             .error(function(data, status, headers, jwr) {
+                                q.reject(jwr);
                                 alert('Houston, we got a problem!');
                             });
-
+                        return q.promise;
                 }
 
             }

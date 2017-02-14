@@ -118,7 +118,8 @@ module.exports = {
             return res.json({valid: true});
         });
     },
-    solicitud:function(){
+    solicitud:function(req, res){
+        console.log(req);
         sails.sockets.blast('trabajo', {sockest:true});
     }
 };  
