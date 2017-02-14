@@ -94,9 +94,9 @@ module.exports = {
         
         
         
-        attrs.location.coordinates = [parseFloat(location.lon), parseFloat(location.lat)];
+        attrs.location = {coordinates : [parseFloat(location.lon), parseFloat(location.lat)]};
         
-        console.log(attrs.location);
+        console.log(attrs);
         
         cb();
     },
