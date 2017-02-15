@@ -87,6 +87,42 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                             }
                         }
                     })
+                     .state('app.viajes', {
+                        url: '/viajes',
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/viajes.html',
+                                controller: 'ViajesCtrl'
+                            }
+                        }
+                    })
+                     .state('app.pagos', {
+                        url: '/pagos',
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/pagos.html',
+                                controller: 'PagosCtrl'
+                            }
+                        }
+                    })
+                    .state('app.notificaciones', {
+                        url: '/notificaciones',
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/notificaciones.html',
+                                controller: 'NotificacionesCtrl'
+                            }
+                        }
+                    })
+                    .state('app.configuracion', {
+                        url: '/configuracion',
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/configuracion.html',
+                                controller: 'ConfigguracionCtrl'
+                            }
+                        }
+                    })
 
             $urlRouterProvider.otherwise('/app/map');
         })

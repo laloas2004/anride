@@ -1,0 +1,39 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">New job</h1>
+  </ion-header-bar>
+  <ion-content class="new-job" ng-controller="JobModalController" scroll="false">
+    <div class="row">
+      <div class="col-20 padding text-center">
+        <i class="icon-job ion-location"></i>
+        <div class="distance">{{ job.from.distance }}km</div>
+      </div>
+      <div class="col-80">
+        <h4>{{ job.from.title }}</h4>
+        <span>{{ job.from.address }}</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-20 padding text-center">
+        <i class="icon-job ion-ios-flag-outline"></i>
+      </div>
+      <div class="col-80">
+        <h4>{{ job.to.title }}</h4>
+        <span>{{ job.to.address }}</span>
+      </div>
+    </div>
+
+    <div class="bottom-buttons row">
+      <div class="col-40">
+        <button class="button button-block button-assertive" ng-click="closeModal()">SKIP</button>
+      </div>
+      <div class="col-20 text-center remaining">
+        <span>{{ remainingTime }}</span>
+      </div>
+      <div class="col-40">
+        <button class="button button-block button-balanced" ng-click="selectJob()">SELECT</button>
+      </div>
+    </div>
+  </ion-content>
+</ion-modal-view>

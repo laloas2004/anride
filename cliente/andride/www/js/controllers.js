@@ -58,12 +58,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $http,
                 $cordovaGeolocation,
                 $ionicScrollDelegate,
+                $ionicNavBarDelegate,
                 $ionicPlatform,
                 clienteService,
                 choferService,
                 $q,
                 $ionicPopup) {
 
+            $ionicNavBarDelegate.showBackButton(false);
 
             $scope.choferesDisponibles = {};
             $scope.hideBubble = true;
@@ -257,32 +259,41 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     state: 'app.map'
                 }, {
                     id: 2,
-                    name: 'Viajes',
+                    name: 'viajes',
                     level: 0,
                     icon: '',
                     state: 'app.viajes'
-                }, {
+                },
+                {
                     id: 3,
+                    name: 'Pagos',
+                    level: 0,
+                    icon: '',
+                    state: 'app.pagos'
+                },
+                {
+                    id: 4,
                     name: 'Notificaciones',
                     level: 0,
                     icon: '',
                     state: 'app.notificaciones'
-                }, {
-                    id: 4,
-                    name: 'Destinos Guardados',
+                },
+//                {
+//                    id: 5,
+//                    name: 'Destinos Guardados',
+//                    level: 0,
+//                    icon: '',
+//                    state: 'app.destinos'
+//                },
+                {
+                    id: 6,
+                    name: 'Configuracion',
                     level: 0,
                     icon: '',
-                    state: 'app.destinos'
+                    state: 'app.configuracion'
                 },
                 {
-                    id: 4,
-                    name: 'Mi Cuenta',
-                    level: 0,
-                    icon: '',
-                    state: 'app.micuenta'
-                },
-                {
-                    id: 5,
+                    id: 7,
                     name: 'Ayuda',
                     level: 0,
                     icon: '',
@@ -301,9 +312,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
         })
-        .controller('DestinoCtrl', function($scope, $rootScope, $ionicSideMenuDelegate, clienteService, $state) {
+        .controller('DestinoCtrl', function($scope, $rootScope, $ionicSideMenuDelegate, clienteService, $state, $ionicNavBarDelegate, $ionicHistory) {
+
+            $ionicNavBarDelegate.showBackButton(true);
 
             $ionicSideMenuDelegate.canDragContent(false);
+
             $scope.backButton = function() {
                 $ionicHistory.goBack();
             };
@@ -318,12 +332,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             }
 
             $scope.onSelectItemDestino = function(res) {
-                
-                clienteService.getDistancia().then(function(response){
+
+                clienteService.getDistancia().then(function(response) {
                     debugger;
                 });
-                
-                
+
+
                 $rootScope.solicitud.destino = {coords: {
                         latitude: res.geometry.location.lat(),
                         longitude: res.geometry.location.lng()
@@ -340,4 +354,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
         })
+        .controller('ViajesCtrl', function($scope, $ionicHistory) {
 
+
+
+        })
+
+        .controller('PagosCtrl', function($scope, $ionicHistory) {
+
+
+
+        })

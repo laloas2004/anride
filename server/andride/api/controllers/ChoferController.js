@@ -88,7 +88,7 @@ module.exports = {
         }
         var socketId = sails.sockets.getId(req);
         var choferId = req.param('choferId');
-        console.log(req.allParams());
+//        console.log(req.allParams());
 
         sails.log('My socket ID is: ' + socketId);
 
@@ -134,6 +134,7 @@ module.exports = {
                 console.log(err);
                 return res.json({updated: false});
             }
+            console.log('--- Se actualizo posicion de: ---');
             console.log(updated);
             return res.json({updated: true});
         })

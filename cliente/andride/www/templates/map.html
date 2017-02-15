@@ -2,18 +2,25 @@
     <ion-content>
 
         <div class="map-overlay list">
-            <div class="row responsive-sm">
-                <div class="list" ng-click="searchOrigen()">
+            
+            
+            <div class="item" ng-click="searchOrigen()">
+                <div class="" >
                     <div id="h_origen">Origen del viaje</div>
                     <i class="icon ion-search" style="font-size: 25px;margin: 10px;" ></i>
-                    <span>{{solicitud.direccion_origen}}</span>
+                    <span class="bold">{{solicitud.direccion_origen}}</span>
                 </div>
             </div>
-            <div class="row responsive-sm" ng-hide="hDestino" class="fadable">
-                <div class="list">
+            
+            
+            
+            
+            
+            <div class="item" ng-hide="hDestino" class="fadable" ng-click="searchDestino()">
+                <div class="">
                     <div id="h_destino">Destino del viaje</div>
-                    <i class="icon ion-search" style="font-size: 25px;margin: 10px;" ng-click="searchDestino()"></i>
-                    <span>{{solicitud.direccion_destino}}</span>
+                    <i class="icon ion-search" style="font-size: 25px;margin: 10px;" ></i>
+                    <span class="bold">{{solicitud.direccion_destino}}</span>
                 </div>
             </div>
         </div>
