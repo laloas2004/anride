@@ -49,12 +49,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 alert('nuevo trabajo');
             });
             $sails.on('connect', function(data) {
-                
-                
+
+
             });
             $sails.on('disconnect', function(data) {
-                
-                
+
+
                 alert('Se perdio la conexion');
             });
 
@@ -72,13 +72,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $ionicNavBarDelegate.showBackButton(false);
 
             document.addEventListener("deviceready", function() {
-debugger;
-                cordova.plugins.backgroundMode.setEnabled(true);
-                
-               
-                
-                cordova.plugins.backgroundMode.onactivate = function() {
 
+                cordova.plugins.backgroundMode.setEnabled(true);
+
+
+
+                cordova.plugins.backgroundMode.onactivate = function() {
+                    console.log('BG activated');
                     var watchOptions = {
                         timeout: 30000,
                         maximumAge: 5000,
@@ -95,20 +95,99 @@ debugger;
                             function(position) {
                                 var lat = position.coords.latitude
                                 var long = position.coords.longitude
-                                
+                                $scope.$storage.position = {};
 
-                                choferService.updatePosition(position).then(function(response) {
-                                    debugger;
-                                    console.log("Se actualizo posicion" + response);
-                                })
+                                if ($scope.$storage.position.lon != position.coords.longitude || $scope.$storage.position.lon != position.coords.latitude) {
+
+                                    $scope.$storage.position.lon = position.coords.longitude;
+                                    $scope.$storage.position.lon = position.coords.latitude;
+
+                                    choferService.updatePosition(position).then(function(response) {
+
+                                        console.log("Se actualizo posicion con watch" + response);
+                                    })
+
+
+
+                                }
+
+
                             });
-                           $rootScope.watch = watch;
+
+                    $rootScope.watch = watch;
                 };
-                
-                
+
+                cordova.plugins.backgroundMode.ondeactivate = function() {
+                    console.log('BG deactivated');
+                };
+
+                cordova.plugins.backgroundMode.onfailure = function(errorCode) {
+                    console.log('BG failure');
+                };
+
+
 
             }, false);
 
+            $scope.watchposition = function() {
+                var watchOptions = {
+                    timeout: 30000,
+                    maximumAge: 5000,
+                    enableHighAccuracy: true // may cause errors if true
+                };
+
+                var watch = $cordovaGeolocation.watchPosition(watchOptions);
+
+                watch.then(
+                        null,
+                        function(err) {
+                            // error
+                        },
+                        function(position) {
+                            var lat = position.coords.latitude
+                            var long = position.coords.longitude
+
+                            if ($scope.$storage.position.lon != position.coords.longitude || $scope.$storage.position.lon != position.coords.latitude) {
+
+                                $scope.$storage.position.lon = position.coords.longitude;
+                                $scope.$storage.position.lon = position.coords.latitude;
+
+                                choferService.updatePosition(position).then(function(response) {
+
+                                    console.log("Se actualizo posicion" + response);
+                                })
+
+
+
+                            }
+
+
+                        });
+            };
+
+
+            $scope.updatePosition = function() {
+
+                var posOptions = {timeout: 100000, enableHighAccuracy: true};
+
+                $cordovaGeolocation
+                        .getCurrentPosition(posOptions)
+                        .then(function(position) {
+                            var lat = position.coords.latitude
+                            var long = position.coords.longitude
+
+                            choferService.updatePosition(position).then(function(response) {
+
+                                console.log("Se actualizo posicion" + response);
+                            })
+
+
+                        }, function(err) {
+                            console.log(err);
+                        });
+            }
+
+            $scope.updatePosition();
 
         })
         .controller('SideMenuCtrl', function($scope, $ionicHistory) {

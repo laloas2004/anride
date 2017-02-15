@@ -86,16 +86,7 @@ module.exports = {
 
     },
     beforeUpdate: function(attrs, cb) {
-//        var location = {};
-//        location.lat = attrs.lat || 0;
-//        location.lon = attrs.lon || 0;
-//        
-//        
-//        
-//        
-//        attrs.location = {coordinates : [parseFloat(location.lon), parseFloat(location.lat)] };
-//        
-//        console.log(attrs);
+
         
         cb();
     },

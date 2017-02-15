@@ -97,7 +97,7 @@ module.exports.sockets = {
    beforeConnect: function(handshake, cb) {
        
        console.log('----beforeConection------');
-       console.log(handshake);
+//       console.log(handshake);
        
     // `true` allows the connection
      return cb(null, true);
@@ -115,7 +115,7 @@ module.exports.sockets = {
    afterDisconnect: function(session, socket, cb) {
        
        console.log('----afterDisconnect------');
-       console.log(socket); 
+//       console.log(socket); 
        
        
      // By default: do nothing.
