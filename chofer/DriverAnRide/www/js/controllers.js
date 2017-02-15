@@ -1,5 +1,5 @@
 angular.module('app.controllers', ['ngSails', 'ngCordova'])
-        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout, AuthService, $state, $cordovaBackgroundGeolocation) {
+        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout, AuthService, $state) {
 
 
 
@@ -49,10 +49,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 alert('nuevo trabajo');
             });
             $sails.on('connect', function(data) {
-                console.log(data);
-                alert('se conecto el websocket');
+                
+                
             });
             $sails.on('disconnect', function(data) {
+                
+                
                 alert('Se perdio la conexion');
             });
 

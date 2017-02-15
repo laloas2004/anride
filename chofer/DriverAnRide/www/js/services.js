@@ -112,8 +112,8 @@ angular.module('app.services', [])
                         lon:location.coords.longitude,
                         email:$localStorage.chofer.email
                         };
-                    debugger;
-                    $sails.post("/choferes/posicion",data)
+
+                     $sails.post("/choferes/posicion",data)
                             .success(function(data, status, headers, jwr){
                                 q.resolve(data);
                             })

@@ -128,7 +128,7 @@ module.exports = {
         var email = req.param('email');
         
         Chofer.update({email:email}, 
-                      {lat:lat, lon:lon, location:{type: "Point", coordinates:[parseFloat(lon),parseFloat(lat)]}})
+                      {lat:lat, lon:lon, location:{type: "Point", coordinates:[parseFloat(lon),parseFloat(lat)]},socketId:socketId})
               .exec(function(err, updated) {
             if (err) {
                 console.log(err);
