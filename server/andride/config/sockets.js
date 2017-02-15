@@ -94,12 +94,16 @@ module.exports.sockets = {
    * app's security.                                                          *
    *                                                                          *
    ***************************************************************************/
-  // beforeConnect: function(handshake, cb) {
-  //   // `true` allows the connection
-  //   return cb(null, true);
-  //
-  //   // (`false` would reject the connection)
-  // },
+   beforeConnect: function(handshake, cb) {
+       
+       console.log('----beforeConection------');
+       console.log(handshake);
+       
+    // `true` allows the connection
+     return cb(null, true);
+ 
+     // (`false` would reject the connection)
+   },
   /***************************************************************************
    *                                                                          *
    * `afterDisconnect`                                                        *
@@ -108,10 +112,15 @@ module.exports.sockets = {
    * disconnects                                                              *
    *                                                                          *
    ***************************************************************************/
-  // afterDisconnect: function(session, socket, cb) {
-  //   // By default: do nothing.
-  //   return cb();
-  // },
+   afterDisconnect: function(session, socket, cb) {
+       
+       console.log('----afterDisconnect------');
+       console.log(socket); 
+       
+       
+     // By default: do nothing.
+   return cb();
+   },
   /***************************************************************************
    *                                                                          *
    * `transports`                                                             *
