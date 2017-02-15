@@ -1,5 +1,7 @@
 angular.module('app.controllers', ['ngSails', 'ngCordova'])
-        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout, AuthService, $state) {
+        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout, AuthService, $state, $cordovaBackgroundGeolocation) {
+
+
 
 
             $scope.platform = ionic.Platform.platform();
@@ -67,37 +69,45 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             };
             $ionicNavBarDelegate.showBackButton(false);
 
-            $scope.updatePosition = function() {
+            document.addEventListener("deviceready", function() {
+debugger;
+                cordova.plugins.backgroundMode.setEnabled(true);
+                
+               
+                
+                cordova.plugins.backgroundMode.onactivate = function() {
 
-                var watchOptions = {
-                    timeout: 30000,
-                    maximumAge: 5000,
-                    enableHighAccuracy: true // may cause errors if true
+                    var watchOptions = {
+                        timeout: 30000,
+                        maximumAge: 5000,
+                        enableHighAccuracy: true // may cause errors if true
+                    };
+
+                    var watch = $cordovaGeolocation.watchPosition(watchOptions);
+
+                    watch.then(
+                            null,
+                            function(err) {
+                                // error
+                            },
+                            function(position) {
+                                var lat = position.coords.latitude
+                                var long = position.coords.longitude
+                                
+
+                                choferService.updatePosition(position).then(function(response) {
+                                    debugger;
+                                    console.log("Se actualizo posicion" + response);
+                                })
+                            });
+                           $rootScope.watch = watch;
                 };
+                
+                
 
-                var watch = $cordovaGeolocation.watchPosition(watchOptions);
+            }, false);
 
-                watch.then(
-                        null,
-                        function(err) {
-                            // error
-                        },
-                        function(position) {
-                            var lat = position.coords.latitude
-                            var long = position.coords.longitude
 
-                            choferService.updatePosition(position).then(function(response) {
-                                console.log("Se actualizo posicion" + response);
-                            })
-                        });
-
-                $rootScope.watch = watch;
-
-//                          watch.clearWatch();
-
-            }
-
-            $scope.updatePosition();
         })
         .controller('SideMenuCtrl', function($scope, $ionicHistory) {
 

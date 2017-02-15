@@ -100,16 +100,19 @@ angular.module('app.services', [])
 
 
         })
-        .factory('choferService', function($http, $q, $sails, $rootScope) {
+        .factory('choferService', function($http, $q, $sails, $rootScope,$localStorage) {
 
             return {
                 updatePosition: function(location) {
                     
                   var q = $q.defer();
+                  
                     var data = {
                         lat:location.coords.latitude,
-                        lon:location.coords.longitude
-                    };
+                        lon:location.coords.longitude,
+                        email:$localStorage.chofer.email
+                        };
+                    debugger;
                     $sails.post("/choferes/posicion",data)
                             .success(function(data, status, headers, jwr){
                                 q.resolve(data);
@@ -118,6 +121,7 @@ angular.module('app.services', [])
                                 q.reject(jwr);
                                 
                             });
+                            
                     return q.promise;   
 
                 },
@@ -156,7 +160,6 @@ angular.module('app.services', [])
 
                             q.resolve(results);
                         } else {
-                            debugger;
                             q.reject();
                         }
 

@@ -25,7 +25,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
             });
 
             $ionicPlatform.ready(function() {
-
+                    
 
                 screen.lockOrientation('portrait');
 

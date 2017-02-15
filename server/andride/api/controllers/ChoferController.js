@@ -57,7 +57,6 @@ module.exports = {
                 } else {
 
                     delete chofer.password;
-//                    debugger;
 //                    if (sails.sockets.getId(req)) {
 //
 //                        var socketId = sails.sockets.getId(req);
@@ -126,12 +125,13 @@ module.exports = {
         var socketId = sails.sockets.getId(req);
         var lat = req.param('lat');
         var lon = req.param('lon');
+        var email = req.param('email');
         
-        Chofer.update({socketId: socketId}, 
+        Chofer.update({email:email}, 
                       {lat:lat, lon:lon, location:{type: "Point", coordinates:[parseFloat(lon),parseFloat(lat)]}})
               .exec(function(err, updated) {
             if (err) {
-                // handle error here- e.g. `res.serverError(err);`
+                console.log(err);
                 return res.json({updated: false});
             }
             console.log(updated);
