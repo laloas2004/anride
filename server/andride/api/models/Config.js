@@ -12,6 +12,9 @@ module.exports = {
         radioBusqueda: {
             type: "float"
         },
+        banderazo: {
+            type: "float"
+        },
         tarifaxcancel: {
             type: "float"
         },
@@ -26,7 +29,22 @@ module.exports = {
         },
         radioGPlaces: {
             type: "float"
-
         },
+        razonesCancelChofer: {
+            type: "json"
+        },
+        opcionesCobroExtra: {
+            type: "json"
+        },
+        tiempoEspera: {
+            type: "integer"
+        },
+        cobroxMinTiempoEsp: {
+            type: "float"
+        },
+        opcionesPago: {
+            type: "json"
+        }
+
     }
 };
