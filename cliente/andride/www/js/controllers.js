@@ -1,11 +1,12 @@
 angular.module('app.controllers', ['ngSails', 'ngCordova'])
         .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout) {
 
+            $rootScope.seleccionoDestino = false;
 
             $rootScope.solicitud = {
                 origen: {},
                 destino: {},
-                direccion_origen: '',
+                direccion_origen: 'IR AL MARCADOR',
                 direccion_destino: 'SE REQUIERE UN DESTINO'
             };
 
@@ -63,29 +64,80 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 clienteService,
                 choferService,
                 $q,
-                $ionicPopup) {
+                $ionicPopup,
+                $ionicModal) {
 
             $ionicNavBarDelegate.showBackButton(false);
 
             $scope.choferesDisponibles = {};
-            $scope.hideBubble = true;
-            $scope.hDestino = true;
-            $scope.hBtnPedir = true;
-            $scope.hCostoEstimado = true;
+            $scope.DestinoBusqueda = {};
+            $scope.status = 'inicio';
+            $scope.hidePanels = function(estatus, cb) {
+
+                var d = estatus || 'inicio';
+
+                var call = cb || function() {
+                };
+
+                if (d == 'inicio') {
+
+                    $scope.hideBubble = true;
+                    $scope.hDestino = true;
+                    $scope.hBtnPedir = true;
+                    $scope.hCostoEstimado = true;
+
+                } else if (d == 'destino') {
+
+                    $scope.hideBubble = true;
+                    $scope.hDestino = false;
+                    $scope.hBtnPedir = false;
+                    $scope.hCostoEstimado = false;
+                    $scope.status = d;
+
+                } else if (d == 'center_changed') {
+
+                    $scope.hDestino = true;
+                    $scope.status = 'inicio';
+
+                } else if (d == 'origen') {
+
+                    $scope.hideBubble = true;
+                    $scope.hDestino = false;
+                    $scope.status = d;
+
+                }
+
+                call();
+
+            }
+
+            $scope.hidePanels($scope.status);
+
             $scope.MarkerCoordenadas = {
                 coordinates: null,
                 direccion: null,
                 tiempoLlegada: null
             };
+            $ionicModal.fromTemplateUrl('templates/punto_origen.html', {
+                scope: $scope,
+                animation: 'slide-in-up'
+            }).then(function(modal) {
+                $scope.modal_punto_origen = modal;
+            });
+            $ionicModal.fromTemplateUrl('templates/punto_destino.html', {
+                scope: $scope,
+                animation: 'slide-in-up'
+            }).then(function(modal) {
+                $scope.modal_punto_destino = modal;
+            });
 
 
             $scope.mapCreated = function(map) {
 
-
                 $scope.map = map;
 
                 $scope.loading = $ionicLoading.show({
-                    content: 'Obteniendo tu Ubicacion...',
+                    template: 'Obteniendo tu Ubicacion...',
                     showBackdrop: false
                 });
 
@@ -96,37 +148,53 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     $scope.position = position;
 
                     $scope.map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
-                    $scope.crearChoferesMarkers(position);
+
+
+                    $scope.crearChoferesMarkers(position, function() {
+
+                        console.log('crearChoferesMarkers---->>')
+                    });
+
+
                     $ionicLoading.hide();
 
                     google.maps.event.addListener($scope.map, "center_changed", function() {
 
-//                        $scope.MarkerCoordenadas.coordinates = $scope.map.getCenter().toUrlValue();
+                        if ($scope.status == 'inicio' || $scope.status == 'origen') {
 
-                        $scope.hDestino = true;
-                        $scope.crearChoferesMarkers({coords: {
-                                latitude: $scope.map.getCenter().lat(),
-                                longitude: $scope.map.getCenter().lng()
-                            }});
+                            $scope.crearChoferesMarkers({coords:
+                                        {
+                                            latitude: $scope.map.getCenter().lat(),
+                                            longitude: $scope.map.getCenter().lng()
+                                        }}, function() {
+
+                                $scope.hidePanels('center_changed');
+
+                                console.log('crearChoferesMarkers--- Event');
+                            });
+
+                        }
 
 //                        $scope.$apply();
                     });
-
-
 
                 }, function(err) {
                     console.log(err);
                 });
 
 
-                debugger;
+
             };
+            $scope.crearChoferesMarkers = function(position, cb) {
 
-            $scope.crearChoferesMarkers = function(position) {
-
-                $rootScope.solicitud.direccion_origen = "Ir al Marcador";
                 $scope.MarkerCoordenadas.coordinates = position;
-                $scope.hideBubble = true;
+
+                if ($scope.status == 'inicio') {
+                    $scope.hideBubble = true;
+                }
+
+
+                $scope.choferesDisponibles = {};
 
                 clienteService.getDireccion(position).then(function(response) {
 
@@ -136,6 +204,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                     $rootScope.solicitud.direccion_origen = calle + ' ' + numero + ' ' + colonia;
                 });
+
                 choferService.getChoferes(position).then(function(response) {
 
                     if (response.data.error) {
@@ -149,32 +218,28 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
                         $scope.choferesDisponibles = response;
+
                         $scope.hideBubble = false;
-//                        if (response.data.matrix.origin_addresses[0]) {
-//                            
-//                        } else {
-//                            var direccion_origen = response.data.matrix.origin_addresses[0].split(',');
-//                        }
-//
-//
-//                        $rootScope.solicitud.direccion_origen = direccion_origen[0] + ' Col.' + direccion_origen[1];
 
                         var tiempo = Math.round((response.data.matrix.rows[0].elements[0].duration.value + response.data.matrix.rows[0].elements[0].duration_in_traffic.value) / 60)
 
                         $scope.MarkerCoordenadas.tiempoLlegada = tiempo + 'Mins';
+
                         var image = {
                             url: 'img/car-icon.png',
                             size: new google.maps.Size(32, 32),
                             origin: new google.maps.Point(0, 0),
                             anchor: new google.maps.Point(0, 32)
                         };
+//                            $scope.map.clearMarkers();
 
                         angular.forEach(response.data.choferes, function(chofer, index) {
                             console.log('chofer');
                             console.log(chofer);
+
                             var myLatlng = new google.maps.LatLng(chofer.lat, chofer.lon);
 
-                            var marker = new google.maps.Marker({
+                            new google.maps.Marker({
                                 position: myLatlng,
                                 title: chofer.nombre,
                                 map: $scope.map,
@@ -187,19 +252,16 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                     }
 
+                    cb();
                 });
 
-                if ($rootScope.seleccionoDestino) {
-
-                    $scope.hideBubble = true;
-                    $scope.hDestino = false;
-                    $scope.hBtnPedir = false;
-                    $scope.hCostoEstimado = false;
-
-                }
+//                if ($rootScope.seleccionoDestino) {
+//  
+//                    $scope.getRoutes();
+//
+//                }
 
             };
-
             $scope.centerOnMe = function() {
 
                 if (!$scope.map) {
@@ -210,9 +272,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
             };
-//            $scope.creaSolicitud = function() {
-//
-//            }
             $scope.onSelectOrigen = function() {
                 $scope.hBtnPedir = true;
                 console.log($scope.MarkerCoordenadas.coordinates);
@@ -227,9 +286,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     });
 //                    alert('no se ha selccionado');
                 } else {
-
-                    $scope.hideBubble = true;
-                    $scope.hDestino = false;
+                    $scope.hidePanels('origen');
 
                 }
             }
@@ -238,11 +295,81 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $state.go('app.origen');
             }
             $scope.searchDestino = function() {
-                $state.go('app.destino');
+                $scope.modal_punto_destino.show();
             }
             $scope.crearsolicitud = function() {
                 $state.go('app.confirmacion');
+            };
+
+            $scope.getRoutes = function() {
+
+                $scope.loading = $ionicLoading.show({
+                    content: 'Calculando Estimacion...',
+                    showBackdrop: false
+                });
+
+                clienteService.getRouteViaje($rootScope.solicitud).then(function(response) {
+                    
+                   debugger; 
+
+                });
+                
+                
+
             }
+            $scope.SearchQueryDestino = function() {
+
+                if ($scope.DestinoBusqueda.query) {
+                    clienteService.searchDireccion($scope.DestinoBusqueda.query, $scope.solicitud.origen.coords).then(function(response) {
+                        $scope.DestinoResponse = response;
+                    }, function() {
+
+                    });
+
+                }
+
+
+            }
+            $scope.onSelectItemDestino = function(place) {
+
+                clienteService.getDireccionDetails(place).then(function(place_detalle) {
+
+                    $rootScope.solicitud.destino = {
+                        coords: {
+                            latitude: place_detalle.geometry.location.lat(),
+                            longitude: place_detalle.geometry.location.lng()
+                        }};
+                    $rootScope.solicitud.direccion_destino = place_detalle.formatted_address;
+                    
+                    $scope.hidePanels('destino', function() {
+
+                       
+//                        $scope.getRoutes();
+                        $scope.modal_punto_destino.hide();
+
+
+
+                    });
+
+
+                })
+
+            };
+
+
+
+            $scope.$on('$ionicView.beforeEnter', function(event, data) {
+
+
+//                alert('beforeEnter');
+            })
+
+
+            $scope.$on('$ionicView.afterEnter', function(event, data) {
+
+
+//                alert('selecciones');
+            })
 
         })
         .controller('SideMenuCtrl', function($scope, $ionicHistory) {
@@ -314,39 +441,47 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
         })
         .controller('DestinoCtrl', function($scope, $rootScope, $ionicSideMenuDelegate, clienteService, $state, $ionicNavBarDelegate, $ionicHistory) {
 
-            $ionicNavBarDelegate.showBackButton(true);
-
-            $ionicSideMenuDelegate.canDragContent(false);
-
-            $scope.backButton = function() {
-                $ionicHistory.goBack();
-            };
-            $scope.onSearchChange = function() {
+//            $scope.solicitud = $rootScope.solicitud;
+//            $ionicNavBarDelegate.showBackButton(true);
+//
+//            $ionicSideMenuDelegate.canDragContent(false);
 
 
-                clienteService.searchDireccion($scope.busqueda).then(function(response) {
-                    $scope.response = response;
-                });
-
-
-            }
-
-            $scope.onSelectItemDestino = function(res) {
-
-                clienteService.getDistancia().then(function(response) {
-                    debugger;
-                });
-
-
-                $rootScope.solicitud.destino = {coords: {
-                        latitude: res.geometry.location.lat(),
-                        longitude: res.geometry.location.lng()
-                    }}
-
-                $rootScope.solicitud.direccion_destino = res.formatted_address;
-                $rootScope.seleccionoDestino = true;
-                $state.go('app.map', {regresoDestino: true});
-            }
+//            $scope.onSearchQueryChange = function() {
+//
+//                $scope.$watch('busqueda', function(newValue) {
+//
+//                    if (newValue) {
+//
+//                        clienteService.searchDireccion(newValue, $scope.solicitud.origen.coords).then(function(response) {
+//                            $scope.response = response;
+//                        }, function() {
+//
+//                        });
+//
+//                    }
+//
+//                });
+//            }
+//
+//            $scope.onSelectItemDestino = function(place) {
+//
+//                clienteService.getDireccionDetails(place).then(function(place_detalle) {
+//
+//                    $rootScope.solicitud.destino = {
+//                        coords: {
+//                            latitude: place_detalle.geometry.location.lat(),
+//                            longitude: place_detalle.geometry.location.lng()
+//                        }};
+//                    $rootScope.solicitud.direccion_destino = place_detalle.formatted_address;
+//                    $rootScope.seleccionoDestino = true;
+//
+//                    $rootScope.$broadcast('seleccione_destino');
+//
+//                    $state.go('app.map');
+//                })
+//
+//            }
 
         })
         .controller('ConfirmaCtrl', function($scope, $ionicHistory) {

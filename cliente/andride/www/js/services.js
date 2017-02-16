@@ -49,37 +49,93 @@ angular.module('app.services', [])
 
                     return q.promise;
                 },
-                searchDireccion: function(texto) {
+                searchDireccion: function(texto, position) {
+
                     var q = $q.defer();
-                    var geocoder = new google.maps.Geocoder();
 
 
-                    geocoder.geocode({
-                        address: texto,
-                        region: 'MX'
-                    }, function(results, status) {
+                    var autocompleteService = new google.maps.places.AutocompleteService();
 
-                        if (status == google.maps.GeocoderStatus.OK) {
+                    var paisCode = 'MX';
 
-                            q.resolve(results);
-                        } else {
-                            debugger;
-                            q.reject();
+                    var location = new google.maps.LatLng(position.latitude, position.longitude);
+
+                    autocompleteService.getPlacePredictions({
+                        input: texto,
+                        componentRestrictions: paisCode ? {country: paisCode} : undefined,
+                        location: location,
+                        radius: '10000',
+                    }, function(result, status) {
+
+                        if (status == google.maps.places.PlacesServiceStatus.OK) {
+
+//                            console.log(result);
+
+                            q.resolve(result);
                         }
-
+                        else
+                            q.reject(status);
                     });
 
 
                     return q.promise;
                 },
-                getDistancia:function(coords1,coords2){
-                    
+                getDireccionDetails: function(place) {
+
+
+                    var detailsService = new google.maps.places.PlacesService(document.createElement("input"));
+
+                    var q = $q.defer();
+
+                    detailsService.getDetails({placeId: place.place_id},
+                    function(result, status) {
+
+                        if (status === google.maps.places.PlacesServiceStatus.OK) {
+                            q.resolve(result);
+
+                        }
+
+
+
+                    });
+
+                    return q.promise;
+
+                },
+                getRouteViaje: function(solicitud) {
+                    var q = $q.defer();
+                    var directionsService = new google.maps.DirectionsService();
+
+                    var origen = solicitud.origen.coords.latitude + ',' + solicitud.origen.coords.longitude;
+                    var destino = solicitud.destino.coords.latitude + ',' + solicitud.destino.coords.longitude;
+                    var request = {
+                        origin: origen,
+                        destination: destino,
+                        travelMode: google.maps.TravelMode.DRIVING,
+                        provideRouteAlternatives: true
+                    };
+
+                    directionsService.route(request, function(response, status) {
+                        if (status === google.maps.DirectionsStatus.OK) {
+
+                            q.resolve(response);
+//                            directionsDisplay.setDirections(response);
+                        } else {
+                            q.reject(status);
+                        }
+                    });
+
+                    return q.promise;
+
+                },
+                getDistancia: function(coords1, coords2) {
+
                     var q = $q.defer();
 
                     var config = {
                         url: "https://maps.googleapis.com/maps/api/distancematrix/json?",
                         method: "GET",
-                        params: {origin:{},coords2:{}}
+                        params: {origin: {}, coords2: {}}
                     };
                     $http(config)
                             .then(function(response) {
@@ -91,14 +147,14 @@ angular.module('app.services', [])
 
                     return q.promise;
                 },
-                getConfiguracion:function(){
-                                     
+                getConfiguracion: function() {
+
                     var q = $q.defer();
 
                     var config = {
                         url: $rootScope.serverIp + "/distancia",
                         method: "GET",
-                        params: {coords1:{},coords2:{}}
+                        params: {coords1: {}, coords2: {}}
                     };
                     $http(config)
                             .then(function(response) {
@@ -108,12 +164,15 @@ angular.module('app.services', [])
 
                     });
 
-                    return q.promise;   
-                }
-                
+                    return q.promise;
+                },
+                getEstimacionMonto: function() {
+
                 }
 
-            
+            }
+
+
 
 
         })

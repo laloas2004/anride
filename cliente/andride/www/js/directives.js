@@ -20,7 +20,9 @@ angular.module('app.directives', [])
         };
         
         var map = new google.maps.Map($element[0], mapOptions);
-  
+        
+            map.setClickableIcons(false);
+            
         $scope.onCreate({map: map});
 
         // Stop the side bar from dragging when mousedown/tapdown on the map

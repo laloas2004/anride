@@ -38,5 +38,10 @@ module.exports = {
 		GmapService.getMatrix(location1, location2).then(function (val) {
 			return res.json(val);
 		});
-	}
+	},
+        montoEstimado:function(req, res){
+            
+            
+            
+        }
 };
