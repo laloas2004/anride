@@ -30,6 +30,9 @@ module.exports = {
         servicios: {
             collection: 'Servicio',
             via: 'cliente'
+        },
+        configuracion:{
+            type: 'json'
         }
     },
     verifyPassword: function(password) {

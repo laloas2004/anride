@@ -344,7 +344,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                  $ionicLoading.hide();
                 
                 clienteService.getDistancia($scope.solicitud).then(function(response) {
+                    
                     $rootScope.solicitud.matrix = response;
+                    
+                    var tiempo = response.data.rows[0].elements[0].duration.value;
+                    var distancia = response.data.rows[0].elements[0].distance.value;
+                    
+                    clienteService.getEstimacionMonto(distancia,tiempo).then(function(response){
+                        
+                    });
+                    
+                    
                     q.resolve(response);
                     
                     
@@ -369,7 +379,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                     $scope.calcularEstimado().then(function(response) {
                        
-                debugger;
+               
                         $scope.hidePanels('destino', function() {
 
 
@@ -419,7 +429,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     state: 'app.map'
                 }, {
                     id: 2,
-                    name: 'viajes',
+                    name: 'Viajes',
                     level: 0,
                     icon: '',
                     state: 'app.viajes'

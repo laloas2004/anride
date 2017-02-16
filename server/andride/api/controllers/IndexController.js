@@ -41,7 +41,10 @@ module.exports = {
 	},
         montoEstimado:function(req, res){
             
-            
+//           var distancia = req.param();
+//           var tiempo = req.param();
+           
+           return res.json("monto estimado server");
             
         }
 };

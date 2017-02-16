@@ -129,7 +129,7 @@ angular.module('app.services', [])
 
                 },
                 getDistancia: function(solicitud) {
-                    debugger;
+
                     var q = $q.defer();
 
 
@@ -149,11 +149,11 @@ angular.module('app.services', [])
 
 
                         }
-                        
+
                     };
                     $http(config)
                             .then(function(response) {
-                                
+
                                 q.resolve(response);
                             }).catch(function(err) {
                         q.reject(err);
@@ -181,8 +181,29 @@ angular.module('app.services', [])
 
                     return q.promise;
                 },
-                getEstimacionMonto: function() {
+                getEstimacionMonto: function(distancia, tiempo) {
 
+                    var q = $q.defer();
+
+                    var config = {
+                        url: $rootScope.serverIp + "/monto/estimado",
+                        method: "POST",
+                        params: {
+                            distancia: distancia, 
+                            tiempo: tiempo}
+                                };
+                    $http(config)
+                            .then(function(response) {
+                                q.resolve(response);
+                            }).catch(function(err) {
+                        q.reject(err);
+
+                    });
+
+                    return q.promise;
+
+                        
+                        
                 }
 
             }
