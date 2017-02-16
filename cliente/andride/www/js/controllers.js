@@ -7,7 +7,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 origen: {},
                 destino: {},
                 direccion_origen: 'IR AL MARCADOR',
-                direccion_destino: 'SE REQUIERE UN DESTINO'
+                direccion_destino: 'SE REQUIERE UN DESTINO',
+                matrix:{},
+                choferesDisponibles:{},
+                tipodePago:{}
             };
 
 
@@ -72,6 +75,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.choferesDisponibles = {};
             $scope.DestinoBusqueda = {};
             $scope.status = 'inicio';
+            $scope.montoEstimado = 0;
             $scope.hidePanels = function(estatus, cb) {
 
                 var d = estatus || 'inicio';
@@ -103,6 +107,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                     $scope.hideBubble = true;
                     $scope.hDestino = false;
+                    $scope.hBtnPedir = true;
+
                     $scope.status = d;
 
                 }
@@ -273,9 +279,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             };
             $scope.onSelectOrigen = function() {
-                $scope.hBtnPedir = true;
-                console.log($scope.MarkerCoordenadas.coordinates);
-
+                
                 $rootScope.solicitud.origen = $scope.MarkerCoordenadas.coordinates;
 
                 if (!$scope.MarkerCoordenadas.coordinates) {
@@ -330,6 +334,24 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
             }
+            $scope.calcularEstimado = function() {
+                var q = $q.defer();
+                
+                $scope.loading = $ionicLoading.show({
+                    content: 'Calculando Estimacion...',
+                    showBackdrop: false
+                });
+                 $ionicLoading.hide();
+                
+                clienteService.getDistancia($scope.solicitud).then(function(response) {
+                    $rootScope.solicitud.matrix = response;
+                    q.resolve(response);
+                    
+                    
+                })
+                 
+              return q.promise;  
+            }
             $scope.onSelectItemDestino = function(place) {
 
                 clienteService.getDireccionDetails(place).then(function(place_detalle) {
@@ -339,17 +361,28 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             latitude: place_detalle.geometry.location.lat(),
                             longitude: place_detalle.geometry.location.lng()
                         }};
+                    
                     $rootScope.solicitud.direccion_destino = place_detalle.formatted_address;
                     
-                    $scope.hidePanels('destino', function() {
+                    
 
+
+                    $scope.calcularEstimado().then(function(response) {
                        
+                debugger;
+                        $scope.hidePanels('destino', function() {
+
+
 //                        $scope.getRoutes();
-                        $scope.modal_punto_destino.hide();
+                           // $scope.modal_punto_destino.hide();
 
 
 
-                    });
+                        });
+
+                        });
+
+                   
 
 
                 })

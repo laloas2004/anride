@@ -128,17 +128,32 @@ angular.module('app.services', [])
                     return q.promise;
 
                 },
-                getDistancia: function(coords1, coords2) {
-
+                getDistancia: function(solicitud) {
+                    debugger;
                     var q = $q.defer();
+
+
+                    var origen = solicitud.origen.coords.latitude + ',' + solicitud.origen.coords.longitude;
+                    var destino = solicitud.destino.coords.latitude + ',' + solicitud.destino.coords.longitude;
 
                     var config = {
                         url: "https://maps.googleapis.com/maps/api/distancematrix/json?",
                         method: "GET",
-                        params: {origin: {}, coords2: {}}
+                        params: {
+                            origins: origen,
+                            destinations: destino,
+                            mode: 'driving',
+//                        traffic_model: 'pessimistic',
+//                        departure_time: 'now',
+                            units: 'metric'
+
+
+                        }
+                        
                     };
                     $http(config)
                             .then(function(response) {
+                                
                                 q.resolve(response);
                             }).catch(function(err) {
                         q.reject(err);
@@ -182,12 +197,14 @@ angular.module('app.services', [])
                 getDireccion: function(location) {
                     var q = $q.defer();
 
+
+
                     var config = {
                         url: "https://maps.googleapis.com/maps/api/geocode/json?",
                         method: "GET",
                         params: {
                             latlng: location.coords.latitude + ',' + location.coords.longitude,
-                            key: $rootScope.google_key
+                            key: $rootScope.google_key,
                         }
                     };
                     $http(config)
