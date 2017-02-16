@@ -42,7 +42,7 @@ map {
   cursor: pointer;
 }
 
-#tiempo{
+#lbl_tiempo{
     padding: 3px;
     border: 1px solid #E6E6E6;
     border-radius: 5px;

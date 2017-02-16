@@ -347,10 +347,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     
                     $rootScope.solicitud.matrix = response;
                     
-                    var tiempo = response.data.rows[0].elements[0].duration.value;
-                    var distancia = response.data.rows[0].elements[0].distance.value;
+                    var matrix_tiempo = response.data.rows[0].elements[0].duration.value;
+                    var matrix_distancia = response.data.rows[0].elements[0].distance.value;
                     
-                    clienteService.getEstimacionMonto(distancia,tiempo).then(function(response){
+                    clienteService.getEstimacionMonto($rootScope.solicitud,matrix_distancia,matrix_tiempo).then(function(response){
+                        
+                        debugger;
                         
                     });
                     

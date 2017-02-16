@@ -40,11 +40,19 @@ module.exports = {
 		});
 	},
         montoEstimado:function(req, res){
-            
-//           var distancia = req.param();
-//           var tiempo = req.param();
+           var tiempo = parseFloat(req.param('timepo')); 
+           var distancia = parseFloat(req.param('distancia'));
            
-           return res.json("monto estimado server");
+           var tarifa_base = 9;
+           var tarifakm = 8;
+           var tarifaxmin = 3;
+           var monto = 0;
+           
+           
+           monto = tarifa_base+(tarifakm*(distancia/1000));
+           
+           
+           return res.json({montoEstimado:monto});
             
         }
 };

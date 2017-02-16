@@ -181,8 +181,7 @@ angular.module('app.services', [])
 
                     return q.promise;
                 },
-                getEstimacionMonto: function(distancia, tiempo) {
-
+                getEstimacionMonto: function(solicitud,distancia, tiempo) {
                     var q = $q.defer();
 
                     var config = {
@@ -190,7 +189,9 @@ angular.module('app.services', [])
                         method: "POST",
                         params: {
                             distancia: distancia, 
-                            tiempo: tiempo}
+                            tiempo: tiempo,
+                            solicitud:solicitud
+                        }
                                 };
                     $http(config)
                             .then(function(response) {
@@ -200,9 +201,7 @@ angular.module('app.services', [])
 
                     });
 
-                    return q.promise;
-
-                        
+                    return q.promise; 
                         
                 }
 
