@@ -193,10 +193,12 @@ module.exports = {
             tipodePago: solicitud.tipodePago}).exec(function(err, finn) {
 
 
-            var socketChofer = solicitud.choferesDisponibles[0].socketId;
+            var socketChofer = solicitud.choferesDisponibles[num_chofer].socketId;
 
             var data = solicitud;
-console.log(socketChofer);
+            
+            console.log(socketChofer);
+            
             sails.sockets.broadcast(socketChofer, 'solicitud', data);
 
 
