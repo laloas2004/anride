@@ -38,7 +38,7 @@ module.exports.routes = {
     'get /distancia': 'IndexController.getMatrix',
     'post /monto/estimado': 'IndexController.montoEstimado',
     //Cliente
-    'get /cliente': 'ClienteController.registroCliente',
+//    'get /cliente': 'ClienteController.registroCliente',
     'post /cliente/login': 'ClienteController.login',
     'post /cliente/validate': 'ClienteController.validateToken',
     'get /cliente/choferes': 'ClienteController.getChoferes',
