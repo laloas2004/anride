@@ -188,19 +188,22 @@ module.exports = {
            matrix:solicitud.matrix,
            cliente:solicitud.cliente,
            choferesDisponibles:solicitud.choferesDisponibles,
-           direccion_origen:solicitud.direccion_origen,
-           direccion_destino:solicitud.direccion_destino,
-           tipodePago:solicitud.tipodePago}).exec(function(err, finn){
-           
-           
-           
-           
-           
-           
-           
-           
-           return res.json({recibido: true});
-       })
+            direccion_origen: solicitud.direccion_origen,
+            direccion_destino: solicitud.direccion_destino,
+            tipodePago: solicitud.tipodePago}).exec(function(err, finn) {
+
+
+            var socketChofer = solicitud.choferesDisponibles[0].socketId;
+
+            var data = solicitud;
+
+            sails.sockets.broadcast(socketChofer, 'solicitud', data);
+
+
+
+
+            return res.json({recibido: true});
+        })
        
 //       
 //        setTimeout(function() {
@@ -209,4 +212,5 @@ module.exports = {
 //        
         
     }
+    
 };
