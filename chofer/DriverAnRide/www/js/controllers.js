@@ -55,7 +55,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $sails.on('disconnect', function(data) {
 
 
-                alert('Se perdio la conexion');
+                alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
             });
 
             $scope.$storage = $localStorage;
@@ -81,7 +81,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     console.log('BG activated');
                     var watchOptions = {
                         timeout: 30000,
-                        maximumAge: 5000,
+                        maximumAge: 30000,
                         enableHighAccuracy: true // may cause errors if true
                     };
 

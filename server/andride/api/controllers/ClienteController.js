@@ -196,13 +196,13 @@ module.exports = {
             var socketChofer = solicitud.choferesDisponibles[0].socketId;
 
             var data = solicitud;
-
+console.log(socketChofer);
             sails.sockets.broadcast(socketChofer, 'solicitud', data);
 
 
 
 
-            return res.json({recibido: true});
+//            return res.json({recibido: true});
         })
        
 //       
