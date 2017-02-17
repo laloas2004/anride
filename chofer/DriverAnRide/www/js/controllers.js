@@ -46,16 +46,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $sessionStorage) {
 
             $sails.on('solicitud', function(data) {
-debugger;
-                $ionicModal.fromTemplateUrl('templates/modal_solicitud.html', {
-                    scope: $scope,
-                    animation: 'slide-in-up'
-                }).then(function(modal) {
-                    $scope.modal_solicitud = modal;
-                });
-                
-                $scope.modal_solicitud.show();
-
+                alert('nuevo trabajo');
             });
             $sails.on('connect', function(data) {
 
@@ -326,43 +317,4 @@ debugger;
 
             }
 
-        })
-        .controller('JobModalController', function($scope, Jobs) {
-            // job select remaining time
-            $scope.remainingTime = 20;
-
-            // get job detail from service and show on modal
-            $scope.job = Jobs.get(1);
-
-            // calculate remaining time
-            function countDown() {
-                $scope.remainingTime = 20;
-
-                // countdown time
-                var interval = setInterval(function() {
-                    $scope.remainingTime--;
-                    // apply scope
-                    $scope.$apply();
-
-                    // if time is over
-                    if ($scope.remainingTime == 0) {
-                        // stop interval
-                        clearInterval(interval);
-
-                        // close modal
-                        $scope.closeModal();
-
-                    }
-                }, 1000);
-
-            }
-
-            // 
-
-
-
-
-            t
-            countdown
-                    countDown();
         })
