@@ -171,6 +171,11 @@ module.exports = {
              if (!req.isSocket) {
             return res.badRequest();
         }  
-        return res.json({recibido: true});
+        
+        setTimeout(function() {
+          return res.json({recibido: true});
+        }, 30000);
+        
+        
     }
 };
