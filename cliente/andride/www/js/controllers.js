@@ -50,6 +50,16 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $q,
                 $ionicPopup,
                 $ionicModal) {
+                    
+            $sails.on('connect', function(data) {
+
+
+            });
+            $sails.on('disconnect', function(data) {
+
+
+                alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
+            });
 
             $ionicNavBarDelegate.showBackButton(false);
 
@@ -504,7 +514,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 } else if (!solicitud.destino.coords) {
                     console.log('El cliente no puede ir vacio');
                 } else {
-                    $scope.modal_buscando_chofer.show();
+//                    $scope.modal_buscando_chofer.show();
                     solicitudService.sendSolicitud(solicitud).then(function(response) {
                         $scope.modal_buscando_chofer.hide();
                         alert('recibio solicitud');
