@@ -137,7 +137,7 @@ module.exports = {
             return res.json({valid: true});
         });
     },
-       suscribe: function(req, res) {
+    suscribe: function(req, res) {
 
         if (!req.isSocket) {
             return res.badRequest();
@@ -153,18 +153,24 @@ module.exports = {
                 return res.serverError(err);
             }
 
-            Cliente.update({id: choferId}, {socketId: socketId,online:true}).exec(function() {
+            Cliente.update({id: choferId}, {socketId: socketId, online: true}).exec(function() {
                 if (err) {
                     return res.json({suscrito: false});
                 }
 
-                return res.json({suscrito: true,socketId: socketId});
+                return res.json({suscrito: true, socketId: socketId});
 
             });
         });
-      
+
 
 
 
     },
+    solicitud:function(req, res){
+             if (!req.isSocket) {
+            return res.badRequest();
+        }  
+        return res.json({recibido: true});
+    }
 };

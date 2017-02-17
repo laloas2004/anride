@@ -211,29 +211,24 @@ angular.module('app.services', [])
 
 
         })
-        .factory('solicitudService', function($http, $q, $sails, $rootScope) {
+        .factory('solicitudService', function($http, $q, $sails, $rootScope, $localStorage) {
 
             return {
                 sendSolicitud: function(solicitud) {
+
                     var q = $q.defer();
-
-
-                    var config = {
-                        url: "https://maps.googleapis.com/maps/api/geocode/json?",
-                        method: "GET",
-                        params: {
-                            latlng: location.coords.latitude + ',' + location.coords.longitude,
-                            key: $rootScope.google_key,
-                        }
+                    var data = {
+                        solicitud: solicitud
                     };
-                    $http(config)
-                            .then(function(response) {
-                                q.resolve(response);
-                            }).catch(function(err) {
-                        q.reject(err);
+                    $sails.post("/clientes/solicitud", data)
+                            .success(function(data, status, headers, jwr) {
 
-                    });
+                                q.resolve(data);
+                            })
+                            .error(function(data, status, headers, jwr) {
+                                q.reject(jwr);
 
+                            });
                     return q.promise;
                 }
 

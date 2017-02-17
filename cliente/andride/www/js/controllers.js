@@ -11,7 +11,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 matrix: {},
                 choferesDisponibles: {},
                 tipodePago: {},
-                cliente: {}
+                cliente: {},
+                status:'sinenviar',
+               
             };
 
 
@@ -45,6 +47,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $ionicPlatform,
                 clienteService,
                 choferService,
+                solicitudService,
                 $q,
                 $ionicPopup,
                 $ionicModal) {
@@ -489,11 +492,20 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 console.log($rootScope.solicitud);
 
-                debugger;
+                
                 if (!solicitud.origen.coords) {
                     console.log('El origen no puede ir vacio');
                 } else if (!solicitud.destino.coords) {
                     console.log('El destino no puede ir vacio');
+                }else if(!solicitud.destino.coords){
+                    console.log('El cliente no puede ir vacio');
+                }else{
+                    debugger;
+                  solicitudService.sendSolicitud(solicitud).then(function(response){
+                      
+                      alert('recibio solicitud');
+                  }) 
+                    
                 }
 
 
