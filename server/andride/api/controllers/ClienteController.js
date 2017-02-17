@@ -206,7 +206,7 @@ module.exports = {
             
 
 
-//            return res.json({recibido: true});
+            return res.json({recibido: true});
         })
        
 //       
