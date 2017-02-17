@@ -1,5 +1,5 @@
 angular.module('app.controllers', ['ngSails', 'ngCordova'])
-        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout, $state, AuthService,$localStorage) {
+        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout, $state, AuthService, $localStorage) {
 
             $rootScope.seleccionoDestino = false;
 
@@ -12,8 +12,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 choferesDisponibles: {},
                 tipodePago: {},
                 cliente: {},
-                status:'sinenviar',
-               
+                status: 'sinenviar',
             };
 
 
@@ -127,7 +126,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             }).then(function(modal) {
                 $scope.modal_punto_destino = modal;
             });
-
+            $ionicModal.fromTemplateUrl('templates/buscando_chofer.html', {
+                scope: $scope,
+                animation: 'slide-in-up'
+            }).then(function(modal) {
+                $scope.modal_buscando_chofer = modal;
+            });
 
             $scope.mapCreated = function(map) {
 
@@ -492,20 +496,20 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 console.log($rootScope.solicitud);
 
-                
+
                 if (!solicitud.origen.coords) {
                     console.log('El origen no puede ir vacio');
                 } else if (!solicitud.destino.coords) {
                     console.log('El destino no puede ir vacio');
-                }else if(!solicitud.destino.coords){
+                } else if (!solicitud.destino.coords) {
                     console.log('El cliente no puede ir vacio');
-                }else{
-                    debugger;
-                  solicitudService.sendSolicitud(solicitud).then(function(response){
-                      
-                      alert('recibio solicitud');
-                  }) 
-                    
+                } else {
+                    $scope.modal_buscando_chofer.show();
+                    solicitudService.sendSolicitud(solicitud).then(function(response) {
+                        $scope.modal_buscando_chofer.hide();
+                        alert('recibio solicitud');
+                    })
+
                 }
 
 

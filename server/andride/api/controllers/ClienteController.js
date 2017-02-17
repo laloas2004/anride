@@ -171,7 +171,8 @@ module.exports = {
              if (!req.isSocket) {
             return res.badRequest();
         }  
-        
+       console.log(req.allParams());
+       
         setTimeout(function() {
           return res.json({recibido: true});
         }, 30000);
