@@ -10,7 +10,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 direccion_destino: 'SE REQUIERE UN DESTINO',
                 matrix: {},
                 choferesDisponibles: {},
-                tipodePago: {}
+                tipodePago: {},
+                cliente:{}
             };
 
 
@@ -75,8 +76,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.choferesDisponibles = {};
             $scope.DestinoBusqueda = {};
             $scope.OrigenBusqueda = {};
-            $scope.status = 'inicio';
             $scope.montoEstimado = 0;
+            $scope.status = 'inicio';
             $scope.hidePanels = function(estatus, cb) {
 
                 var d = estatus || 'inicio';
@@ -112,14 +113,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                     $scope.status = d;
 
-                }else if('origen_places'){
-                    
+                } else if ('origen_places') {
+
                     $scope.hideBubble = true;
                     $scope.hDestino = false;
                     $scope.hBtnPedir = true;
                     $scope.hCostoEstimado = true;
                     $scope.hCostoEstimado = true;
-                    
+
                     $scope.status = d;
                 }
 
@@ -127,11 +128,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             }
 
-            $scope.hidePanels($scope.status);
+            $scope.hidePanels('inicio');
 
             $scope.MarkerCoordenadas = {
-                coordinates: null,
-                direccion: null,
                 tiempoLlegada: null
             };
             $ionicModal.fromTemplateUrl('templates/punto_origen.html', {
@@ -178,28 +177,31 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
                     });
-                    
-                    
-                    google.maps.event.addListener($scope.map, "center_changed", function() {
-                        
-                        console.log('se ejecuto center_changed');
 
-                        if ($scope.status == 'inicio' || $scope.status == 'origen') {
-                            
+
+                    google.maps.event.addListener($scope.map, "dragend", function() {
+
+                        
+
+                        if ($scope.status == 'inicio' || $scope.status == 'origen' || $scope.status == 'origen_places') {
+
+                            console.log('se ejecuto dragend');
+
                             $scope.hideBubble = true;
+
                             $scope.loading = $ionicLoading.show({
                                 template: 'Buscando Autos...',
                                 showBackdrop: false
                             });
 
                             $scope.position = {coords: {latitude: $scope.map.getCenter().lat(), longitude: $scope.map.getCenter().lng()}};
-                            
-                            $scope.setDireccionOrigen(position).then(function() {
+
+                            $scope.setDireccionOrigen($scope.position).then(function() {
 
                                 $scope.getChoferes().then(function() {
-                                            
+
                                     $scope.renderChoferesMap().then(function() {
-                                        debugger;
+                                        
                                         $scope.hidePanels('center_changed');
                                         $scope.hideBubble = false;
                                         $ionicLoading.hide();
@@ -210,9 +212,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
                             });
-
-
                         }
+
+
+
 
 
                     });
@@ -235,22 +238,23 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             title: 'Sin servicio en esta area',
                             template: 'No contamos con servicio en esta area, disculpe las molestias.'
                         });
-                       q.reject(response.data.error);
+                        q.reject(response.data.error);
+                    } else {
+                        $scope.choferesDisponibles = response;
+                        $scope.setLblTiempo(response);
+                        q.resolve(response);
+
                     }
-                    q.resolve(response);
-                    $scope.choferesDisponibles = response;
-                    
-                    $scope.setLblTiempo(response);
-                    
+
 
                 });
-                
+
                 return q.promise;
             }
-            
-            $scope.setDireccionOrigen = function(position){
+
+            $scope.setDireccionOrigen = function(position) {
                 var q = $q.defer();
-                
+
                 clienteService.getDireccion(position).then(function(response) {
 
                     var calle = response.data.results[0].address_components[1].long_name;
@@ -259,26 +263,25 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                     $rootScope.solicitud.direccion_origen = calle + ' ' + numero + ' ' + colonia;
                     q.resolve(response);
-                }); 
-                
+                });
+
                 return q.promise;
             }
-            
-            $scope.setLblTiempo = function(response){
-                debugger;
-                if(response.data.matrix.rows.elements){
-                  
-                 var tiempo = Math.round((response.data.matrix.rows[0].elements[0].duration.value + response.data.matrix.rows[0].elements[0].duration_in_traffic.value) / 60)
-                 $scope.MarkerCoordenadas.tiempoLlegada = tiempo + 'Mins';
-                    
-                }
+
+            $scope.setLblTiempo = function(response) {
+
+                var tiempo = response.data.matrix.rows[0].elements[0].duration.value || 0;
+                var tiempo_trafico = response.data.matrix.rows[0].elements[0].duration_in_traffic.value || 0;
+
+                var tiempo = Math.round((tiempo + tiempo_trafico) / 60)
+                $scope.MarkerCoordenadas.tiempoLlegada = tiempo + 'Mins';
 
             }
-            
-            $scope.renderChoferesMap = function(){
-                
+
+            $scope.renderChoferesMap = function() {
+
                 var q = $q.defer();
-                
+
 
                 var image = {
                     url: 'img/car-icon.png',
@@ -300,40 +303,57 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         map: $scope.map,
                         icon: image
                     });
-                    
+
 
                 });
-                    q.resolve();
-                    
-                    return q.promise;
+                q.resolve();
+
+                return q.promise;
             }
-            
+
 
             $scope.centerOnMe = function() {
 
-                    if (!$scope.map) {
-                        return;
-                    }
+                    $scope.loading = $ionicLoading.show({
+                    template: 'Obteniendo tu ubicacion...',
+                    showBackdrop: false
+                });
 
+                var posOptions = {timeout: 100000, enableHighAccuracy: true};
+
+                $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
+
+                    $scope.position = position;
                     $scope.map.setCenter(new google.maps.LatLng($scope.position.coords.latitude, $scope.position.coords.longitude));
+
+                    $scope.setDireccionOrigen(position).then(function() {
+
+                        $scope.getChoferes().then(function() {
+
+                            $scope.renderChoferesMap().then(function() {
+                                
+                                $ionicLoading.hide();
+                                $scope.hidePanels('inicio', function(){
+                                    $scope.hideBubble = false;
+                                });
+                            })
+
+
+                        })
+
+
+                    });
+
+
+                }, function(err) {
+                    console.log(err);
+                });
 
 
             };
             $scope.onSelectOrigen = function() {
-
-                $rootScope.solicitud.origen = $scope.MarkerCoordenadas.coordinates;
-
-                if (!$scope.MarkerCoordenadas.coordinates) {
-
-                    var alertPopup = $ionicPopup.alert({
-                        title: 'No se eligio origen del viaje!',
-                        template: 'Por Favor elige un origen para el viaje.'
-                    });
-//                    alert('no se ha selccionado');
-                } else {
-                    $scope.hidePanels('origen');
-
-                }
+                $rootScope.solicitud.origen = $scope.position;
+                $scope.hidePanels('origen');
             }
             $scope.searchOrigen = function() {
 
@@ -341,6 +361,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             }
             $scope.searchDestino = function() {
+
                 $scope.modal_punto_destino.show();
             }
             $scope.SearchQueryOrigen = function() {
@@ -353,58 +374,60 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 }
             }
             $scope.onSelectItemOrigen = function(place) {
+
                 clienteService.getDireccionDetails(place).then(function(place_detalle) {
-                    debugger;
-                    $rootScope.solicitud.origen = {
-                        coords: {
-                            latitude: place_detalle.geometry.location.lat(),
-                            longitude: place_detalle.geometry.location.lng()
-                        }};
+
+                    $scope.position = {coords: {latitude: place_detalle.geometry.location.lat(), longitude: place_detalle.geometry.location.lng()}};
+
+                    $rootScope.solicitud.origen = {coords: {latitude: place_detalle.geometry.location.lat(), longitude: place_detalle.geometry.location.lng()}};
 
                     $rootScope.solicitud.direccion_origen = place_detalle.formatted_address;
-                    
-                    $scope.hidePanels('origen_places', function() {
-                        
-                        $rootScope.solicitud.destino = {};
-                        
-                        $rootScope.solicitud.direccion_destino = 'SE REQUIERE UN DESTINO';
-                        
-                        $scope.modal_punto_origen.hide();
-                        if (!$scope.map) {
-                            return;
-                        }
 
-                        $scope.map.setCenter(new google.maps.LatLng(place_detalle.geometry.location.lat(), place_detalle.geometry.location.lng()));
-                        
-                       
+
+                    $scope.hidePanels('origen_places', function() {
+
+                        $rootScope.solicitud.destino = {};
+
+                        $rootScope.solicitud.direccion_destino = 'SE REQUIERE UN DESTINO';
+
+                        $scope.modal_punto_origen.hide();
+
+                        $scope.map.setCenter(new google.maps.LatLng($scope.position.coords.latitude, $scope.position.coords.longitude));
+
+                        $scope.getChoferes().then(function() {
+
+                            $scope.renderChoferesMap().then(function() {
+
+
+
+
+                            })
+
+
+                        })
+
                     });
 
                 })
             }
-            $scope.crearsolicitud = function() {
-
-                console.log($rootScope.solicitud);
 
 
-
-            };
-
-            $scope.getRoutes = function() {
-
-                $scope.loading = $ionicLoading.show({
-                    content: 'Calculando Estimacion...',
-                    showBackdrop: false
-                });
-
-                clienteService.getRouteViaje($rootScope.solicitud).then(function(response) {
-
-                    debugger;
-
-                });
-
-
-
-            }
+//            $scope.getRoutes = function() {
+//
+//                $scope.loading = $ionicLoading.show({
+//                    content: 'Calculando Estimacion...',
+//                    showBackdrop: false
+//                });
+//
+//                clienteService.getRouteViaje($rootScope.solicitud).then(function(response) {
+//
+//                    debugger;
+//
+//                });
+//
+//
+//
+//            }
             $scope.SearchQueryDestino = function() {
 
                 if ($scope.DestinoBusqueda.query) {
@@ -456,16 +479,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                     $rootScope.solicitud.direccion_destino = place_detalle.formatted_address;
 
-
-
-
                     $scope.calcularEstimado().then(function(response) {
 
                         $ionicLoading.hide();
                         $scope.hidePanels('destino', function() {
 
-
-//                        $scope.getRoutes();
                             $scope.modal_punto_destino.hide();
 
                         });
