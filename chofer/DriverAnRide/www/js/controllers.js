@@ -54,7 +54,19 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 // close modal first
                 $scope.closeModal();
 
-                alert('se selcciono el trabajo');
+                 var data = {
+                       
+                    };
+                    $sails.post("/choferes/respuesta", data)
+                            .success(function(data, status, headers, jwr) {
+                                
+                                $localStorage.socketId = data.socketId;
+                                
+                            })
+                            .error(function(data, status, headers, jwr) {
+                                
+                                
+                            });
 
             }
             $sails.on('solicitud', function(data) {

@@ -161,19 +161,23 @@ module.exports = {
         });
     },
     aprovarSolicitud: function(req, res) {
+//
+//        var solicitudId = req.param('sId');
+//
+//        var chofer = req.param('chId');
+//
+//
+//        Servicio.create().exec(function() {
+//
+//
+//
+//        });
+//
+//        return res.json({updated: true, updat: updated});
 
-        var solicitudId = req.param('sId');
-
-        var chofer = req.param('chId');
+sails.sockets.blast('aprovo_solicitud', data);
 
 
-        Servicio.create().exec(function() {
-
-
-
-        });
-
-        return res.json({updated: true, updat: updated});
     }
     
 };  

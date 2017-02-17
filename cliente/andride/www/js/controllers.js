@@ -500,6 +500,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             };
 
             $scope.crearsolicitud = function() {
+                
+                $sails.on('aprovo_solicitud', function(data) {
+                    
+                $scope.modal_buscando_chofer.hide();
+                
+                alert('aprovo la solicitud');
+                    
+                });
 
                 // valido informacion para crear la solicitud.
                 var solicitud = $rootScope.solicitud;
@@ -514,10 +522,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 } else if (!solicitud.destino.coords) {
                     console.log('El cliente no puede ir vacio');
                 } else {
-//                    $scope.modal_buscando_chofer.show();
+
                     solicitudService.sendSolicitud(solicitud).then(function(response) {
-                        
-                        $scope.modal_buscando_chofer.hide();
+                        $scope.modal_buscando_chofer.show();
+
                         
                         alert('recibio solicitud');
                     })
