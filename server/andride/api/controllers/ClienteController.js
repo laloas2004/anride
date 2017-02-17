@@ -136,5 +136,35 @@ module.exports = {
 
             return res.json({valid: true});
         });
-    }
+    },
+       suscribe: function(req, res) {
+
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+        var socketId = sails.sockets.getId(req);
+        var choferId = req.param('clienteId');
+//        console.log(req.allParams());
+
+        sails.log('My socket ID is: ' + socketId);
+
+        sails.sockets.join(req, 'Clientes', function(err) {
+            if (err) {
+                return res.serverError(err);
+            }
+
+            Cliente.update({id: choferId}, {socketId: socketId,online:true}).exec(function() {
+                if (err) {
+                    return res.json({suscrito: false});
+                }
+
+                return res.json({suscrito: true,socketId: socketId});
+
+            });
+        });
+      
+
+
+
+    },
 };

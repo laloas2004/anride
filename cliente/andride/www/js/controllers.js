@@ -1,5 +1,5 @@
 angular.module('app.controllers', ['ngSails', 'ngCordova'])
-        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout, $state, AuthService) {
+        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout, $state, AuthService,$localStorage) {
 
             $rootScope.seleccionoDestino = false;
 

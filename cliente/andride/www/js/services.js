@@ -383,9 +383,9 @@ angular.module('app.services', [])
                 suscribe: function() {
                     var q = $q.defer();
                     var data = {
-                        clienteId: $localStorage.solicitudcliente.id
+                        clienteId: $localStorage.cliente.id
                     };
-                    $sails.post("/choferes/suscribe", data)
+                    $sails.post("/clientes/suscribe", data)
                             .success(function(data, status, headers, jwr) {
 
                                 $localStorage.socketId = data.socketId;

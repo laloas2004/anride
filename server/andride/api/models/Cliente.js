@@ -34,6 +34,13 @@ module.exports = {
         },
         configuracion: {
             type: 'json'
+        },
+        socketId: {
+            type: 'string'
+        },
+        online: {
+            type: 'boolean',
+            defaultsTo: false
         }
     },
     comparePassword: function(password, chofer, cb) {
