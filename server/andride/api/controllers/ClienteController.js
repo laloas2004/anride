@@ -174,13 +174,13 @@ module.exports = {
        console.log(req.allParams());
        var solicitud = req.param('solicitud');
        
-       Cliente.create({
+       Solicitud.create({
            origen:solicitud.origen,
            destino:solicitud.destino,
            matrix:solicitud.matrix,
            cliente:solicitud.cliente,
            choferesDisponibles:solicitud.choferesDisponibles
-                                        }).exec(function(err,finn){
+                                        }).exec(function(err, finn){
            return res.json({recibido: true});
        })
        
