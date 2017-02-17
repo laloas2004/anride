@@ -36,7 +36,11 @@ module.exports.routes = {
   'get /direccion': 'IndexController.getDireccion',
   'get /distancia': 'IndexController.getMatrix',
   'post /monto/estimado': 'IndexController.montoEstimado',
+  
+  
+  
   'get /cliente': 'ClienteController.registroCliente',
+  'post /cliente/login': 'ClienteController.login',
   'get /cliente/choferes': 'ClienteController.getChoferes',
   
   'post /chofer': 'ChoferController.create',
