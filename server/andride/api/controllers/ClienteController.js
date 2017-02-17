@@ -174,6 +174,7 @@ module.exports = {
         
         
        console.log(req.allParams());
+       
        var solicitud = req.param('solicitud');
        
        var tiempo = 0;
@@ -193,14 +194,14 @@ module.exports = {
             tipodePago: solicitud.tipodePago}).exec(function(err, finn) {
 
 
-            var socketChofer = solicitud.choferesDisponibles[num_chofer].socketId;
+//            var socketChofer = solicitud.choferesDisponibles[num_chofer].socketId;
 
             var data = solicitud;
             
-            console.log(socketChofer);
-            sails.sockets.blast('solicitud', data);
+            console.log('se ejecuto create solicitud');
+//            sails.sockets.blast('solicitud', data);
             
-//            sails.sockets.broadcast('Choferes', 'solicitud', data);
+            sails.sockets.broadcast('Choferes', 'solicitud', data);
 
             
 

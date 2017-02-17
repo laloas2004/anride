@@ -487,7 +487,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         $scope.hidePanels('destino', function() {
 
                             $scope.modal_punto_destino.hide();
-                            $scope.solicitud.choferesDisponibles = $scope.choferesDisponibles.data.choferes;
+                            $scope.solicitud.choferesDisponibles = $scope.choferesDisponibles.data;
                         });
 
                     });
@@ -516,7 +516,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 } else {
 //                    $scope.modal_buscando_chofer.show();
                     solicitudService.sendSolicitud(solicitud).then(function(response) {
+                        
                         $scope.modal_buscando_chofer.hide();
+                        
                         alert('recibio solicitud');
                     })
 

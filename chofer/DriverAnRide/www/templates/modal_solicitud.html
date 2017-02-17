@@ -6,11 +6,15 @@
     <div class="row">
       <div class="col-20 padding text-center">
         <i class="icon-job ion-location"></i>
-        <div class="distance">{{ job.from.distance }}km</div>
+        <div class="distance">{{solicitud.matrix.data.rows[0].elements[0].distance.text}}</div>
+        <div class="distance">{{solicitud.matrix.data.rows[0].elements[0].duration.text}}</div>
       </div>
       <div class="col-80">
-        <h4>{{ job.from.title }}</h4>
-        <span>{{ job.from.address }}</span>
+          
+        <h4>Origen</h4>
+        <span>{{solicitud.direccion_origen}}</span>
+        <h4>Destino</h4>
+        <span>{{solicitud.direccion_destino}}</span>
       </div>
     </div>
 
@@ -19,20 +23,21 @@
         <i class="icon-job ion-ios-flag-outline"></i>
       </div>
       <div class="col-80">
-        <h4>{{ job.to.title }}</h4>
-        <span>{{ job.to.address }}</span>
+        <h4>{{solicitud.cliente.nombre}} {{solicitud.cliente.apellido}}</h4>
+        <span>{{solicitud.cliente.numCel}}</span>
+        <span>{{solicitud.cliente.numCel}}</span>
       </div>
     </div>
 
     <div class="bottom-buttons row">
       <div class="col-40">
-        <button class="button button-block button-assertive" ng-click="closeModal()">SKIP</button>
+        <button class="button button-block button-assertive" ng-click="closeModal()">RECHAZAR</button>
       </div>
       <div class="col-20 text-center remaining">
         <span>{{ remainingTime }}</span>
       </div>
       <div class="col-40">
-        <button class="button button-block button-balanced" ng-click="selectJob()">SELECT</button>
+        <button class="button button-block button-balanced" ng-click="selectJob()">ACEPTAR</button>
       </div>
     </div>
   </ion-content>

@@ -92,7 +92,7 @@ module.exports = {
 
         sails.log('My socket ID is: ' + socketId);
 
-        sails.sockets.join(req, 'Choferes', function(err) {
+        sails.sockets.join(req,'Choferes', function(err) {
             if (err) {
                 return res.serverError(err);
             }

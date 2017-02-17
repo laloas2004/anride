@@ -45,10 +45,37 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $localStorage,
                 $sessionStorage) {
 
+
+            $scope.closeModal = function() {
+                $scope.modal_solicitud.hide();
+            };
+
+            $scope.selectJob = function() {
+                // close modal first
+                $scope.closeModal();
+
+                alert('se selcciono el trabajo');
+
+            }
             $sails.on('solicitud', function(data) {
-                alert('nuevo trabajo');
+
+                $scope.solicitud = data;
+
+
+                $ionicModal.fromTemplateUrl('templates/modal_solicitud.html', {
+                    scope: $scope,
+                    animation: 'slide-in-up'
+                }).then(function(modal) {
+                    $scope.modal_solicitud = modal;
+
+                });
+
+                debugger;
+
+                $scope.modal_solicitud.show();
+
             });
-            
+
             $sails.on('connect', function(data) {
 
 
@@ -297,17 +324,21 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.login = function() {
 
                 AuthService.login($scope.email, $scope.password).then(function(response) {
+
+
                     $ionicSideMenuDelegate.canDragContent(true);
 
                     AuthService.suscribe().then(function(response) {
-                        $state.go('app.main', {});
-                    }, function() {
 
+
+                        $state.go('app.main', {});
+                    }, function(err) {
+                        alert(err);
                     });
 
+                }, function(err) {
 
-                }, function() {
-
+                    alert(err);
                 })
 
             };
@@ -317,5 +348,39 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.onRegistrate = function() {
 
             }
+
+        })
+
+        .controller('JobModalController', function($scope, $ionicHistory) {
+            console.log('se ejecuto JobModalController');
+            $scope.remainingTime = 20;
+
+            function countDown() {
+                $scope.remainingTime = 20;
+
+                // countdown time
+                var interval = setInterval(function() {
+                    $scope.remainingTime--;
+                    // apply scope
+                    $scope.$apply();
+
+                    // if time is over
+                    if ($scope.remainingTime == 0) {
+                        // stop interval
+                        clearInterval(interval);
+
+                        // close modal
+//                        $scope.closeModal();
+
+
+//                        alert('se acabo el timpo');
+
+
+                    }
+                }, 1000);
+
+            }
+
+            countDown();
 
         })
