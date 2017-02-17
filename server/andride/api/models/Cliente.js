@@ -32,12 +32,22 @@ module.exports = {
             collection: 'Servicio',
             via: 'cliente'
         },
-        configuracion:{
+        configuracion: {
             type: 'json'
         }
     },
-    verifyPassword: function(password) {
-        return bcrypt.compareSync(password, this.password);
+    comparePassword: function(password, chofer, cb) {
+
+        bcrypt.compare(password, chofer.password, function(err, match) {
+
+            if (err)
+                cb(err);
+            if (match) {
+                cb(null, true);
+            } else {
+                cb(err);
+            }
+        })
     },
     changePassword: function(newPassword, cb) {
         this.newPassword = newPassword;
@@ -50,8 +60,8 @@ module.exports = {
         return obj;
     },
     beforeCreate: function(attrs, cb) {
-        
-         bcrypt.genSalt(10, function(err, salt) {
+
+        bcrypt.genSalt(10, function(err, salt) {
             bcrypt.hash(attrs.password, salt, function(err, hash) {
                 if (err) {
                     console.log(err);
