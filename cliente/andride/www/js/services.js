@@ -50,7 +50,7 @@ angular.module('app.services', [])
                     return q.promise;
                 },
                 searchDireccion: function(texto, position) {
-                    
+
                     var q = $q.defer();
 
 
@@ -181,18 +181,18 @@ angular.module('app.services', [])
 
                     return q.promise;
                 },
-                getEstimacionMonto: function(solicitud,distancia, tiempo) {
+                getEstimacionMonto: function(solicitud, distancia, tiempo) {
                     var q = $q.defer();
 
                     var config = {
                         url: $rootScope.serverIp + "/monto/estimado",
                         method: "POST",
                         params: {
-                            distancia: distancia, 
+                            distancia: distancia,
                             tiempo: tiempo,
-                            solicitud:solicitud
+//                            solicitud: solicitud
                         }
-                                };
+                    };
                     $http(config)
                             .then(function(response) {
                                 q.resolve(response);
@@ -201,8 +201,8 @@ angular.module('app.services', [])
 
                     });
 
-                    return q.promise; 
-                        
+                    return q.promise;
+
                 }
 
             }
@@ -214,9 +214,8 @@ angular.module('app.services', [])
         .factory('solicitudService', function($http, $q, $sails, $rootScope) {
 
             return {
-                getDireccion: function(location) {
+                sendSolicitud: function(solicitud) {
                     var q = $q.defer();
-
 
 
                     var config = {
@@ -293,6 +292,107 @@ angular.module('app.services', [])
 
                     });
 
+                    return q.promise;
+                }
+
+            }
+
+
+        })
+        .factory('AuthService', function($http, $q, $sails, $rootScope, $localStorage, $sessionStorage) {
+            return {
+                isAuthenticated: function() {
+                    var q = $q.defer();
+
+                    if ($localStorage.token !== null && $localStorage.token !== "") {
+
+                        var config = {
+                            url: $rootScope.serverIp + "/choferes/validate",
+                            method: "POST",
+                            params: {
+                                token: $localStorage.token
+                            }
+                        };
+
+                        $http(config)
+                                .then(function(response) {
+                                    if (response.data.valid) {
+                                        q.resolve(response);
+                                    } else {
+                                        q.reject('Token no Valido');
+                                    }
+
+
+                                }).catch(function(err) {
+                            q.reject(err);
+
+                        });
+
+                    } else {
+
+                        q.reject('No exite Token de Authenticacion');
+                    }
+
+                    return q.promise;
+                },
+                login: function(email, password) {
+
+                    var q = $q.defer();
+                    $localStorage.$reset();
+//                    $localStorage = $localStorage.$default({
+//                        token: '',
+//                        chofer:{}
+//                    });
+
+                    var config = {
+                        url: $rootScope.serverIp + "/choferes/login",
+                        method: "POST",
+                        params: {
+                            email: email,
+                            password: password
+                        }
+                    };
+
+                    $http(config)
+                            .then(function(response) {
+
+                                $localStorage.token = response.data.token;
+                                $localStorage.chofer = response.data.chofer;
+
+                                q.resolve(response);
+
+                            }).catch(function(err) {
+
+                        q.reject(err);
+
+                    });
+
+                    return q.promise;
+
+                },
+                logout: function() {
+
+                    var q = $q.defer();
+
+                    $localStorage.$reset();
+                    q.resolve();
+                    return q.promise;
+                },
+                suscribe: function() {
+                    var q = $q.defer();
+                    var data = {
+                        choferId: $localStorage.chofer.id
+                    };
+                    $sails.post("/choferes/suscribe", data)
+                            .success(function(data, status, headers, jwr) {
+
+                                $localStorage.socketId = data.socketId;
+                                q.resolve();
+                            })
+                            .error(function(data, status, headers, jwr) {
+                                q.reject(jwr);
+
+                            });
                     return q.promise;
                 }
 

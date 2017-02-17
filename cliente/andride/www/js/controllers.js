@@ -91,6 +91,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     $scope.hDestino = true;
                     $scope.hBtnPedir = true;
                     $scope.hCostoEstimado = true;
+                    $scope.status = d;
 
                 } else if (d == 'destino') {
 
@@ -269,12 +270,16 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             }
 
             $scope.setLblTiempo = function(response) {
+                try {
+                    var tiempo = response.data.matrix.rows[0].elements[0].duration.value || 0;
+                    var tiempo_trafico = response.data.matrix.rows[0].elements[0].duration_in_traffic.value || 0;
 
-                var tiempo = response.data.matrix.rows[0].elements[0].duration.value || 0;
-                var tiempo_trafico = response.data.matrix.rows[0].elements[0].duration_in_traffic.value || 0;
-
-                var tiempo = Math.round((tiempo + tiempo_trafico) / 60)
-                $scope.MarkerCoordenadas.tiempoLlegada = tiempo + 'Mins';
+                    var tiempo = Math.round((tiempo + tiempo_trafico) / 60)
+                    $scope.MarkerCoordenadas.tiempoLlegada = tiempo + 'Mins';
+                } catch (e) {
+                    console.log("Error en setLblTiempo: " + e);
+                    debugger;
+                }
 
             }
 
@@ -331,10 +336,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         $scope.getChoferes().then(function() {
 
                             $scope.renderChoferesMap().then(function() {
-                                
+
                                 $ionicLoading.hide();
-                                $scope.hidePanels('inicio', function(){
+                                $scope.hidePanels('inicio', function() {
                                     $scope.hideBubble = false;
+                                    $rootScope.solicitud.destino = {};
+                                    $rootScope.solicitud.direccion_destino = 'SE REQUIERE UN DESTINO';
                                 });
                             })
 
@@ -485,7 +492,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         $scope.hidePanels('destino', function() {
 
                             $scope.modal_punto_destino.hide();
-
+                            $scope.solicitud.choferesDisponibles = $scope.choferesDisponibles.data.choferes;
                         });
 
                     });
@@ -496,6 +503,23 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 })
 
             };
+            
+            $scope.crearsolicitud=function(){
+                
+              // valido informacion para crear la solicitud.
+              var solicitud = $rootScope.solicitud;
+              
+              console.log($rootScope.solicitud);
+              
+              debugger;
+                if(!solicitud.origen.coords){
+                    console.log('El origen no puede ir vacio');
+                }else if(!solicitud.destino.coords){
+                    console.log('El destino no puede ir vacio');
+                }
+                
+                
+            }
 
 
 

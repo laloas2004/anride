@@ -9,7 +9,7 @@ var bcrypt = require('bcrypt-nodejs');
 module.exports = {
     attributes: {
         nombre: {
-            type: "strig"
+            type: "string"
         },
         apellidos: {
             type: "string"
