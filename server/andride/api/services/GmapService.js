@@ -2,7 +2,8 @@ var GoogleMapsAPI = require('googlemaps');
 var Q = require('q');
 module.exports = {
 	publicConfig: {
-		key: 'AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8',
+            key: 'AIzaSyCWp8rfTpYiFsnn2tLEx4VupIqkLCqQllA',
+//		key: 'AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8',
 		stagger_time: 1000, // for elevationPath
 		encode_polylines: false,
 		secure: true, // use https

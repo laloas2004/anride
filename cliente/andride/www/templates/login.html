@@ -1,25 +1,55 @@
-<ion-modal-view>
-  <ion-header-bar>
-    <h1 class="title">Login</h1>
-    <div class="buttons">
-      <button class="button button-clear" ng-click="closeLogin()">Close</button>
-    </div>
-  </ion-header-bar>
-  <ion-content>
-    <form ng-submit="doLogin()">
-      <div class="list">
-        <label class="item item-input">
-          <span class="input-label">Username</span>
-          <input type="text" ng-model="loginData.username">
-        </label>
-        <label class="item item-input">
-          <span class="input-label">Password</span>
-          <input type="password" ng-model="loginData.password">
-        </label>
-        <label class="item">
-          <button class="button button-block button-positive" type="submit">Log in</button>
-        </label>
+<ion-view view-title="Login" hide-nav-bar="true" class="login-bg">
+  <ion-content class="login-bg">
+
+      <div class="login-content" ng-controller="LoginCtrl">
+
+      <div class="light-bg">
+
+        <!-- Logo -->
+        <div class="padding text-center">
+          <div class="logo">
+            
+          </div>
+          <h2 class="dark">
+            AnRide
+          </h2>
+          <p class="dark">Conductor An Ride</p>
+        </div>
+
+        <!-- Login form -->
+        <div class="list padding">
+          <label class="item item-input">
+            <i class="ion-ios-email-outline light icon-label"></i>
+            <input type="email" placeholder="Email" ng-model="email" required value="chofer5@gmail.com">
+          </label>
+          <label class="item item-input">
+            <i class="ion-ios-locked-outline light icon-label"></i>
+            <input type="password" placeholder="Password" ng-model="password" required value="22222">
+          </label>
+        </div>
+        <div class="padding">
+            <button class="button button-block button-balanced" ng-click="validate()">
+            Entrar
+          </button>
+        </div>
+
       </div>
-    </form>
+
+      <div class="padding"></div>
+
+      <!-- Other links -->
+      <div class="row">
+
+        <div class="col">
+          <span class="light">Olvidaste tu password?</span>
+        </div>
+        <div class="col text-right">
+          <a ui-sref="auth.register" class="light">Nuevo? <span class="balanced">Registrate como Conductor!</span></a>
+        </div>
+
+      </div>
+
+    </div>
+
   </ion-content>
-</ion-modal-view>
+</ion-view>
