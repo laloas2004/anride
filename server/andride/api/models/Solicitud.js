@@ -5,25 +5,37 @@
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 module.exports = {
-	attributes: {
-		origen: {
-			type: "json"
-		},
-		destino: {
-			type: "json"
-		},
-		matrix: {
-			type: "json"
-		},
-		estimacion: {
-			type: "float"
-		},
-		cliente: {
-			model: 'Cliente'
-		},
-		servicio: {
-			model: 'Servicio',
-			unique: true
-		}
-	}
+    attributes: {
+        origen: {
+            type: "json"
+        },
+        destino: {
+            type: "json"
+        },
+        matrix: {
+            type: "json"
+        },
+        estimacion: {
+            type: "float"
+        },
+        cliente: {
+            model: 'Cliente'
+        },
+        direccion_origen: {
+            type: "string"
+        },
+        direccion_destino: {
+            type: "string"
+        },
+        choferesDisponibles: {
+            type: "json"
+        },
+        tipodePago: {
+            type: "string"
+        },
+        servicio: {
+            model: 'Servicio',
+            unique: true
+        }
+    }
 };

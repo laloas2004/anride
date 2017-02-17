@@ -170,17 +170,35 @@ module.exports = {
     solicitud:function(req, res){
              if (!req.isSocket) {
             return res.badRequest();
-        }  
+        } 
+        
+        
        console.log(req.allParams());
        var solicitud = req.param('solicitud');
+       
+       var tiempo = 0;
+       var num_chofer = 0;
+       var cant_chofer = solicitud.choferesDisponibles.length;
+       var tiempo_espera = 30;
+       
        
        Solicitud.create({
            origen:solicitud.origen,
            destino:solicitud.destino,
            matrix:solicitud.matrix,
            cliente:solicitud.cliente,
-           choferesDisponibles:solicitud.choferesDisponibles
-                                        }).exec(function(err, finn){
+           choferesDisponibles:solicitud.choferesDisponibles,
+           direccion_origen:solicitud.direccion_origen,
+           direccion_destino:solicitud.direccion_destino,
+           tipodePago:solicitud.tipodePago}).exec(function(err, finn){
+           
+           
+           
+           
+           
+           
+           
+           
            return res.json({recibido: true});
        })
        
