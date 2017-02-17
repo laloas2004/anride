@@ -96,8 +96,10 @@ module.exports = {
             if (err) {
                 return res.serverError(err);
             }
+            
+//          sChofer.subscribe(req, _.pluck(usersNamedLouie, 'id'));
 
-            Chofer.update({id: choferId}, {socketId: socketId,online:true}).exec(function() {
+            Chofer.update({id: choferId}, {socketId: socketId, online:true}).exec(function() {
                 if (err) {
                     return res.json({suscrito: false});
                 }

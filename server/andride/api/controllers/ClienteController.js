@@ -199,7 +199,7 @@ module.exports = {
             
             console.log(socketChofer);
             
-            sails.sockets.broadcast(socketChofer, 'solicitud', data);
+            sails.sockets.broadcast('Choferes', 'solicitud', data);
 
 
 
