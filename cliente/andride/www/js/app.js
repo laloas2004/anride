@@ -1,20 +1,21 @@
 
 
-angular.module('app', ['ionic', 'ionic-sidemenu', 
-    'app.controllers', 
-    'app.directives', 
-    'app.services', 
-    'ngCordova', 
-    'ngSails'
-                    ])
+angular.module('app', ['ionic', 'ionic-sidemenu',
+    'app.controllers',
+    'app.directives',
+    'app.services',
+    'ngCordova',
+    'ngSails',
+    'ngStorage'
+])
         .run(function($ionicPlatform, $rootScope, $window) {
 //Validar que este conectado a internet.
             $rootScope.serverIp = "http://104.131.116.22:1337";
-            
-            $rootScope.google_key  = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
-            
-            console.log('connectado a internet:'+ $window.navigator.onLine);
-            
+
+            $rootScope.google_key = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
+
+            console.log('connectado a internet:' + $window.navigator.onLine);
+
             $window.addEventListener('offline', function() {
                 console.log('offline');
                 $rootScope.$digest();
@@ -54,7 +55,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                         views: {
                             'menuContent': {
                                 templateUrl: 'templates/map.html',
-                                controller: 'MapCtrl'  
+                                controller: 'MapCtrl'
                             }
                         },
 //                        cache: false
@@ -77,7 +78,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
 //                            }
 //                        }
 //                    })
-                     .state('app.confirmacion', {
+                    .state('app.confirmacion', {
                         url: '/confirmacion',
                         views: {
                             'menuContent': {
@@ -86,7 +87,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                             }
                         }
                     })
-                     .state('app.viajes', {
+                    .state('app.viajes', {
                         url: '/viajes',
                         views: {
                             'menuContent': {
@@ -95,7 +96,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                             }
                         }
                     })
-                     .state('app.pagos', {
+                    .state('app.pagos', {
                         url: '/pagos',
                         views: {
                             'menuContent': {
@@ -118,16 +119,25 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                         views: {
                             'menuContent': {
                                 templateUrl: 'templates/configuracion.html',
-                                controller: 'ConfigguracionCtrl'
+                                controller: 'ConfiguracionCtrl'
+                            }
+                        }
+                    })
+                    .state('app.login', {
+                        url: '/login',
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/login.html',
+                                controller: 'LoginCtrl'
                             }
                         }
                     })
 
-            $urlRouterProvider.otherwise('/app/map');
+            $urlRouterProvider.otherwise('/app/login');
         })
         .config(['$sailsProvider', function($sailsProvider) {
                 $sailsProvider.url = "http://104.131.116.22:1337";
-                                
+
                 //digital ocean.
 //                $sailsProvider.url = 'http://104.131.116.22:1337';
 

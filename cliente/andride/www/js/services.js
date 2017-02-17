@@ -307,7 +307,7 @@ angular.module('app.services', [])
                     if ($localStorage.token !== null && $localStorage.token !== "") {
 
                         var config = {
-                            url: $rootScope.serverIp + "/choferes/validate",
+                            url: $rootScope.serverIp + "/cliente/validate",
                             method: "POST",
                             params: {
                                 token: $localStorage.token

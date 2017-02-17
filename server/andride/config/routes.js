@@ -20,55 +20,52 @@
  * http://sailsjs.org/#!/documentation/concepts/Routes/RouteTargetSyntax.html
  */
 module.exports.routes = {
-  /***************************************************************************
-   *                                                                          *
-   * Make the view located at `views/homepage.ejs` (or `views/homepage.jade`, *
-   * etc. depending on your default view engine) your home page.              *
-   *                                                                          *
-   * (Alternatively, remove this and add an `index.html` file in your         *
-   * `assets` directory)                                                      *
-   *                                                                          *
-   ***************************************************************************/
-  '/': {
-    view: 'homepage'
-  },
-  'get /config': 'IndexController.getConfig',
-  'get /direccion': 'IndexController.getDireccion',
-  'get /distancia': 'IndexController.getMatrix',
-  'post /monto/estimado': 'IndexController.montoEstimado',
-  
-  
-  
-  'get /cliente': 'ClienteController.registroCliente',
-  'post /cliente/login': 'ClienteController.login',
-  'get /cliente/choferes': 'ClienteController.getChoferes',
-  
-  'post /chofer': 'ChoferController.create',
-  'post /choferes/login': 'ChoferController.login',
-  'post /choferes/logout': 'ChoferController.logout',
-  'post /choferes/suscribe': 'ChoferController.suscribe',
-  'post /choferes/posicion': 'ChoferController.trackChofer',
-  'post /choferes/validate': 'ChoferController.validateToken',
-  'get /choferes/solicitud_prueba': 'ChoferController.solicitud',
+    /***************************************************************************
+     *                                                                          *
+     * Make the view located at `views/homepage.ejs` (or `views/homepage.jade`, *
+     * etc. depending on your default view engine) your home page.              *
+     *                                                                          *
+     * (Alternatively, remove this and add an `index.html` file in your         *
+     * `assets` directory)                                                      *
+     *                                                                          *
+     ***************************************************************************/
+    '/': {
+        view: 'homepage'
+    },
+    //Controllers Comunes.
+    'get /config': 'IndexController.getConfig',
+    'get /direccion': 'IndexController.getDireccion',
+    'get /distancia': 'IndexController.getMatrix',
+    'post /monto/estimado': 'IndexController.montoEstimado',
+    //Cliente
+    'get /cliente': 'ClienteController.registroCliente',
+    'post /cliente/login': 'ClienteController.login',
+    'post /cliente/validate': 'ClienteController.validateToken',
+    'get /cliente/choferes': 'ClienteController.getChoferes',
+    //Chofer
+    'post /chofer': 'ChoferController.create',
+    'post /choferes/login': 'ChoferController.login',
+    'post /choferes/logout': 'ChoferController.logout',
+    'post /choferes/suscribe': 'ChoferController.suscribe',
+    'post /choferes/posicion': 'ChoferController.trackChofer',
+    'post /choferes/validate': 'ChoferController.validateToken',
+    'get /choferes/solicitud_prueba': 'ChoferController.solicitud',
+    /***************************************************************************
+     *                                                                          *
+     * Custom routes here...                                                    *
+     *                                                                          *
+     * If a request to a URL doesn't match any of the custom routes above, it   *
+     * is matched against Sails route blueprints. See `config/blueprints.js`    *
+     * for configuration options and examples.                                  *
+     *                                                                          *
+     ***************************************************************************/
 
-  
-  /***************************************************************************
-   *                                                                          *
-   * Custom routes here...                                                    *
-   *                                                                          *
-   * If a request to a URL doesn't match any of the custom routes above, it   *
-   * is matched against Sails route blueprints. See `config/blueprints.js`    *
-   * for configuration options and examples.                                  *
-   *                                                                          *
-   ***************************************************************************/
-  
-  'get /admin/clientes': 'AdminController.indexCliente',
-  'get /admin/clientes/new': 'AdminController.newCliente',
-  'get /admin/solicitudes': 'AdminController.indexSolicitudes',
-  'get /admin/servicios': 'AdminController.indexServicios',
-  'get /admin/choferes': 'AdminController.indexChoferes',
-  'get /admin/autos': 'AdminController.indexAutos',
-  'get /admin/pagos': 'AdminController.indexPagos',
-  'get /admin/configuracion': 'AdminController.indexConfiguracion',
-  
+    'get /admin/clientes': 'AdminController.indexCliente',
+    'get /admin/clientes/new': 'AdminController.newCliente',
+    'get /admin/solicitudes': 'AdminController.indexSolicitudes',
+    'get /admin/servicios': 'AdminController.indexServicios',
+    'get /admin/choferes': 'AdminController.indexChoferes',
+    'get /admin/autos': 'AdminController.indexAutos',
+    'get /admin/pagos': 'AdminController.indexPagos',
+    'get /admin/configuracion': 'AdminController.indexConfiguracion',
 };

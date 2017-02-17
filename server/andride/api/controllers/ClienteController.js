@@ -125,5 +125,16 @@ module.exports = {
 
         }
 
+    },
+    validateToken: function(req, res) {
+        var token = req.param('token');
+        jwToken.verify(token, function(err, token) {
+            if (err)
+                return res.json({valid: false});
+
+//    req.token = token; // This is the decrypted token or the payload you provided
+
+            return res.json({valid: true});
+        });
     }
 };

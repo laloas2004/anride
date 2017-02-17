@@ -9724,14 +9724,17 @@ a {
       width: inherit; }
 
 .logo {
+  background: url("../img/icon.png") no-repeat center;
+  height: 120px;
   margin: 20px auto 0;
   padding: 0.25em 0.5em 0.25em 0.27em;
-  width: 1.5em;
+  width: 2.5em;
   border-radius: 10%;
-  font-size: 3em; }
+  font-size: 3em; 
+}
 
 .login-bg {
-  background: url("../img/bg2.jpg") no-repeat center;
+  background: url("../img/bg.jpg") no-repeat center;
   background-size: 100% 100%; }
   .login-bg .scroll {
     display: flex;
