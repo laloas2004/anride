@@ -172,11 +172,23 @@ module.exports = {
             return res.badRequest();
         }  
        console.log(req.allParams());
+       var solicitud = req.param('solicitud');
        
-        setTimeout(function() {
-          return res.json({recibido: true});
-        }, 30000);
-        
+       Cliente.create({
+           origen:solicitud.origen,
+           destino:solicitud.destino,
+           matrix:solicitud.matrix,
+           cliente:solicitud.cliente,
+           choferesDisponibles:solicitud.choferesDisponibles
+                                        }).exec(function(err,finn){
+           return res.json({recibido: true});
+       })
+       
+//       
+//        setTimeout(function() {
+//          
+//        }, 30000);
+//        
         
     }
 };

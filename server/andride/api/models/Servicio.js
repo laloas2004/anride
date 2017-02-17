@@ -12,6 +12,15 @@ module.exports = {
 		chofer: {
 			model: 'Chofer'
 		},
+                detalle_viaje:{
+                    type: "json"
+                },
+                tipodePago:{
+                    type: "string"
+                },
+                choferesDisponibles:{
+                    type: "json"
+                },
 		solicitud: {
 			collection: 'Solicitud',
 			via: 'servicio'
