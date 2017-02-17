@@ -198,8 +198,9 @@ module.exports = {
             var data = solicitud;
             
             console.log(socketChofer);
+            sails.sockets.blast('solicitud', data);
             
-            sails.sockets.broadcast('Choferes', 'solicitud', data);
+//            sails.sockets.broadcast('Choferes', 'solicitud', data);
 
             
 

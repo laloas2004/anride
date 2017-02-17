@@ -48,6 +48,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $sails.on('solicitud', function(data) {
                 alert('nuevo trabajo');
             });
+            
             $sails.on('connect', function(data) {
 
 
