@@ -96,7 +96,7 @@ module.exports.sockets = {
    ***************************************************************************/
    beforeConnect: function(handshake, cb) {
        
-//       console.log(handshake);
+       console.log('before Connect---');
 //       console.log(handshake);
        
     // `true` allows the connection
