@@ -201,7 +201,7 @@ module.exports = {
             
             sails.sockets.broadcast('Choferes', 'solicitud', data);
 
-
+            
 
 
 //            return res.json({recibido: true});

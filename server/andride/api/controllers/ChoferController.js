@@ -160,15 +160,20 @@ module.exports = {
             return res.json({valid: true});
         });
     },
-    solicitud: function(req, res) {
-//        console.log(req);
-//        sails.sockets.blast('trabajo', {sockest: true});
-            Chofer.update({nombre:'mas'}, {lat:'25.7461718', lon:'-100.2967787',location:{type: "Point",coordinates:[-100.2967787,25.7461718]}}).exec(function(err, updated) {
-            if (err) {
-                // handle error here- e.g. `res.serverError(err);`
-                return res.json({updated: false,err:err});
-            }
-            return res.json({updated: true,updat:updated});
-        })
+    aprovarSolicitud: function(req, res) {
+
+        var solicitudId = req.param('sId');
+
+        var chofer = req.param('chId');
+
+
+        Servicio.create().exec(function() {
+
+
+
+        });
+
+        return res.json({updated: true, updat: updated});
     }
+    
 };  
