@@ -1,5 +1,5 @@
 angular.module('app.controllers', ['ngSails', 'ngCordova'])
-        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout,$state,AuthService) {
+        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout, $state, AuthService) {
 
             $rootScope.seleccionoDestino = false;
 
@@ -11,7 +11,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 matrix: {},
                 choferesDisponibles: {},
                 tipodePago: {},
-                cliente:{}
+                cliente: {}
             };
 
 
@@ -23,6 +23,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             //$scope.$on('$ionicView.enter', function(e) {
             //});
             AuthService.isAuthenticated().then(function(response) {
+                $rootScope.solicitud.cliente = $localStorage.cliente;
                 $state.go('app.map', {});
 
             }, function(err) {
@@ -159,7 +160,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                     google.maps.event.addListener($scope.map, "dragend", function() {
 
-                        
+
 
                         if ($scope.status == 'inicio' || $scope.status == 'origen' || $scope.status == 'origen_places') {
 
@@ -179,7 +180,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                 $scope.getChoferes().then(function() {
 
                                     $scope.renderChoferesMap().then(function() {
-                                        
+
                                         $scope.hidePanels('center_changed');
                                         $scope.hideBubble = false;
                                         $ionicLoading.hide();
@@ -296,7 +297,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             $scope.centerOnMe = function() {
 
-                    $scope.loading = $ionicLoading.show({
+                $scope.loading = $ionicLoading.show({
                     template: 'Obteniendo tu ubicacion...',
                     showBackdrop: false
                 });
@@ -480,22 +481,22 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 })
 
             };
-            
-            $scope.crearsolicitud=function(){
-                
-              // valido informacion para crear la solicitud.
-              var solicitud = $rootScope.solicitud;
-              
-              console.log($rootScope.solicitud);
-              
-              debugger;
-                if(!solicitud.origen.coords){
+
+            $scope.crearsolicitud = function() {
+
+                // valido informacion para crear la solicitud.
+                var solicitud = $rootScope.solicitud;
+
+                console.log($rootScope.solicitud);
+
+                debugger;
+                if (!solicitud.origen.coords) {
                     console.log('El origen no puede ir vacio');
-                }else if(!solicitud.destino.coords){
+                } else if (!solicitud.destino.coords) {
                     console.log('El destino no puede ir vacio');
                 }
-                
-                
+
+
             }
 
 
@@ -577,8 +578,38 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
         })
 
-        .controller('LoginCtrl', function($scope) {
+        .controller('LoginCtrl', function($scope, $rootScope, $localStorage, $ionicSideMenuDelegate, $ionicPlatform, AuthService, $state) {
 
+            $scope.$storage = $localStorage;
+
+            $ionicSideMenuDelegate.canDragContent(false);
+
+            $ionicPlatform.registerBackButtonAction(function(event) {
+                event.preventDefault();
+                ionic.Platform.exitApp();
+            }, 100);
+            $scope.validate = function() {
+                $scope.login();
+            };
+            $scope.login = function() {
+
+                AuthService.login($scope.email, $scope.password).then(function(response) {
+
+                    $rootScope.solicitud.cliente = response;
+                    $ionicSideMenuDelegate.canDragContent(true);
+
+                    AuthService.suscribe().then(function(response) {
+                        $state.go('app.map', {});
+                    }, function() {
+
+                    });
+
+
+                }, function() {
+
+                })
+
+            };
 
         })
         .controller('DestinoCtrl', function($scope, $rootScope, $ionicSideMenuDelegate, clienteService, $state, $ionicNavBarDelegate, $ionicHistory) {

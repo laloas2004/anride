@@ -55,11 +55,11 @@ angular.module('app.services', [])
 
                     $http(config)
                             .then(function(response) {
+                                
+                                 $localStorage.token = response.data.token;
+                                 $localStorage.chofer = response.data.chofer;
 
-                                $localStorage.token = response.data.token;
-                                $localStorage.chofer = response.data.chofer;
-
-                                q.resolve(response);
+         
 
                             }).catch(function(err) {
 

@@ -307,7 +307,7 @@ angular.module('app.services', [])
                     if ($localStorage.token !== null && $localStorage.token !== "") {
 
                         var config = {
-                            url: $rootScope.serverIp + "/cliente/validate",
+                            url: $rootScope.serverIp + "/clientes/validate",
                             method: "POST",
                             params: {
                                 token: $localStorage.token
@@ -345,7 +345,7 @@ angular.module('app.services', [])
 //                    });
 
                     var config = {
-                        url: $rootScope.serverIp + "/choferes/login",
+                        url: $rootScope.serverIp + "/clientes/login",
                         method: "POST",
                         params: {
                             email: email,
@@ -356,8 +356,10 @@ angular.module('app.services', [])
                     $http(config)
                             .then(function(response) {
 
-                                $localStorage.token = response.data.token;
-                                $localStorage.chofer = response.data.chofer;
+                               $localStorage.token = response.data.token;
+                               $localStorage.cliente =response.data.cliente;
+                               
+                                q.resolve(response.data.cliente);
 
                                 q.resolve(response);
 
@@ -381,7 +383,7 @@ angular.module('app.services', [])
                 suscribe: function() {
                     var q = $q.defer();
                     var data = {
-                        choferId: $localStorage.chofer.id
+                        clienteId: $localStorage.solicitudcliente.id
                     };
                     $sails.post("/choferes/suscribe", data)
                             .success(function(data, status, headers, jwr) {

@@ -39,8 +39,8 @@ module.exports.routes = {
     'post /monto/estimado': 'IndexController.montoEstimado',
     //Cliente
 //    'get /cliente': 'ClienteController.registroCliente',
-    'post /cliente/login': 'ClienteController.login',
-    'post /cliente/validate': 'ClienteController.validateToken',
+    'post /clientes/login': 'ClienteController.login',
+    'post /clientes/validate': 'ClienteController.validateToken',
     'get /cliente/choferes': 'ClienteController.getChoferes',
     //Chofer
     'post /chofer': 'ChoferController.create',
