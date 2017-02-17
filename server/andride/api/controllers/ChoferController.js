@@ -174,7 +174,7 @@ module.exports = {
 //        });
 //
 //        return res.json({updated: true, updat: updated});
-
+var data={};
 sails.sockets.blast('aprovo_solicitud', data);
 
 
