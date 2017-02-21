@@ -556,7 +556,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     try{
                    $scope.chofer.nombre = data.chofer.nombre || '';
                    $scope.chofer.apellido = data.chofer.apellido ||'';
-                   $scope.chofer.distancia = data.chofer.didtancia||'';
+                   $scope.chofer.distancia = data.chofer.distancia||'';
                     }catch(e){
                         console.log(e);
                     }

@@ -177,9 +177,36 @@ module.exports = {
  console.log(req.allParams());
 
 var data = {
-    
+    chofer:{
+        nombre:'lalo acevedo',
+        apellido:'apelido',
+        distancia:'1km'
+        
+    }
 };
 sails.sockets.blast('aprovo_solicitud', data);
+
+
+    },
+    denegoSolicitud: function(req, res) {
+//
+//        var solicitudId = req.param('sId');
+//
+//        var chofer = req.param('chId');
+//
+//
+//        Servicio.create().exec(function() {
+//
+//
+//
+//        });
+//
+//        return res.json({updated: true, updat: updated});
+        console.log(req.allParams());
+
+        var data = {
+        };
+        sails.sockets.blast('aprovo_solicitud', data);
 
 
     }
