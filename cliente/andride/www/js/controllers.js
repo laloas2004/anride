@@ -11,7 +11,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 direccion_destino: 'SE REQUIERE UN DESTINO',
                 matrix: {},
                 choferesDisponibles: {},
-                tipodePago: {},
+                tipodePago:'efectivo',
                 cliente: {},
                 status: 'sinenviar',
             };
@@ -153,6 +153,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             }).then(function(modal) {
                 $scope.modal_buscando_chofer = modal;
             });
+             $ionicModal.fromTemplateUrl('templates/driver.html', {
+                scope: $scope,
+                animation: 'slide-in-up'
+            }).then(function(modal) {
+                $scope.model_solicitud_aprovada = modal;
+            });
 
             $scope.mapCreated = function(map) {
 
@@ -288,7 +294,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 return q.promise;
             }
-
             $scope.setDireccionOrigen = function(position) {
                 var q = $q.defer();
 
@@ -304,7 +309,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 return q.promise;
             }
-
             $scope.setLblTiempo = function(response) {
                 try {
                     var tiempo = response.data.matrix.rows[0].elements[0].duration.value || 0;
@@ -369,8 +373,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 return q.promise;
             }
-
-
             $scope.centerOnMe = function() {
 
                 $scope.loading = $ionicLoading.show({
@@ -477,24 +479,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 })
             }
-
-
-//            $scope.getRoutes = function() {
-//
-//                $scope.loading = $ionicLoading.show({
-//                    content: 'Calculando Estimacion...',
-//                    showBackdrop: false
-//                });
-//
-//                clienteService.getRouteViaje($rootScope.solicitud).then(function(response) {
-//
-//                    debugger;
-//
-//                });
-//
-//
-//
-//            }
             $scope.SearchQueryDestino = function() {
 
                 if ($scope.DestinoBusqueda.query) {
@@ -565,14 +549,21 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 })
 
             };
-
             $scope.crearsolicitud = function() {
 
                 $sails.on('aprovo_solicitud', function(data) {
-
+                    
+                    try{
+                   $scope.chofer.nombre = data.chofer.nombre || '';
+                   $scope.chofer.apellido = data.chofer.apellido ||'';
+                   $scope.chofer.distancia = data.chofer.didtancia||'';
+                    }catch(e){
+                        console.log(e);
+                    }
+                    
                     $scope.modal_buscando_chofer.hide();
 
-                    alert('aprovo la solicitud');
+                    $scope.model_solicitud_aprovada.show();
 
                 });
 
