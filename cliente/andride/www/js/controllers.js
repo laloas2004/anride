@@ -11,7 +11,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 direccion_destino: 'SE REQUIERE UN DESTINO',
                 matrix: {},
                 choferesDisponibles: {},
-                tipodePago:'efectivo',
+                tipodePago: 'efectivo',
                 cliente: {},
                 status: 'sinenviar',
             };
@@ -53,21 +53,21 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $q,
                 $ionicPopup,
                 $ionicModal) {
-                    $scope.intervalReconnect = {};
-                    
+            $scope.intervalReconnect = {};
+
             $sails.on('connect', function(data) {
 
 
             });
             $sails.on('disconnect', function(data) {
                 alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
-                
-                   $scope.intervalReconnect = $interval(function() {
 
-                                 
+                $scope.intervalReconnect = $interval(function() {
 
-                                }, 30000);
-                
+
+
+                }, 30000);
+
             });
 
             $ionicNavBarDelegate.showBackButton(false);
@@ -76,6 +76,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.DestinoBusqueda = {};
             $scope.OrigenBusqueda = {};
             $scope.markers = [];
+            $scope.choferConfirma = {};
             $scope.intervalUpdateChoferes = {};
             $scope.montoEstimado = 0;
             $scope.status = 'inicio';
@@ -153,7 +154,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             }).then(function(modal) {
                 $scope.modal_buscando_chofer = modal;
             });
-             $ionicModal.fromTemplateUrl('templates/driver.html', {
+            $ionicModal.fromTemplateUrl('templates/driver.html', {
                 scope: $scope,
                 animation: 'slide-in-up'
             }).then(function(modal) {
@@ -552,18 +553,30 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.crearsolicitud = function() {
 
                 $sails.on('aprovo_solicitud', function(data) {
-                    
-                    try{
-                   $scope.chofer.nombre = data.chofer.nombre || '';
-                   $scope.chofer.apellido = data.chofer.apellido ||'';
-                   $scope.chofer.distancia = data.chofer.distancia||'';
-                    }catch(e){
+
+                    try {
+                        $scope.choferConfirma.nombre = data.chofer.nombre || '';
+                        $scope.choferConfirma.apellido = data.chofer.apellido || '';
+                        $scope.choferConfirma.distancia = data.chofer.distancia || '';
+                    } catch (e) {
                         console.log(e);
                     }
-                    
+
                     $scope.modal_buscando_chofer.hide();
 
                     $scope.model_solicitud_aprovada.show();
+
+                });
+                $sails.on('denego_solicitud', function(data) {
+
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'No contamos con choferes disponibles',
+                        template: 'es este momento, por favor intentalo mas tarde...'
+                    });
+                    
+                     alertPopup.then(function(res) {
+                        $state.go('app.map', {});
+                    });
 
                 });
 

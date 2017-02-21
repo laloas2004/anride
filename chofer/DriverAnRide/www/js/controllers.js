@@ -46,45 +46,43 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $sessionStorage) {
 
 
+            $ionicModal.fromTemplateUrl('templates/modal_solicitud.html', {
+                scope: $scope,
+                animation: 'slide-in-up'
+            }).then(function(modal) {
+                $rootScope.modal_solicitud = modal;
+
+            });
+
             $scope.closeModal = function() {
-                $scope.modal_solicitud.hide();
+                $rootScope.modal_solicitud.hide();
             };
 
             $scope.selectJob = function() {
                 // close modal first
                 $scope.closeModal();
 
-                 var data = {
-                       
-                    };
-                    $sails.post("/choferes/respuesta", data)
-                            .success(function(data, status, headers, jwr) {
-                                
-                                $localStorage.socketId = data.socketId;
-                                
-                            })
-                            .error(function(data, status, headers, jwr) {
-                                
-                                
-                            });
+                var data = {
+                };
+                $sails.post("/choferes/respuesta", data)
+                        .success(function(data, status, headers, jwr) {
+
+                            $localStorage.socketId = data.socketId;
+
+                            $scope.closeModal();
+
+                        })
+                        .error(function(data, status, headers, jwr) {
+
+
+                        });
 
             }
             $sails.on('solicitud', function(data) {
 
-                $scope.solicitud = data;
+                $rootScope.solicitud = data;
 
-
-                $ionicModal.fromTemplateUrl('templates/modal_solicitud.html', {
-                    scope: $scope,
-                    animation: 'slide-in-up'
-                }).then(function(modal) {
-                    $scope.modal_solicitud = modal;
-
-                });
-
-                debugger;
-
-                $scope.modal_solicitud.show();
+                $rootScope.modal_solicitud.show();
 
             });
 
@@ -363,12 +361,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
         })
 
-        .controller('JobModalController', function($scope, $ionicHistory) {
+        .controller('JobModalController', function($scope, $ionicHistory, $rootScope) {
+            
             console.log('se ejecuto JobModalController');
-            $scope.remainingTime = 20;
+    
+            $scope.remainingTime = 60;
 
             function countDown() {
-                $scope.remainingTime = 20;
+                $scope.remainingTime = 60;
 
                 // countdown time
                 var interval = setInterval(function() {
@@ -379,10 +379,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     // if time is over
                     if ($scope.remainingTime == 0) {
                         // stop interval
+
+
+
                         clearInterval(interval);
 
                         // close modal
-//                        $scope.closeModal();
+                        $rootScope.modal_solicitud.hide();
 
 
 //                        alert('se acabo el timpo');

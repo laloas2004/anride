@@ -206,7 +206,7 @@ sails.sockets.blast('aprovo_solicitud', data);
 
         var data = {
         };
-        sails.sockets.blast('aprovo_solicitud', data);
+        sails.sockets.blast('denego_solicitud', data);
 
 
     }
