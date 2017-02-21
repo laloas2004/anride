@@ -1,7 +1,11 @@
 
 <ion-modal-view>  
-
+    <div class="bar bar-header bar-dark">
+        <button class="button icon ion-arrow-left-c" ng-click="close_modal_destino()"></button>
+        <h1 class="title">Buscar Ubicacion</h1>
+    </div>
     <ion-content>
+        <div class="row" style='margin-top: 30px;'>
         <div class="list list-inset">
             <label class="item item-input">
                 <i class="icon ion-search placeholder-icon"></i>
@@ -9,11 +13,15 @@
             </label>
 
             <ion-list>
-                <ion-item ng-repeat="res in DestinoResponse" ng-click="onSelectItemDestino(res)">{{res.description}}</ion-item>
+                <ion-item ng-repeat="res in DestinoResponse" ng-click="onSelectItemDestino(res)">
+
+                    <div class="bold">{{ res.structured_formatting.main_text}}</div>
+                    <div>{{ res.structured_formatting.secondary_text}}</div>                
+                </ion-item>
             </ion-list>
             <div class="padding">
                 <img src="https://developers.google.com/maps/documentation/places/images/powered-by-google-on-white.png" style="margin-left: 5px" alt="" />
             </div>
-        </div>
+        </div></div>
     </ion-content>
 </ion-modal-view>

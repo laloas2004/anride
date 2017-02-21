@@ -44,6 +44,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $ionicScrollDelegate,
                 $ionicNavBarDelegate,
                 $ionicPlatform,
+                $timeout,
+                $interval,
                 clienteService,
                 choferService,
                 solicitudService,
@@ -66,6 +68,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.choferesDisponibles = {};
             $scope.DestinoBusqueda = {};
             $scope.OrigenBusqueda = {};
+            $scope.markers = [];
+            $scope.intervalUpdateChoferes={};
             $scope.montoEstimado = 0;
             $scope.status = 'inicio';
             $scope.hidePanels = function(estatus, cb) {
@@ -166,6 +170,24 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             $scope.renderChoferesMap().then(function() {
                                 $scope.hideBubble = false;
                                 $ionicLoading.hide();
+
+                                $scope.intervalUpdateChoferes = $interval(function() {
+                                    
+                                    $scope.setDireccionOrigen(position).then(function() {
+                                        $scope.getChoferes().then(function() {
+                                            $scope.renderChoferesMap().then(function() {
+
+                                                console.log('Actualizo choferes en intervalo');
+
+                                            })
+
+                                        })
+
+
+                                    })  
+                                   
+                                }, 30000);
+
                             })
 
 
@@ -173,7 +195,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
                     });
-
+                    
+                    
 
                     google.maps.event.addListener($scope.map, "dragend", function() {
 
@@ -277,10 +300,22 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 }
 
             }
+            $scope.clearChoferesMap = function() {
+                var q = $q.defer();
 
+                angular.forEach($scope.markers, function(marker, index) {
+                    marker.setMap(null);
+
+                })
+
+                q.resolve();
+
+                return q.promise;
+            }
             $scope.renderChoferesMap = function() {
 
                 var q = $q.defer();
+
 
 
                 var image = {
@@ -290,23 +325,29 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     anchor: new google.maps.Point(0, 32)
                 };
 //                            $scope.map.clearMarkers();
+                $scope.clearChoferesMap().then(function() {
 
-                angular.forEach($scope.choferesDisponibles.data.choferes, function(chofer, index) {
-                    console.log('chofer');
-                    console.log(chofer);
+                    angular.forEach($scope.choferesDisponibles.data.choferes, function(chofer, index) {
 
-                    var myLatlng = new google.maps.LatLng(chofer.lat, chofer.lon);
+                        console.log('chofer');
+                        console.log(chofer);
 
-                    new google.maps.Marker({
-                        position: myLatlng,
-                        title: chofer.nombre,
-                        map: $scope.map,
-                        icon: image
+                        var myLatlng = new google.maps.LatLng(chofer.lat, chofer.lon);
+
+                        $scope.markers[index] = new google.maps.Marker({
+                            position: myLatlng,
+                            title: chofer.nombre,
+                            map: $scope.map,
+                            icon: image
+                        });
+
+
                     });
 
+                    q.resolve();
+                })
 
-                });
-                q.resolve();
+
 
                 return q.promise;
             }
@@ -356,6 +397,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.onSelectOrigen = function() {
                 $rootScope.solicitud.origen = $scope.position;
                 $scope.hidePanels('origen');
+            }
+            $scope.close_modal_origen = function() {
+                $scope.modal_punto_origen.hide();
+            }
+            $scope.close_modal_destino = function() {
+                $scope.modal_punto_destino.hide();
             }
             $scope.searchOrigen = function() {
 
@@ -480,7 +527,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         }};
 
                     $rootScope.solicitud.direccion_destino = place_detalle.formatted_address;
-
+                    
+                    $interval.cancel($scope.intervalUpdateChoferes);
+                    
                     $scope.calcularEstimado().then(function(response) {
 
                         $ionicLoading.hide();
@@ -621,7 +670,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
         })
 
-        .controller('LoginCtrl', function($scope, $rootScope, $localStorage, $ionicSideMenuDelegate, $ionicPlatform, AuthService, $state, $ionicLoading,$ionicPopup) {
+        .controller('LoginCtrl', function($scope, $rootScope, $localStorage, $ionicSideMenuDelegate, $ionicPlatform, AuthService, $state, $ionicLoading, $ionicPopup) {
 
             $scope.$storage = $localStorage;
 
@@ -655,9 +704,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 }, function(err) {
                     $ionicLoading.hide();
                     $ionicPopup.alert({
-                    title: 'No valido',
-                    template: 'Usuario o contraseña invalidos!, intentalo nuevamente'
-                });
+                        title: 'No valido',
+                        template: 'Usuario o contraseña invalidos!, intentalo nuevamente'
+                    });
                 })
 
             };
@@ -731,10 +780,16 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
         })
-        .controller('LogoutCtrl', function($scope, $ionicHistory,AuthService,$state) {
+        .controller('LogoutCtrl', function($scope, $ionicHistory, AuthService, $state) {
 
-        AuthService.logout().then(function(){
-             $state.go('app.login', {});
-        });
+            AuthService.logout().then(function() {
+                $state.go('app.login', {});
+            });
 
         })
+        .controller('NotificacionesCtrl', function($scope, $ionicHistory) {
+
+
+
+        })
+

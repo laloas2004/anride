@@ -145,7 +145,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
             $urlRouterProvider.otherwise('/app/login');
         })
         .config(['$sailsProvider', function($sailsProvider) {
-                debugger;
+            
                 $sailsProvider.url = "http://104.131.116.22:1337";
                 
                 //digital ocean.
