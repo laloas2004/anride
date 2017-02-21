@@ -1,5 +1,6 @@
 angular.module('app.controllers', ['ngSails', 'ngCordova'])
-        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout, $state, AuthService, $localStorage) {
+        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout, $state, AuthService, $localStorage, $cordovaNetwork) {
+
 
             $rootScope.seleccionoDestino = false;
 
@@ -52,15 +53,21 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $q,
                 $ionicPopup,
                 $ionicModal) {
-
+                    $scope.intervalReconnect = {};
+                    
             $sails.on('connect', function(data) {
 
 
             });
             $sails.on('disconnect', function(data) {
-
-
                 alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
+                
+                   $scope.intervalReconnect = $interval(function() {
+
+                                 
+
+                                }, 30000);
+                
             });
 
             $ionicNavBarDelegate.showBackButton(false);
@@ -69,7 +76,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.DestinoBusqueda = {};
             $scope.OrigenBusqueda = {};
             $scope.markers = [];
-            $scope.intervalUpdateChoferes={};
+            $scope.intervalUpdateChoferes = {};
             $scope.montoEstimado = 0;
             $scope.status = 'inicio';
             $scope.hidePanels = function(estatus, cb) {
@@ -172,7 +179,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                 $ionicLoading.hide();
 
                                 $scope.intervalUpdateChoferes = $interval(function() {
-                                    
+
                                     $scope.setDireccionOrigen(position).then(function() {
                                         $scope.getChoferes().then(function() {
                                             $scope.renderChoferesMap().then(function() {
@@ -184,8 +191,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                         })
 
 
-                                    })  
-                                   
+                                    })
+
                                 }, 30000);
 
                             })
@@ -195,8 +202,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
                     });
-                    
-                    
+
+
 
                     google.maps.event.addListener($scope.map, "dragend", function() {
 
@@ -240,7 +247,18 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     });
 
                 }, function(err) {
+
+
                     console.log(err);
+                    $ionicLoading.hide();
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'No tenemos acceso al GPS',
+                        template: 'Por favor activa tu GPS!'
+                    });
+
+                    alertPopup.then(function(res) {
+                        ionic.Platform.exitApp();
+                    });
                 });
 
 
@@ -527,9 +545,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         }};
 
                     $rootScope.solicitud.direccion_destino = place_detalle.formatted_address;
-                    
+
                     $interval.cancel($scope.intervalUpdateChoferes);
-                    
+
                     $scope.calcularEstimado().then(function(response) {
 
                         $ionicLoading.hide();

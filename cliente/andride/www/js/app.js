@@ -8,25 +8,38 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
     'ngSails',
     'ngStorage'
 ])
-        .run(function($ionicPlatform, $rootScope, $window) {
+        .run(function($ionicPlatform, $rootScope, $window, $cordovaNetwork, $ionicPopup) {
 //Validar que este conectado a internet.
             $rootScope.serverIp = "http://104.131.116.22:1337";
 
             $rootScope.google_key = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
 
-            console.log('connectado a internet:' + $window.navigator.onLine);
-
             $window.addEventListener('offline', function() {
-                console.log('offline');
+                
                 $rootScope.$digest();
             });
             $window.addEventListener('online', function() {
-                console.log('online');
+//                console.log('online');
                 $rootScope.$digest();
             });
 
             $ionicPlatform.ready(function() {
 
+                var isOnline = $cordovaNetwork.isOnline();
+
+                if (!isOnline) {
+
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'Sin Acceso a Internet',
+                        template: 'Ups, no pudimos comunicarnos con nuestro servidor, Revisa tu conexion a internet y vuelvelo a intentar...'
+                    });
+
+                    alertPopup.then(function(res) {
+                        ionic.Platform.exitApp();
+                    });
+
+
+                }
 
                 screen.lockOrientation('portrait');
 
@@ -132,7 +145,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                             }
                         }
                     })
-                     .state('app.logout', {
+                    .state('app.logout', {
                         url: '/logout',
                         views: {
                             'menuContent': {
@@ -145,9 +158,9 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
             $urlRouterProvider.otherwise('/app/login');
         })
         .config(['$sailsProvider', function($sailsProvider) {
-            
+
                 $sailsProvider.url = "http://104.131.116.22:1337";
-                
+
                 //digital ocean.
 //                $sailsProvider.url = 'http://104.131.116.22:1337';
 

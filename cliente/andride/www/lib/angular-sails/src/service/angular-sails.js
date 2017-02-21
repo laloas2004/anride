@@ -62,7 +62,7 @@
             useCORSRouteToGetCookie: false
         };
 
-        this.debug = false;
+        this.debug = true;
 
         // like https://docs.angularjs.org/api/ng/service/$http#interceptors
         // but with sails.io arguments
