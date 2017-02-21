@@ -132,6 +132,15 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                             }
                         }
                     })
+                     .state('app.logout', {
+                        url: '/logout',
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/logout.html',
+                                controller: 'LogoutCtrl'
+                            }
+                        }
+                    })
 
             $urlRouterProvider.otherwise('/app/login');
         })

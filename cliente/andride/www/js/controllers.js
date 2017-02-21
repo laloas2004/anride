@@ -50,7 +50,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $q,
                 $ionicPopup,
                 $ionicModal) {
-                    
+
             $sails.on('connect', function(data) {
 
 
@@ -500,13 +500,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             };
 
             $scope.crearsolicitud = function() {
-                
+
                 $sails.on('aprovo_solicitud', function(data) {
-                    
-                $scope.modal_buscando_chofer.hide();
-                
-                alert('aprovo la solicitud');
-                    
+
+                    $scope.modal_buscando_chofer.hide();
+
+                    alert('aprovo la solicitud');
+
                 });
 
                 // valido informacion para crear la solicitud.
@@ -526,7 +526,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     solicitudService.sendSolicitud(solicitud).then(function(response) {
                         $scope.modal_buscando_chofer.show();
 
-                        
+
 //                        alert('recibio solicitud');
                     })
 
@@ -604,6 +604,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     level: 0,
                     icon: '',
                     state: 'app.ayuda'
+                },
+                {
+                    id: 8,
+                    name: 'Salir',
+                    level: 0,
+                    icon: '',
+                    state: 'app.logout'
                 }
 
             ];
@@ -614,7 +621,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
         })
 
-        .controller('LoginCtrl', function($scope, $rootScope, $localStorage, $ionicSideMenuDelegate, $ionicPlatform, AuthService, $state) {
+        .controller('LoginCtrl', function($scope, $rootScope, $localStorage, $ionicSideMenuDelegate, $ionicPlatform, AuthService, $state, $ionicLoading,$ionicPopup) {
 
             $scope.$storage = $localStorage;
 
@@ -628,24 +635,39 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $scope.login();
             };
             $scope.login = function() {
-
+                $scope.loading = $ionicLoading.show({
+                    template: 'Validando...',
+                    showBackdrop: false
+                });
                 AuthService.login($scope.email, $scope.password).then(function(response) {
 
                     $rootScope.solicitud.cliente = response;
                     $ionicSideMenuDelegate.canDragContent(true);
 
                     AuthService.suscribe().then(function(response) {
+                        $ionicLoading.hide();
                         $state.go('app.map', {});
                     }, function() {
-
+                        $ionicLoading.hide();
                     });
 
 
-                }, function() {
-
+                }, function(err) {
+                    $ionicLoading.hide();
+                    $ionicPopup.alert({
+                    title: 'No valido',
+                    template: 'Usuario o contraseña invalidos!, intentalo nuevamente'
+                });
                 })
 
             };
+
+            $scope.showAlert = function() {
+                var alertPopup = $ionicPopup.alert({
+                    title: 'Don\'t eat that!',
+                    template: 'It might taste good'
+                });
+            }
 
         })
         .controller('DestinoCtrl', function($scope, $rootScope, $ionicSideMenuDelegate, clienteService, $state, $ionicNavBarDelegate, $ionicHistory) {
@@ -707,5 +729,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
         .controller('PagosCtrl', function($scope, $ionicHistory) {
 
 
+
+        })
+        .controller('LogoutCtrl', function($scope, $ionicHistory,AuthService,$state) {
+
+        AuthService.logout().then(function(){
+             $state.go('app.login', {});
+        });
 
         })
