@@ -527,7 +527,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         $scope.modal_buscando_chofer.show();
 
                         
-                        alert('recibio solicitud');
+//                        alert('recibio solicitud');
                     })
 
                 }
