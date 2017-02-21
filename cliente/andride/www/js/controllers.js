@@ -52,7 +52,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 solicitudService,
                 $q,
                 $ionicPopup,
-                $ionicModal) {
+                $ionicModal,
+                $ionicHistory) {
             $scope.intervalReconnect = {};
 
             $sails.on('connect', function(data) {
@@ -575,7 +576,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     });
                     
                      alertPopup.then(function(res) {
-                        $state.go('app.map', {});
+                         $ionicHistory.clearCache().then(function () {
+                        $scope.modal_buscando_chofer.hide();
+                        $state.go('app.map', {});  
+                             
+                             
+                         })
+
                     });
 
                 });

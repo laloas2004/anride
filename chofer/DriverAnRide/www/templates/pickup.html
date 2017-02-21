@@ -1,0 +1,48 @@
+<!--
+  This template loads for the 'pickup' state (app.js)
+  Show job information and customer contact
+  job is a $scope variable in PickupCtrl (controllers.js)
+-->
+<ion-view view-title="Recoger">
+  <ion-content scroll="false" class="pickup-content  dark-bg">
+    <div class="padding light-bg">
+
+      <span class="badge badge-balanced">Efectivo</span>
+
+      <div class="item item-icon-left rounded balanced-bg margin-top light">
+        <i class="icon ion-ios-location-outline"></i>
+        <div>
+          <h4 class="light">Gonzalitos #829</h4>
+          <span>Col.Chapultepec</span>
+        </div>
+      </div>
+
+      <div class="item item-icon-left no-border rounded margin-top">
+        <i class="icon ion-ios-flag-outline"></i>
+        <div>
+          <h4>XXXXXX</h4>
+          <span>XXXXXX</span>
+        </div>
+      </div>
+
+
+      <div class="item item-icon-left rounded balanced-bg margin-top light">
+        <i class="icon ion-android-call"></i>
+        <div>
+          <h4 class="light">jesus Acevedo</h4>
+          <span>8110162454</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="bottom-buttons row">
+      <div class="col">
+        <button class="button button-block">Llegue al lugar</button>
+      </div>
+      <div class="col">
+        <button class="button button-block button-balanced" ng-click="pickup()">Empieza Viaje</button>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

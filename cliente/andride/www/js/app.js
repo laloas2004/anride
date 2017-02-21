@@ -71,7 +71,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                                 controller: 'MapCtrl'
                             }
                         },
-//                        cache: false
+                        cache: false
                     })
 //                    .state('app.origen', {
 //                        url: '/origen',
@@ -152,7 +152,8 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                                 templateUrl: 'templates/logout.html',
                                 controller: 'LogoutCtrl'
                             }
-                        }
+                        },
+                        cache: false
                     })
 
             $urlRouterProvider.otherwise('/app/login');

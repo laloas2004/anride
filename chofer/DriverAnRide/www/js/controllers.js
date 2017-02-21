@@ -12,7 +12,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             //$scope.$on('$ionicView.enter', function(e) {
             //});
 
-            //$state.go('app.login', {});
+            
 
             AuthService.isAuthenticated().then(function(response) {
                 $state.go('app.main', {});
@@ -54,13 +54,29 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             });
 
-            $scope.closeModal = function() {
+            $scope.denegoSolicitud = function() {
+                               
+
+                var data = {
+                };
+                $sails.post("/choferes/denego", data)
+                        .success(function(data, status, headers, jwr) {
+
+                            $localStorage.socketId = data.socketId;
+
+                            $rootScope.modal_solicitud.hide();
+
+                        })
+                        .error(function(data, status, headers, jwr) {
+
+
+                        });
                 $rootScope.modal_solicitud.hide();
             };
 
             $scope.selectJob = function() {
                 // close modal first
-                $scope.closeModal();
+                $rootScope.modal_solicitud.hide();
 
                 var data = {
                 };
@@ -69,7 +85,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                             $localStorage.socketId = data.socketId;
 
-                            $scope.closeModal();
+                            $rootScope.modal_solicitud.hide();
+                            
+                            $state.go('app.pickup', {});
 
                         })
                         .error(function(data, status, headers, jwr) {
@@ -362,9 +380,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
         })
 
         .controller('JobModalController', function($scope, $ionicHistory, $rootScope) {
-            
+
             console.log('se ejecuto JobModalController');
-    
+
             $scope.remainingTime = 60;
 
             function countDown() {
@@ -399,3 +417,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             countDown();
 
         })
+
+        .controller('PickupCtrl', function($scope, $ionicHistory) {
+
+
+
+        })
+        

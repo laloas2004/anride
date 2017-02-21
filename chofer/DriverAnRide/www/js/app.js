@@ -133,6 +133,18 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                             }
                         }
                     })
+                     .state('app.pickup', {
+                        url: '/pickup',
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/pickup.html',
+                                controller: 'PickupCtrl',
+                                params:{
+                                    
+                                }
+                            }
+                        }
+                    })
                   
 
             $urlRouterProvider.otherwise('/app/login');

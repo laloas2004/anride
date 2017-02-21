@@ -173,7 +173,7 @@ module.exports = {
 //
 //        });
 //
-//        return res.json({updated: true, updat: updated});
+
  console.log(req.allParams());
 
 var data = {
@@ -186,7 +186,7 @@ var data = {
 };
 sails.sockets.blast('aprovo_solicitud', data);
 
-
+        return res.json({aprovada: true});
     },
     denegoSolicitud: function(req, res) {
 //
