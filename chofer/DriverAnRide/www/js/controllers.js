@@ -18,7 +18,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $state.go('app.main', {});
 
             }, function(err) {
-
+                console.log('AuthService.isAuthenticated()');
+                console.log(err);
                 $state.go('app.login', {});
 
             });
@@ -43,7 +44,20 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $ionicPopup,
                 $ionicModal,
                 $localStorage,
-                $sessionStorage) {
+                $sessionStorage,
+                $cordovaLocalNotification) {
+
+
+
+                 $ionicPlatform.ready(function () {
+                     
+                     
+             
+                     
+                     
+                     
+                 })
+
 
 
             $ionicModal.fromTemplateUrl('templates/modal_solicitud.html', {
@@ -55,7 +69,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
             $scope.denegoSolicitud = function() {
-                               
+
 
                 var data = {
                 };
@@ -86,7 +100,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             $localStorage.socketId = data.socketId;
 
                             $rootScope.modal_solicitud.hide();
-                            
+
                             $state.go('app.pickup', {});
 
                         })
@@ -97,7 +111,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             }
             $sails.on('solicitud', function(data) {
-
+                $cordovaLocalNotification.schedule({
+                    id: 1,
+                    title: 'An Ride',
+                    text: 'Nuevo Servicio',
+                    data: {
+                        customProperty: 'custom value'
+                    }
+                }).then(function(result) {
+                    console.log(result);
+                });
+    
                 $rootScope.solicitud = data;
 
                 $rootScope.modal_solicitud.show();
@@ -135,6 +159,23 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 cordova.plugins.backgroundMode.onactivate = function() {
                     console.log('BG activated');
+                    $sails.on('solicitud', function(data) {
+                        $cordovaLocalNotification.schedule({
+                            id: 1,
+                            title: 'An Ride',
+                            text: 'Nuevo Servicio',
+                            data: {
+                                customProperty: 'custom value'
+                            }
+                        }).then(function(result) {
+                            console.log(result);
+                        });
+
+//                        $rootScope.solicitud = data;
+//
+//                        $rootScope.modal_solicitud.show();
+
+                    });
                     var watchOptions = {
                         timeout: 30000,
                         maximumAge: 30000,
@@ -331,7 +372,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
         .controller('LogOutCtrl', function($scope, $rootScope, $ionicHistory, AuthService, $state) {
 
             AuthService.logout().then(function() {
-                $rootScope.watch.clearWatch();
+//                $rootScope.watch.clearWatch();
                 $state.go('app.login', {});
             });
 
@@ -361,12 +402,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                         $state.go('app.main', {});
                     }, function(err) {
-                        alert(err);
+                        console.log('AuthService.suscribe()');
+                        console.log(err);
                     });
 
                 }, function(err) {
-
-                    alert(err);
+                   console.log('AuthService.login()');
+                   console.log(err);
                 })
 
             };

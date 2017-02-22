@@ -55,11 +55,11 @@ angular.module('app.services', [])
 
                     $http(config)
                             .then(function(response) {
-                                
-                                 $localStorage.token = response.data.token;
-                                 $localStorage.chofer = response.data.chofer;
 
-         
+                                $localStorage.token = response.data.token;
+                                $localStorage.chofer = response.data.chofer;
+
+                                q.resolve(response);
 
                             }).catch(function(err) {
 
@@ -80,18 +80,21 @@ angular.module('app.services', [])
                 },
                 suscribe: function() {
                     var q = $q.defer();
+
+
+
                     var data = {
                         choferId: $localStorage.chofer.id
                     };
                     $sails.post("/choferes/suscribe", data)
                             .success(function(data, status, headers, jwr) {
-                                
+
                                 $localStorage.socketId = data.socketId;
                                 q.resolve();
                             })
                             .error(function(data, status, headers, jwr) {
                                 q.reject(jwr);
-                                
+
                             });
                     return q.promise;
                 }
@@ -100,29 +103,29 @@ angular.module('app.services', [])
 
 
         })
-        .factory('choferService', function($http, $q, $sails, $rootScope,$localStorage) {
+        .factory('choferService', function($http, $q, $sails, $rootScope, $localStorage) {
 
             return {
                 updatePosition: function(location) {
-                    
-                  var q = $q.defer();
-                  
-                    var data = {
-                        lat:location.coords.latitude,
-                        lon:location.coords.longitude,
-                        email:$localStorage.chofer.email
-                        };
 
-                     $sails.post("/choferes/posicion",data)
-                            .success(function(data, status, headers, jwr){
+                    var q = $q.defer();
+
+                    var data = {
+                        lat: location.coords.latitude,
+                        lon: location.coords.longitude,
+                        email: $localStorage.chofer.email
+                    };
+
+                    $sails.post("/choferes/posicion", data)
+                            .success(function(data, status, headers, jwr) {
                                 q.resolve(data);
                             })
-                            .error(function(data, status, headers, jwr){
+                            .error(function(data, status, headers, jwr) {
                                 q.reject(jwr);
-                                
+
                             });
-                            
-                    return q.promise;   
+
+                    return q.promise;
 
                 },
                 getDireccion: function(location) {

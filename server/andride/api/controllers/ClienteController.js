@@ -192,15 +192,19 @@ module.exports = {
             direccion_origen: solicitud.direccion_origen,
             direccion_destino: solicitud.direccion_destino,
             tipodePago: solicitud.tipodePago}).exec(function(err, finn) {
-
+            
+            
+            if (err) {
+                    return res.json({err: err});
+                }
 
 //            var socketChofer = solicitud.choferesDisponibles[num_chofer].socketId;
 
             var data = solicitud;
 
-            console.log(err);
+           
 
-            sails.sockets.blast('solicitud', data);
+//            sails.sockets.blast('solicitud', data);
 
 //            sails.sockets.broadcast('Choferes', 'solicitud', data);
 

@@ -13,7 +13,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 choferesDisponibles: {},
                 tipodePago: 'efectivo',
                 cliente: {},
-                status: 'sinenviar',
+                status: 'iniciada',
             };
 
 
@@ -605,7 +605,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         $scope.modal_buscando_chofer.show();
 
 
-//                        alert('recibio solicitud');
+
                     })
 
                 }
