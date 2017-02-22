@@ -574,14 +574,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         title: 'No contamos con choferes disponibles',
                         template: 'es este momento, por favor intentalo mas tarde...'
                     });
-                    
-                     alertPopup.then(function(res) {
-                         $ionicHistory.clearCache().then(function () {
-                        $scope.modal_buscando_chofer.hide();
-                        $state.go('app.map', {});  
-                             
-                             
-                         })
+
+                    alertPopup.then(function(res) {
+                        $ionicHistory.clearCache().then(function() {
+                            $scope.modal_buscando_chofer.hide();
+                            $state.go('app.map', {});
+
+
+                        })
 
                     });
 
