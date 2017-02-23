@@ -124,7 +124,16 @@ module.exports.sockets = {
             });
            
        }
-       
+       if(session.clienteId){
+           
+           var clienteId = session.clienteId;
+           
+           Cliente.update({id: clienteId}, {socketId: '', online:false}).exec(function() {
+               
+               console.log(clienteId + ': Se Desconecto Cliente');
+           })
+           
+       }
        
        
 //       console.log(session); 

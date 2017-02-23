@@ -33,6 +33,10 @@ module.exports = {
         tipodePago: {
             type: "string"
         },
+        status:{
+          type: "string",
+          defaultsTo: 'confirmada'
+        },
         servicio: {
             model: 'Servicio',
             unique: true

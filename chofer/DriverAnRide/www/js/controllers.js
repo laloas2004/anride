@@ -12,7 +12,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             //$scope.$on('$ionicView.enter', function(e) {
             //});
 
-            
+
 
             AuthService.isAuthenticated().then(function(response) {
                 $state.go('app.main', {});
@@ -49,14 +49,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
 
-                 $ionicPlatform.ready(function () {
-                     
-                     
-             
-                     
-                     
-                     
-                 })
+            $ionicPlatform.ready(function() {
+
+
+
+
+
+
+            })
 
 
 
@@ -111,6 +111,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             }
             $sails.on('solicitud', function(data) {
+                
                 $cordovaLocalNotification.schedule({
                     id: 1,
                     title: 'An Ride',
@@ -121,7 +122,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 }).then(function(result) {
                     console.log(result);
                 });
-    
+
                 $rootScope.solicitud = data;
 
                 $rootScope.modal_solicitud.show();
@@ -129,21 +130,39 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
             $sails.on('connect', function(data) {
-                debugger;
-                if($localStorage.chofer.id){
-                    
+                
+                if ($localStorage.chofer.id) {
+
                     AuthService.suscribe().then(function(response) {
                         console.log(response);
                     });
-                    
+
                 }
 
             });
             $sails.on('disconnect', function(data) {
 
-                
+
                 alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
             });
+
+            $sails.on('solicitud.enbusqueda', function(data) {
+
+                    
+                $rootScope.solicitud = data;
+                $rootScope.modal_solicitud.show();
+
+
+
+            });
+
+            
+            $sails.on('solicitud.enbusqueda.vencio', function(data) {
+
+                $rootScope.solicitud = {};
+                $rootScope.modal_solicitud.hide();
+
+            })
 
             $scope.$storage = $localStorage;
             $scope.driver = {
@@ -414,8 +433,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     });
 
                 }, function(err) {
-                   console.log('AuthService.login()');
-                   console.log(err);
+                    console.log('AuthService.login()');
+                    console.log(err);
                 })
 
             };
@@ -428,48 +447,23 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
         })
 
-        .controller('JobModalController', function($scope, $ionicHistory, $rootScope) {
+        .controller('JobModalController', function($scope, $ionicHistory, $rootScope, $sails) {
 
-            console.log('se ejecuto JobModalController');
+            $sails.on('solicitud.enbusqueda.cont', function(data) {
+              console.log(data);
+              var tiempo_espera = parseInt(data.tiempo_espera);
+              var tiempo = parseInt(data.tiempo);
+              
+              $scope.remainingTime = (tiempo_espera-tiempo);  
 
-            $scope.remainingTime = 60;
+            })
 
-            function countDown() {
-                $scope.remainingTime = 60;
-
-                // countdown time
-                var interval = setInterval(function() {
-                    $scope.remainingTime--;
-                    // apply scope
-                    $scope.$apply();
-
-                    // if time is over
-                    if ($scope.remainingTime == 0) {
-                        // stop interval
-
-
-
-                        clearInterval(interval);
-
-                        // close modal
-                        $rootScope.modal_solicitud.hide();
-
-
-//                        alert('se acabo el timpo');
-
-
-                    }
-                }, 1000);
-
-            }
-
-            countDown();
 
         })
 
         .controller('PickupCtrl', function($scope, $ionicHistory) {
 
-
+                
 
         })
         

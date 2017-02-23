@@ -5,19 +5,23 @@
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 module.exports = {
-	attributes: {
-		cliente: {
-			model: 'Cliente',
-		},
-		chofer: {
-			model: 'Chofer'
-		},
-                detalle_viaje:{
-                    type: "json"
-                },
-		solicitud: {
-			collection: 'Solicitud',
-			via: 'servicio'
-		}
-	}
+    attributes: {
+        cliente: {
+            model: 'Cliente',
+        },
+        chofer: {
+            model: 'Chofer'
+        },
+        detalle_viaje: {
+            type: "json"
+        },
+        status: {
+            type: "string",
+            defaultsTo: 'iniciada'
+        },
+        solicitud: {
+            collection: 'Solicitud',
+            via: 'servicio'
+        }
+    }
 };

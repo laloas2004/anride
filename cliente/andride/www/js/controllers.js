@@ -53,21 +53,27 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $q,
                 $ionicPopup,
                 $ionicModal,
-                $ionicHistory) {
+                $ionicHistory,
+                $localStorage,
+                AuthService) {
             $scope.intervalReconnect = {};
 
             $sails.on('connect', function(data) {
+                
+                if($localStorage.cliente.id){
+                    
+                    AuthService.suscribe().then(function(response) {
+                        console.log(response);
+                    });
+                    
+                }
 
 
             });
+            
             $sails.on('disconnect', function(data) {
                 alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
 
-                $scope.intervalReconnect = $interval(function() {
-
-
-
-                }, 30000);
 
             });
 

@@ -167,7 +167,68 @@ module.exports = {
 
 
     },
+    _enviaSolicitudaChofer: function(tiempo_espera, finn) {
+
+        var deferred = Q.defer()
+        var num_chofer = 0;
+        var cant_chofer = finn.choferesDisponibles.choferes.length;
+
+        var loop = function(tiempo_espera, finn) {
+            var tiempo = 0;
+
+            var chofer = finn.choferesDisponibles.choferes[num_chofer];
+
+            var interval = setInterval(function(tiempo_espera, finn) {
+
+                if (tiempo == 0) {
+
+                    sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda', finn);
+                }
+                sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.cont', {tiempo:tiempo,tiempo_espera:tiempo_espera});
+
+                tiempo++;
+
+                if (tiempo == tiempo_espera) {
+
+                    sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.vencio');
+                    num_chofer++;
+
+                    clearInterval(interval);
+
+                    if (num_chofer < cant_chofer) {
+
+                        Solicitud.findOne({id: finn.id}).exec(function(err, record) {
+                            
+                            if (record.status) {
+
+                                if (record.status == 'confirmada') {
+                                    loop(tiempo_espera, finn);
+
+                                } else {
+                                    deferred.resolve({respuesta: 'aceptada'});
+                                }
+
+
+                            } else {
+                                deferred.resolve({respuesta: 'sin_status'});
+                            }
+
+                        })
+
+                    } else {
+                        deferred.resolve({respuesta: 'sin_disponibilidad'});
+                    }
+                }
+
+            }, 1000, tiempo_espera, finn);
+
+        }
+        loop(tiempo_espera, finn);
+
+        return deferred.promise;
+    },
     solicitud: function(req, res) {
+
         if (!req.isSocket) {
             return res.badRequest();
         }
@@ -176,10 +237,9 @@ module.exports = {
         console.log(req.allParams());
 
         var solicitud = req.param('solicitud');
+        var socketId = sails.sockets.getId(req);
+        var that = this;
 
-        var tiempo = 0;
-        var num_chofer = 0;
-        var cant_chofer = solicitud.choferesDisponibles.length;
         var tiempo_espera = 30;
 
 
@@ -192,23 +252,34 @@ module.exports = {
             direccion_origen: solicitud.direccion_origen,
             direccion_destino: solicitud.direccion_destino,
             tipodePago: solicitud.tipodePago}).exec(function(err, finn) {
-            
-            
+
+
             if (err) {
-                    return res.json({err: err});
+                return res.json({err: err});
+            }
+
+
+            sails.sockets.blast(socketId, 'solicitud.confirmada', finn);
+
+
+            that._enviaSolicitudaChofer(tiempo_espera, finn).then(function(res) {
+                console.log(res);
+
+
+                if (res.respuesta){
+                    
                 }
 
-//            var socketChofer = solicitud.choferesDisponibles[num_chofer].socketId;
 
-            var data = solicitud;
+            })
 
-           
+
 
 //            sails.sockets.blast('solicitud', data);
 
 //            sails.sockets.broadcast('Choferes', 'solicitud', data);
 
-            return res.json({recibido: true});
+//            return res.json({recibido: true});
         })
 
 //       
