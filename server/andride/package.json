@@ -8,6 +8,7 @@
     "bcrypt": "~0.8.0",
     "bcrypt-nodejs": "0.0.3",
     "conekta": "^2.2.0",
+    "connect-mongo": "^1.3.2",
     "ejs": "2.3.4",
     "googlemaps": "^1.12.0",
     "grunt": "1.0.1",

@@ -278,11 +278,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 choferService.getChoferes($scope.position).then(function(response) {
                     if (response.data.error) {
+                        $scope.clearChoferesMap().then(function() {
 
-                        var alertPopup = $ionicPopup.alert({
-                            title: 'Sin servicio en esta area',
-                            template: 'No contamos con servicio en esta area, disculpe las molestias.'
-                        });
+                            $ionicLoading.hide();
+                            $scope.hideBubble = true;
+                            var alertPopup = $ionicPopup.alert({
+                                title: 'Sin servicio en esta area',
+                                template: 'No contamos con servicio en esta area, disculpe las molestias.'
+                            });
+
+                        })
+                        
                         q.reject(response.data.error);
                     } else {
                         $scope.choferesDisponibles = response;

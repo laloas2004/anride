@@ -114,7 +114,18 @@ module.exports.sockets = {
    ***************************************************************************/
    afterDisconnect: function(session, socket, cb) {
        
-       console.log('----afterDisconnect------');
+       if(session.choferId){
+           var choferId = session.choferId;
+           
+     Chofer.update({id: choferId}, {socketId:'', online:false}).exec(function() {
+                
+                console.log(choferId + ': Se Desconecto Chofer');
+
+            });
+           
+       }
+       
+       
        
 //       console.log(session); 
        

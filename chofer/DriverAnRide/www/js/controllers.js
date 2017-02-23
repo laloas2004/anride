@@ -129,12 +129,19 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
             $sails.on('connect', function(data) {
-
+                debugger;
+                if($localStorage.chofer.id){
+                    
+                    AuthService.suscribe().then(function(response) {
+                        console.log(response);
+                    });
+                    
+                }
 
             });
             $sails.on('disconnect', function(data) {
 
-
+                
                 alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
             });
 

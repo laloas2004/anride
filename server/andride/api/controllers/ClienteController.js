@@ -143,7 +143,7 @@ module.exports = {
             return res.badRequest();
         }
         var socketId = sails.sockets.getId(req);
-        var choferId = req.param('clienteId');
+        var clienteId = req.param('clienteId');
 //        console.log(req.allParams());
 
         sails.log('My socket ID is: ' + socketId);
@@ -153,11 +153,11 @@ module.exports = {
                 return res.serverError(err);
             }
 
-            Cliente.update({id: choferId}, {socketId: socketId, online: true}).exec(function() {
+            Cliente.update({id: clienteId}, {socketId: socketId, online: true}).exec(function() {
                 if (err) {
                     return res.json({suscrito: false});
                 }
-
+                req.session.clienteId = clienteId;
                 return res.json({suscrito: true, socketId: socketId});
 
             });

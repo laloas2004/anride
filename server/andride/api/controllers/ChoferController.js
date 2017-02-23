@@ -65,7 +65,7 @@ module.exports = {
 //                            console.log('Se Actualizo el SocketId de ' + chofer.emial);
 //                        })
 //                    }
-                    
+
                     res.json({
                         chofer: chofer,
                         token: jwToken.issue({id: chofer.id})
@@ -92,24 +92,23 @@ module.exports = {
 
         sails.log('My socket ID is: ' + socketId);
 
-        sails.sockets.join(req,'Choferes', function(err) {
+        sails.sockets.join(req, 'Choferes', function(err) {
             if (err) {
                 return res.serverError(err);
             }
-            
+
 //          sChofer.subscribe(req, _.pluck(usersNamedLouie, 'id'));
 
-            Chofer.update({id: choferId}, {socketId: socketId, online:true}).exec(function() {
+            Chofer.update({id: choferId}, {socketId: socketId, online: true}).exec(function() {
                 if (err) {
                     return res.json({suscrito: false});
                 }
+                req.session.choferId = choferId;
 
-                return res.json({suscrito: true,socketId: socketId});
+                return res.json({suscrito: true, socketId: socketId});
 
             });
         });
-      
-
 
 
     },
@@ -119,7 +118,7 @@ module.exports = {
     newChofer: function(req, res) {
     },
     trackChofer: function(req, res) {
-        
+
         if (!req.isSocket) {
             return res.badRequest();
         }
@@ -128,18 +127,18 @@ module.exports = {
         var lat = req.param('lat');
         var lon = req.param('lon');
         var email = req.param('email');
-        
-        Chofer.update({email:email}, 
-                      {lat:lat, lon:lon, location:{type: "Point", coordinates:[parseFloat(lon),parseFloat(lat)]},socketId:socketId})
-              .exec(function(err, updated) {
-            if (err) {
-                console.log(err);
-                return res.json({updated: false});
-            }
-            console.log('--- Se actualizo posicion de: ---');
-            console.log(updated);
-            return res.json({updated: true});
-        })
+
+        Chofer.update({email: email},
+        {lat: lat, lon: lon, location: {type: "Point", coordinates: [parseFloat(lon), parseFloat(lat)]}, socketId: socketId, online: true})
+                .exec(function(err, updated) {
+                    if (err) {
+                        console.log(err);
+                        return res.json({updated: false});
+                    }
+                    console.log('--- Se actualizo posicion de: ---');
+                    console.log(updated);
+                    return res.json({updated: true});
+                })
 
     },
     getChoferes: function(req, res) {
@@ -174,17 +173,17 @@ module.exports = {
 //        });
 //
 
- console.log(req.allParams());
+        console.log(req.allParams());
 
-var data = {
-    chofer:{
-        nombre:'lalo acevedo',
-        apellido:'apelido',
-        distancia:'1km'
-        
-    }
-};
-sails.sockets.blast('aprovo_solicitud', data);
+        var data = {
+            chofer: {
+                nombre: 'lalo acevedo',
+                apellido: 'apelido',
+                distancia: '1km'
+
+            }
+        };
+        sails.sockets.blast('aprovo_solicitud', data);
 
         return res.json({aprovada: true});
     },
@@ -210,5 +209,5 @@ sails.sockets.blast('aprovo_solicitud', data);
 
 
     }
-    
+
 };  

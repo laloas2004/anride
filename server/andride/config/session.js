@@ -74,8 +74,8 @@ module.exports.session = {
   *                                                                          *
   ***************************************************************************/
 
-  // adapter: 'mongo',
-  // url: 'mongodb://user:password@localhost:27017/dbname', // user, password and port optional
+   adapter: 'mongo',
+   url: 'mongodb://@localhost:27017/andride', // user, password and port optional
 
   /***************************************************************************
   *                                                                          *
@@ -89,12 +89,12 @@ module.exports.session = {
   *                                                                          *
   ***************************************************************************/
 
-  // collection: 'sessions',
-  // stringify: true,
-  // mongoOptions: {
-  //   server: {
-  //     ssl: true
-  //   }
-  // }
+   collection: 'sessions',
+   stringify: true,
+   mongoOptions: {
+     server: {
+       ssl: false
+     }
+   }
 
 };

@@ -9,7 +9,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
     'ngStorage'])
         .run(function($ionicPlatform, $rootScope, $window) {
 //Validar que este conectado a internet.
-            $rootScope.serverIp = "http://104.131.116.22:1337";
+            $rootScope.serverIp = "http://192.168.15.99:1337";
             
             $rootScope.google_key  = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
             
@@ -151,8 +151,8 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
         })
         .config(['$sailsProvider', function($sailsProvider) {
                 
-                $sailsProvider.url = "http://104.131.116.22:1337";
-                                
+                $sailsProvider.url = "http://192.168.15.99:1337";
+                $sailsProvider.debug = true;                
                 //digital ocean.
 //                $sailsProvider.url = 'http://104.131.116.22:1337';
 

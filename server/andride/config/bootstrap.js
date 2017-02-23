@@ -11,7 +11,7 @@
 module.exports.bootstrap = function (cb) {
 	// Ensure we have 2dsphere index on Property so GeoSpatial queries can work!
 	sails.models.chofer.native(function (err, collection) {
-		console.log('ejecuto el index de chofer');
+//		console.log('ejecuto el index de chofer');
 		collection.ensureIndex({
 			location: '2dsphere'
 		}, function () {

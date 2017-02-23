@@ -101,6 +101,7 @@ module.exports = {
         }
 
         var deferred = Q.defer()
+        
         Chofer.native(function(err, collection) {
 
             if (err)
@@ -115,8 +116,12 @@ module.exports = {
                         },
                         $maxDistance: maxdist // 10 miles in meters
                     }
-                }
-            }, {}).toArray(function(err, results) {
+                },
+                online:true 
+                
+            }, {
+//               online:true 
+            }).toArray(function(err, results) {
 
                 if (err) {
 
