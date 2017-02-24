@@ -195,17 +195,12 @@ module.exports = {
 
                         sails.sockets.broadcast(chofer[0].id, 'servicio.iniciada', {servicio: servicio});
 
-                        return res.json({servicio: servicio});
+                        return res.json({servicio: servicio,cliente:cliente});
                     })
-
-
 
                 })
 
             })
-
-
-
 
         })
 

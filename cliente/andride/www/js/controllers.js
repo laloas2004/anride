@@ -60,7 +60,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.intervalReconnect = {};
 
             $sails.on('connect', function(data) {
-
+debugger;
                 if ($localStorage.cliente.id) {
 
                     AuthService.suscribe().then(function(response) {

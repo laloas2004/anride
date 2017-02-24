@@ -138,7 +138,7 @@ module.exports = {
         });
     },
     suscribe: function(req, res) {
-
+                 
         if (!req.isSocket) {
             return res.badRequest();
         }
@@ -146,14 +146,15 @@ module.exports = {
         var clienteId = req.param('clienteId');
 //        console.log(req.allParams());
 
-        sails.log('My socket ID is: ' + socketId);
+        sails.log('My socket ID is Cliente : ' + socketId);
 
         sails.sockets.join(req, 'Clientes', function(err) {
+            
             if (err) {
                 return res.serverError(err);
             }
 
-            Cliente.update({id: clienteId}, {socketId: socketId, online: true}).exec(function() {
+            Cliente.update({id: clienteId}, {socketId: socketId, online: true}).exec(function(){
                 if (err) {
                     return res.json({suscrito: false});
                 }

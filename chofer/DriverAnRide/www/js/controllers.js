@@ -136,8 +136,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 cordova.plugins.backgroundMode.setEnabled(true);
 
-
-
                 cordova.plugins.backgroundMode.onactivate = function() {
                     console.log('BG activated');
                     $sails.on('solicitud', function(data) {
@@ -274,8 +272,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $sails.post("/choferes/servicio", data)
 
                         .success(function(data, status, headers, jwr) {
-
-                            debugger;
+debugger;
+                            $rootScope.cliente = data.cliente;
                             $localStorage.servicio = data.servicio;
                             $localStorage.socketId = data.socketId;
 
@@ -401,7 +399,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 AuthService.login($scope.email, $scope.password).then(function(response) {
 
-
                     $ionicSideMenuDelegate.canDragContent(true);
 
                     AuthService.suscribe().then(function(response) {
@@ -443,13 +440,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
         })
 
         .controller('PickupCtrl', function($scope, $ionicHistory,$localStorage,$rootScope,$sails) {
+            debugger;
             $scope.pickup = {
-                
-                
+             direccion_origen:$rootScope.solicitud.direccion_origen,
+             direccion_destino:$rootScope.solicitud.direccion_destino,
+             cliente:$rootScope.cliente,
+             solicitud:$rootScope.solicitud
+              
                 
             };
             $scope.onPlace = function() {
-                debugger;
+                
                 var data = {
                     servicio: $localStorage.servicio
                 };
