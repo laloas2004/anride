@@ -55,25 +55,26 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $ionicModal,
                 $ionicHistory,
                 $localStorage,
-                AuthService) {
+                AuthService,
+                $cordovaLocalNotification) {
             $scope.intervalReconnect = {};
 
             $sails.on('connect', function(data) {
-                
-                if($localStorage.cliente.id){
-                    
+
+                if ($localStorage.cliente.id) {
+
                     AuthService.suscribe().then(function(response) {
                         console.log(response);
                     });
-                    
+
                 }
 
 
             });
-            
-            $sails.on('disconnect', function(data) {
-                alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
 
+            $sails.on('disconnect', function(data) {
+
+                alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
 
             });
 
@@ -294,7 +295,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 //                            });
 
                         })
-                        
+
                         q.reject(response.data.error);
                     } else {
                         $scope.choferesDisponibles = response;
@@ -349,10 +350,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 return q.promise;
             }
             $scope.renderChoferesMap = function() {
-
                 var q = $q.defer();
-
-
 
                 var image = {
                     url: 'img/car-icon.png',
@@ -564,7 +562,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             };
             $scope.crearsolicitud = function() {
-                
+
 
                 $sails.on('solicitud.confirmada', function(data) {
                     $scope.modal_buscando_chofer.show();
@@ -583,14 +581,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $sails.on('servicio.iniciada', function(data) {
                     debugger;
                     var chofer = data.chofer;
-                    
-                    
+
+
                     $scope.modal_buscando_chofer.hide();
 
                     $scope.model_solicitud_aprovada.show();
-                    
-                    
-                    
+
+
+
 //                    var alertPopup = $ionicPopup.alert({
 //                        title: 'No contamos con choferes disponibles',
 //                        template: 'es este momento, por favor intentalo mas tarde...'
@@ -607,6 +605,21 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 //                    });
 
                 });
+                $sails.on('servicio.onplace', function(data) {
+
+                    $cordovaLocalNotification.schedule({
+                        id: 1,
+                        title: 'Tu Auto ha Llegado',
+                        text: 'El An Ride ha Llegado al punto',
+                        data: {
+                            customProperty: 'custom value'
+                        }
+                    }).then(function(result) {
+                        console.log(result);
+                    });
+
+
+                })
 
                 // valido informacion para crear la solicitud.
                 var solicitud = $rootScope.solicitud;
@@ -623,8 +636,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 } else {
 
                     solicitudService.sendSolicitud(solicitud).then(function(response) {
+                        debugger;
+                        if (response.respuesta != 'aceptada') {
 
-                        if (response != 'aceptada') {
                             $scope.modal_buscando_chofer.hide();
                             var alertPopup = $ionicPopup.alert({
                                 title: 'No contamos con choferes disponibles',
@@ -636,7 +650,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     })
 
                 }
-
 
             }
 

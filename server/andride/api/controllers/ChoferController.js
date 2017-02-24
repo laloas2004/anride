@@ -190,12 +190,12 @@ module.exports = {
                         if (err) {
                             return res.json({err: err});
                         }
-                        debugger;
+                        
                         sails.sockets.broadcast(cliente.socketId, 'servicio.iniciada', {servicio: servicio, chofer: chofer[0]});
 
                         sails.sockets.broadcast(chofer[0].id, 'servicio.iniciada', {servicio: servicio});
 
-                        return res.json({servicio_creado: true});
+                        return res.json({servicio: servicio});
                     })
 
 
@@ -209,6 +209,33 @@ module.exports = {
 
         })
 
-    }
+    },
+    onPlace: function(req, res) {
+
+        var servicio = req.param('servicio');
+        
+        Chofer.findOne({id: servicio.chofer}).exec(function(err, chofer) {
+            if (err) {
+                return res.json({err: err});
+            }
+            Cliente.findOne({id: servicio.cliente}).exec(function(err, cliente) {
+                if (err) {
+                    return res.json({err: err});
+                }
+                sails.sockets.broadcast(cliente.socketId, 'servicio.onplace', {servicio: servicio, chofer: chofer});
+                return res.json({enviado: true});
+            })
+
+
+        })
+
+
+    },
+   empiezaViaje:function(){
+       
+   },
+   terminaViaje:function(){
+       
+   }
 
 };  

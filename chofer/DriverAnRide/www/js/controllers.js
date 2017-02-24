@@ -1,9 +1,6 @@
 angular.module('app.controllers', ['ngSails', 'ngCordova'])
         .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout, AuthService, $state) {
 
-
-
-
             $scope.platform = ionic.Platform.platform();
             // With the new view caching in Ionic, Controllers are only called
             // when they are recreated or on app start, instead of every page change.
@@ -49,14 +46,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
 
-            $ionicPlatform.ready(function() {
-
-
-                console.log('ready');
-
-
-
-            })
+//            $ionicPlatform.ready(function() {
+//
+//
+//                console.log('ready');
+//
+//
+//
+//            })
 
 
 
@@ -69,52 +66,27 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
 
-            $scope.selectJob = function() {
-
-                var data = {solicitud: $rootScope.solicitud,
-                    chofer: $localStorage.chofer
-                };
-                
-                $sails.post("/choferes/servicio", data)
-                
-                        .success(function(data, status, headers, jwr) {
-                            debugger;
-                            $localStorage.socketId = data.socketId;
-
-                            $rootScope.modal_solicitud.hide();
-
-                            $state.go('app.pickup', {});
-
-                        })
-                        .error(function(data, status, headers, jwr) {
-
-
-                        });
-
-            }
-            
-            
-            $sails.on('solicitud', function(data) {
-                
-                $cordovaLocalNotification.schedule({
-                    id: 1,
-                    title: 'An Ride',
-                    text: 'Nuevo Servicio',
-                    data: {
-                        customProperty: 'custom value'
-                    }
-                }).then(function(result) {
-                    console.log(result);
-                });
-
-                $rootScope.solicitud = data;
-
-                $rootScope.modal_solicitud.show();
-
-            });
+//            $sails.on('solicitud', function(data) {
+//                
+//                $cordovaLocalNotification.schedule({
+//                    id: 1,
+//                    title: 'An Ride',
+//                    text: 'Nuevo Servicio',
+//                    data: {
+//                        customProperty: 'custom value'
+//                    }
+//                }).then(function(result) {
+//                    console.log(result);
+//                });
+//
+//                $rootScope.solicitud = data;
+//
+//                $rootScope.modal_solicitud.show();
+//
+//            });
 
             $sails.on('connect', function(data) {
-                
+
                 if ($localStorage.chofer.id) {
 
                     AuthService.suscribe().then(function(response) {
@@ -131,16 +103,24 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
             $sails.on('solicitud.enbusqueda', function(data) {
-
-                    
+                
+                $cordovaLocalNotification.schedule({
+                    id: 1,
+                    title: 'Nuevo Servicio ',
+                    text: 'Tenemos un nuevo servicio para ti',
+                    data: {
+                        customProperty: 'custom value'
+                    }
+                }).then(function(result) {
+                    console.log(result);
+                });
+                
                 $rootScope.solicitud = data;
                 $rootScope.modal_solicitud.show();
 
-
-
             });
 
-            
+
             $sails.on('solicitud.enbusqueda.vencio', function(data) {
 
                 $rootScope.solicitud = {};
@@ -149,16 +129,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             })
 
             $scope.$storage = $localStorage;
-            $scope.driver = {
-                id: 1,
-                name: "Edward Thomas",
-                plate: "29A567.89",
-                brand: "Kia Morning",
-                ref_code: "486969",
-                rating: 4,
-                balance: "580",
-                balance_pending: 0
-            };
+
             $ionicNavBarDelegate.showBackButton(false);
 
             document.addEventListener("deviceready", function() {
@@ -295,6 +266,32 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             }
 
             $scope.updatePosition();
+
+            $scope.selectJob = function() {
+
+                var data = {solicitud: $rootScope.solicitud, chofer: $localStorage.chofer};
+
+                $sails.post("/choferes/servicio", data)
+
+                        .success(function(data, status, headers, jwr) {
+
+                            debugger;
+                            $localStorage.servicio = data.servicio;
+                            $localStorage.socketId = data.socketId;
+
+                            $rootScope.modal_solicitud.hide();
+
+                            $state.go('app.pickup', {});
+
+                        })
+                        .error(function(data, status, headers, jwr) {
+
+
+                        });
+
+            }
+
+
 
         })
         .controller('SideMenuCtrl', function($scope, $ionicHistory) {
@@ -434,20 +431,48 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
         .controller('JobModalController', function($scope, $ionicHistory, $rootScope, $sails) {
 
             $sails.on('solicitud.enbusqueda.cont', function(data) {
-              console.log(data);
-              var tiempo_espera = parseInt(data.tiempo_espera);
-              var tiempo = parseInt(data.tiempo);
-              
-              $scope.remainingTime = (tiempo_espera-tiempo);  
+                console.log(data);
+                var tiempo_espera = parseInt(data.tiempo_espera);
+                var tiempo = parseInt(data.tiempo);
+
+                $scope.remainingTime = (tiempo_espera - tiempo);
 
             })
 
 
         })
 
-        .controller('PickupCtrl', function($scope, $ionicHistory) {
-
+        .controller('PickupCtrl', function($scope, $ionicHistory,$localStorage,$rootScope,$sails) {
+            $scope.pickup = {
                 
+                
+                
+            };
+            $scope.onPlace = function() {
+                debugger;
+                var data = {
+                    servicio: $localStorage.servicio
+                };
+
+                $sails.post("/choferes/place", data)
+
+                        .success(function(data, status, headers, jwr) {
+
+                            console.log(data);
+
+                        })
+                        .error(function(data, status, headers, jwr) {
+
+
+                        });
+                  }
+                  
+                  $scope.empiezaViaje = function(){
+                      
+                      
+                      
+                  }
+
 
         })
         
