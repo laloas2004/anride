@@ -184,12 +184,11 @@ module.exports = {
 
                     sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda', finn);
                 }
-                sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.cont', {tiempo:tiempo,tiempo_espera:tiempo_espera});
+                sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.cont', {tiempo: tiempo, tiempo_espera: tiempo_espera});
 
                 tiempo++;
 
                 if (tiempo == tiempo_espera) {
-
                     sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.vencio');
                     num_chofer++;
 
@@ -198,7 +197,7 @@ module.exports = {
                     if (num_chofer < cant_chofer) {
 
                         Solicitud.findOne({id: finn.id}).exec(function(err, record) {
-                            
+
                             if (record.status) {
 
                                 if (record.status == 'confirmada') {
@@ -215,8 +214,24 @@ module.exports = {
 
                         })
 
-                    } else {
-                        deferred.resolve({respuesta: 'sin_disponibilidad'});
+                    } else if (num_chofer == cant_chofer) {
+
+                        Solicitud.findOne({id: finn.id}).exec(function(err, record) {
+
+                            if (record.status) {
+
+                                if (record.status == 'confirmada') {
+
+                                    deferred.resolve({respuesta: 'sin_disponibilidad'});
+
+                                } else {
+                                    deferred.resolve({respuesta: 'aceptada'});
+                                }
+                            } else {
+                                deferred.resolve({respuesta: 'sin_status'});
+                            }
+                        })
+
                     }
                 }
 
@@ -258,36 +273,17 @@ module.exports = {
                 return res.json({err: err});
             }
 
+            sails.sockets.broadcast(socketId, 'solicitud.confirmada', finn);
 
-            sails.sockets.blast(socketId, 'solicitud.confirmada', finn);
-
-
-            that._enviaSolicitudaChofer(tiempo_espera, finn).then(function(res) {
-                console.log(res);
-
-
-                if (res.respuesta){
-                    
-                }
-
-
+            that._enviaSolicitudaChofer(tiempo_espera, finn).then(function(respuesta) {
+                
+                    return res.json({status:respuesta});
+                     
+   
             })
 
-
-
-//            sails.sockets.blast('solicitud', data);
-
-//            sails.sockets.broadcast('Choferes', 'solicitud', data);
-
-//            return res.json({recibido: true});
         })
-
-//       
-//        setTimeout(function() {
-//          
-//        }, 30000);
-//        
-
+       
     }
 
 };

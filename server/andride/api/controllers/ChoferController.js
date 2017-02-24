@@ -99,7 +99,7 @@ module.exports = {
 
 //          sChofer.subscribe(req, _.pluck(usersNamedLouie, 'id'));
 
-            Chofer.update({id: choferId}, {socketId: socketId, online: true}).exec(function() {
+            Chofer.update({id: choferId}, {socketId: socketId, online: true}).exec(function(err, chofer) {
                 if (err) {
                     return res.json({suscrito: false});
                 }
@@ -159,54 +159,55 @@ module.exports = {
             return res.json({valid: true});
         });
     },
-    aprovarSolicitud: function(req, res) {
-//
-//        var solicitudId = req.param('sId');
-//
-//        var chofer = req.param('chId');
-//
-//
-//        Servicio.create().exec(function() {
-//
-//
-//
-//        });
-//
+    servicio: function(req, res) {
 
-        console.log(req.allParams());
+        var solicitud = req.param('solicitud');
+        var chofer = req.param('chofer');
 
-        var data = {
-            chofer: {
-                nombre: 'lalo acevedo',
-                apellido: 'apelido',
-                distancia: '1km'
-
+        Solicitud.update({id: solicitud.id}, {
+            status: 'aceptada'
+        }).exec(function(err, solicitud) {
+            if (err) {
+                return res.json({err: err});
             }
-        };
-        sails.sockets.blast('aprovo_solicitud', data);
 
-        return res.json({aprovada: true});
-    },
-    denegoSolicitud: function(req, res) {
-//
-//        var solicitudId = req.param('sId');
-//
-//        var chofer = req.param('chId');
-//
-//
-//        Servicio.create().exec(function() {
-//
-//
-//
-//        });
-//
-//        return res.json({updated: true, updat: updated});
-        console.log(req.allParams());
+            Cliente.findOne({id: solicitud[0].cliente}).exec(function(err, cliente) {
 
-        var data = {
-        };
-        sails.sockets.blast('denego_solicitud', data);
+                sails.sockets.broadcast(cliente.socketId, 'solicitud.aceptada', solicitud[0]);
 
+                Servicio.create({
+                    cliente: solicitud[0].cliente,
+                    chofer: chofer.id,
+                    solicitud: solicitud[0].id
+                }).exec(function(err, servicio) {
+
+                    if (err) {
+                        return res.json({err: err});
+                    }
+
+
+                    Chofer.update({id: chofer.id}, {status: 'enservicio'}).exec(function(err, chofer) {
+                        if (err) {
+                            return res.json({err: err});
+                        }
+                        debugger;
+                        sails.sockets.broadcast(cliente.socketId, 'servicio.iniciada', {servicio: servicio, chofer: chofer[0]});
+
+                        sails.sockets.broadcast(chofer[0].id, 'servicio.iniciada', {servicio: servicio});
+
+                        return res.json({servicio_creado: true});
+                    })
+
+
+
+                })
+
+            })
+
+
+
+
+        })
 
     }
 

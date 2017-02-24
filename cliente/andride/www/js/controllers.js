@@ -288,10 +288,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                             $ionicLoading.hide();
                             $scope.hideBubble = true;
-                            var alertPopup = $ionicPopup.alert({
-                                title: 'Sin servicio en esta area',
-                                template: 'No contamos con servicio en esta area, disculpe las molestias.'
-                            });
+//                            var alertPopup = $ionicPopup.alert({
+//                                title: 'Sin servicio en esta area',
+//                                template: 'No contamos con servicio en esta area, disculpe las molestias.'
+//                            });
 
                         })
                         
@@ -564,38 +564,47 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             };
             $scope.crearsolicitud = function() {
+                
 
-                $sails.on('aprovo_solicitud', function(data) {
+                $sails.on('solicitud.confirmada', function(data) {
+                    $scope.modal_buscando_chofer.show();
+//                    debugger;
+//                    try {
+//                        $scope.choferConfirma.nombre = data.chofer.nombre || '';
+//                        $scope.choferConfirma.apellido = data.chofer.apellido || '';
+//                        $scope.choferConfirma.distancia = data.chofer.distancia || '';
+//                    } catch (e) {
+//                        console.log(e);
+//                    }
+//
 
-                    try {
-                        $scope.choferConfirma.nombre = data.chofer.nombre || '';
-                        $scope.choferConfirma.apellido = data.chofer.apellido || '';
-                        $scope.choferConfirma.distancia = data.chofer.distancia || '';
-                    } catch (e) {
-                        console.log(e);
-                    }
 
+                });
+                $sails.on('servicio.iniciada', function(data) {
+                    debugger;
+                    var chofer = data.chofer;
+                    
+                    
                     $scope.modal_buscando_chofer.hide();
 
                     $scope.model_solicitud_aprovada.show();
-
-                });
-                $sails.on('denego_solicitud', function(data) {
-
-                    var alertPopup = $ionicPopup.alert({
-                        title: 'No contamos con choferes disponibles',
-                        template: 'es este momento, por favor intentalo mas tarde...'
-                    });
-
-                    alertPopup.then(function(res) {
-                        $ionicHistory.clearCache().then(function() {
-                            $scope.modal_buscando_chofer.hide();
-                            $state.go('app.map', {});
-
-
-                        })
-
-                    });
+                    
+                    
+                    
+//                    var alertPopup = $ionicPopup.alert({
+//                        title: 'No contamos con choferes disponibles',
+//                        template: 'es este momento, por favor intentalo mas tarde...'
+//                    });
+//
+//                    alertPopup.then(function(res) {
+//                        $ionicHistory.clearCache().then(function() {
+//                            $scope.modal_buscando_chofer.hide();
+//                            $state.go('app.map', {});
+//
+//
+//                        })
+//
+//                    });
 
                 });
 
@@ -614,9 +623,15 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 } else {
 
                     solicitudService.sendSolicitud(solicitud).then(function(response) {
-                        $scope.modal_buscando_chofer.show();
 
+                        if (response != 'aceptada') {
+                            $scope.modal_buscando_chofer.hide();
+                            var alertPopup = $ionicPopup.alert({
+                                title: 'No contamos con choferes disponibles',
+                                template: 'es este momento, por favor intentalo mas tarde...'
+                            });
 
+                        }
 
                     })
 

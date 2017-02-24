@@ -36,10 +36,7 @@ module.exports = {
         status:{
           type: "string",
           defaultsTo: 'confirmada'
-        },
-        servicio: {
-            model: 'Servicio',
-            unique: true
         }
+        
     }
 };

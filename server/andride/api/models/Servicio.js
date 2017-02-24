@@ -20,8 +20,8 @@ module.exports = {
             defaultsTo: 'iniciada'
         },
         solicitud: {
-            collection: 'Solicitud',
-            via: 'servicio'
+            model: 'Solicitud'
+            
         }
     }
 };

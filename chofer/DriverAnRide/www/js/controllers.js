@@ -52,7 +52,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $ionicPlatform.ready(function() {
 
 
-
+                console.log('ready');
 
 
 
@@ -68,35 +68,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             });
 
-            $scope.denegoSolicitud = function() {
-
-
-                var data = {
-                };
-                $sails.post("/choferes/denego", data)
-                        .success(function(data, status, headers, jwr) {
-
-                            $localStorage.socketId = data.socketId;
-
-                            $rootScope.modal_solicitud.hide();
-
-                        })
-                        .error(function(data, status, headers, jwr) {
-
-
-                        });
-                $rootScope.modal_solicitud.hide();
-            };
 
             $scope.selectJob = function() {
-                // close modal first
-                $rootScope.modal_solicitud.hide();
 
-                var data = {
+                var data = {solicitud: $rootScope.solicitud,
+                    chofer: $localStorage.chofer
                 };
-                $sails.post("/choferes/respuesta", data)
+                
+                $sails.post("/choferes/servicio", data)
+                
                         .success(function(data, status, headers, jwr) {
-
+                            debugger;
                             $localStorage.socketId = data.socketId;
 
                             $rootScope.modal_solicitud.hide();
@@ -110,6 +92,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         });
 
             }
+            
+            
             $sails.on('solicitud', function(data) {
                 
                 $cordovaLocalNotification.schedule({
