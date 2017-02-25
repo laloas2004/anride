@@ -12,8 +12,17 @@ module.exports = {
         chofer: {
             model: 'Chofer'
         },
-        detalle_viaje: {
+        inicio_viaje: {
             type: "json"
+        },
+        inicio_fecha: {
+            type: "datetime"
+        },
+        fin_viaje: {
+            type: "json"
+        },
+        fin_fecha: {
+            type: "datetime"
         },
         status: {
             type: "string",
@@ -21,7 +30,16 @@ module.exports = {
         },
         solicitud: {
             model: 'Solicitud'
-            
+
+        },
+        tiempo: {
+            type: "float"
+        },
+        distancia: {
+            type: "float"
+        },
+        monto: {
+            type: "float"
         }
     }
 };

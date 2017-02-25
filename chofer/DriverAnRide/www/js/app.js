@@ -145,6 +145,18 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                             }
                         }
                     })
+                       .state('app.pickoff', {
+                        url: '/pickoff',
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/pickoff.html',
+                                controller: 'PickoffCtrl',
+                                params:{
+                                    
+                                }
+                            }
+                        }
+                    })
                   
 
             $urlRouterProvider.otherwise('/app/login');

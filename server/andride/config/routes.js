@@ -53,6 +53,8 @@ module.exports.routes = {
     'post /choferes/validate': 'ChoferController.validateToken',
     'post /choferes/servicio': 'ChoferController.servicio',
     'post /choferes/place': 'ChoferController.onPlace',
+    'post /choferes/servicio/inicio': 'ChoferController.empiezaViaje',
+    'post /choferes/servicio/final': 'ChoferController.terminaViaje',
 //    'get /choferes/solicitud_prueba': 'ChoferController.solicitud',
     /***************************************************************************
      *                                                                          *

@@ -8,15 +8,15 @@
     <div class="padding light-bg">
 
       <span class="badge badge-balanced">{{pickup.solicitud.tipodePago}}</span>
-
+<a href="geo:?daddr={{pickup.solicitud.origen.coords.latitude}},{{pickup.solicitud.origen.coords.longitude}}" target="_system">
       <div class="item item-icon-left rounded balanced-bg margin-top light">
         <i class="icon ion-ios-location-outline"></i>
         <div>
           <h4 class="light">Direccion Origen</h4>
-          <span><a href="geo:'{{pickup.solicitud.origen.coords.latitude}},{{pickup.solicitud.origen.coords.longitude}}'">{{pickup.direccion_origen}}</a></span>
+          <span>{{pickup.direccion_origen}}</span>
         </div>
       </div>
-
+</a>
       <div class="item item-icon-left no-border rounded margin-top">
         <i class="icon ion-ios-flag-outline"></i>
         <div>

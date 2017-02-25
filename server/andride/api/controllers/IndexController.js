@@ -40,6 +40,7 @@ module.exports = {
         });
     },
     montoEstimado: function(req, res) {
+        
         var tiempo = parseFloat(req.param('timepo'));
         var distancia = parseFloat(req.param('distancia'));
 

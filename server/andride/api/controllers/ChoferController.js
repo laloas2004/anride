@@ -5,6 +5,7 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+var Q = require('q');
 
 module.exports = {
     _config: {
@@ -190,12 +191,12 @@ module.exports = {
                         if (err) {
                             return res.json({err: err});
                         }
-                        
+
                         sails.sockets.broadcast(cliente.socketId, 'servicio.iniciada', {servicio: servicio, chofer: chofer[0]});
 
                         sails.sockets.broadcast(chofer[0].id, 'servicio.iniciada', {servicio: servicio});
 
-                        return res.json({servicio: servicio,cliente:cliente});
+                        return res.json({servicio: servicio, cliente: cliente});
                     })
 
                 })
@@ -208,7 +209,7 @@ module.exports = {
     onPlace: function(req, res) {
 
         var servicio = req.param('servicio');
-        
+
         Chofer.findOne({id: servicio.chofer}).exec(function(err, chofer) {
             if (err) {
                 return res.json({err: err});
@@ -226,11 +227,126 @@ module.exports = {
 
 
     },
-   empiezaViaje:function(){
-       
-   },
-   terminaViaje:function(){
-       
-   }
+    empiezaViaje: function(req, res) {
+
+        var servicio = req.param('servicio');
+
+        var inicio_viaje = req.param('inicio_viaje');
+
+        Servicio.update({id: servicio.id}, {
+            status: 'enproceso',
+            inicio_viaje: inicio_viaje.posicion,
+            inicio_fecha: inicio_viaje.fechaHora}).exec(function(err, result) {
+
+            if (err) {
+                return res.json({err: err});
+            }
+            Cliente.findOne({id: servicio.cliente}).exec(function(err, cliente) {
+                if (err) {
+                    return res.json({err: err});
+                }
+                sails.sockets.broadcast(cliente.socketId, 'servicio.inicio', {servicio: servicio});
+            })
+
+            return res.json({servicio: result});
+
+        })
+
+
+    },
+    terminaViaje: function(req, res) {
+
+        var servicio = req.param('servicio');
+
+        var fin_viaje = req.param('fin_viaje');
+
+        var that = this;
+
+        Servicio.update({
+            id: servicio.id}, {status: 'finalizado',
+            fin_viaje: fin_viaje.posicion,
+            fin_fecha: fin_viaje.fechaHora}).exec(function(err, result) {
+            if (err) {
+                return res.json({err: err});
+            }
+
+
+
+            that._calcularCobro(result[0]).then(function(respuesta) {
+
+                Servicio.update({
+                    id: servicio.id}, {
+                    tiempo: respuesta.tiempo,
+                    distancia: respuesta.distancia,
+                    monto: respuesta.monto
+                }).exec(function(err, result) {
+                    if (err) {
+                        return res.json({err: err});
+                    }
+
+                    Cliente.findOne({id: servicio.cliente}).exec(function(err, cliente) {
+
+                        if (err) {
+                            return res.json({err: err});
+                        }
+
+                        sails.sockets.broadcast(cliente.socketId, 'servicio.finalizado', {servicio: servicio, totales: result});
+
+                    })
+
+                    return res.json(respuesta);
+
+                })
+
+            });
+
+        })
+
+
+    },
+    _calcularCobro: function(servicio) {
+
+        var deferred = Q.defer();
+
+        var tarifa_base = 9;
+        var tarifakm = 8;
+        var tarifaxmin = 3;
+        var monto = 0;
+
+        var fecha_inicio = new Date(servicio.inicio_fecha);
+
+        var fecha_fin = new Date(servicio.fin_fecha);
+
+        var segundos = (fecha_fin - fecha_inicio) / 1000;
+
+        var minutos = Math.floor(segundos % 3600) / 60;
+
+        var location1 = {
+            lat: servicio.inicio_viaje.lat,
+            lon: servicio.inicio_viaje.lon
+        };
+        var location2 = {
+            lat: servicio.fin_viaje.lat,
+            lon: servicio.fin_viaje.lon
+        };
+
+        GmapService.getMatrix(location1, location2).then(function(val) {
+
+            var distancia = val.rows[0].elements[0].distance.value;
+
+            monto = (tarifakm * distancia) + (tarifaxmin * minutos) + tarifa_base;
+
+            deferred.resolve({tiempo: minutos, distancia: distancia, monto: monto});
+
+        }, function(err) {
+
+            return res.json(err);
+        });
+//
+
+        return deferred.promise;
+    }
+
+
 
 };  

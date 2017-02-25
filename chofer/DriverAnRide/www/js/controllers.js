@@ -176,7 +176,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                 if ($scope.$storage.position.lon != position.coords.longitude || $scope.$storage.position.lon != position.coords.latitude) {
 
                                     $scope.$storage.position.lon = position.coords.longitude;
-                                    $scope.$storage.position.lon = position.coords.latitude;
+                                    $scope.$storage.position.lat = position.coords.latitude;
 
                                     choferService.updatePosition(position).then(function(response) {
 
@@ -226,10 +226,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             if ($scope.$storage.position.lon != position.coords.longitude || $scope.$storage.position.lon != position.coords.latitude) {
 
                                 $scope.$storage.position.lon = position.coords.longitude;
-                                $scope.$storage.position.lon = position.coords.latitude;
+                                $scope.$storage.position.lat = position.coords.latitude;
 
                                 choferService.updatePosition(position).then(function(response) {
-
+                                        
                                     console.log("Se actualizo posicion" + response);
                                 })
 
@@ -249,14 +249,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $cordovaGeolocation
                         .getCurrentPosition(posOptions)
                         .then(function(position) {
-                            var lat = position.coords.latitude
-                            var long = position.coords.longitude
-
+                            $scope.$storage.position.lon = position.coords.longitude;
+                            $scope.$storage.position.lat = position.coords.latitude;
+                            
                             choferService.updatePosition(position).then(function(response) {
 
                                 console.log("Se actualizo posicion" + response);
                             })
-
 
                         }, function(err) {
                             console.log(err);
@@ -272,7 +271,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $sails.post("/choferes/servicio", data)
 
                         .success(function(data, status, headers, jwr) {
-debugger;
                             $rootScope.cliente = data.cliente;
                             $localStorage.servicio = data.servicio;
                             $localStorage.socketId = data.socketId;
@@ -439,7 +437,7 @@ debugger;
 
         })
 
-        .controller('PickupCtrl', function($scope, $ionicHistory,$localStorage,$rootScope,$sails) {
+        .controller('PickupCtrl', function($scope, $ionicHistory,$localStorage,$rootScope,$sails,$state) {
             debugger;
             $scope.pickup = {
              direccion_origen:$rootScope.solicitud.direccion_origen,
@@ -466,14 +464,83 @@ debugger;
 
 
                         });
-                  }
-                  
-                  $scope.empiezaViaje = function(){
-                      
-                      
-                      
+            }
+
+            $scope.empiezaViaje = function() {
+                
+                $state.go('app.pickoff', {});
+                
+                   
                   }
 
+
+        })
+        
+        .controller('PickoffCtrl', function($scope, $sails, $localStorage, $rootScope,$ionicPopup,$state) {
+
+
+            $scope.servicio = $localStorage.servicio;
+            $scope.solicitud = $rootScope.solicitud;
+            $scope.inicio_viaje = {fechaHora: new Date(),posicion:$localStorage.position};
+            
+            
+            var data = {servicio: $scope.servicio,inicio_viaje: $scope.inicio_viaje};
+            
+
+            $sails.post("/choferes/servicio/inicio", data)
+
+                    .success(function(data, status, headers, jwr) {
+
+                        console.log(data);
+
+                    })
+                    .error(function(data, status, headers, jwr) {
+
+
+                    });
+            
+            
+           $scope.showPayment = function(){
+               
+              $scope.fin_viaje = {fechaHora: new Date(),posicion:$localStorage.position};
+              
+              var data = {servicio: $scope.servicio,fin_viaje:$scope.fin_viaje};
+              
+                $sails.post("/choferes/servicio/final", data)
+
+                        .success(function(data, status, headers, jwr) {
+                            
+                            $scope.totales = data;
+                            
+                            $ionicPopup.show({
+                                templateUrl: 'templates/popup_cobrar.html',
+                                title: 'Total a Pagar',
+                                scope: $scope,
+                                buttons: [
+                                    {text: 'Cancelar'},
+                                    {
+                                        text: 'Confirmar',
+                                        type: 'button-balanced',
+                                        onTap: function(e) {
+                                            $scope.confirmaPago();
+                                        }
+                                    }
+                                ]
+                            });
+
+                        })
+                        .error(function(data, status, headers, jwr) {
+
+
+                        });
+
+            }
+
+            $scope.confirmaPago = function() {
+
+                alert('pago confimado');
+                $state.go('app.main', {});
+            }
 
         })
         

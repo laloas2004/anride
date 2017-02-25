@@ -620,6 +620,12 @@ debugger;
 
 
                 })
+           $sails.on('servicio.finalizado', function(data) {
+
+                 alert('servicio finalizado');
+                    $state.go('app.map', {});
+
+                })
 
                 // valido informacion para crear la solicitud.
                 var solicitud = $rootScope.solicitud;
