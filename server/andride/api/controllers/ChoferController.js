@@ -416,6 +416,23 @@ module.exports = {
 
 
 
+    },
+    cambiarStatus: function(req, res) {
+
+      if (!req.isSocket) {
+            return res.badRequest();
+        }
+
+        var choferId = req.session.choferId;
+        var action = req.param('action');
+
+        Chofer.update({id: choferId}, {status: action}).exec(function(err, chofer) {
+
+            res.ok(chofer[0]);
+
+        })
+
+
     }
 
 

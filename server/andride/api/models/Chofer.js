@@ -51,14 +51,14 @@ module.exports = {
             type: 'datetime'
         },
         autoActivo: {
-            type: 'string'
+            model: 'Auto'
         },
         servicios: {
             collection: 'Servicio',
             via: 'chofer'
         },
-        rating:{
-           type:'float' 
+        rating: {
+            type: 'float'
         }
     },
     beforeCreate: function(attrs, cb) {
@@ -87,15 +87,15 @@ module.exports = {
     },
     beforeUpdate: function(attrs, cb) {
 
-        
+
         cb();
     },
-    getChoferesCercanos: function(ClientCoordinates, maxDistance,limitChoferes) {
+    getChoferesCercanos: function(ClientCoordinates, maxDistance, limitChoferes) {
 
         var maxdist = maxDistance || 16093.4;
-        
+
         var limit = limitChoferes || 10;
-        
+
         if (!ClientCoordinates) {
 
             deferred.reject(new Error('se necesita un punto geografico'));
@@ -103,7 +103,7 @@ module.exports = {
         }
 
         var deferred = Q.defer();
-        
+
         Chofer.native(function(err, collection) {
 
             if (err)
@@ -119,11 +119,11 @@ module.exports = {
                         $maxDistance: maxdist // 10 miles in meters
                     }
                 },
-                online:true,
-                status:'activo'
-                
+                online: true,
+                status: 'activo'
+
             }, {
-               password:0 
+                password: 0
             }).limit(limit).toArray(function(err, results) {
 
                 if (err) {
@@ -137,7 +137,7 @@ module.exports = {
         return deferred.promise;
     },
     toJSON: function() {
-       
+
         var obj = this.toObject();
         delete obj.password;
 //        delete obj.confirmation;
@@ -146,7 +146,7 @@ module.exports = {
         return obj;
     },
     comparePassword: function(password, chofer, cb) {
-      
+
         bcrypt.compare(password, chofer.password, function(err, match) {
 
             if (err)

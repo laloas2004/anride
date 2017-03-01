@@ -46,6 +46,7 @@ module.exports.routes = {
     'post /clientes/suscribe/chofer': 'ClienteController.suscribeChofer',
     'post /clientes/servicio/cancel': 'ClienteController.cancelarServicio',
     'get /cliente/choferes': 'ClienteController.getChoferes',
+    'get /cliente/viajes': 'ClienteController.getViajes',
     //Chofer
     'post /chofer': 'ChoferController.create',
     'post /choferes/login': 'ChoferController.login',
@@ -58,6 +59,8 @@ module.exports.routes = {
     'post /choferes/servicio/inicio': 'ChoferController.empiezaViaje',
     'post /choferes/servicio/final': 'ChoferController.terminaViaje',
     'post /choferes/servicio/cancelo/cliente': 'ChoferController.canceloCliente',
+    'post /choferes/estatus': 'ChoferController.cambiarStatus',
+    
 //    'get /choferes/solicitud_prueba': 'ChoferController.solicitud',
     /***************************************************************************
      *                                                                          *

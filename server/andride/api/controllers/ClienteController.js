@@ -375,6 +375,10 @@ module.exports = {
         })
         
         
+    },
+    getViajes:function(req, res){
+        
+        
     }
 
 };

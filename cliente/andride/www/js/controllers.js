@@ -1035,7 +1035,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
         })
         .controller('ViajesCtrl', function($scope, $ionicHistory) {
 
-
+        $sails.get("cliente/viajes")
 
         })
 
