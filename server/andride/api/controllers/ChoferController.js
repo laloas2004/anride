@@ -146,10 +146,12 @@ module.exports = {
                     console.log('--- Se actualizo posicion de: ---');
                     console.log(updated);
 
+                    try {
 
-
-                    Chofer.publishUpdate(updated[0].id, {chofer: updated[0]});
-
+                        Chofer.publishUpdate(updated[0].id, {chofer: updated[0]});
+                    } catch (e) {
+                        console.log(e);
+                    }
 
                     return res.json({updated: true});
                 })
@@ -419,7 +421,7 @@ module.exports = {
     },
     cambiarStatus: function(req, res) {
 
-      if (!req.isSocket) {
+        if (!req.isSocket) {
             return res.badRequest();
         }
 
