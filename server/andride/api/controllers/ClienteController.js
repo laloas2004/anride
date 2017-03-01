@@ -200,7 +200,7 @@ module.exports = {
 
                                     if (record.status) {
 
-                                        if (record.status == 'confirmada') {
+                                        if (record.status == 'creada') {
                                             loop(tiempo_espera, finn);
 
                                         } else {
@@ -220,7 +220,7 @@ module.exports = {
 
                                     if (record.status) {
 
-                                        if (record.status == 'confirmada') {
+                                        if (record.status == 'creada') {
 
                                             deferred.resolve({respuesta: 'sin_disponibilidad'});
 
@@ -247,7 +247,7 @@ module.exports = {
 
                             if (record.status) {
 
-                                if (record.status == 'confirmada') {
+                                if (record.status == 'creada') {
 
                                     loop(tiempo_espera, finn);
 
@@ -265,7 +265,7 @@ module.exports = {
 
                             if (record.status) {
 
-                                if (record.status == 'confirmada') {
+                                if (record.status == 'creada') {
 
                                     deferred.resolve({respuesta: 'sin_disponibilidad'});
 
@@ -321,11 +321,13 @@ module.exports = {
 
             sails.sockets.broadcast(socketId, 'solicitud.creada', finn);
 
-            Solicitud.subscribe(req, [finn.id]);
-            Solicitud.publishCreate(finn,req);
+            Solicitud.subscribe(req, finn.id);
+            Solicitud.publishCreate( finn , req);
 
             that._enviaSolicitudaChofer(tiempo_espera, finn).then(function(respuesta) {
+                
                 return res.json(respuesta);
+                
             })
 
         })
@@ -345,6 +347,33 @@ module.exports = {
 
 
         return res.ok();
+        
+    },
+    
+    cancelarServicio:function(req, res){
+        
+        if (!req.isSocket) {
+
+            return res.badRequest();
+        } 
+        
+        var servicioId = req.param('servicioId');
+        
+        Servicio.update({id:servicioId},{status:'cancelada',cancelo:'cliente'}).exec(function(err,serv){
+
+            if (err) {
+                return res.json({err: err});
+            }
+            
+            debugger;
+            
+            Servicio.publishUpdate(serv[0].id,{servicio:serv[0]}, req);
+            
+            res.ok(serv[0]);
+            
+             
+        })
+        
         
     }
 

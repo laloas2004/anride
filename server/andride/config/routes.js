@@ -43,7 +43,8 @@ module.exports.routes = {
     'post /clientes/validate': 'ClienteController.validateToken',
     'post /clientes/suscribe': 'ClienteController.suscribe',
     'post /clientes/solicitud': 'ClienteController.solicitud',
-    '/clientes/suscribe/chofer': 'ClienteController.suscribeChofer',
+    'post /clientes/suscribe/chofer': 'ClienteController.suscribeChofer',
+    'post /clientes/servicio/cancel': 'ClienteController.cancelarServicio',
     'get /cliente/choferes': 'ClienteController.getChoferes',
     //Chofer
     'post /chofer': 'ChoferController.create',
@@ -56,6 +57,7 @@ module.exports.routes = {
     'post /choferes/place': 'ChoferController.onPlace',
     'post /choferes/servicio/inicio': 'ChoferController.empiezaViaje',
     'post /choferes/servicio/final': 'ChoferController.terminaViaje',
+    'post /choferes/servicio/cancelo/cliente': 'ChoferController.canceloCliente',
 //    'get /choferes/solicitud_prueba': 'ChoferController.solicitud',
     /***************************************************************************
      *                                                                          *

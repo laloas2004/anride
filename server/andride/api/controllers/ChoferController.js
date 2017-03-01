@@ -93,21 +93,21 @@ module.exports = {
 
         sails.log('My socket ID is: ' + socketId);
 
-        sails.sockets.join(req, 'chofer_'+choferId , function(err) {
-            
+        sails.sockets.join(req, 'chofer_' + choferId, function(err) {
+
             if (err) {
                 return res.serverError(err);
             }
 
 
-            Chofer.update({id: choferId}, {socketId: socketId, online: true}).exec(function(err, chofer){
-                
+            Chofer.update({id: choferId}, {socketId: socketId, online: true}).exec(function(err, chofer) {
+
                 if (err) {
-                    
+
                     return res.json({suscrito: false});
                 }
 
-                
+
                 req.session.choferId = choferId;
 
                 return res.json({suscrito: true, socketId: socketId});
@@ -135,21 +135,21 @@ module.exports = {
 
         Chofer.update({email: email},
         {lat: lat, lon: lon, location: {type: "Point", coordinates: [parseFloat(lon), parseFloat(lat)]}, socketId: socketId, online: true})
-        
+
                 .exec(function(err, updated) {
                     if (err) {
                         console.log(err);
                         return res.json({updated: false});
                     }
-                    
-                    
+
+
                     console.log('--- Se actualizo posicion de: ---');
                     console.log(updated);
-                    
-                    
 
-                Chofer.publishUpdate(updated[0].id, {chofer:updated[0]});
-                
+
+
+                    Chofer.publishUpdate(updated[0].id, {chofer: updated[0]});
+
 
                     return res.json({updated: true});
                 })
@@ -174,29 +174,27 @@ module.exports = {
         });
     },
     servicio: function(req, res) {
-
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
         var solicitud = req.param('solicitud');
-        
+
         var chofer = req.param('chofer');
-        
+
 
         Solicitud.update({id: solicitud.id}, {
-            
             status: 'aceptada'
-            
+
         }).exec(function(err, solicitud) {
-            
-            
+
+
             if (err) {
                 return res.json({err: err});
             }
-            
-            Solicitud.publishUpdate(solicitud[0].id, {status: 'aceptada'},req);
-            
-            
-            
-//            sails.sockets.broadcast('cliente_'+solicitud[0].cliente, 'solicitud.aceptada', solicitud[0]);
-            
+
+            Solicitud.publishUpdate(solicitud[0].id, {status: 'aceptada', solicitud: solicitud[0]}, req);
+
+
             Cliente.findOne({id: solicitud[0].cliente}).exec(function(err, cliente) {
 
                 sails.sockets.broadcast(cliente.socketId, 'solicitud.aceptada', solicitud[0]);
@@ -211,9 +209,11 @@ module.exports = {
                         return res.json({err: err});
                     }
 
-                    Servicio.subscribe(req, [servicio.id]);
-                    
+                    Servicio.subscribe(req, servicio.id);
+                    Servicio.publishCreate(servicio, req);
+
                     Chofer.update({id: chofer.id}, {status: 'enservicio'}).exec(function(err, chofer) {
+
                         if (err) {
                             return res.json({err: err});
                         }
@@ -233,7 +233,9 @@ module.exports = {
 
     },
     onPlace: function(req, res) {
-
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
         var servicio = req.param('servicio');
 
         Chofer.findOne({id: servicio.chofer}).exec(function(err, chofer) {
@@ -254,6 +256,9 @@ module.exports = {
 
     },
     empiezaViaje: function(req, res) {
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
 
         var servicio = req.param('servicio');
 
@@ -267,7 +272,9 @@ module.exports = {
             if (err) {
                 return res.json({err: err});
             }
+
             Cliente.findOne({id: servicio.cliente}).exec(function(err, cliente) {
+
                 if (err) {
                     return res.json({err: err});
                 }
@@ -281,7 +288,9 @@ module.exports = {
 
     },
     terminaViaje: function(req, res) {
-
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
         var servicio = req.param('servicio');
 
         var fin_viaje = req.param('fin_viaje');
@@ -371,6 +380,42 @@ module.exports = {
 //
 
         return deferred.promise;
+    },
+    cancelaViaje: function(req, res) {
+
+
+
+    },
+    canceloCliente: function(req, res) {
+
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+
+        var servicioId = req.param('servicioId');
+
+        var fin_viaje = req.param('fin_viaje');
+
+        Servicio.update({id: servicioId}, {fin_viaje: fin_viaje.posicion, fin_fecha: fin_viaje.fechaHora}).exec(function(err, servi) {
+
+            if (err) {
+                return res.json({err: err});
+            }
+
+            Chofer.update({id: req.session.choferId}, {status: 'activo'}).exec(function(err, chofer) {
+                if (err) {
+                    return res.json({err: err});
+                }
+                res.ok(chofer);
+            })
+
+
+        })
+
+
+
+
+
     }
 
 

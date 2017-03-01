@@ -56,7 +56,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $ionicHistory,
                 $localStorage,
                 AuthService,
-                $cordovaLocalNotification) {
+                $cordovaLocalNotification,
+                $cordovaDialogs) {
 
 
 
@@ -84,7 +85,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             $sails.on('disconnect', function(data) {
 
-                alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
+//                alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
 
             });
 
@@ -114,39 +115,39 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $scope.modal_buscando_chofer.hide();
 
                 $scope.model_solicitud_aprovada.show();
-                
-                 $scope.$storage = $localStorage;
-                  
-                    var latLngChofer = new google.maps.LatLng($localStorage.solicitud.origen.coords.latitude, $localStorage.solicitud.origen.coords.longitude);
 
-                    var mapOptions = {
-                        center: latLngChofer,
-                        zoom: 16,
-                        mapTypeId: google.maps.MapTypeId.ROADMAP,
-                        mapTypeControl: false,
-                        streetViewControl: false,
-                        draggable: false
-                    };
+                $scope.$storage = $localStorage;
 
-                    $scope.mapa_chofer = new google.maps.Map(document.getElementById("mapa_chofer"), mapOptions);
+                var latLngChofer = new google.maps.LatLng($localStorage.solicitud.origen.coords.latitude, $localStorage.solicitud.origen.coords.longitude);
 
-                    $scope.mapa_chofer.setClickableIcons(false);
-                    
-                    var imageUser = {
-                        url: 'img/user.png',
-                        size: new google.maps.Size(32, 32),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(0, 32)
-                    };
-                    new google.maps.Marker({
-                        position: latLngChofer,
-                        title: '',
-                        map: $scope.mapa_chofer,
-                        icon: imageUser
-                    });
-                    
-                    $scope.updateMarkerServicio($localStorage.chofer.id);
-                         
+                var mapOptions = {
+                    center: latLngChofer,
+                    zoom: 16,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    mapTypeControl: false,
+                    streetViewControl: false,
+                    draggable: false
+                };
+
+                $scope.mapa_chofer = new google.maps.Map(document.getElementById("mapa_chofer"), mapOptions);
+
+                $scope.mapa_chofer.setClickableIcons(false);
+
+                var imageUser = {
+                    url: 'img/user.png',
+                    size: new google.maps.Size(32, 32),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(0, 32)
+                };
+                new google.maps.Marker({
+                    position: latLngChofer,
+                    title: '',
+                    map: $scope.mapa_chofer,
+                    icon: imageUser
+                });
+
+                $scope.updateMarkerServicio($localStorage.chofer.id);
+
 
             });
 
@@ -163,7 +164,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
             $sails.on('solicitud', function(data) {
-
+                
+//                alert('solicitud event');
                 debugger;
 
 
@@ -251,13 +253,15 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
             $ionicModal.fromTemplateUrl('templates/buscando_chofer.html', {
                 scope: $scope,
-                animation: 'slide-in-up'
+                animation: 'slide-in-up',
+                hardwareBackButtonClose: false
             }).then(function(modal) {
                 $scope.modal_buscando_chofer = modal;
             });
             $ionicModal.fromTemplateUrl('templates/driver.html', {
                 scope: $scope,
-                animation: 'slide-in-up'
+                animation: 'slide-in-up',
+                hardwareBackButtonClose: false
             }).then(function(modal) {
 
                 $scope.model_solicitud_aprovada = modal;
@@ -706,7 +710,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         if (response.respuesta != 'aceptada') {
 
                             $ionicLoading.hide();
-                            
+
                             $scope.modal_buscando_chofer.hide();
 
                             var alertPopup = $ionicPopup.alert({
@@ -731,27 +735,28 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             }
 
-            $scope.updateMarkerServicio = function(choferId){
-                
-                var data = {choferId:choferId};
-                
+            $scope.updateMarkerServicio = function(choferId) {
+
+                var data = {choferId: choferId};
+
                 var markerChoferServicio = {};
-                
-                markerChoferServicio.setMap = function(){};
+
+                markerChoferServicio.setMap = function() {
+                };
                 $sails.post("/clientes/suscribe/chofer", data)
                         .success(function(data, status, headers, jwr) {
-                            
-                              var imageUser = {
-                                    url: 'img/car-icon.png',
-                                    size: new google.maps.Size(32, 32),
-                                    origin: new google.maps.Point(0, 0),
-                                    anchor: new google.maps.Point(0, 32)
-                                };
-                            
+
+                            var imageUser = {
+                                url: 'img/car-icon.png',
+                                size: new google.maps.Size(32, 32),
+                                origin: new google.maps.Point(0, 0),
+                                anchor: new google.maps.Point(0, 32)
+                            };
+
                             $sails.on('chofer', function(data) {
-                                
+
                                 markerChoferServicio.setMap(null);
-                             
+
                                 var latLngChofer = new google.maps.LatLng(data.data.chofer.lat, data.data.chofer.lon);
 
                                 markerChoferServicio = new google.maps.Marker({
@@ -770,16 +775,46 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         });
 
             }
-            
-            $scope.cancelarServicio = function(){
-                
-                
+
+            $scope.cancelarServicio = function() {
+
+                $cordovaDialogs.confirm('Esta Seguro de Cancelar el Servicio', 'Cancelar Viaje', ['SI', 'NO'])
+
+                        .then(function(buttonIndex) {
+
+                            var btnIndex = buttonIndex;
+
+                            if (btnIndex == 1) {
+                                
+                                var data = {servicioId:$localStorage.servicio.id};
+                                
+                               $sails.post("/clientes/servicio/cancel", data)
+                                .success(function(data, status, headers, jwr) {
+                                                debugger;
+                                            $localStorage.servicio = {};
+                                            $localStorage.chofer = {};
+                                            $scope.model_solicitud_aprovada.hide();
+                                            $scope.centerOnMe();
+                                            $scope.hidePanels('inicio');
+                                            
+                               })
+                               .error(function(data, status, headers, jwr) {});
+     
+                            }
+
+
+                        });
             }
 
             $scope.$on('$ionicView.beforeEnter', function(event, data) {
 
+//                    $ionicPlatform.registerBackButtonAction(function(event) {
+//                        debugger;
+//                        event.preventDefault();
+//                      ionic.Platform.exitApp();
+//                    }, 100);
+                    
 
-//                alert('beforeEnter');
             })
 
 
@@ -790,9 +825,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 if ($localStorage.servicio.id) {
 
+
+
                     $scope.model_solicitud_aprovada.show();
+                    
                     $scope.$storage = $localStorage;
-                  
+
                     var latLngChofer = new google.maps.LatLng($localStorage.solicitud.origen.coords.latitude, $localStorage.solicitud.origen.coords.longitude);
 
                     var mapOptions = {
@@ -807,7 +845,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     $scope.mapa_chofer = new google.maps.Map(document.getElementById("mapa_chofer"), mapOptions);
 
                     $scope.mapa_chofer.setClickableIcons(false);
-                    
+
                     var imageUser = {
                         url: 'img/user.png',
                         size: new google.maps.Size(32, 32),
@@ -820,7 +858,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         map: $scope.mapa_chofer,
                         icon: imageUser
                     });
-                    
+
                     $scope.updateMarkerServicio($localStorage.chofer.id);
 
                 }
@@ -893,9 +931,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             ];
 
-            $scope.myGoBack = function() {
-                $ionicHistory.goBack();
-            };
 
         })
 
@@ -1021,4 +1056,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
         })
+        .controller('CancelCtrl', function($scope, $ionicHistory) {
+            
+           var razones = [{id:1,title:""}] 
+            
+
+        })
+
 

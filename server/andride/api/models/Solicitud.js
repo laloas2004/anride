@@ -35,7 +35,8 @@ module.exports = {
         },
         status:{
           type: "string",
-          defaultsTo: 'confirmada'
+          enum: ['creada', 'enbusqueda', 'aceptada', 'finalizada', 'sincobertura'],
+          defaultsTo: 'creada'
         }
         
     }

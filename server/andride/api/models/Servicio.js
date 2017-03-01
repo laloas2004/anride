@@ -26,6 +26,7 @@ module.exports = {
         },
         status: {
             type: "string",
+            enum: ['iniciada', 'pickup', 'enproceso', 'finalizado', 'cancelada'],
             defaultsTo: 'iniciada'
         },
         solicitud: {
@@ -40,6 +41,14 @@ module.exports = {
         },
         monto: {
             type: "float"
+        },
+        cancelo: {
+            type: "string",
+            enum: ['cliente', 'chofer']
+
+        },
+        detalleCancel: {
+            type: "json",
         }
     }
 };

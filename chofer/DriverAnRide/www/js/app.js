@@ -26,7 +26,6 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
 
             $ionicPlatform.ready(function() {
                     
-
                 screen.lockOrientation('portrait');
 
                 if (window.cordova && window.cordova.plugins.Keyboard) {
@@ -151,6 +150,19 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                             'menuContent': {
                                 templateUrl: 'templates/pickoff.html',
                                 controller: 'PickoffCtrl',
+                                params:{
+                                    
+                                }
+                            }
+                        }
+                    })
+                    
+                      .state('app.cancelacion', {
+                        url: '/cancelacion',
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/cancelacion.html',
+                                controller: 'CancelCtrl',
                                 params:{
                                     
                                 }
