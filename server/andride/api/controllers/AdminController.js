@@ -53,6 +53,14 @@ module.exports = {
     },
     newCliente: function(req, res) {
 
+    },
+    suscribe:function(req, res){
+        
+//     Solicitud.find()
+     
+     
+     
+        
     }
 };
 

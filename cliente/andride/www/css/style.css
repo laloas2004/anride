@@ -9783,8 +9783,8 @@ a {
     font-size: 1.2em; }
 
 .driver-info {
-  padding-top: 80px;
-  height: 70%; }
+  /*padding-top: 80px;*/
+  height: 20%; }
   .driver-info .driver-picture {
     position: absolute;
     top: -60px;
@@ -9794,11 +9794,11 @@ a {
       width: 120px;
       height: 120px; }
   .driver-info .driver-plate {
-    margin-top: 40px; }
+    margin-top: 10px; }
   .driver-info .button {
     position: absolute;
     bottom: 0;
-    width: 90%;
+    width: 45%;
     margin-left: 5%; }
 
 .tracking-info {
@@ -9833,3 +9833,9 @@ a {
     height: 80px; }
 
 /*# sourceMappingURL=ionic.app.css.map */
+
+
+.bottom-buttons{
+position: absolute;
+bottom: -50px;  
+}

@@ -46,14 +46,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
 
-//            $ionicPlatform.ready(function() {
+            $ionicPlatform.ready(function() {
+                
+
+//            var mapDiv = document.getElementById("map_canvas");
+//              
+//            $scope.map = plugin.google.maps.Map.getMap(mapDiv);
 //
-//
-//                console.log('ready');
-//
-//
-//
-//            })
+//            $scope.map.setDebuggable(true);
+            
+
+            })
 
 
 
@@ -137,9 +140,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 cordova.plugins.backgroundMode.setEnabled(true);
 
                 cordova.plugins.backgroundMode.onactivate = function() {
+                    
                     console.log('BG activated');
+                    
                     $sails.on('solicitud', function(data) {
+                        
                         $cordovaLocalNotification.schedule({
+                            
                             id: 1,
                             title: 'An Ride',
                             text: 'Nuevo Servicio',
@@ -147,8 +154,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                 customProperty: 'custom value'
                             }
                         }).then(function(result) {
+                            
                             console.log(result);
                         });
+                        
 
 //                        $rootScope.solicitud = data;
 //
@@ -157,7 +166,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     });
                     var watchOptions = {
                         timeout: 30000,
-                        maximumAge: 30000,
+                        maximumAge: 3600000,
                         enableHighAccuracy: true // may cause errors if true
                     };
 
@@ -172,7 +181,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                 var lat = position.coords.latitude
                                 var long = position.coords.longitude
                                 $scope.$storage.position = {};
-
+debugger;
                                 if ($scope.$storage.position.lon != position.coords.longitude || $scope.$storage.position.lon != position.coords.latitude) {
 
                                     $scope.$storage.position.lon = position.coords.longitude;
@@ -181,6 +190,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                     choferService.updatePosition(position).then(function(response) {
 
                                         console.log("Se actualizo posicion con watch" + response);
+                                        consol.log(new Date());
                                     })
 
 
@@ -252,6 +262,23 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             $scope.$storage.position.lon = position.coords.longitude;
                             $scope.$storage.position.lat = position.coords.latitude;
                             
+//                            var myPosition = new plugin.google.maps.LatLng(position.coords.latitude,position.coords.longitude); 
+                            
+//                            $scope.map.addMarker({
+//                                 'position': myPosition
+//                            },function(marker){
+//                                
+//                            });
+                            
+//                            $scope.map.moveCamera({
+//                                'target': myPosition,
+//                                'zoom': 17,
+//                                'tilt': 30
+//                            },function(){
+//                                
+//                                
+//                            });
+                            
                             choferService.updatePosition(position).then(function(response) {
 
                                 console.log("Se actualizo posicion" + response);
@@ -264,35 +291,16 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             $scope.updatePosition();
 
-            $scope.selectJob = function() {
-
-                var data = {solicitud: $rootScope.solicitud, chofer: $localStorage.chofer};
-
-                $sails.post("/choferes/servicio", data)
-
-                        .success(function(data, status, headers, jwr) {
-                            $rootScope.cliente = data.cliente;
-                            $localStorage.servicio = data.servicio;
-                            $localStorage.socketId = data.socketId;
-
-                            $rootScope.modal_solicitud.hide();
-
-                            $state.go('app.pickup', {});
-
-                        })
-                        .error(function(data, status, headers, jwr) {
-
-
-                        });
-
-            }
+//            $scope.selectJob = function() {
+//
+//            }
 
 
 
         })
-        .controller('SideMenuCtrl', function($scope, $ionicHistory) {
+        .controller('SideMenuCtrl', function($scope, $ionicHistory, $rootScope) {
 
-
+        
 
             $scope.theme = 'ionic-sidemenu-dark';
             $scope.tree1 = [];
@@ -423,7 +431,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
         })
 
-        .controller('JobModalController', function($scope, $ionicHistory, $rootScope, $sails) {
+        .controller('JobModalController', function($scope, $ionicHistory, $rootScope, $sails,$localStorage,$state) {
 
             $sails.on('solicitud.enbusqueda.cont', function(data) {
                 console.log(data);
@@ -433,6 +441,33 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $scope.remainingTime = (tiempo_espera - tiempo);
 
             })
+            
+            $scope.selectJob = function() {
+                
+                var data = {solicitud: $rootScope.solicitud, chofer: $localStorage.chofer};
+debugger;
+                $sails.post("/choferes/servicio", data)
+
+                        .success(function(data, status, headers, jwr) {
+                            
+                            
+                            $rootScope.cliente = data.cliente;
+                            $localStorage.servicio = data.servicio;
+                            $localStorage.socketId = data.socketId;
+
+                            $rootScope.modal_solicitud.hide();
+
+                            $state.go('app.pickup', {});
+
+                        })
+                        
+                        .error(function(data, status, headers, jwr) {
+
+
+                        });
+
+                
+            }
 
 
         })

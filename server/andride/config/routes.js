@@ -43,6 +43,7 @@ module.exports.routes = {
     'post /clientes/validate': 'ClienteController.validateToken',
     'post /clientes/suscribe': 'ClienteController.suscribe',
     'post /clientes/solicitud': 'ClienteController.solicitud',
+    '/clientes/suscribe/chofer': 'ClienteController.suscribeChofer',
     'get /cliente/choferes': 'ClienteController.getChoferes',
     //Chofer
     'post /chofer': 'ChoferController.create',
@@ -74,4 +75,6 @@ module.exports.routes = {
     'get /admin/autos': 'AdminController.indexAutos',
     'get /admin/pagos': 'AdminController.indexPagos',
     'get /admin/configuracion': 'AdminController.indexConfiguracion',
+    'post /admin/servicio': 'AdminController.suscribe',
+
 };

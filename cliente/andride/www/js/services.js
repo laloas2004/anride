@@ -3,22 +3,22 @@ angular.module('app.services', [])
 
             return {
                 getChoferes: function(location) {
+                    
                     var q = $q.defer();
 
-                    var config = {
-                        url: $rootScope.serverIp + "/cliente/choferes",
-                        method: "GET",
-                        params: {lat: location.coords.latitude, lon: location.coords.longitude}
-                    };
-                    $http(config)
-                            .then(function(response) {
-                                q.resolve(response);
-                            }).catch(function(err) {
-                        q.reject(err);
+                    var data = {lat: location.coords.latitude, lon: location.coords.longitude};
+                    
+                    $sails.get("/cliente/choferes", data)
+                            .success(function(data, status, headers, jwr) {
 
-                    });
+                                q.resolve(data);
+                            })
+                            .error(function(data, status, headers, jwr) {
+                                q.reject(jwr);
 
+                            });
                     return q.promise;
+                    
                 }
 
             }

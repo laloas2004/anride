@@ -93,17 +93,21 @@ module.exports = {
 
         sails.log('My socket ID is: ' + socketId);
 
-        sails.sockets.join(req, 'Choferes', function(err) {
+        sails.sockets.join(req, 'chofer_'+choferId , function(err) {
+            
             if (err) {
                 return res.serverError(err);
             }
 
-//          sChofer.subscribe(req, _.pluck(usersNamedLouie, 'id'));
 
-            Chofer.update({id: choferId}, {socketId: socketId, online: true}).exec(function(err, chofer) {
+            Chofer.update({id: choferId}, {socketId: socketId, online: true}).exec(function(err, chofer){
+                
                 if (err) {
+                    
                     return res.json({suscrito: false});
                 }
+
+                
                 req.session.choferId = choferId;
 
                 return res.json({suscrito: true, socketId: socketId});
@@ -131,13 +135,22 @@ module.exports = {
 
         Chofer.update({email: email},
         {lat: lat, lon: lon, location: {type: "Point", coordinates: [parseFloat(lon), parseFloat(lat)]}, socketId: socketId, online: true})
+        
                 .exec(function(err, updated) {
                     if (err) {
                         console.log(err);
                         return res.json({updated: false});
                     }
+                    
+                    
                     console.log('--- Se actualizo posicion de: ---');
                     console.log(updated);
+                    
+                    
+
+                Chofer.publishUpdate(updated[0].id, {chofer:updated[0]});
+                
+
                     return res.json({updated: true});
                 })
 
@@ -163,15 +176,27 @@ module.exports = {
     servicio: function(req, res) {
 
         var solicitud = req.param('solicitud');
+        
         var chofer = req.param('chofer');
+        
 
         Solicitud.update({id: solicitud.id}, {
+            
             status: 'aceptada'
+            
         }).exec(function(err, solicitud) {
+            
+            
             if (err) {
                 return res.json({err: err});
             }
-
+            
+            Solicitud.publishUpdate(solicitud[0].id, {status: 'aceptada'},req);
+            
+            
+            
+//            sails.sockets.broadcast('cliente_'+solicitud[0].cliente, 'solicitud.aceptada', solicitud[0]);
+            
             Cliente.findOne({id: solicitud[0].cliente}).exec(function(err, cliente) {
 
                 sails.sockets.broadcast(cliente.socketId, 'solicitud.aceptada', solicitud[0]);
@@ -186,7 +211,8 @@ module.exports = {
                         return res.json({err: err});
                     }
 
-
+                    Servicio.subscribe(req, [servicio.id]);
+                    
                     Chofer.update({id: chofer.id}, {status: 'enservicio'}).exec(function(err, chofer) {
                         if (err) {
                             return res.json({err: err});

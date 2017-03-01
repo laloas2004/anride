@@ -90,17 +90,19 @@ module.exports = {
         
         cb();
     },
-    getChoferesCercanos: function(ClientCoordinates, maxDistance) {
+    getChoferesCercanos: function(ClientCoordinates, maxDistance,limitChoferes) {
 
         var maxdist = maxDistance || 16093.4;
-
+        
+        var limit = limitChoferes || 10;
+        
         if (!ClientCoordinates) {
 
             deferred.reject(new Error('se necesita un punto geografico'));
 
         }
 
-        var deferred = Q.defer()
+        var deferred = Q.defer();
         
         Chofer.native(function(err, collection) {
 
@@ -117,17 +119,18 @@ module.exports = {
                         $maxDistance: maxdist // 10 miles in meters
                     }
                 },
-                online:true 
+                online:true,
+                status:'activo'
                 
             }, {
-//               online:true 
-            }).toArray(function(err, results) {
+               password:0 
+            }).limit(limit).toArray(function(err, results) {
 
                 if (err) {
 
                     deferred.reject(new Error(err));
                 }
-
+//                delete results.password;
                 deferred.resolve(results);
             });
         })

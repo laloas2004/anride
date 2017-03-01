@@ -57,10 +57,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $localStorage,
                 AuthService,
                 $cordovaLocalNotification) {
+
+
+
+
             $scope.intervalReconnect = {};
 
             $sails.on('connect', function(data) {
-debugger;
+
                 if ($localStorage.cliente.id) {
 
                     AuthService.suscribe().then(function(response) {
@@ -72,11 +76,100 @@ debugger;
 
             });
 
+//            $sails.on('chofer', function(data) {
+//
+//                alert('chofer');
+//                debugger;
+//            });
+
             $sails.on('disconnect', function(data) {
 
                 alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
 
             });
+
+            $sails.on('servicio.onplace', function(data) {
+
+                $cordovaLocalNotification.schedule({
+                    id: 1,
+                    title: 'Tu Auto ha Llegado',
+                    text: 'El An Ride ha Llegado al punto',
+                    data: {
+                        customProperty: 'custom value'
+                    }
+                }).then(function(result) {
+                    console.log(result);
+                });
+
+
+            });
+
+            $sails.on('servicio.iniciada', function(data) {
+
+                $localStorage.chofer = data.chofer;
+                $localStorage.servicio = data.servicio;
+
+                $scope.$storage = $localStorage;
+
+                $scope.modal_buscando_chofer.hide();
+
+                $scope.model_solicitud_aprovada.show();
+                
+                 $scope.$storage = $localStorage;
+                  
+                    var latLngChofer = new google.maps.LatLng($localStorage.solicitud.origen.coords.latitude, $localStorage.solicitud.origen.coords.longitude);
+
+                    var mapOptions = {
+                        center: latLngChofer,
+                        zoom: 16,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP,
+                        mapTypeControl: false,
+                        streetViewControl: false,
+                        draggable: false
+                    };
+
+                    $scope.mapa_chofer = new google.maps.Map(document.getElementById("mapa_chofer"), mapOptions);
+
+                    $scope.mapa_chofer.setClickableIcons(false);
+                    
+                    var imageUser = {
+                        url: 'img/user.png',
+                        size: new google.maps.Size(32, 32),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(0, 32)
+                    };
+                    new google.maps.Marker({
+                        position: latLngChofer,
+                        title: '',
+                        map: $scope.mapa_chofer,
+                        icon: imageUser
+                    });
+                    
+                    $scope.updateMarkerServicio($localStorage.chofer.id);
+                         
+
+            });
+
+            $sails.on('servicio.finalizado', function(data) {
+
+                //alert('servicio finalizado');
+                $state.go('app.map', {});
+
+            });
+
+            $sails.on('solicitud.creada', function(data) {
+                $ionicLoading.hide();
+                $scope.modal_buscando_chofer.show();
+            });
+
+            $sails.on('solicitud', function(data) {
+
+                debugger;
+
+
+            });
+
+
 
             $ionicNavBarDelegate.showBackButton(false);
 
@@ -166,18 +259,20 @@ debugger;
                 scope: $scope,
                 animation: 'slide-in-up'
             }).then(function(modal) {
+
                 $scope.model_solicitud_aprovada = modal;
+
             });
 
             $scope.mapCreated = function(map) {
 
                 $scope.map = map;
-
-                $scope.loading = $ionicLoading.show({
-                    template: 'Obteniendo tu ubicacion...',
-                    showBackdrop: false
-                });
-
+                if (!$localStorage.servicio) {
+                    $scope.loading = $ionicLoading.show({
+                        template: 'Obteniendo tu ubicacion...',
+                        showBackdrop: false
+                    });
+                }
                 var posOptions = {timeout: 100000, enableHighAccuracy: true};
 
                 $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
@@ -222,8 +317,6 @@ debugger;
 
                     google.maps.event.addListener($scope.map, "dragend", function() {
 
-
-
                         if ($scope.status == 'inicio' || $scope.status == 'origen' || $scope.status == 'origen_places') {
 
                             console.log('se ejecuto dragend');
@@ -257,8 +350,6 @@ debugger;
 
 
 
-
-
                     });
 
                 }, function(err) {
@@ -284,7 +375,8 @@ debugger;
                 $scope.choferesDisponibles = {};
 
                 choferService.getChoferes($scope.position).then(function(response) {
-                    if (response.data.error) {
+
+                    if (response.error) {
                         $scope.clearChoferesMap().then(function() {
 
                             $ionicLoading.hide();
@@ -296,8 +388,10 @@ debugger;
 
                         })
 
-                        q.reject(response.data.error);
+                        q.reject(response.error);
                     } else {
+
+
                         $scope.choferesDisponibles = response;
                         $scope.setLblTiempo(response);
                         q.resolve(response);
@@ -325,12 +419,35 @@ debugger;
                 return q.promise;
             }
             $scope.setLblTiempo = function(response) {
-                try {
-                    var tiempo = response.data.matrix.rows[0].elements[0].duration.value || 0;
-                    var tiempo_trafico = response.data.matrix.rows[0].elements[0].duration_in_traffic.value || 0;
 
-                    var tiempo = Math.round((tiempo + tiempo_trafico) / 60)
-                    $scope.MarkerCoordenadas.tiempoLlegada = tiempo + 'Mins';
+                try {
+
+                    if (response.choferes[0]) {
+
+                        var data = {
+                            lat1: response.choferes[0].lat,
+                            lon1: response.choferes[0].lon,
+                            lat2: $scope.position.coords.latitude,
+                            lon2: $scope.position.coords.longitude
+                        };
+
+                        $sails.get("/distancia", data)
+                                .success(function(data, status, headers, jwr) {
+
+                                    var tiempo = data.rows[0].elements[0].duration.value || 0;
+                                    var tiempo_trafico = data.rows[0].elements[0].duration_in_traffic.value || 0;
+
+                                    var tiempo = Math.round((tiempo + tiempo_trafico) / 60)
+                                    $scope.MarkerCoordenadas.tiempoLlegada = tiempo + 'Mins';
+
+                                })
+                                .error(function(data, status, headers, jwr) {
+
+                                    $scope.MarkerCoordenadas.tiempoLlegada = '--';
+                                });
+
+                    }
+
                 } catch (e) {
                     console.log("Error en setLblTiempo: " + e);
                     debugger;
@@ -361,7 +478,7 @@ debugger;
 //                            $scope.map.clearMarkers();
                 $scope.clearChoferesMap().then(function() {
 
-                    angular.forEach($scope.choferesDisponibles.data.choferes, function(chofer, index) {
+                    angular.forEach($scope.choferesDisponibles.choferes, function(chofer, index) {
 
                         console.log('chofer');
                         console.log(chofer);
@@ -550,7 +667,7 @@ debugger;
                         $scope.hidePanels('destino', function() {
 
                             $scope.modal_punto_destino.hide();
-                            $scope.solicitud.choferesDisponibles = $scope.choferesDisponibles.data;
+                            $scope.solicitud.choferesDisponibles = $scope.choferesDisponibles;
                         });
 
                     });
@@ -564,70 +681,8 @@ debugger;
             $scope.crearsolicitud = function() {
 
 
-                $sails.on('solicitud.confirmada', function(data) {
-                    $scope.modal_buscando_chofer.show();
-//                    debugger;
-//                    try {
-//                        $scope.choferConfirma.nombre = data.chofer.nombre || '';
-//                        $scope.choferConfirma.apellido = data.chofer.apellido || '';
-//                        $scope.choferConfirma.distancia = data.chofer.distancia || '';
-//                    } catch (e) {
-//                        console.log(e);
-//                    }
-//
-
-
-                });
-                $sails.on('servicio.iniciada', function(data) {
-                    debugger;
-                    var chofer = data.chofer;
-
-
-                    $scope.modal_buscando_chofer.hide();
-
-                    $scope.model_solicitud_aprovada.show();
-
-
-
-//                    var alertPopup = $ionicPopup.alert({
-//                        title: 'No contamos con choferes disponibles',
-//                        template: 'es este momento, por favor intentalo mas tarde...'
-//                    });
-//
-//                    alertPopup.then(function(res) {
-//                        $ionicHistory.clearCache().then(function() {
-//                            $scope.modal_buscando_chofer.hide();
-//                            $state.go('app.map', {});
-//
-//
-//                        })
-//
-//                    });
-
-                });
-                $sails.on('servicio.onplace', function(data) {
-
-                    $cordovaLocalNotification.schedule({
-                        id: 1,
-                        title: 'Tu Auto ha Llegado',
-                        text: 'El An Ride ha Llegado al punto',
-                        data: {
-                            customProperty: 'custom value'
-                        }
-                    }).then(function(result) {
-                        console.log(result);
-                    });
-
-
-                })
-           $sails.on('servicio.finalizado', function(data) {
-
-                 alert('servicio finalizado');
-                    $state.go('app.map', {});
-
-                })
-
                 // valido informacion para crear la solicitud.
+
                 var solicitud = $rootScope.solicitud;
 
                 console.log($rootScope.solicitud);
@@ -641,16 +696,33 @@ debugger;
                     console.log('El cliente no puede ir vacio');
                 } else {
 
+                    $scope.loading = $ionicLoading.show({
+                        template: 'Enviando Solicitud...',
+                        showBackdrop: false
+                    });
+                    $localStorage.solicitud = $rootScope.solicitud;
                     solicitudService.sendSolicitud(solicitud).then(function(response) {
-                        debugger;
+
                         if (response.respuesta != 'aceptada') {
 
+                            $ionicLoading.hide();
+                            
                             $scope.modal_buscando_chofer.hide();
+
                             var alertPopup = $ionicPopup.alert({
                                 title: 'No contamos con choferes disponibles',
                                 template: 'es este momento, por favor intentalo mas tarde...'
                             });
 
+                            alertPopup.then(function(res) {
+
+                                $scope.hidePanels('inicio', function() {
+                                    $scope.hideBubble = false;
+                                    $rootScope.solicitud.destino = {};
+                                    $rootScope.solicitud.direccion_destino = 'SE REQUIERE UN DESTINO';
+                                });
+
+                            })
                         }
 
                     })
@@ -659,7 +731,50 @@ debugger;
 
             }
 
+            $scope.updateMarkerServicio = function(choferId){
+                
+                var data = {choferId:choferId};
+                
+                var markerChoferServicio = {};
+                
+                markerChoferServicio.setMap = function(){};
+                $sails.post("/clientes/suscribe/chofer", data)
+                        .success(function(data, status, headers, jwr) {
+                            
+                              var imageUser = {
+                                    url: 'img/car-icon.png',
+                                    size: new google.maps.Size(32, 32),
+                                    origin: new google.maps.Point(0, 0),
+                                    anchor: new google.maps.Point(0, 32)
+                                };
+                            
+                            $sails.on('chofer', function(data) {
+                                
+                                markerChoferServicio.setMap(null);
+                             
+                                var latLngChofer = new google.maps.LatLng(data.data.chofer.lat, data.data.chofer.lon);
 
+                                markerChoferServicio = new google.maps.Marker({
+                                    position: latLngChofer,
+                                    title: '',
+                                    map: $scope.mapa_chofer,
+                                    icon: imageUser
+                                });
+
+                            })
+
+                        })
+                        .error(function(data, status, headers, jwr) {
+
+
+                        });
+
+            }
+            
+            $scope.cancelarServicio = function(){
+                
+                
+            }
 
             $scope.$on('$ionicView.beforeEnter', function(event, data) {
 
@@ -671,7 +786,46 @@ debugger;
             $scope.$on('$ionicView.afterEnter', function(event, data) {
 
 
-//                alert('selecciones');
+//              Si el usuario tiene un servicio en proceso.
+
+                if ($localStorage.servicio.id) {
+
+                    $scope.model_solicitud_aprovada.show();
+                    $scope.$storage = $localStorage;
+                  
+                    var latLngChofer = new google.maps.LatLng($localStorage.solicitud.origen.coords.latitude, $localStorage.solicitud.origen.coords.longitude);
+
+                    var mapOptions = {
+                        center: latLngChofer,
+                        zoom: 16,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP,
+                        mapTypeControl: false,
+                        streetViewControl: false,
+                        draggable: false
+                    };
+
+                    $scope.mapa_chofer = new google.maps.Map(document.getElementById("mapa_chofer"), mapOptions);
+
+                    $scope.mapa_chofer.setClickableIcons(false);
+                    
+                    var imageUser = {
+                        url: 'img/user.png',
+                        size: new google.maps.Size(32, 32),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(0, 32)
+                    };
+                    new google.maps.Marker({
+                        position: latLngChofer,
+                        title: '',
+                        map: $scope.mapa_chofer,
+                        icon: imageUser
+                    });
+                    
+                    $scope.updateMarkerServicio($localStorage.chofer.id);
+
+                }
+
+
             })
 
         })

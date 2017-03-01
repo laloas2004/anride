@@ -19,8 +19,10 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                 $rootScope.$digest();
             });
             $window.addEventListener('online', function() {
-//                console.log('online');
-                $rootScope.$digest();
+//              
+
+
+               
             });
 
             $ionicPlatform.ready(function() {
@@ -161,7 +163,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
         .config(['$sailsProvider', function($sailsProvider) {
 
                 $sailsProvider.url = "http://192.168.15.99:1337";
-
+                $sailsProvider.debug = true; 
                 //digital ocean.
 //                $sailsProvider.url = 'http://104.131.116.22:1337';
 

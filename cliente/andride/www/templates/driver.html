@@ -3,38 +3,50 @@
   driver is a $cope variable in DriverCtrl (controllers.js)
   DriverCtrl pull data from Drivers service (services.js)
 -->
-<ion-view view-title="Tu Conductor">
-  <ion-content scroll="false">
-    <div class="driver-top dark-bg light text-center">
-      <span>Encontramos un chofer para tu servicio</span>
-    </div>
+<ion-modal-view>  
+    <ion-content scroll="false">
+        <!--<div class="driver-top dark-bg light text-center">
+            <span>Encontramos un chofer para tu servicio</span>
+        </div>-->
+        <div class="row">
+            <div class="col">
+                <div id="mapa_chofer" style="width: 100%; height: 380px;">
+                    
+                </div>
+            </div>
+        </div>
+        <div class="driver-info rlt text-center">
 
-    <div class="driver-info rlt text-center">
+          <!--  <div class="driver-picture padding-bottom">
 
-      <div class="driver-picture padding-bottom">
+                <img class="circle" src="img/thumb/adam.jpg" alt=""/>
+            </div>-->
 
-        <img class="circle" src="img/thumb/adam.jpg" alt=""/>
-      </div>
 
-      <h5 class="no-margin">Hola, mi nombre es:</h5>
-      <h3 class="no-margin balanced">Lalo Central</h3>
-      <h5 class="no-margin">estoy 3KM de distancia</h5>
+            <h3 class="no-margin balanced"></h3>
+            <h5 class="no-margin">{{$storage.chofer.nombre}} {{$storage.chofer.apellido}}</h5>
 
-      <div class="driver-plate row">
+            <div class="driver-plate row">
 
-        <div class="col">
-          <div class="text-hint">Placas</div>
-          <strong>XXXXXX</strong>
+                <div class="col">
+                    <div class="text-hint">Placas</div>
+                    <strong>XXXXXX</strong>
+                </div>
+
+                <div class="col">
+                    <div class="text-hint">Forma de Pago</div>
+                    <strong>Efectivo</strong>
+                </div>
+            </div>
+            <div class="bottom-buttons row">
+                <div class="col-50">
+                    <div class="button button-block" ng-click="cancelar()">Cancelar</div>
+                </div>
+                <div class="col-50">
+                    <div class="button button-balanced button-block" ng-click="track()">Continuar</div>
+                </div>
+            </div>
         </div>
 
-        <div class="col">
-          <div class="text-hint">Forma de Pago</div>
-          <strong>Efectivo</strong>
-        </div>
-      </div>
-
-     <!-- <div class="button button-balanced button-block" ng-click="track()">Continuar</div>-->
-    </div>
-
-  </ion-content>
-</ion-view>
+    </ion-content>
+</ion-modal-view>  

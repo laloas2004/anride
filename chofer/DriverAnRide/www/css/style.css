@@ -77,6 +77,20 @@ map {
     opacity: 0;
 }
 
+.menu {
+  transform: translateX(-275px);
+  -webkit-transition: -webkit-transform 200ms ease;
+  transition: transform 200ms ease;
+}
+
+.menu-open .menu {
+  
+    transform: translateX(0px);
+    -webkit-transition: -webkit-transform 200ms ease;
+    transition: transform 200ms ease;
+  
+}
+
 @charset "UTF-8";
 /*
 To customize the look and feel of Ionic, you can override the variables

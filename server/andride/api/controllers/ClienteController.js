@@ -10,8 +10,14 @@ var Q = require('q');
 module.exports = {
     getChoferes: function(req, res) {
 
+        if (!req.isSocket) {
+
+            return res.badRequest();
+        }
 
         var maxDistance = req.param('distance') || 1000;
+
+        var limitChoferes = 10;
 
 
         ClientCoordinates = {
@@ -19,15 +25,10 @@ module.exports = {
             lat: req.param('lat')
         };
 
+        Chofer.getChoferesCercanos(ClientCoordinates, maxDistance, limitChoferes).then(function(result) {
 
-        Chofer.getChoferesCercanos(ClientCoordinates).then(function(result) {
             var choferesRes = {};
             choferesRes.choferes = result;
-            //console.log(result[0]);
-            var location1 = {
-                lat: req.param('lat'),
-                lon: req.param('lon')
-            };
 
 
             if (result.length == 0) {
@@ -35,23 +36,10 @@ module.exports = {
                 return res.json({error: "No contamos con servicio en esta area"});
             }
 
+            Chofer.subscribe(req, _.pluck(result, '_id'));
 
-            var location2 = {
-                lat: result[0].lat,
-                lon: result[0].lon
-            }
-            console.log(location1);
-            console.log(location2);
+            return res.json(choferesRes);
 
-            GmapService.getMatrix(location1, location2).then(function(val) {
-                choferesRes.matrix = val;
-                return res.json(choferesRes);
-            }, function(err) {
-                return res.json(err);
-            });
-//			return res.json(result);
-        }, function(err) {
-            console.log('Error: En getChoferes .' + err)
         });
     },
     create: function(req, res) {
@@ -138,7 +126,7 @@ module.exports = {
         });
     },
     suscribe: function(req, res) {
-                 
+
         if (!req.isSocket) {
             return res.badRequest();
         }
@@ -148,17 +136,20 @@ module.exports = {
 
         sails.log('My socket ID is Cliente : ' + socketId);
 
-        sails.sockets.join(req, 'Clientes', function(err) {
-            
+        sails.sockets.join(req, 'cliente_' + clienteId, function(err) {
+
             if (err) {
                 return res.serverError(err);
             }
 
-            Cliente.update({id: clienteId}, {socketId: socketId, online: true}).exec(function(){
+            Cliente.update({id: clienteId}, {socketId: socketId, online: true}).exec(function(err, clientesUpdate) {
                 if (err) {
                     return res.json({suscrito: false});
                 }
+
+
                 req.session.clienteId = clienteId;
+
                 return res.json({suscrito: true, socketId: socketId});
 
             });
@@ -178,76 +169,122 @@ module.exports = {
             var tiempo = 0;
 
             var solicitud_chofer = finn.choferesDisponibles.choferes[num_chofer];
-            
-            
+
+
             Chofer.findOne({id: solicitud_chofer._id}).exec(function(err, chofer) {
-                
-                
-               
-                var interval = setInterval(function(tiempo_espera, finn) {
 
-                    if (tiempo == 0) {
-
-                        sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda', finn);
-                    }
-                    sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.cont', {tiempo: tiempo, tiempo_espera: tiempo_espera});
-
-                    tiempo++;
-
-                    if (tiempo == tiempo_espera) {
-                        sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.vencio');
-                        num_chofer++;
-
-                        clearInterval(interval);
-
-                        if (num_chofer < cant_chofer) {
-
-                            Solicitud.findOne({id: finn.id}).exec(function(err, record) {
-
-                                if (record.status) {
-
-                                    if (record.status == 'confirmada') {
-                                        loop(tiempo_espera, finn);
-
-                                    } else {
-                                        deferred.resolve({respuesta: 'aceptada'});
-                                    }
+                if (chofer.online && chofer.status == 'activo') {
 
 
-                                } else {
-                                    deferred.resolve({respuesta: 'sin_status'});
-                                }
+                    var interval = setInterval(function(tiempo_espera, finn) {
 
-                            })
+                        if (tiempo == 0) {
 
-                        } else if (num_chofer == cant_chofer) {
-
-                            Solicitud.findOne({id: finn.id}).exec(function(err, record) {
-
-                                if (record.status) {
-
-                                    if (record.status == 'confirmada') {
-
-                                        deferred.resolve({respuesta: 'sin_disponibilidad'});
-
-                                    } else {
-                                        deferred.resolve({respuesta: 'aceptada'});
-                                    }
-                                } else {
-                                    deferred.resolve({respuesta: 'sin_status'});
-                                }
-                            })
-
+                            sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda', finn);
                         }
+                        sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.cont', {tiempo: tiempo, tiempo_espera: tiempo_espera});
+
+                        tiempo++;
+
+                        if (tiempo == tiempo_espera) {
+
+                            sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.vencio');
+
+                            num_chofer++;
+
+                            clearInterval(interval);
+
+                            if (num_chofer < cant_chofer) {
+
+                                Solicitud.findOne({id: finn.id}).exec(function(err, record) {
+
+                                    if (record.status) {
+
+                                        if (record.status == 'confirmada') {
+                                            loop(tiempo_espera, finn);
+
+                                        } else {
+                                            deferred.resolve({respuesta: 'aceptada'});
+                                        }
+
+
+                                    } else {
+                                        deferred.resolve({respuesta: 'sin_status'});
+                                    }
+
+                                })
+
+                            } else if (num_chofer == cant_chofer) {
+
+                                Solicitud.findOne({id: finn.id}).exec(function(err, record) {
+
+                                    if (record.status) {
+
+                                        if (record.status == 'confirmada') {
+
+                                            deferred.resolve({respuesta: 'sin_disponibilidad'});
+
+                                        } else {
+                                            deferred.resolve({respuesta: 'aceptada'});
+                                        }
+                                    } else {
+                                        deferred.resolve({respuesta: 'sin_status'});
+                                    }
+                                })
+
+                            }
+                        }
+
+                    }, 1000, tiempo_espera, finn);
+
+                } else {
+
+                    num_chofer++;
+
+                    if (num_chofer < cant_chofer) {
+
+                        Solicitud.findOne({id: finn.id}).exec(function(err, record) {
+
+                            if (record.status) {
+
+                                if (record.status == 'confirmada') {
+
+                                    loop(tiempo_espera, finn);
+
+                                } else {
+                                    deferred.resolve({respuesta: 'aceptada'});
+                                }
+                            } else {
+                                deferred.resolve({respuesta: 'sin_status'});
+                            }
+                        })
+
+                    } else if (num_chofer == cant_chofer) {
+
+                        Solicitud.findOne({id: finn.id}).exec(function(err, record) {
+
+                            if (record.status) {
+
+                                if (record.status == 'confirmada') {
+
+                                    deferred.resolve({respuesta: 'sin_disponibilidad'});
+
+                                } else {
+                                    deferred.resolve({respuesta: 'aceptada'});
+                                }
+                            } else {
+                                deferred.resolve({respuesta: 'sin_status'});
+                            }
+                        })
+
                     }
 
-                }, 1000, tiempo_espera, finn);
-
-
+                }
             })
 
 
         }
+        
         loop(tiempo_espera, finn);
 
         return deferred.promise;
@@ -255,9 +292,9 @@ module.exports = {
     solicitud: function(req, res) {
 
         if (!req.isSocket) {
+            
             return res.badRequest();
         }
-
 
         console.log(req.allParams());
 
@@ -282,17 +319,33 @@ module.exports = {
                 return res.json({err: err});
             }
 
-            sails.sockets.broadcast(socketId, 'solicitud.confirmada', finn);
+            sails.sockets.broadcast(socketId, 'solicitud.creada', finn);
+
+            Solicitud.subscribe(req, [finn.id]);
+            Solicitud.publishCreate(finn,req);
 
             that._enviaSolicitudaChofer(tiempo_espera, finn).then(function(respuesta) {
-
                 return res.json(respuesta);
-
-
             })
 
         })
 
+    },
+    suscribeChofer: function(req, res) {
+
+        if (!req.isSocket) {
+
+            return res.badRequest();
+        }
+
+        var choferId = req.param('choferId');
+
+
+        Chofer.subscribe(req, choferId);
+
+
+        return res.ok();
+        
     }
 
 };

@@ -6,13 +6,16 @@
  
  */
 var Q = require('q');
+
 module.exports = {
+    
     getConfig: function(req, res) {
         console.log(' req.isSocket ', req.isSocket);
         console.log(' req.isAjax   ', req.isAjax);
         console.log(' req.isJson   ', req.isJson);
         return res.json(sails.config.andride_configuracion);
     },
+    
     getDireccion: function(req, res) {
         console.log(' req.isSocket ', req.isSocket);
         console.log(' req.isAjax   ', req.isAjax);
@@ -26,6 +29,7 @@ module.exports = {
             return res.json(val);
         });
     },
+    
     getMatrix: function(req, res) {
         var location1 = {
             lat: req.param('lat1'),
@@ -39,6 +43,7 @@ module.exports = {
             return res.json(val);
         });
     },
+    
     montoEstimado: function(req, res) {
         
         var tiempo = parseFloat(req.param('timepo'));
