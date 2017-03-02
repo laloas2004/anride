@@ -9,7 +9,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
     'ngStorage'])
         .run(function($ionicPlatform, $rootScope, $window) {
 //Validar que este conectado a internet.
-            $rootScope.serverIp = "http://104.131.116.22:1337";
+            $rootScope.serverIp = "http://192.168.15.99:1337";
             
             $rootScope.google_key  = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
             
@@ -144,12 +144,12 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                             }
                         }
                     })
-                       .state('app.pickoff', {
-                        url: '/pickoff',
+                       .state('app.servicio', {
+                        url: '/servicio',
                         views: {
                             'menuContent': {
                                 templateUrl: 'templates/pickoff.html',
-                                controller: 'PickoffCtrl',
+                                controller: 'ServicioCtrl',
                                 params:{
                                     
                                 }
@@ -169,13 +169,25 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                             }
                         }
                     })
+                      .state('app.solicitud', {
+                        url: '/solicitud',
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/solicitud_servicio.html',
+                                controller: 'SolicitudCtrl',
+                                params:{
+                                    
+                                }
+                            }
+                        }
+                    })
                   
 
             $urlRouterProvider.otherwise('/app/login');
         })
         .config(['$sailsProvider', function($sailsProvider) {
                 
-                $sailsProvider.url = "http://104.131.116.22:1337";
+                $sailsProvider.url = "http://192.168.15.99:1337";
                 $sailsProvider.debug = true;                
                 //digital ocean.
 //                $sailsProvider.url = 'http://104.131.116.22:1337';

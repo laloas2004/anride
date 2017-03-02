@@ -258,6 +258,7 @@ module.exports = {
 
     },
     empiezaViaje: function(req, res) {
+        
         if (!req.isSocket) {
             return res.badRequest();
         }
@@ -330,8 +331,18 @@ module.exports = {
                         sails.sockets.broadcast(cliente.socketId, 'servicio.finalizado', {servicio: servicio, totales: result});
 
                     })
-
-                    return res.json(respuesta);
+                    
+                    
+                    Chofer.update({id: req.session.choferId}, {status: 'activo'}).exec(function(err, chofer) {
+                        if (err) {
+                            return res.json({err: err});
+                        }
+                        
+                        
+                        return res.json(respuesta);
+                        
+                    })
+                    
 
                 })
 
@@ -417,7 +428,6 @@ module.exports = {
 
 
 
-
     },
     cambiarStatus: function(req, res) {
 
@@ -431,6 +441,63 @@ module.exports = {
         Chofer.update({id: choferId}, {status: action}).exec(function(err, chofer) {
 
             res.ok(chofer[0]);
+
+        })
+
+
+    },
+    
+    getServicio: function(req, res){
+        
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+        
+        var servicioId = req.param('servicioId');
+        
+        
+        Servicio.findOne({id:servicioId}).exec(function(err,servicio){
+            
+            res.ok(servicio); 
+            
+        })
+        
+    },
+    cancelarServicio:function(req, res){
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+
+        var servicioId = req.param('servicioId');
+
+
+        Servicio.update({id: servicioId}, {status: 'cancelada', cancelo: 'chofer'}).exec(function(err, serv) {
+
+            if (err) {
+
+                return res.json({err: err});
+            }
+
+            Servicio.publishUpdate(serv[0].id, {servicio: serv[0]}, req);
+
+            Cliente.findOne({id: serv[0].cliente}).exec(function(err, cliente) {
+
+                if (err) {
+                    return res.json({err: err});
+                }
+
+                sails.sockets.broadcast(cliente.socketId, 'servicio.cancelado', {servicio: serv[0]});
+
+                Chofer.update({id:req.session.choferId}, {status: 'activo'}).exec(function(err, chofer) {
+                    if (err) {
+                        return res.json({err: err});
+                    }
+                    res.ok(serv[0]);
+                })
+
+
+
+            })
 
         })
 

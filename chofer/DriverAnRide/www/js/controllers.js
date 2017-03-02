@@ -4,7 +4,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.platform = ionic.Platform.platform();
 
             AuthService.isAuthenticated().then(function(response) {
-                $state.go('app.main', {});
+
+                AuthService.suscribe().then(function(response) {
+                    $state.go('app.main', {});
+
+                }, function(e) {
+                    console.error(e);
+                });
+
 
             }, function(err) {
                 console.log('AuthService.isAuthenticated()');
@@ -36,9 +43,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $sessionStorage,
                 $cordovaLocalNotification,
                 $cordovaDialogs) {
-
+              
             if ($localStorage.chofer.status == "activo") {
-
                 $scope.estadoBtnClass = "button-assertive";
                 $scope.estadoBtn = "Desactivarse";
             } else {
@@ -49,52 +55,24 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $ionicPlatform.ready(function() {
 
 
-            var mapDiv = document.getElementById("map_canvas");
-              
-            $scope.map = plugin.google.maps.Map.getMap(mapDiv);
+                var mapDiv = document.getElementById("map_canvas");
 
-            $scope.map.setDebuggable(true);
+                $scope.map = plugin.google.maps.Map.getMap(mapDiv);
+
+                $scope.map.setDebuggable(true);
 
 
             })
 
-//            $scope.chofer.estado = "Activo";
-
-            $ionicModal.fromTemplateUrl('templates/modal_solicitud.html', {
-                scope: $scope,
-                animation: 'slide-in-up'
-            }).then(function(modal) {
-                
-                $rootScope.modal_solicitud = modal;
-
-            });
-
-
-//            $sails.on('solicitud', function(data) {
-//                
-//                $cordovaLocalNotification.schedule({
-//                    id: 1,
-//                    title: 'An Ride',
-//                    text: 'Nuevo Servicio',
-//                    data: {
-//                        customProperty: 'custom value'
-//                    }
-//                }).then(function(result) {
-//                    console.log(result);
-//                });
-//
-//                $rootScope.solicitud = data;
-//
-//                $rootScope.modal_solicitud.show();
-//
-//            });
 
             $sails.on('connect', function(data) {
 
                 if ($localStorage.chofer.id) {
-
                     AuthService.suscribe().then(function(response) {
+                        console.log('Suscribe Chofer:');
                         console.log(response);
+                    }, function(e) {
+                        console.error(e);
                     });
 
                 }
@@ -116,7 +94,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                 $sails.post("/choferes/servicio/cancelo/cliente", {servicioId: data.data.servicio.id, fin_viaje: fin_viaje})
 
                                         .success(function(data, status, headers, jwr) {
-                                            debugger;
+                                          
+                                            $localStorage.solicitud = {};
+                                            $localStorage.servicio = {};
                                             $state.go('app.main', {});
 
                                         })
@@ -142,17 +122,15 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     console.log(result);
                 });
 
-                $rootScope.solicitud = data;
-                $rootScope.modal_solicitud.show();
+                $localStorage.solicitud = data;
+
+                $state.go('app.solicitud', {});
 
             });
-            $sails.on('solicitud.enbusqueda.vencio', function(data) {
 
-                $rootScope.solicitud = {};
-                $rootScope.modal_solicitud.hide();
 
-            })
             $scope.$storage = $localStorage;
+            $scope.$storage.position={};
 
             $ionicNavBarDelegate.showBackButton(false);
 
@@ -164,63 +142,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                     console.log('BG activated');
 
-                    $sails.on('solicitud', function(data) {
-
-                        $cordovaLocalNotification.schedule({
-                            id: 1,
-                            title: 'An Ride',
-                            text: 'Nuevo Servicio',
-                            data: {
-                                customProperty: 'custom value'
-                            }
-                        }).then(function(result) {
-
-                            console.log(result);
-                        });
-
-
-//                        $rootScope.solicitud = data;
-//
-//                        $rootScope.modal_solicitud.show();
-
-                    });
-                    var watchOptions = {
-                        timeout: 30000,
-                        maximumAge: 3600000,
-                        enableHighAccuracy: true // may cause errors if true
-                    };
-
-                    var watch = $cordovaGeolocation.watchPosition(watchOptions);
-
-                    watch.then(
-                            null,
-                            function(err) {
-                                // error
-                            },
-                            function(position) {
-                                var lat = position.coords.latitude
-                                var long = position.coords.longitude
-                                $scope.$storage.position = {};
-
-                                if ($scope.$storage.position.lon != position.coords.longitude || $scope.$storage.position.lon != position.coords.latitude) {
-
-                                    $scope.$storage.position.lon = position.coords.longitude;
-                                    $scope.$storage.position.lat = position.coords.latitude;
-
-                                    choferService.updatePosition(position).then(function(response) {
-
-                                        console.log("Se actualizo posicion con watch" + response);
-                                        console.log(new Date());
-                                    })
-
-
-
-                                }
-
-
-                            });
-
-                    $rootScope.watch = watch;
                 };
 
                 cordova.plugins.backgroundMode.ondeactivate = function() {
@@ -234,9 +155,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             }, false);
 
             $scope.watchposition = function() {
-                
+
+                var actualizo = false;
+
+
                 var watchOptions = {
-                    timeout: 30000,
+                    timeout: 30000000,
                     maximumAge: 5000,
                     enableHighAccuracy: true // may cause errors if true
                 };
@@ -249,10 +173,33 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             // error
                         },
                         function(position) {
+                            console.log('Se ejecuto watchPosition:');
+                            console.log('Lat: ' + position.coords.latitude + ' Lon:' + position.coords.longitude);
                             var lat = position.coords.latitude
-                            var long = position.coords.longitude
+                            var lon = position.coords.longitude
 
-                            if ($scope.$storage.position.lon != position.coords.longitude || $scope.$storage.position.lon != position.coords.latitude) {
+                            $scope.$storage.position.lon = position.coords.longitude;
+                            $scope.$storage.position.lat = position.coords.latitude;
+
+                            var myPosition = new plugin.google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+                            $scope.map.addMarker({
+                                'position': myPosition
+                            }, function(marker) {
+
+                            });
+
+                            $scope.map.moveCamera({
+                                'target': myPosition,
+                                'zoom': 17,
+                                'tilt': 30
+                            }, function() {
+
+
+                            });
+
+
+                            if ($scope.$storage.position.lon != lon && $scope.$storage.position.lat != lat && actualizo) {
 
                                 $scope.$storage.position.lon = position.coords.longitude;
                                 $scope.$storage.position.lat = position.coords.latitude;
@@ -260,51 +207,20 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                 choferService.updatePosition(position).then(function(response) {
 
                                     console.log("Se actualizo posicion" + response);
+                                    actualizo = true;
+
                                 })
+
+                            } else {
 
                             }
 
 
                         });
             };
-            $scope.updatePosition = function() {
 
-                var posOptions = {timeout: 100000, enableHighAccuracy: true};
 
-                $cordovaGeolocation
-                        .getCurrentPosition(posOptions)
-                        .then(function(position) {
-                            $scope.$storage.position.lon = position.coords.longitude;
-                            $scope.$storage.position.lat = position.coords.latitude;
-
-                            var myPosition = new plugin.google.maps.LatLng(position.coords.latitude,position.coords.longitude); 
-
-                            $scope.map.addMarker({
-                                 'position': myPosition
-                            },function(marker){
-                                
-                            });
-
-                            $scope.map.moveCamera({
-                                'target': myPosition,
-                                'zoom': 17,
-                                'tilt': 30
-                            },function(){
-                                
-                                
-                            });
-
-                            choferService.updatePosition(position).then(function(response) {
-
-                                console.log("Se actualizo posicion" + response);
-                            })
-
-                        }, function(err) {
-                            console.log(err);
-                        });
-            }
-
-            $scope.updatePosition();
+            $scope.watchposition();
 
 
             $scope.cambiarEstadoChofer = function() {
@@ -325,30 +241,78 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 $sails.post("/choferes/estatus", data)
                         .success(function(data, status, headers, jwr) {
-                            
+
                             $localStorage.chofer.status = data.status;
-                    
-                            if(data.status == "activo"){
-                                
+
+                            if (data.status == "activo") {
+
                                 $scope.estadoBtn = "Desactivarse";
                                 $scope.estadoBtnClass = "button-assertive";
-                            }else{
+                            } else {
                                 $scope.estadoBtn = "Activarse";
                                 $scope.estadoBtnClass = "button-balanced";
                             }
-                            
-                            
+
+
                         })
                         .error(function(data, status, headers, jwr) {
-                            
-                            
+
+
                         })
 
             }
+            
+            
+            $scope.$on('$ionicView.beforeEnter', function(event, data) {
+
+                console.log('Before Enter');
+
+
+            })
+            $scope.$on('$ionicView.afterEnter', function(event, data) {
+
+                console.log('After Enter');
+//              Si el chofer tiene un servicio en proceso.
+
+                if ($localStorage.servicio.id) {
+                    //Obtengo el servicio para actualizar el status.
+                    $sails.get("/choferes/servicio", {servicioId: $localStorage.servicio.id})
+                            .success(function(servicio, status, headers, jwr) {
+                             
+                                $localStorage.servicio = servicio;
+
+                                if ($localStorage.servicio.status == 'iniciada') {
+                                    $state.go('app.pickup', {});
+
+                                } else if ($localStorage.servicio.status == 'enproceso') {
+                                    $state.go('app.servicio', {});
+                                } else if ($localStorage.servicio.status == 'cancelada') {
+                                    if ($localStorage.chofer.status != 'activo') {
+
+                                        $scope.cambiarEstadoChofer();
+                                        $localStorage.servicio = {};
+                                        $localStorage.solicitud = {};
+
+                                    } else {
+                                        $localStorage.servicio = {};
+                                        $localStorage.solicitud = {};
+                                    }
+
+                                }
+
+                        
+                    })
+                    .error(function(){});
+                    
+
+                   
+                }
+
+
+            })
 
         })
         .controller('SideMenuCtrl', function($scope, $ionicHistory, $rootScope) {
-
             $scope.theme = 'ionic-sidemenu-dark';
             $scope.tree1 = [];
             $scope.tree = [{
@@ -393,12 +357,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             ];
 
-            $scope.myGoBack = function() {
-                $ionicHistory.goBack();
-            };
 
         })
-
         .controller('CarteraCtrl', function($scope) {
 
 
@@ -423,6 +383,59 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
         })
         .controller('AyudaCtrl', function($scope, $ionicHistory) {
+
+
+
+        })
+        .controller('SolicitudCtrl', function($scope, $ionicHistory, $ionicSideMenuDelegate, $ionicPlatform, AuthService, $localStorage, $state, $sails, $rootScope) {
+
+            $scope.servicioAceptado = false;
+            $scope.solicitud = $localStorage.solicitud; 
+
+            $sails.on('solicitud.enbusqueda.cont', function(data) {
+
+                var tiempo_espera = parseInt(data.tiempo_espera);
+                var tiempo = parseInt(data.tiempo);
+
+                $scope.remainingTime = (tiempo_espera - tiempo);
+
+            })
+
+            $sails.on('solicitud.enbusqueda.vencio', function(data) {
+
+                if (!$scope.servicioAceptado) {
+                   
+                    $localStorage.solicitud = {};
+                    $state.go('app.main', {});
+                }
+            })
+
+            $scope.selectJob = function() {
+
+                $scope.servicioAceptado = true;
+
+                var data = {solicitud: $localStorage.solicitud, chofer: $localStorage.chofer};
+
+                $sails.post("/choferes/servicio", data)
+
+                        .success(function(data, status, headers, jwr) {
+
+                            $rootScope.cliente = data.cliente;
+                            $localStorage.cliente = data.cliente;
+                            $localStorage.servicio = data.servicio;
+                            $localStorage.socketId = data.socketId;
+
+                            $state.go('app.pickup', {});
+
+                        })
+
+                        .error(function(data, status, headers, jwr) {
+
+
+                        });
+
+
+            }
 
 
 
@@ -477,58 +490,15 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             }
 
         })
+        .controller('PickupCtrl', function($scope, $ionicHistory, $localStorage, $rootScope, $sails, $state, $cordovaDialogs) {
 
-        .controller('JobModalController', function($scope, $ionicHistory, $rootScope, $sails, $localStorage, $state) {
-
-            $sails.on('solicitud.enbusqueda.cont', function(data) {
-                console.log(data);
-                var tiempo_espera = parseInt(data.tiempo_espera);
-                var tiempo = parseInt(data.tiempo);
-
-                $scope.remainingTime = (tiempo_espera - tiempo);
-
-            })
-
-            $scope.selectJob = function() {
-
-                var data = {solicitud: $rootScope.solicitud, chofer: $localStorage.chofer};
-              
-                $sails.post("/choferes/servicio", data)
-
-                        .success(function(data, status, headers, jwr) {
-
-
-                            $rootScope.cliente = data.cliente;
-                            $localStorage.servicio = data.servicio;
-                            $localStorage.socketId = data.socketId;
-
-                            $rootScope.modal_solicitud.hide();
-
-                            $state.go('app.pickup', {});
-
-                        })
-
-                        .error(function(data, status, headers, jwr) {
-
-
-                        });
-
-
-            }
-
-
-        })
-
-        .controller('PickupCtrl', function($scope, $ionicHistory, $localStorage, $rootScope, $sails, $state) {
-            debugger;
             $scope.pickup = {
-                direccion_origen: $rootScope.solicitud.direccion_origen,
-                direccion_destino: $rootScope.solicitud.direccion_destino,
+                direccion_origen: $localStorage.solicitud.direccion_origen,
+                direccion_destino: $localStorage.solicitud.direccion_destino,
                 cliente: $rootScope.cliente,
-                solicitud: $rootScope.solicitud
-
-
+                solicitud: $localStorage.solicitud
             };
+
             $scope.onPlace = function() {
 
                 var data = {
@@ -550,30 +520,63 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             $scope.empiezaViaje = function() {
 
-                $state.go('app.pickoff', {});
+                $state.go('app.servicio', {});
 
 
+            }
+            
+            $scope.cancelarViaje = function(){
+                
+                 $cordovaDialogs.confirm('Esta Seguro de Cancelar el Servicio', 'Cancelar Viaje', ['SI', 'NO'])
+
+                        .then(function(buttonIndex) {
+
+                            var btnIndex = buttonIndex;
+
+                            if (btnIndex == 1) {
+
+                            
+                                $sails.post("/choferes/servicio/cancel", {servicioId: $localStorage.servicio.id})
+                                        .success(function(data, status, headers, jwr) {
+                                            
+                                           
+                                            $localStorage.servicio = {};
+                                            $localStorage.solicitud = {};
+                                            $state.go('app.main', {});
+                                            
+                                        })
+                                        .error(function(data, status, headers, jwr) {
+                                        });
+
+                            }
+
+
+                        });
+                
+                
             }
 
 
         })
-
-        .controller('PickoffCtrl', function($scope, $sails, $localStorage, $rootScope, $ionicPopup, $state) {
+        .controller('ServicioCtrl', function($scope, $sails, $localStorage, $rootScope, $ionicPopup, $state) {
 
 
             $scope.servicio = $localStorage.servicio;
-            $scope.solicitud = $rootScope.solicitud;
+            $scope.solicitud = $localStorage.solicitud;
+            $scope.cliente = $rootScope.cliente;
+            $localStorage.solicitud = $rootScope.cliente;
+
             $scope.inicio_viaje = {fechaHora: new Date(), posicion: $localStorage.position};
 
 
-            var data = {servicio: $scope.servicio, inicio_viaje: $scope.inicio_viaje};
-
-
-            $sails.post("/choferes/servicio/inicio", data)
+            $sails.post("/choferes/servicio/inicio", {servicio: $scope.servicio, inicio_viaje: $scope.inicio_viaje})
 
                     .success(function(data, status, headers, jwr) {
 
                         console.log(data);
+              
+                        $localStorage.servicio = data.servicio;
+                        $scope.inicioContador();
 
                     })
                     .error(function(data, status, headers, jwr) {
@@ -582,7 +585,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     });
 
 
-            $scope.showPayment = function() {
+            $scope.terminarViaje = function() {
+
+                clearInterval($scope.contadorServicio);
 
                 $scope.fin_viaje = {fechaHora: new Date(), posicion: $localStorage.position};
 
@@ -599,11 +604,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                 title: 'Total a Pagar',
                                 scope: $scope,
                                 buttons: [
-                                    {text: 'Cancelar'},
                                     {
                                         text: 'Confirmar',
                                         type: 'button-balanced',
                                         onTap: function(e) {
+                                        
                                             $scope.confirmaPago();
                                         }
                                     }
@@ -621,7 +626,32 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.confirmaPago = function() {
 
                 alert('pago confimado');
+                $localStorage.servicio={};
                 $state.go('app.main', {});
+            }
+            $scope.inicioContador = function() {
+
+                console.log('Inicio contador de Servicio');
+                $scope.tiempo = {};
+                $scope.tiempo.horas = 0;
+                $scope.tiempo.min = 0;
+                $scope.tiempo.segundos = 0;
+                $scope.contadorServicio = setInterval(function() {
+
+                    $scope.tiempo.segundos++;
+
+                    if ($scope.tiempo.segundos >= 60) {
+                        $scope.tiempo.min++;
+                        $scope.tiempo.segundos = 0;
+                    }
+
+                    if ($scope.tiempo.min >= 60) {
+                        $scope.tiempo.horas++;
+                        $scope.tiempo.min = 0;
+                    }
+
+                }, 1000);
+
             }
 
         })

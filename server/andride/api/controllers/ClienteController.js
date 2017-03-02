@@ -365,7 +365,7 @@ module.exports = {
                 return res.json({err: err});
             }
             
-            debugger;
+         
             
             Servicio.publishUpdate(serv[0].id,{servicio:serv[0]}, req);
             

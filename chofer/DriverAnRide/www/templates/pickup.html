@@ -7,7 +7,7 @@
   <ion-content scroll="false" class="pickup-content  dark-bg">
     <div class="padding light-bg">
 
-      <span class="badge badge-balanced">{{pickup.solicitud.tipodePago}}</span>
+        <span class="badge badge-balanced"><div ng-click="cancelarViaje()">Cancelar Viaje</div></span>
 <a href="geo:?daddr={{pickup.solicitud.origen.coords.latitude}},{{pickup.solicitud.origen.coords.longitude}}" target="_system">
       <div class="item item-icon-left rounded balanced-bg margin-top light">
         <i class="icon ion-ios-location-outline"></i>

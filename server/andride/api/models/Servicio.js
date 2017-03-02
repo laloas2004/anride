@@ -47,6 +47,12 @@ module.exports = {
             enum: ['cliente', 'chofer']
 
         },
+        recorridoChofer:{
+            type:"array"
+        },
+        recorridoCliente:{
+            type:"array"
+        },
         detalleCancel: {
             type: "json",
         }

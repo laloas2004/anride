@@ -79,18 +79,14 @@ angular.module('app.services', [])
                     return q.promise;
                 },
                 suscribe: function() {
+                    
+                    
                     var q = $q.defer();
-
-
-
-                    var data = {
-                        choferId: $localStorage.chofer.id
-                    };
-                    $sails.post("/choferes/suscribe", data)
+                    $sails.post("/choferes/suscribe", {choferId: $localStorage.chofer.id})
                             .success(function(data, status, headers, jwr) {
 
                                 $localStorage.socketId = data.socketId;
-                                q.resolve();
+                                q.resolve(data);
                             })
                             .error(function(data, status, headers, jwr) {
                                 q.reject(jwr);

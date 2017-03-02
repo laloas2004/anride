@@ -3,23 +3,39 @@
   Show destination
   job is a $scope variable in PickupCtrl (controllers.js)
 -->
-<ion-view view-title="Pickup">
+<ion-view view-title="Servicio en Proceso">
   <ion-content scroll="false" class="pickup-content  dark-bg">
     <div class="padding light-bg">
 
-      <span class="badge badge-balanced">{{ job.payment_method }}</span>
+      <span class="badge badge-balanced"></span>
 
       <div class="item item-icon-left no-border rounded margin-top balanced-bg light">
         <i class="icon ion-ios-flag-outline"></i>
         <div>
-          <h4 class="light">{{ job.to.title }}</h4>
-          <span>{{ job.to.address }}</span>
+          <h4 class="light">Destino</h4>
+          <span>{{solicitud.direccion_destino}}</span>
+          <h4 class="light">Cliente</h4>
+          <span>{{cliente.nombre}} {{cliente.apellido}}</span>
         </div>
       </div>
     </div>
-
+      <div class="row">
+          <div class="col"> <h2 class="light">TIEMPO</h2></div>
+      </div>
+      <div class="row">
+          <div class="col col-33"><h4 class="light">HORAS{{tiempo.horas}}:</h4></div>
+          <div class="col col-33"><h4 class="light">MINS.{{tiempo.min}}:</h4></div>
+          <div class="col col-33"><h4 class="light">SEGS.{{tiempo.segundos}}</h4></div>
+      </div>
+       <div class="row">
+          <div class="col"> <h2 class="light">DISTANCIA</h2></div>
+      </div>
+      <div class="row">
+          <div class="col col-33"><h4 class="light">0 KM</h4></div>
+      
+      </div>
     <div class="bottom-buttons padding full-width">
-      <button class="button button-block button-balanced" ng-click="showPayment()">Terminar</button>
+      <button class="button button-block button-balanced" ng-click="terminarViaje()">Terminar</button>
     </div>
   </ion-content>
 </ion-view>
