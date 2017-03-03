@@ -79,6 +79,8 @@ module.exports.routes = {
     'get /admin/solicitudes': 'AdminController.indexSolicitudes',
     'get /admin/servicios': 'AdminController.indexServicios',
     'get /admin/choferes': 'AdminController.indexChoferes',
+    'get /admin/choferes/new': 'AdminController.newChofer',
+    'post /admin/choferes/new': 'AdminController.saveChofer',
     'get /admin/autos': 'AdminController.indexAutos',
     'get /admin/pagos': 'AdminController.indexPagos',
     'get /admin/configuracion': 'AdminController.indexConfiguracion',

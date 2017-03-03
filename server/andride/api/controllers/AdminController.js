@@ -21,8 +21,6 @@ module.exports = {
     },
     indexChoferes: function(req, res) {
         
-       
-
         if (req.isSocket) {
             sails.sockets.join(req, "funSockets", function(err) {
                 return res.json({
@@ -52,7 +50,35 @@ module.exports = {
         res.view('configuracion/home', {saludos: 'saludos!!'});
     },
     newCliente: function(req, res) {
-
+        
+        
+        
+    
+        
+    },
+    newChofer:function(req, res){
+        
+      res.view('choferes/new_chofer', {});      
+    },
+    saveChofer:function(req, res){
+     
+       
+        
+     var chofer = req.param('chofer');   
+        
+     Chofer.create(chofer).exec(function(err,chofer){
+         
+         if (err) {
+                return res.json(err.status, {err: err});
+            }
+        
+        
+             console.log(chofer);
+        
+         return res.redirect('/admin/choferes');
+         
+     })
+        
     },
     suscribe:function(req, res){
         

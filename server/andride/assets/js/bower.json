@@ -1,0 +1,17 @@
+{
+  "name": "andride",
+  "authors": [
+    "jesus abelardo <abelardo@websiete.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
