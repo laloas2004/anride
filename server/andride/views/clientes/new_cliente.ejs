@@ -1,39 +1,59 @@
- <%- include ../includes/menu %>
+<%- include ../includes/menu %>
 
 <div class="container">
 
-<div class="row">
-<div class ="col-md-12">
-<div class="page-header">
-<h1>Clientes</h1>
-<div>
-<div class=""><a href="#" class="btn btn-default">Nuevo Cliente</a></div>
-<table class="table table-striped">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Apellidos</th>
-        <th>Email</th>
-        <th>Telefono</th>
-        <th>Operaciones</th>
-      </tr>
-    </thead>
-<tbody>
+    <div class="row">
+        <div class ="col-md-12">
+            <div class="page-header">
+                <h1>Nuevo Cliente</h1>
+                <div>
+                    <form role="form" method="POST">
 
-      <tr>
-        <td>10</td>
-        <td>Jesus</td>
-        <td>Acevedo</td>
-        <td>laloas_2004@yahoo.com.mx</td>
-        <td>8110162454</td>
-        <td><a href="#" class="btn btn-primary">Editar</a><a href="#" class="btn btn-danger">Bloquear</a></td>
-      </tr>
-</tbody>
-    </table>
+                        <div class="form-group">
+                            <label for="cliente.nombre">Nombre</label>
+                            <input type="text" class="form-control" id="cliente.nombre"
+                                   placeholder="Introduce un Nombre" name="cliente[nombre]" required>
+                        </div>
+                        
+                        
+                        
+                        <div class="form-group">
+                            <label for="cliente.apellido">Apellidos</label>
+                            <input type="text" class="form-control" id="cliente.apellido"
+                                   placeholder="Introduce Apellidos" name="cliente[apellido]" required >
+                                   </div>
+                                   <div class="form-group">
+                                   <label for="cliente.email">Email</label>
+                            <input type="email" class="form-control" id="cliente.email"
+                                   placeholder="Introduce un Email" name="cliente[email]" required>
+                                   </div>
+                                   <div class="form-group">
+                                   <label for="cliente.password">Password</label>
+                            <input type="password" class="form-control" id="cliente.password"
+                                   placeholder="Introduce un Password" name="cliente[password]" required>
+                                   </div>
+                                   <div class="form-group">
+                                   <label for="cliente.numCel">Telefono Cel.</label>
+                            <input type="text" class="form-control" id="cliente.numCel"
+                                   placeholder="Introduce Celular" name="cliente[numCel]" required>
+                                   </div>
+                                   <button type="submit" class="btn btn-default">Guardar</button>
+                            </form>
+                        </div>
+                </div>
 
-</div>
-</div>
+
+            </div>
+            <script>
+                $(document).ready(function() {
 
 
-</div>
+
+
+
+                });
+
+
+
+
+            </script>

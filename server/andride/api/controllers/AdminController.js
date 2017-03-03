@@ -7,8 +7,14 @@
 
 module.exports = {
     indexCliente: function(req, res) {
+        
+        Cliente.find().exec(function(err,clientes){
+             console.log(clientes);
+             res.view('clientes/home', {clientes:clientes});
+            
+        })
 
-        res.view('clientes/home', {saludos: 'saludos!!'});
+       
 
     },
     indexSolicitudes: function(req, res) {
@@ -21,14 +27,14 @@ module.exports = {
     },
     indexChoferes: function(req, res) {
         
-        if (req.isSocket) {
-            sails.sockets.join(req, "funSockets", function(err) {
-                return res.json({
-                    message: 'Subscribed to a fun room called ' + 'un grupo' + '!'
-                });
-            });
-           
-        }
+//        if (req.isSocket) {
+//            sails.sockets.join(req, "funSockets", function(err) {
+//                return res.json({
+//                    message: 'Subscribed to a fun room called ' + 'un grupo' + '!'
+//                });
+//            });
+//           
+//        }
 
 
         Chofer.find().exec(function(err, choferes) {
@@ -50,15 +56,26 @@ module.exports = {
         res.view('configuracion/home', {saludos: 'saludos!!'});
     },
     newCliente: function(req, res) {
+      return res.view('clientes/new_cliente', {});     
+    },
+    saveCliente:function(req, res){
         
+      var cliente = req.param('cliente');
+      
+    Cliente.create(cliente).exec(function(err, cliente){
+         if (err) {
+                return res.json(err.status, {err: err});
+            }
+            
+          console.log(cliente);
         
-        
-    
-        
+         return res.redirect('/admin/clientes');  
+          
+      })
     },
     newChofer:function(req, res){
         
-      res.view('choferes/new_chofer', {});      
+      return res.view('choferes/new_chofer', {});      
     },
     saveChofer:function(req, res){
      
