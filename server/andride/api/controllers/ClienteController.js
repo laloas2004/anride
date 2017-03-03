@@ -15,7 +15,7 @@ module.exports = {
             return res.badRequest();
         }
 
-        var maxDistance = req.param('distance') || 1000;
+        var maxDistance = req.param('distance') || 100000;
 
         var limitChoferes = 10;
 
