@@ -89,6 +89,7 @@ module.exports.routes = {
     'get /admin/choferes/new': 'AdminController.newChofer',
     'post /admin/choferes/new': 'AdminController.saveChofer',
     'get /admin/choferes/delete/:choferId': 'AdminController.deleteChofer',
+    'get /admin/choferes/mapa': 'AdminController.getChoferes',
     
     
     'get /admin/autos': 'AdminController.indexAutos',

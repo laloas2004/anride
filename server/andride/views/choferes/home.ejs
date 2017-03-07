@@ -40,30 +40,69 @@
 
         </div>
         <script>
-            
-
-                function initMap() {
-                    var map = new google.maps.Map(document.getElementById('map'), {
-                        center: {lat: 25.747215080976115, lng: -100.29709576508179},
-                        zoom: 12
-                    });
-
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(function(position) {
-                            var pos = {
-                                lat: position.coords.latitude,
-                                lng: position.coords.longitude
-                            };
-
-                            map.setCenter(pos);
-
-                        })
 
 
-                    }
+            function initMap() {
+                var map = new google.maps.Map(document.getElementById('map'), {
+                    center: {lat: 25.747215080976115, lng: -100.29709576508179},
+                    zoom: 12
+                });
+
+                if (navigator.geolocation) {
+
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        var pos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+
+                        map.setCenter(pos);
+
+
+
+                    })
+
+
                 }
 
-           
+                setMarkersChoferes(map);
+            }
+
+
+
+
+
+            function setMarkersChoferes(map) {
+
+                io.socket.get("/admin/choferes/mapa", {}, function(resData, jwres) {
+
+
+                    $.each(resData, function(index, value) {
+                        debugger;
+
+                        if (value.lat && value.lon) {
+
+                            var myLatLng = {lat: value.lat, lng: value.lon};
+
+                            var marker = new google.maps.Marker({
+                                position: myLatLng,
+                                map: map,
+                                title: value.nombre
+                            });
+
+                        }
+
+
+
+                    })
+
+
+
+
+                });
+
+
+            }
 
 
 

@@ -73,6 +73,19 @@ module.exports = {
           
       })
     },
+    getChoferes: function(req, res) {
+ if (!req.isSocket) {
+            return res.badRequest();
+        }
+
+        Chofer.find().exec(function(err, choferes) {
+            
+            
+            return res.json(choferes);
+
+        });  
+        
+    },
     newChofer:function(req, res){
         
       return res.view('choferes/new_chofer', {});      
