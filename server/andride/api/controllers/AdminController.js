@@ -78,7 +78,7 @@ module.exports = {
             return res.badRequest();
         }
 
-        Chofer.find().exec(function(err, choferes) {
+        Chofer.find({online:true}).exec(function(err, choferes) {
             
             
             return res.json(choferes);
