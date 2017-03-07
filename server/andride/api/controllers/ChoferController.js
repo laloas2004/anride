@@ -107,7 +107,7 @@ module.exports = {
                     return res.json({suscrito: false});
                 }
 
-
+                sails.sockets.blast('chofer_online', chofer, req);
                 req.session.choferId = choferId;
 
                 return res.json({suscrito: true, socketId: socketId});
