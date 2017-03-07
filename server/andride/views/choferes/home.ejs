@@ -41,7 +41,7 @@
         </div>
         <script>
 
-
+var markersChoferes= [];
             function initMap() {
                  map = new google.maps.Map(document.getElementById('map'), {
                     center: {lat: 25.747215080976115, lng: -100.29709576508179},
@@ -74,7 +74,7 @@
 
             function setMarkersChoferes() {
             
-                var markersChoferes= [];
+                
 
                 io.socket.get("/admin/choferes/mapa", {}, function(resData, jwres) {
                     
