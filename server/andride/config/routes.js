@@ -77,14 +77,29 @@ module.exports.routes = {
     'get /admin/clientes': 'AdminController.indexCliente',
     'get /admin/clientes/new': 'AdminController.newCliente',
     'post /admin/clientes/new': 'AdminController.saveCliente',
+    
+   
     'get /admin/solicitudes': 'AdminController.indexSolicitudes',
+    
+    
     'get /admin/servicios': 'AdminController.indexServicios',
+    
+    
     'get /admin/choferes': 'AdminController.indexChoferes',
     'get /admin/choferes/new': 'AdminController.newChofer',
     'post /admin/choferes/new': 'AdminController.saveChofer',
+    'get /admin/choferes/delete/:choferId': 'AdminController.deleteChofer',
+    
+    
     'get /admin/autos': 'AdminController.indexAutos',
+    
+    
     'get /admin/pagos': 'AdminController.indexPagos',
+    
+    
     'get /admin/configuracion': 'AdminController.indexConfiguracion',
+    
+    
     'post /admin/servicio': 'AdminController.suscribe',
 
 };

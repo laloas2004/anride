@@ -18,8 +18,8 @@ module.exports = {
 
     },
     indexSolicitudes: function(req, res) {
-
-        res.view('solicitudes/home', {saludos: 'saludos!!'});
+        
+        res.view('solicitudes/home', {solicitudes:{}});
     },
     indexServicios: function(req, res) {
         sails.sockets.blast('algo',{res:'haz algo socket!'});
@@ -94,8 +94,22 @@ module.exports = {
         
          return res.redirect('/admin/choferes');
          
-     })
-        
+        })
+
+    },
+    deleteChofer: function(req, res) {
+
+        var ChoferId = req.param('choferId');
+
+        Chofer.destroy({id: ChoferId}).exec(function(err) {
+
+            if (err) {
+                return res.negotiate(err);
+            }
+
+            return res.redirect('/admin/choferes');
+        });
+
     },
     suscribe:function(req, res){
         
