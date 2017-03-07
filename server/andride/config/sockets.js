@@ -117,8 +117,8 @@ module.exports.sockets = {
        if(session.choferId){
            var choferId = session.choferId;
            
-     Chofer.update({id: choferId}, {socketId:'', online:false}).exec(function() {
-                
+     Chofer.update({id: choferId}, {socketId:'', online:false}).exec(function(err,chofer) {
+                sails.sockets.blast('chofer_online', chofer);
                 console.log(choferId + ': Se Desconecto Chofer');
 
             });

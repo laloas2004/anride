@@ -41,9 +41,9 @@
         </div>
         <script>
 
-var markersChoferes= [];
+            var markersChoferes = [];
             function initMap() {
-                 map = new google.maps.Map(document.getElementById('map'), {
+                map = new google.maps.Map(document.getElementById('map'), {
                     center: {lat: 25.747215080976115, lng: -100.29709576508179},
                     zoom: 12
                 });
@@ -73,12 +73,12 @@ var markersChoferes= [];
 
 
             function setMarkersChoferes() {
-            
-                
+
+
 
                 io.socket.get("/admin/choferes/mapa", {}, function(resData, jwres) {
-                    
-                    
+
+
 
                     $.each(resData, function(index, value) {
 
@@ -86,7 +86,7 @@ var markersChoferes= [];
 
                             var myLatLng = {lat: value.lat, lng: value.lon};
 
-                          markersChoferes.push(new google.maps.Marker({
+                            markersChoferes.push(new google.maps.Marker({
                                 position: myLatLng,
                                 map: map,
                                 title: value.nombre
@@ -106,20 +106,20 @@ var markersChoferes= [];
 
             }
 
-            function resetMarkers(cb){
-                $.each(markersChoferes,function(index, value){
-                        value.setMap(null);
-                           
-                        });
+            function resetMarkers(cb) {
+                $.each(markersChoferes, function(index, value) {
+                    value.setMap(null);
 
-                             cb();
-                    }
+                });
 
-            io.socket.on('chofer_online', function (msg) {
-                
+                cb();
+            }
+
+            io.socket.on('chofer_online', function(msg) {
+
                 resetMarkers(setMarkersChoferes());
-                
-                        });
+
+            });
 
 
         </script>
