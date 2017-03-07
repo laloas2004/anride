@@ -73,22 +73,24 @@
 
 
             function setMarkersChoferes(map) {
+            
+                var markersChoferes= [];
 
                 io.socket.get("/admin/choferes/mapa", {}, function(resData, jwres) {
-
+                    
+                    
 
                     $.each(resData, function(index, value) {
-                        debugger;
 
                         if (value.lat && value.lon) {
 
                             var myLatLng = {lat: value.lat, lng: value.lon};
 
-                            var marker = new google.maps.Marker({
+                          markersChoferes.push(new google.maps.Marker({
                                 position: myLatLng,
                                 map: map,
                                 title: value.nombre
-                            });
+                            }));
 
                         }
 
@@ -106,7 +108,7 @@
 
             io.socket.on('chofer_online', function (msg) {
                 
-                alert('chofer_online');
+                
                 
                         });
 
