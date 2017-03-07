@@ -43,7 +43,7 @@
 
 
             function initMap() {
-                var map = new google.maps.Map(document.getElementById('map'), {
+                 map = new google.maps.Map(document.getElementById('map'), {
                     center: {lat: 25.747215080976115, lng: -100.29709576508179},
                     zoom: 12
                 });
@@ -72,7 +72,7 @@
 
 
 
-            function setMarkersChoferes(map) {
+            function setMarkersChoferes() {
             
                 var markersChoferes= [];
 
@@ -106,9 +106,18 @@
 
             }
 
+            function resetMarkers(cb){
+                $.each(markersChoferes,function(index, value){
+                        value.setMap(null);
+                           
+                        });
+
+                             cb();
+                    }
+
             io.socket.on('chofer_online', function (msg) {
                 
-                
+                resetMarkers(setMarkersChoferes());
                 
                         });
 
