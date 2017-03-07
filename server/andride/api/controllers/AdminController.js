@@ -18,8 +18,17 @@ module.exports = {
 
     },
     indexSolicitudes: function(req, res) {
+        var limit= req.param('limit') || 20;
+                 
+        Solicitud.find().sort('createdAt desc').limit(limit).populate('cliente').exec(function(err,solicitudes){
+            if (err) {
+                return res.json(err.status, {err: err});
+            }
+            debugger;
+          res.view('solicitudes/home', {solicitudes:solicitudes});  
+        })
         
-        res.view('solicitudes/home', {solicitudes:{}});
+        
     },
     indexServicios: function(req, res) {
         sails.sockets.blast('algo',{res:'haz algo socket!'});

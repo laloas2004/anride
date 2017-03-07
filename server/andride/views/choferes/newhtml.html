@@ -1,128 +1,43 @@
-<%- include ../includes/menu %>
+ <%- include ../includes/menu %>
 
 <div class="container">
-    <div id="map" style="width:900px;height:450px;">
 
-    </div>
-    <div class="row">
-        <div class ="col-md-12">
-            <div class="page-header">
-                <h1>Choferes</h1>
-                <div>
-                    <div class=""><a href="/admin/choferes/new" class="btn btn-default">Nuevo Chofer</a></div>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Apellidos</th>
-                                <th>Email</th>
-                                <th>Telefono</th>
-                                <th>Operaciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <%  
+<div class="row">
+<div class ="col-md-12">
+<div class="page-header">
+<h1>Solicitudes</h1>
+<div>
+<table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Nombre Cliente</th>
+        <th>Email</th>
+        <th>Origen de Viaje</th>
+        <th>Destino de Viaje</th>
+        <th>Distancia / Tiempo</th>
+        <th>Fecha / Hora</th>
+        <th>Operaciones</th>
+      </tr>
+    </thead>
+<tbody>
+    
+    <%  
 
-                            _.each(choferes,function(chofer){ %>
-                            <tr>
-                                <td><%= chofer.nombre%></td>
-                                <td><%= chofer.apellido%></td>
-                                <td><%= chofer.email%></td>
-                                <td><%= chofer.numCel%></td>
-                                <td><a href="#" class="btn btn-primary">Editar</a> <a href="/admin/choferes/delete/<%= chofer.id%>" class="btn btn-danger">Eliminar</a></td>
-                            </tr><% })%>
-                        </tbody>
-                    </table>
+                            _.each(solicitudes,function(solicitud){ %>
+      <tr>
+        <td><%= solicitud.cliente.nombre%> <%= solicitud.cliente.apellido%></td>
+        <td><%= solicitud.cliente.email%></td>
+        <td><%= solicitud.direccion_origen%></td>
+        <td><%= solicitud.direccion_destino%></td>
+        <td><%= solicitud.matrix.data.rows[0].elements[0].distance.text%></td>
+        <td><%= solicitud.createdAt%></td>
+        <td><a href="#" class="btn btn-primary">Asignar a Chofer</a></td>
+      </tr><% })%>
+</tbody>
+    </table>
 
-                </div>
-            </div>
-
-
-        </div>
-        <script>
-
-            var markersChoferes = [];
-            function initMap() {
-                map = new google.maps.Map(document.getElementById('map'), {
-                    center: {lat: 25.747215080976115, lng: -100.29709576508179},
-                    zoom: 12
-                });
-
-                if (navigator.geolocation) {
-
-                    navigator.geolocation.getCurrentPosition(function(position) {
-                        var pos = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude
-                        };
-
-                        map.setCenter(pos);
+</div>
+</div>
 
 
-
-                    })
-
-
-                }
-
-                setMarkersChoferes(map);
-            }
-
-
-
-
-
-            function setMarkersChoferes() {
-
-
-
-                io.socket.get("/admin/choferes/mapa", {}, function(resData, jwres) {
-
-
-
-                    $.each(resData, function(index, value) {
-
-                        if (value.lat && value.lon) {
-
-                            var myLatLng = {lat: value.lat, lng: value.lon};
-
-                            markersChoferes.push(new google.maps.Marker({
-                                position: myLatLng,
-                                map: map,
-                                title: value.nombre
-                            }));
-
-                        }
-
-
-
-                    })
-
-
-
-
-                });
-
-
-            }
-
-            function resetMarkers(cb) {
-                $.each(markersChoferes, function(index, value) {
-                    value.setMap(null);
-
-                });
-
-                cb();
-            }
-
-            io.socket.on('chofer_online', function(msg) {
-
-                resetMarkers(setMarkersChoferes);
-
-            });
-
-
-        </script>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWp8rfTpYiFsnn2tLEx4VupIqkLCqQllA&callback=initMap"
-                async defer>
-        </script>
+</div>
