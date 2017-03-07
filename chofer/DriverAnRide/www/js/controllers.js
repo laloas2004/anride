@@ -166,7 +166,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 };
 
                 var watch = $cordovaGeolocation.watchPosition(watchOptions);
-
+                var markerChofer = {};
                 watch.then(
                         null,
                         function(err) {
@@ -185,11 +185,23 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                          
                             var myPosition = new plugin.google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-
-                            $scope.map.addMarker({
+                            
+                                 
+                            if(angular.isFunction(markerChofer.remove)){
+                                
+                                markerChofer.remove();
+                            }
+                                 
+                            
+                         
+                        
+                          
+                          $scope.map.addMarker({
                                 'position': myPosition
                             }, function(marker) {
-
+                                
+                            markerChofer = marker;
+                                debugger;
                             });
 
                             $scope.map.moveCamera({
@@ -264,7 +276,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 console.log('After Enter');
 //              Si el chofer tiene un servicio en proceso.
 
-                if ($localStorage.servicio.id) {
+                if ($localStorage.servicio) {
                     //Obtengo el servicio para actualizar el status.
                     $sails.get("/choferes/servicio", {servicioId: $localStorage.servicio.id})
                             .success(function(servicio, status, headers, jwr) {
