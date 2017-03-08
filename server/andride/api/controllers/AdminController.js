@@ -7,35 +7,43 @@
 
 module.exports = {
     indexCliente: function(req, res) {
-        
-        Cliente.find().exec(function(err,clientes){
-             console.log(clientes);
-             res.view('clientes/home', {clientes:clientes});
-            
+
+        Cliente.find().exec(function(err, clientes) {
+            console.log(clientes);
+            res.view('clientes/home', {clientes: clientes});
+
         })
 
-       
+
 
     },
     indexSolicitudes: function(req, res) {
-        var limit= req.param('limit') || 20;
-                 
-        Solicitud.find().sort('createdAt desc').limit(limit).populate('cliente').exec(function(err,solicitudes){
+        var limit = req.param('limit') || 20;
+
+        Solicitud.find().sort('createdAt desc').limit(limit).populate('cliente').exec(function(err, solicitudes) {
             if (err) {
                 return res.json(err.status, {err: err});
             }
             debugger;
-          res.view('solicitudes/home', {solicitudes:solicitudes});  
+            res.view('solicitudes/home', {solicitudes: solicitudes});
         })
-        
-        
+
+
     },
     indexServicios: function(req, res) {
-        sails.sockets.blast('algo',{res:'haz algo socket!'});
-        res.view('servicios/home', {saludos: 'saludos!!'});
+        var limit = req.param('limit') || 20;
+        Servicio.find().sort('createdAt desc').limit(limit).populate('solicitud').populate('cliente').populate('chofer').exec(function(err, servicios) {
+
+            if (err) {
+                return res.json(err.status, {err: err});
+            }
+debugger;
+            res.view('servicios/home', {servicios: servicios});
+        })
+
     },
     indexChoferes: function(req, res) {
-        
+
 //        if (req.isSocket) {
 //            sails.sockets.join(req, "funSockets", function(err) {
 //                return res.json({
@@ -65,57 +73,57 @@ module.exports = {
         res.view('configuracion/home', {saludos: 'saludos!!'});
     },
     newCliente: function(req, res) {
-      return res.view('clientes/new_cliente', {});     
+        return res.view('clientes/new_cliente', {});
     },
-    saveCliente:function(req, res){
-        
-      var cliente = req.param('cliente');
-      
-    Cliente.create(cliente).exec(function(err, cliente){
-         if (err) {
+    saveCliente: function(req, res) {
+
+        var cliente = req.param('cliente');
+
+        Cliente.create(cliente).exec(function(err, cliente) {
+            if (err) {
                 return res.json(err.status, {err: err});
             }
-            
-          console.log(cliente);
-        
-         return res.redirect('/admin/clientes');  
-          
-      })
+
+            console.log(cliente);
+
+            return res.redirect('/admin/clientes');
+
+        })
     },
     getChoferes: function(req, res) {
- if (!req.isSocket) {
+        if (!req.isSocket) {
             return res.badRequest();
         }
 
-        Chofer.find({online:true}).exec(function(err, choferes) {
-            
-            
+        Chofer.find({online: true}).exec(function(err, choferes) {
+
+
             return res.json(choferes);
 
-        });  
-        
+        });
+
     },
-    newChofer:function(req, res){
-        
-      return res.view('choferes/new_chofer', {});      
+    newChofer: function(req, res) {
+
+        return res.view('choferes/new_chofer', {});
     },
-    saveChofer:function(req, res){
-     
-       
-        
-     var chofer = req.param('chofer');   
-        
-     Chofer.create(chofer).exec(function(err,chofer){
-         
-         if (err) {
+    saveChofer: function(req, res) {
+
+
+
+        var chofer = req.param('chofer');
+
+        Chofer.create(chofer).exec(function(err, chofer) {
+
+            if (err) {
                 return res.json(err.status, {err: err});
             }
-        
-        
-             console.log(chofer);
-        
-         return res.redirect('/admin/choferes');
-         
+
+
+            console.log(chofer);
+
+            return res.redirect('/admin/choferes');
+
         })
 
     },
@@ -133,13 +141,13 @@ module.exports = {
         });
 
     },
-    suscribe:function(req, res){
-        
+    suscribe: function(req, res) {
+
 //     Solicitud.find()
-     
-     
-     
-        
+
+
+
+
     }
 };
 

@@ -10,7 +10,6 @@
 <table class="table table-striped">
     <thead>
       <tr>
-        <th>ID</th>
         <th>Cliente</th>
         <th>Chofer</th>
         <th>Monto</th>
@@ -21,17 +20,24 @@
       </tr>
     </thead>
 <tbody>
+    <%  
+
+                            _.each(servicios,function(servicio){ 
+
+var monto = servicio.monto || 000;
+
+%>
       <tr>
-        <td>10</td>
-        <td>abelardo@websiete.com</td>
-        <td>chofer@gmail.com</td>
-        <td>$200MXN</td>
-        <td>Efectivo</td>
-        <td>1 Enero 2017 3:00PM</td>
-        <td>En Proceso</td>
+        
+        <td><%= servicio.cliente.email%></td>
+        <td><%= servicio.chofer.email%></td>
+        <td>$<%= monto.toFixed(2) %> MXN</td>
+        <td><%= servicio.solicitud.tipodePago%></td>
+        <td><%=servicio.createdAt.toUTCString() %></td>
+        <td><%=servicio.status%></td>
         <td><a href="#" class="btn btn-primary">Ver Detalle</a></td>
 
-      </tr>
+      </tr><% })%>
 </tbody>
     </table>
 
