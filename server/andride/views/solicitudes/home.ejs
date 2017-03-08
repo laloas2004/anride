@@ -29,7 +29,7 @@
         <td><%= solicitud.cliente.email%></td>
         <td><%= solicitud.direccion_origen%></td>
         <td><%= solicitud.direccion_destino%></td>
-        <td><%= solicitud.matrix.data.rows[0].elements[0].distance.text%> | <%= solicitud.matrix.data.rows[0].elements[0].duration.text%></td>
+        <td><%= solicitud.matrix.data.rows[0].elements[0].distance.text%> <br><%= solicitud.matrix.data.rows[0].elements[0].duration.text%></td>
         <td><%= solicitud.createdAt.toUTCString() %></td>
         <td><a href="#" class="btn btn-primary">Asignar a Chofer</a></td>
       </tr><% })%>
