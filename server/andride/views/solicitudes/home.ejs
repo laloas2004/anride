@@ -30,7 +30,7 @@
         <td><%= solicitud.direccion_origen%></td>
         <td><%= solicitud.direccion_destino%></td>
         <td><%= solicitud.matrix.data.rows[0].elements[0].distance.text%> <br><%= solicitud.matrix.data.rows[0].elements[0].duration.text%></td>
-        <td><%= solicitud.createdAt.toUTCString() %></td>
+        <td><%= solicitud.createdAt%></td>
         <td><a href="#" class="btn btn-primary">Asignar a Chofer</a></td>
       </tr><% })%>
 </tbody>

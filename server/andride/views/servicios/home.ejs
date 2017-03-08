@@ -33,7 +33,7 @@ var monto = servicio.monto || 000;
         <td><%= servicio.chofer.email%></td>
         <td>$<%= monto.toFixed(2) %> MXN</td>
         <td><%= servicio.solicitud.tipodePago%></td>
-        <td><%=servicio.createdAt.toUTCString() %></td>
+        <td><%=servicio.createdAt %></td>
         <td><%=servicio.status%></td>
         <td><a href="#" class="btn btn-primary">Ver Detalle</a></td>
 
