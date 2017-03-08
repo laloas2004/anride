@@ -320,6 +320,7 @@ module.exports = {
             }
 
             sails.sockets.broadcast(socketId, 'solicitud.creada', finn);
+            sails.sockets.blast('solicitud', {}, req);
 
             Solicitud.subscribe(req, finn.id);
             Solicitud.publishCreate( finn , req);

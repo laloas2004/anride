@@ -6,6 +6,9 @@
  */
 
 module.exports = {
+    index:function(req, res){
+        
+    },
     indexCliente: function(req, res) {
 
         Cliente.find().exec(function(err, clientes) {
@@ -37,7 +40,7 @@ module.exports = {
             if (err) {
                 return res.json(err.status, {err: err});
             }
-debugger;
+
             res.view('servicios/home', {servicios: servicios});
         })
 

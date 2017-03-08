@@ -22,8 +22,7 @@
 <tbody>
     
     <%  
-
-                            _.each(solicitudes,function(solicitud){ %>
+                      _.each(solicitudes,function(solicitud){ %>
       <tr>
         <td><%= solicitud.cliente.nombre%> <%= solicitud.cliente.apellido%></td>
         <td><%= solicitud.cliente.email%></td>
@@ -41,3 +40,15 @@
 
 
 </div>
+<script>
+
+ io.socket.on('solicitud', function(msg) {
+
+alert('Nueva Solicitud');
+
+location.reload();
+
+            });
+
+
+</script>
