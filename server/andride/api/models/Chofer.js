@@ -59,6 +59,10 @@ module.exports = {
         },
         rating: {
             type: 'float'
+        },
+        aprovado: {
+            type: 'boolean',
+            defaultsTo: false
         }
     },
     beforeCreate: function(attrs, cb) {

@@ -8,7 +8,9 @@
 module.exports = {
 
   attributes: {
-
+      servicio:{
+          model: 'Servicio'
+      }
   }
 };
 

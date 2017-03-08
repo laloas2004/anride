@@ -41,6 +41,10 @@ module.exports = {
         online: {
             type: 'boolean',
             defaultsTo: false
+        },
+        aprovado: {
+            type: 'boolean',
+            defaultsTo: false
         }
     },
     comparePassword: function(password, chofer, cb) {
