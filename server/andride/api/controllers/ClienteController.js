@@ -401,39 +401,44 @@ module.exports = {
 
         var clienteId = req.param('clienteId');
 
+
         Servicio.find({
-            chofer: clienteId,
+            cliente: clienteId,
             status: {'!': ['finalizado', 'cancelada']}
         }).sort('updateAt ASC').exec(function(err, servi) {
 
             if (err) {
                 return res.json({err: err});
             }
-            Servicio.subscribe(req, servi[0].id);
+
+            if (servi.length > 0) {
+                Servicio.subscribe(req, servi[0].id);
+            }
+
             res.json(servi);
 
         })
 
     },
-    getSolicitud:function(req, res){
-        
+    getSolicitud: function(req, res) {
+
         if (!req.isSocket) {
             return res.badRequest();
-        } 
-        
+        }
+
         var SolId = req.param('SolId');
-        
-        Solicitud.findOne({id:SolId}).exec(function(err,solicitud){
-          
+
+        Solicitud.findOne({id: SolId}).exec(function(err, solicitud) {
+
             if (err) {
                 return res.json({err: err});
             }
 
-            
-          res.json(solicitud);  
-            
+
+            res.json(solicitud);
+
         })
     }
-    
+
 
 };

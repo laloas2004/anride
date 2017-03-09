@@ -313,7 +313,7 @@ module.exports = {
             }
 
 
-            debugger;
+            
             that._calcularCobro(result[0]).then(function(respuesta) {
 
                 Servicio.update({
@@ -523,6 +523,9 @@ module.exports = {
             if (err) {
                 return res.json({err: err});
             }
+            if (servi.length > 0) {
+                Servicio.subscribe(req, servi[0].id);
+            }
 
             res.json(servi);
 
@@ -543,7 +546,6 @@ module.exports = {
                 return res.json({err: err});
             }
 
-          Servicio.subscribe(req, servi[0].id);
           
           res.json(solicitud);  
             
