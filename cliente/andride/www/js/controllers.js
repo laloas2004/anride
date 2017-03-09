@@ -44,6 +44,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 clienteService,
                 choferService,
                 solicitudService,
+                servicioService,
                 $q,
                 $ionicPopup,
                 $ionicModal,
@@ -696,9 +697,19 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 //              Si el usuario tiene un servicio en proceso.
 
-                if ($localStorage.servicio) {
-                    $state.go('app.servicio_aprovado', {});
-                }
+        servicioService.getSolicitudPendiente().then(function(response){
+            
+            
+            if (response.length > 0) {
+                
+             $localStorage.servicio = response[0];
+                
+             $state.go('app.servicio_aprovado', {});
+         }
+            
+        })
+
+            
 
 
             })

@@ -167,7 +167,7 @@ module.exports = {
 
         var deferred = Q.defer()
         var num_chofer = 0;
-        var cant_chofer = finn.choferesDisponibles.choferes.length;
+        var cant_chofer = finn.choferesDisponibles.choferes.length || 0;
 
         var loop = function(tiempo_espera, finn) {
             var tiempo = 0;
@@ -391,6 +391,49 @@ module.exports = {
     getViajes: function(req, res) {
 
 
+    },
+    getServicioPendiente: function(req, res) {
+
+
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+
+        var clienteId = req.param('clienteId');
+
+        Servicio.find({
+            chofer: clienteId,
+            status: {'!': ['finalizado', 'cancelada']}
+        }).sort('updateAt ASC').exec(function(err, servi) {
+
+            if (err) {
+                return res.json({err: err});
+            }
+            Servicio.subscribe(req, servi[0].id);
+            res.json(servi);
+
+        })
+
+    },
+    getSolicitud:function(req, res){
+        
+        if (!req.isSocket) {
+            return res.badRequest();
+        } 
+        
+        var SolId = req.param('SolId');
+        
+        Solicitud.findOne({id:SolId}).exec(function(err,solicitud){
+          
+            if (err) {
+                return res.json({err: err});
+            }
+
+            
+          res.json(solicitud);  
+            
+        })
     }
+    
 
 };

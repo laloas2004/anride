@@ -543,7 +543,8 @@ module.exports = {
                 return res.json({err: err});
             }
 
-            
+          Servicio.subscribe(req, servi[0].id);
+          
           res.json(solicitud);  
             
         })

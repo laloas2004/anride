@@ -47,6 +47,8 @@ module.exports.routes = {
     'post /clientes/servicio/cancel': 'ClienteController.cancelarServicio',
     'get /cliente/choferes': 'ClienteController.getChoferes',
     'get /cliente/viajes': 'ClienteController.getViajes',
+    'get /cliente/servicio/pendiente': 'ClienteController.getServicioPendiente',
+    'get /cliente/solicitud': 'ClienteController.getSolicitud',
     //Chofer
     'post /chofer': 'ChoferController.create',
     'post /choferes/login': 'ChoferController.login',

@@ -3,11 +3,11 @@ angular.module('app.services', [])
 
             return {
                 getChoferes: function(location) {
-                    
+
                     var q = $q.defer();
 
                     var data = {lat: location.coords.latitude, lon: location.coords.longitude};
-                    
+
                     $sails.get("/cliente/choferes", data)
                             .success(function(data, status, headers, jwr) {
 
@@ -18,7 +18,7 @@ angular.module('app.services', [])
 
                             });
                     return q.promise;
-                    
+
                 }
 
             }
@@ -236,27 +236,23 @@ angular.module('app.services', [])
 
 
         })
-        .factory('servicioService', function($http, $q, $sails, $rootScope) {
+        .factory('servicioService', function($http, $q, $sails, $rootScope,$localStorage) {
 
             return {
-                getDireccion: function(location) {
+             
+                getSolicitudPendiente: function() {
+
                     var q = $q.defer();
 
-                    var config = {
-                        url: "https://maps.googleapis.com/maps/api/geocode/json?",
-                        method: "GET",
-                        params: {
-                            latlng: location.coords.latitude + ',' + location.coords.longitude,
-                            key: $rootScope.google_key
-                        }
-                    };
-                    $http(config)
-                            .then(function(response) {
-                                q.resolve(response);
-                            }).catch(function(err) {
-                        q.reject(err);
+                    var cliente = $localStorage.cliente.id;
 
-                    });
+                    $sails.get("/cliente/servicio/pendiente", {clienteId:cliente})
+                            .success(function(servicio, status, headers, jwr) {
+                                q.resolve(servicio);
+                            })
+                            .error(function(err) {
+                                q.reject(err);
+                            });
 
                     return q.promise;
                 }
@@ -351,9 +347,9 @@ angular.module('app.services', [])
                     $http(config)
                             .then(function(response) {
 
-                               $localStorage.token = response.data.token;
-                               $localStorage.cliente =response.data.cliente;
-                               
+                                $localStorage.token = response.data.token;
+                                $localStorage.cliente = response.data.cliente;
+
                                 q.resolve(response.data.cliente);
 
                                 q.resolve(response);
