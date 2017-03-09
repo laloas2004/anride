@@ -7,7 +7,7 @@
 module.exports = {
     attributes: {
         cliente: {
-            model: 'Cliente',
+            model: 'cliente',
         },
         chofer: {
             model: 'Chofer'

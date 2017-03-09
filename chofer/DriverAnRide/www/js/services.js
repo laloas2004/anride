@@ -212,7 +212,7 @@ angular.module('app.services', [])
 
 
         })
-        .factory('solicitudService', function($http, $q, $sails, $rootScope) {
+        .factory('solicitudService', function($http, $q, $sails, $rootScope,$localStorage) {
 
             return {
                 getDireccion: function(location) {
@@ -233,6 +233,22 @@ angular.module('app.services', [])
                         q.reject(err);
 
                     });
+
+                    return q.promise;
+                },
+                getSolicitudPendiente: function() {
+                    
+                    var q = $q.defer();
+                    
+                    var chofer = $localStorage.chofer.id;
+             
+                    $sails.get("/choferes/solicitud/pendiente", {ChoferId: chofer})
+                            .success(function(servicio, status, headers, jwr) {
+                                q.resolve(servicio);
+                            })
+                            .error(function(err) {
+                                q.reject(err);
+                            });
 
                     return q.promise;
                 }

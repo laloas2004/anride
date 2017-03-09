@@ -107,14 +107,16 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $sails.on('servicio.finalizado', function(data) {
                 
                 $cordovaDialogs.alert('Hemos llegado al destino de su servicio, el total es de: $'+data.totales[0].monto+' MXN','Servicio Terminado','OK');
-                $localStorage.servicio = {};
+                delete $localStorage.servicio;
+                delete $localStorage.solicitud;
+                delete $localStorage.chofer;
                 $state.go('app.map', {});
 
             });
             
             $sails.on('servicio.cancelado', function(data) {
               $cordovaDialogs.alert('El servicio ha sido cancelado por el Chofer, por favor vuelva a pedir otro servicio.','Servicio Cancelado','OK');
-              $localStorage.servicio = {};
+              delete $localStorage.servicio;
               $state.go('app.map', {});
 
             });
@@ -694,7 +696,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 //              Si el usuario tiene un servicio en proceso.
 
-                if ($localStorage.servicio.id) {
+                if ($localStorage.servicio) {
                     $state.go('app.servicio_aprovado', {});
                 }
 
@@ -885,7 +887,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             $sails.on('chofer', function(data) {
 
                                 markerChoferServicio.setMap(null);
-                                var latLngChofer = new google.maps.LatLng(data.data.chofer.lat, data.data.chofer.lon);
+                                
+                                var lat = data.data.chofer.lat || 0;
+                                var lon = data.data.chofer.lon || 0;
+                                var latLngChofer = new google.maps.LatLng(lat, lon);
 
                                 markerChoferServicio = new google.maps.Marker({
                                     position: latLngChofer,
@@ -920,8 +925,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                 $sails.post("/clientes/servicio/cancel", data)
                                         .success(function(data, status, headers, jwr) {
                                             $sails.off('chofer',function(){});
-                                            $localStorage.servicio = {};
-                                            $localStorage.chofer = {};
+                                    
+                                    
+                                    
+                                           delete $localStorage.servicio;
+                                           delete $localStorage.chofer ;
                                             $state.go('app.map', {});
                                             $scope.centerOnMe();
                                             $scope.hidePanels('inicio');

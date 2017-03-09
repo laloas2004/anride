@@ -59,6 +59,8 @@ module.exports.routes = {
     'post /choferes/servicio/inicio': 'ChoferController.empiezaViaje',
     'post /choferes/servicio/final': 'ChoferController.terminaViaje',
     'get /choferes/servicio': 'ChoferController.getServicio',
+    'get /choferes/solicitud/pendiente': 'ChoferController.getServicioPendiente',
+    'get /choferes/solicitud': 'ChoferController.getSolicitud',
     'post /choferes/servicio/cancelo/cliente': 'ChoferController.canceloCliente',
     'post /choferes/estatus': 'ChoferController.cambiarStatus',
     'post /choferes/servicio/cancel': 'ChoferController.cancelarServicio',

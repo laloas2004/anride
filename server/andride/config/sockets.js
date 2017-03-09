@@ -96,7 +96,6 @@ module.exports.sockets = {
    ***************************************************************************/
    beforeConnect: function(handshake, cb) {
        
-       console.log('before Connect---');
 //       console.log(handshake);
        
     // `true` allows the connection
@@ -124,6 +123,7 @@ module.exports.sockets = {
             });
            
        }
+       
        if(session.clienteId){
            
            var clienteId = session.clienteId;
@@ -135,8 +135,7 @@ module.exports.sockets = {
            
        }
        
-       
-//       console.log(session); 
+      
        
        
      // By default: do nothing.

@@ -36,6 +36,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $ionicPlatform,
                 AuthService,
                 choferService,
+                solicitudService,
                 $q,
                 $ionicPopup,
                 $ionicModal,
@@ -82,7 +83,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
             $sails.on('disconnect', function(data) {
 
-//                alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
+                alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
             });
             $sails.on('servicio', function(data) {
 
@@ -175,33 +176,39 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         function(position) {
                             console.log('Se ejecuto watchPosition:');
                             console.log('Lat: ' + position.coords.latitude + ' Lon:' + position.coords.longitude);
-                            
-                            
+
+
                             var lat = position.coords.latitude
                             var lon = position.coords.longitude
+                            try {
 
-                            $scope.$storage.position.lon = position.coords.longitude;
-                            $scope.$storage.position.lat = position.coords.latitude;
+                                $scope.$storage.position.lon = position.coords.longitude;
+                                $scope.$storage.position.lat = position.coords.latitude;
 
-                         
+                            } catch (e) {
+                                console.log(e);
+                            }
+
+
+
                             var myPosition = new plugin.google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                            
-                                 
-                            if(angular.isFunction(markerChofer.remove)){
-                                
+
+
+                            if (angular.isFunction(markerChofer.remove)) {
+
                                 markerChofer.remove();
                             }
-                                 
-                            
-                         
-                        
-                          
-                          $scope.map.addMarker({
+
+
+
+
+
+                            $scope.map.addMarker({
                                 'position': myPosition
                             }, function(marker) {
-                                
-                            markerChofer = marker;
-                                debugger;
+
+                                markerChofer = marker;
+
                             });
 
                             $scope.map.moveCamera({
@@ -213,14 +220,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                             });
 
-                                choferService.updatePosition(position).then(function(response) {
+                            choferService.updatePosition(position).then(function(response) {
 
-                                    console.log("Se actualizo posicion" + response);
-                                    actualizo = true;
+                                console.log("Se actualizo posicion" + response);
+                                actualizo = true;
 
-                                })
+                            })
 
-                       
+
 
                         });
             };
@@ -241,7 +248,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 }
 
 
-                $sails.post("/choferes/estatus", { action: action})
+                $sails.post("/choferes/estatus", {action: action})
                         .success(function(data, status, headers, jwr) {
 
                             $localStorage.chofer.status = data.status;
@@ -276,40 +283,75 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 console.log('After Enter');
 //              Si el chofer tiene un servicio en proceso.
 
-                if ($localStorage.servicio) {
-                    //Obtengo el servicio para actualizar el status.
-                    $sails.get("/choferes/servicio", {servicioId: $localStorage.servicio.id})
-                            .success(function(servicio, status, headers, jwr) {
 
-                                $localStorage.servicio = servicio;
 
-                                if ($localStorage.servicio.status == 'iniciada') {
-                                    $state.go('app.pickup', {});
+                solicitudService.getSolicitudPendiente().then(function(response) {
 
-                                } else if ($localStorage.servicio.status == 'enproceso') {
-                                    $state.go('app.servicio', {});
-                                } else if ($localStorage.servicio.status == 'cancelada') {
-                                    if ($localStorage.chofer.status != 'activo') {
+                    if (response.length > 0) {
 
-                                        $scope.cambiarEstadoChofer();
-                                        $localStorage.servicio = {};
-                                        $localStorage.solicitud = {};
+                        $localStorage.servicio = response[0];
 
-                                    } else {
-                                        $localStorage.servicio = {};
-                                        $localStorage.solicitud = {};
+                        $sails.get("/choferes/solicitud", {SolId:response[0].solicitud})
+                                .success(function(response, status, headers, jwr) {
+                                    
+                                    $localStorage.solicitud = response;
+                                    
+                                    if ($localStorage.servicio.status == 'iniciada') {
+                                        $state.go('app.pickup', {});
+
+                                    } else if ($localStorage.servicio.status == 'enproceso') {
+                                        $state.go('app.servicio', {});
                                     }
-
-                                }
-
-
-                            })
-                            .error(function() {
-                            });
+                                })
+                                .error(function(err) {
+                                    console.log(err);
+                                });
 
 
 
-                }
+                    }
+                  
+
+                }, function(err) {
+                    console.log(err);
+
+                });
+
+
+//                if ($localStorage.servicio) {
+//                    //Obtengo el servicio para actualizar el status.
+//                    $sails.get("/choferes/servicio", {servicioId: $localStorage.servicio.id})
+//                            .success(function(servicio, status, headers, jwr) {
+//
+//                                $localStorage.servicio = servicio;
+//
+//                                if ($localStorage.servicio.status == 'iniciada') {
+//                                    $state.go('app.pickup', {});
+//
+//                                } else if ($localStorage.servicio.status == 'enproceso') {
+//                                    $state.go('app.servicio', {});
+//                                } else if ($localStorage.servicio.status == 'cancelada') {
+//                                    if ($localStorage.chofer.status != 'activo') {
+//
+//                                        $scope.cambiarEstadoChofer();
+//                                        $localStorage.servicio = {};
+//                                        $localStorage.solicitud = {};
+//
+//                                    } else {
+//                                        $localStorage.servicio = {};
+//                                        $localStorage.solicitud = {};
+//                                    }
+//
+//                                }
+//
+//
+//                            })
+//                            .error(function() {
+//                            });
+//
+//
+//
+//                }
 
 
             })
@@ -408,7 +450,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 if (!$scope.servicioAceptado) {
 
-                    $localStorage.solicitud = {};
+                    delete $localStorage.solicitud;
                     $state.go('app.main', {});
                 }
             })
@@ -451,7 +493,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
         })
-        .controller('LoginCtrl', function($scope, $ionicHistory, $ionicSideMenuDelegate, $ionicPlatform, AuthService, $localStorage, $state) {
+        .controller('LoginCtrl', function($scope, $ionicHistory, $ionicSideMenuDelegate, $ionicPlatform, AuthService, $localStorage, $state, $cordovaDialogs) {
 
             $scope.$storage = $localStorage;
 
@@ -468,6 +510,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 AuthService.login($scope.email, $scope.password).then(function(response) {
 
+
+
+
                     $ionicSideMenuDelegate.canDragContent(true);
 
                     AuthService.suscribe().then(function(response) {
@@ -480,8 +525,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     });
 
                 }, function(err) {
-                    console.log('AuthService.login()');
-                    console.log(err);
+
+
+
+                    $cordovaDialogs.alert(err.data.err, err.data.err, 'OK')
+                            .then(function() {
+
+                            })
+
                 })
 
             };
@@ -564,7 +615,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
         .controller('ServicioCtrl', function($scope, $sails, $localStorage, $rootScope, $ionicPopup, $state) {
 
             $scope.$storage = $localStorage;
-          
+
             $scope.servicio = $localStorage.servicio;
             $scope.solicitud = $localStorage.solicitud;
             $scope.cliente = $rootScope.cliente;

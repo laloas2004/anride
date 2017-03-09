@@ -1,8 +1,6 @@
 
  <%- include includes/menu %>
 <div class="container">
-<iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d14375.642758222635!2d-100.299279!3d25.7404669!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2smx!4v1487983702167" width="1000" height="500" frameborder="0" style="border:0" allowfullscreen></iframe>
-
 <div class="row">
 <div class="col-md-6">
 <div class="panel panel-default">
@@ -37,10 +35,6 @@
 
 <script>
 $( document ).ready(function() {
-
-sails.get();
-
-
 
 io.socket.on('solicitud.enbusqueda', function (msg) {
 

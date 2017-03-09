@@ -1,15 +1,16 @@
 <%- include ../includes/menu %>
 
 <div class="container">
-    <div id="map" style="height:450px;" class="col-md-12">
-
-    </div>
-    <div class="row">
-        <div class ="col-md-12">
-            <div class="page-header">
+    <div class="page-header">
                 <h1>Choferes</h1>
                 <div>
                     <div class=""><a href="/admin/choferes/new" class="btn btn-default">Nuevo Chofer</a></div>
+    <div id="map" style="height:450px;margin-top:10px;" class="col-md-12">
+
+    </div>
+    <div class="row ">
+        <div class ="col-md-12">
+            
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -29,7 +30,7 @@
                                 <td><%= chofer.apellido%></td>
                                 <td><%= chofer.email%></td>
                                 <td><%= chofer.numCel%></td>
-                                <td><a href="#" class="btn btn-primary">Editar</a> <a href="/admin/choferes/delete/<%= chofer.id%>" class="btn btn-danger">Eliminar</a></td>
+                                <td><a href="#" class="btn btn-primary">Editar</a> <a href="#" class="btn btn-primary">Autos</a> <a href="/admin/choferes/delete/<%= chofer.id%>" class="btn btn-danger">Eliminar</a></td>
                             </tr><% })%>
                         </tbody>
                     </table>

@@ -27,7 +27,7 @@ module.exports = {
             if (err) {
                 return res.json(err.status, {err: err});
             }
-            debugger;
+            
             res.view('solicitudes/home', {solicitudes: solicitudes});
         })
 

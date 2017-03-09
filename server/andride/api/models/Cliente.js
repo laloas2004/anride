@@ -16,7 +16,7 @@ module.exports = {
             type: "string"
         },
         email: {
-            type: "string"
+            type: "email"
         },
         password: {
             type: "string"
@@ -25,11 +25,11 @@ module.exports = {
             type: 'string'
         },
         solicitudes: {
-            collection: 'Solicitud',
+            collection: 'solicitud',
             via: 'cliente'
         },
         servicios: {
-            collection: 'Servicio',
+            collection: 'servicio',
             via: 'cliente'
         },
         configuracion: {
@@ -85,9 +85,13 @@ module.exports = {
         });
     },
     beforeUpdate: function(attrs, cb) {
+        
         if (attrs.newPassword) {
+            
             bcrypt.genSalt(10, function(err, salt) {
+                
                 bcrypt.hash(attrs.password, salt, function(err, hash) {
+                    
                     if (err) {
                         console.log(err);
                         cb(err);
@@ -98,7 +102,8 @@ module.exports = {
                 });
             });
         } else {
-            return cb();
+            
+             cb();
         }
     }
 };

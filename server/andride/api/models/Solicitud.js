@@ -19,7 +19,7 @@ module.exports = {
             type: "float"
         },
         cliente: {
-            model: 'Cliente'
+            model: 'cliente'
         },
         direccion_origen: {
             type: "string"

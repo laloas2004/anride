@@ -6,7 +6,6 @@
  */
 var Q = require('q');
 
-
 module.exports = {
     getChoferes: function(req, res) {
 
@@ -20,7 +19,7 @@ module.exports = {
         var limitChoferes = 10;
 
 
-        ClientCoordinates = {
+        var ClientCoordinates = {
             lon: req.param('lon'),
             lat: req.param('lat')
         };
@@ -65,9 +64,14 @@ module.exports = {
         }
 
         Cliente.findOne({email: req_email}).exec(function(err, cliente) {
+
             if (!cliente) {
                 return res.json(401, {err: 'Usuario o contraseña Invalidos.'});
 
+            }
+            if (cliente.online) {
+
+                return res.json(401, {err: 'El Usuario esta en Uso.'});
             }
 
             Cliente.comparePassword(req_password, cliente, function(err, valid) {
@@ -284,7 +288,7 @@ module.exports = {
 
 
         }
-        
+
         loop(tiempo_espera, finn);
 
         return deferred.promise;
@@ -292,11 +296,11 @@ module.exports = {
     solicitud: function(req, res) {
 
         if (!req.isSocket) {
-            
+
             return res.badRequest();
         }
 
-        console.log(req.allParams());
+//        console.log(req.allParams());
 
         var solicitud = req.param('solicitud');
         var socketId = sails.sockets.getId(req);
@@ -320,15 +324,15 @@ module.exports = {
             }
 
             sails.sockets.broadcast(socketId, 'solicitud.creada', finn);
-            sails.sockets.blast('solicitud', {}, req);
+            sails.sockets.blast('solicitud', finn, req);
 
             Solicitud.subscribe(req, finn.id);
-            Solicitud.publishCreate( finn , req);
+            Solicitud.publishCreate(finn, req);
 
             that._enviaSolicitudaChofer(tiempo_espera, finn).then(function(respuesta) {
-                
+
                 return res.json(respuesta);
-                
+
             })
 
         })
@@ -348,38 +352,45 @@ module.exports = {
 
 
         return res.ok();
-        
+
     },
-    
-    cancelarServicio:function(req, res){
-        
+    cancelarServicio: function(req, res) {
+
         if (!req.isSocket) {
 
             return res.badRequest();
-        } 
-        
+        }
+
         var servicioId = req.param('servicioId');
-        
-        Servicio.update({id:servicioId},{status:'cancelada',cancelo:'cliente'}).exec(function(err,serv){
+
+        Servicio.update({id: servicioId}, {status: 'cancelada', cancelo: 'cliente'}).exec(function(err, serv) {
 
             if (err) {
                 return res.json({err: err});
             }
-            
-         
-            
-            Servicio.publishUpdate(serv[0].id,{servicio:serv[0]}, req);
-            
+
+
+            try {
+
+                Servicio.publishUpdate(serv[0].id, {servicio: serv[0]}, req);
+
+            } catch (e) {
+
+                console.log(e);
+
+            }
+
+
             res.ok(serv[0]);
-            
-             
+
+
         })
-        
-        
+
+
     },
-    getViajes:function(req, res){
-        
-        
+    getViajes: function(req, res) {
+
+
     }
 
 };
