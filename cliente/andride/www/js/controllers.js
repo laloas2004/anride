@@ -106,19 +106,20 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
             $sails.on('servicio.finalizado', function(data) {
-                
-                $cordovaDialogs.alert('Hemos llegado al destino de su servicio, el total es de: $'+data.totales[0].monto+' MXN','Servicio Terminado','OK');
+
+                $cordovaDialogs.alert('Hemos llegado al destino de su servicio, el total es de: $' + data.totales[0].monto + ' MXN', 'Servicio Terminado', 'OK');
                 delete $localStorage.servicio;
-                delete $localStorage.solicitud;
-                delete $localStorage.chofer;
+//                delete $localStorage.solicitud;
+//                delete $localStorage.chofer;
+
                 $state.go('app.map', {});
 
             });
-            
+
             $sails.on('servicio.cancelado', function(data) {
-              $cordovaDialogs.alert('El servicio ha sido cancelado por el Chofer, por favor vuelva a pedir otro servicio.','Servicio Cancelado','OK');
-              delete $localStorage.servicio;
-              $state.go('app.map', {});
+                $cordovaDialogs.alert('El servicio ha sido cancelado por el Chofer, por favor vuelva a pedir otro servicio.', 'Servicio Cancelado', 'OK');
+                delete $localStorage.servicio;
+                $state.go('app.map', {});
 
             });
 
@@ -402,7 +403,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 } catch (e) {
                     console.log("Error en setLblTiempo: " + e);
-                    
+
                 }
 
             }
@@ -697,19 +698,33 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 //              Si el usuario tiene un servicio en proceso.
 
-        servicioService.getSolicitudPendiente().then(function(response){
-            
-            
-            if (response.length > 0) {
-                
-             $localStorage.servicio = response[0];
-                
-             $state.go('app.servicio_aprovado', {});
-         }
-            
-        })
+                servicioService.getSolicitudPendiente().then(function(response) {
 
-            
+
+                    if (response.length > 0) {
+
+                        $localStorage.servicio = response[0];
+                        $localStorage.chofer = response[0].chofer;
+
+
+                        $sails.get("/cliente/solicitud", {SolId: response[0].solicitud})
+                                .success(function(response, status, headers, jwr) {
+
+                                    $localStorage.solicitud = response;
+
+                                    $state.go('app.servicio_aprovado', {});
+
+
+
+                                })
+                                .error(function(err) {
+                                    console.log(err);
+                                });
+                    }
+
+                })
+
+
 
 
             })
@@ -898,7 +913,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             $sails.on('chofer', function(data) {
 
                                 markerChoferServicio.setMap(null);
-                                
+
                                 var lat = data.data.chofer.lat || 0;
                                 var lon = data.data.chofer.lon || 0;
                                 var latLngChofer = new google.maps.LatLng(lat, lon);
@@ -935,15 +950,15 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                                 $sails.post("/clientes/servicio/cancel", data)
                                         .success(function(data, status, headers, jwr) {
-                                            $sails.off('chofer',function(){});
-                                    
-                                    
-                                    
-                                           delete $localStorage.servicio;
-                                           delete $localStorage.chofer ;
+                                            $sails.off('chofer', function() {
+                                                
+                                            });
+
+                                            delete $localStorage.servicio;
+                                            delete $localStorage.chofer;
                                             $state.go('app.map', {});
-                                            $scope.centerOnMe();
-                                            $scope.hidePanels('inicio');
+//                                            $scope.centerOnMe();
+//                                            $scope.hidePanels('inicio');
 
                                         })
                                         .error(function(data, status, headers, jwr) {

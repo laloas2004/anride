@@ -405,7 +405,7 @@ module.exports = {
         Servicio.find({
             cliente: clienteId,
             status: {'!': ['finalizado', 'cancelada']}
-        }).sort('updateAt ASC').exec(function(err, servi) {
+        }).populate('chofer').sort('updateAt ASC').exec(function(err, servi) {
 
             if (err) {
                 return res.json({err: err});
@@ -433,7 +433,6 @@ module.exports = {
             if (err) {
                 return res.json({err: err});
             }
-
 
             res.json(solicitud);
 

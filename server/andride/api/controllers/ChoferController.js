@@ -177,6 +177,7 @@ module.exports = {
         });
     },
     servicio: function(req, res) {
+
         if (!req.isSocket) {
             return res.badRequest();
         }
@@ -200,7 +201,7 @@ module.exports = {
 
             Cliente.findOne({id: solicitud[0].cliente}).exec(function(err, cliente) {
 
-                sails.sockets.broadcast(cliente.socketId, 'solicitud.aceptada', solicitud[0]);
+                sails.sockets.broadcast('cliente_' + solicitud[0].cliente, 'solicitud.aceptada', solicitud[0]);
 
                 Servicio.create({
                     cliente: solicitud[0].cliente,
@@ -221,9 +222,9 @@ module.exports = {
                             return res.json({err: err});
                         }
 
-                        sails.sockets.broadcast(cliente.socketId, 'servicio.iniciada', {servicio: servicio, chofer: chofer[0]});
+                        sails.sockets.broadcast('cliente_' + cliente.id, 'servicio.iniciada', {servicio: servicio, chofer: chofer[0]});
 
-                        sails.sockets.broadcast(chofer[0].id, 'servicio.iniciada', {servicio: servicio});
+                        sails.sockets.broadcast('chofer_' + chofer[0].id, 'servicio.iniciada', {servicio: servicio});
 
                         return res.json({servicio: servicio, cliente: cliente});
                     })
@@ -249,7 +250,7 @@ module.exports = {
                 if (err) {
                     return res.json({err: err});
                 }
-                sails.sockets.broadcast(cliente.socketId, 'servicio.onplace', {servicio: servicio, chofer: chofer});
+                sails.sockets.broadcast('cliente_' + cliente.id, 'servicio.onplace', {servicio: servicio, chofer: chofer});
                 return res.json({enviado: true});
             })
 
@@ -263,7 +264,7 @@ module.exports = {
         if (!req.isSocket) {
             return res.badRequest();
         }
-
+        
         var servicio = req.param('servicio');
 
         var inicio_viaje = req.param('inicio_viaje');
@@ -282,7 +283,8 @@ module.exports = {
                 if (err) {
                     return res.json({err: err});
                 }
-                sails.sockets.broadcast(cliente.socketId, 'servicio.inicio', {servicio: servicio});
+
+                sails.sockets.broadcast('cliente_' + cliente.id, 'servicio.inicio', {servicio: servicio});
             })
 
             return res.json({servicio: result});
@@ -313,7 +315,7 @@ module.exports = {
             }
 
 
-            
+
             that._calcularCobro(result[0]).then(function(respuesta) {
 
                 Servicio.update({
@@ -332,12 +334,13 @@ module.exports = {
                             return res.json({err: err});
                         }
 
-                        sails.sockets.broadcast(cliente.socketId, 'servicio.finalizado', {servicio: servicio, totales: result});
+                        sails.sockets.broadcast('cliente_' + cliente.id, 'servicio.finalizado', {servicio: servicio, totales: result});
 
                     })
 
 
                     Chofer.update({id: req.session.choferId}, {status: 'activo'}).exec(function(err, chofer) {
+
                         if (err) {
                             return res.json({err: err});
                         }
@@ -372,15 +375,29 @@ module.exports = {
         var segundos = (fecha_fin - fecha_inicio) / 1000;
 
         var minutos = Math.floor(segundos % 3600) / 60;
+        var location1 = {};
+        var location2 = {};
+        try {
+            location1 = {
+                lat: servicio.inicio_viaje.lat,
+                lon: servicio.inicio_viaje.lon
+            };
+        } catch (e) {
 
-        var location1 = {
-            lat: servicio.inicio_viaje.lat,
-            lon: servicio.inicio_viaje.lon
-        };
-        var location2 = {
-            lat: servicio.fin_viaje.lat,
-            lon: servicio.fin_viaje.lon
-        };
+            console.log("Location 1:" + e);
+
+        }
+        try {
+            location2 = {
+                lat: servicio.fin_viaje.lat,
+                lon: servicio.fin_viaje.lon
+            };
+        } catch (e) {
+
+            console.log("Location 2:" + e);
+
+        }
+
 
         GmapService.getMatrix(location1, location2).then(function(val) {
 
@@ -532,23 +549,23 @@ module.exports = {
         })
 
     },
-    getSolicitud:function(req, res){
-        
+    getSolicitud: function(req, res) {
+
         if (!req.isSocket) {
             return res.badRequest();
-        } 
-        
+        }
+
         var SolId = req.param('SolId');
-        
-        Solicitud.findOne({id:SolId}).exec(function(err,solicitud){
-          
+
+        Solicitud.findOne({id: SolId}).exec(function(err, solicitud) {
+
             if (err) {
                 return res.json({err: err});
             }
 
-          
-          res.json(solicitud);  
-            
+
+            res.json(solicitud);
+
         })
     }
 
