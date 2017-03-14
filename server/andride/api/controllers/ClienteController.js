@@ -18,7 +18,6 @@ module.exports = {
 
         var limitChoferes = 10;
 
-
         var ClientCoordinates = {
             lon: req.param('lon'),
             lat: req.param('lat')
@@ -167,7 +166,11 @@ module.exports = {
 
         var deferred = Q.defer()
         var num_chofer = 0;
-        var cant_chofer = finn.choferesDisponibles.choferes.length || 0;
+        if (finn.choferesDisponibles.choferes) {
+            var cant_chofer = finn.choferesDisponibles.choferes.length || 0;
+        } else {
+            var cant_chofer = 0;
+        }
 
         var loop = function(tiempo_espera, finn) {
             var tiempo = 0;
@@ -331,8 +334,11 @@ module.exports = {
 
             that._enviaSolicitudaChofer(tiempo_espera, finn).then(function(respuesta) {
 
-                return res.json(respuesta);
+                return res.json({respuesta: respuesta, solicitud: finn});
 
+            },function(err){
+                
+               return res.json({err: err}); 
             })
 
         })
@@ -347,11 +353,15 @@ module.exports = {
 
         var choferId = req.param('choferId');
 
-
         Chofer.subscribe(req, choferId);
 
+        Chofer.findOne({id: choferId}).exec(function(err, chofer) {
+            if (err) {
+                return res.json({err: err});
+            }
+            return res.ok(chofer);
 
-        return res.ok();
+        })
 
     },
     cancelarServicio: function(req, res) {
@@ -437,7 +447,54 @@ module.exports = {
             res.json(solicitud);
 
         })
-    }
+    },
+    confirmaMsg: function(req, res) {
+
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+        var idMsg = req.param('idQueue');
+
+        if (!idMsg) {
+            console.log('Falta parametro idMsg')
+
+        }
+
+        Queue.update({id: idMsg}, {entregado: true}).exec(function(err, queue) {
+
+            if (err) {
+                return res.json(err);
+            }
+            return res.json(queue);
+
+        })
+
+    },
+    getQueueMsg: function(req, res) {
+        
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+
+        var idCliente = req.session.clienteId;
+        
+        if(idCliente){
+            
+        Queue.findOne({idDestino: {"$in": [idCliente]}, entregado: false}).exec(function(err, msg) {
+
+            if (err) {
+
+                return res.serverError(err);
+            }
+
+            if (msg) {
+
+                sails.sockets.broadcast(msg.tipo + '_' + msg.idDestino[0], msg.event, msg);
+            }
+            res.ok({ok: true});
+        })
+
+    }}
 
 
 };

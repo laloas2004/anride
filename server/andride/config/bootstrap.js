@@ -9,6 +9,8 @@
  * http://sailsjs.org/#!/documentation/reference/sails.config/sails.config.bootstrap.html
  */
 module.exports.bootstrap = function (cb) {
+    
+    sails.moment = require('moment');
 	// Ensure we have 2dsphere index on Property so GeoSpatial queries can work!
 	sails.models.chofer.native(function (err, collection) {
 //		console.log('ejecuto el index de chofer');

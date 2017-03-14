@@ -8,27 +8,34 @@
 module.exports = {
     attributes: {
         tipo: {
-            type: 'string'
+            type: 'string',
+            enum: ['chofer', 'cliente']
         },
-        socketsOrigen: {
+        event:{
+          type: 'string'  
+        },
+        idOrigen: {
             type: 'array'
         },
-        socketsDestino: {
+        idDestino: {
             type: 'array'
         },
         rooms: {
             type: 'array'
         },
-        dataOrigen: {
+        data: {
             type: 'json'
         },
-        dataDestino: {
-            type: 'json',
-        },
+        
         entregado: {
             type: 'boolean',
             defaultsTo: false
         },
+        intentos:{
+            type: 'integer',
+            defaultsTo: 0
+
+        }
     }
 };
 

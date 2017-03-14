@@ -49,8 +49,11 @@ module.exports.routes = {
     'get /cliente/viajes': 'ClienteController.getViajes',
     'get /cliente/servicio/pendiente': 'ClienteController.getServicioPendiente',
     'get /cliente/solicitud': 'ClienteController.getSolicitud',
+    'get /cliente/mensajes': 'ClienteController.getQueueMsg',
+    'post cliente/mensaje/confirma': 'ClienteController.confirmaMsg',
     //Chofer
     'post /chofer': 'ChoferController.create',
+    'get /chofer': 'ChoferController.getChofer',
     'post /choferes/login': 'ChoferController.login',
     'post /choferes/logout': 'ChoferController.logout',
     'post /choferes/suscribe': 'ChoferController.suscribe',
@@ -61,11 +64,13 @@ module.exports.routes = {
     'post /choferes/servicio/inicio': 'ChoferController.empiezaViaje',
     'post /choferes/servicio/final': 'ChoferController.terminaViaje',
     'get /choferes/servicio': 'ChoferController.getServicio',
+    
     'get /choferes/solicitud/pendiente': 'ChoferController.getServicioPendiente',
     'get /choferes/solicitud': 'ChoferController.getSolicitud',
     'post /choferes/servicio/cancelo/cliente': 'ChoferController.canceloCliente',
     'post /choferes/estatus': 'ChoferController.cambiarStatus',
     'post /choferes/servicio/cancel': 'ChoferController.cancelarServicio',
+    'post /choferes/servicio/track': 'ChoferController.trackRecorridoServicio',
     
 //    'get /choferes/solicitud_prueba': 'ChoferController.solicitud',
     /***************************************************************************

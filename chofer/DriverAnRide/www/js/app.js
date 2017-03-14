@@ -6,10 +6,11 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
     'app.services', 
     'ngCordova', 
     'ngSails',
-    'ngStorage'])
-        .run(function($ionicPlatform, $rootScope, $window) {
+    'ngStorage',
+    'angularMoment'])
+        .run(function($ionicPlatform, $rootScope, $window, $cordovaSQLite) {
 //Validar que este conectado a internet.
-            $rootScope.serverIp = "http://192.168.15.99:1337";
+            $rootScope.serverIp = "http://192.168.1.66:1337";
             
             $rootScope.google_key  = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
             
@@ -37,6 +38,8 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                     StatusBar.styleDefault();
                 }
             })
+            
+      
         })
         .config(function($stateProvider, $urlRouterProvider) {
 
@@ -50,6 +53,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                     })
                     .state('app.main', {
                         url: '/main',
+                        
                         views: {
                             'menuContent': {
                                 templateUrl: 'templates/home.html',
@@ -147,6 +151,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                        .state('app.servicio', {
                         url: '/servicio',
                         views: {
+                            cache:false,
                             'menuContent': {
                                 templateUrl: 'templates/pickoff.html',
                                 controller: 'ServicioCtrl',
@@ -187,7 +192,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
         })
         .config(['$sailsProvider', function($sailsProvider) {
                 
-                $sailsProvider.url = "http://192.168.15.99:1337";
+                $sailsProvider.url = "http://192.168.1.66:1337";
                 $sailsProvider.debug = false;                
                 //digital ocean.
 //                $sailsProvider.url = 'http://104.131.116.22:1337';

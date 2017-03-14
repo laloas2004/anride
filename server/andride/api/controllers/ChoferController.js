@@ -8,11 +8,6 @@
 var Q = require('q');
 
 module.exports = {
-    _config: {
-        actions: false,
-        shortcuts: false,
-        rest: false
-    },
     create: function(req, res) {
 
 
@@ -64,7 +59,7 @@ module.exports = {
                 if (!valid) {
                     return res.json(401, {err: 'Usuario o contraseña Invalidos.'});
                 } else {
-
+                    console.log('-- Login Chofer | ' + chofer.email);
                     delete chofer.password;
 
                     res.json({
@@ -88,14 +83,19 @@ module.exports = {
             return res.badRequest();
         }
         var socketId = sails.sockets.getId(req);
-        var choferId = req.param('choferId');
-//        console.log(req.allParams());
 
-        sails.log('My socket ID is: ' + socketId);
+        var choferId = req.param('choferId');
+
+        if (!choferId) {
+
+            console.log('ChoferController:92 | Falta parammetro choferId');
+
+        }
 
         sails.sockets.join(req, 'chofer_' + choferId, function(err) {
 
             if (err) {
+
                 return res.serverError(err);
             }
 
@@ -108,9 +108,29 @@ module.exports = {
                 }
 
                 sails.sockets.blast('chofer_online', chofer, req);
+
                 req.session.choferId = choferId;
 
-                return res.json({suscrito: true, socketId: socketId});
+                sails.log('Suscribe Chofer: ' + choferId + ' -- ' + chofer.email);
+
+                Queue.findOne({idOrigen: {"$in": [choferId]}, entregado: false}).exec(function(err, msg) {
+
+                    if (err) {
+
+                        return res.serverError(err);
+                    }
+
+                    if (msg) {
+
+                        sails.sockets.broadcast(msg.tipo + '_' + msg.idDestino[0], msg.event, msg);
+
+                    }
+
+                    return res.json({suscrito: true, socketId: socketId});
+
+                });
+
+
 
             });
         });
@@ -120,11 +140,10 @@ module.exports = {
     signup: function(req, res) {
 
     },
-    newChofer: function(req, res) {
-    },
     trackChofer: function(req, res) {
 
         if (!req.isSocket) {
+
             return res.badRequest();
         }
 
@@ -138,38 +157,34 @@ module.exports = {
 
                 .exec(function(err, updated) {
                     if (err) {
-                        console.log(err);
+                        console.log('ChoferController:142' + err);
                         return res.json({updated: false});
                     }
 
 
-//                    console.log('--- Se actualizo posicion de: ---');
-//                    console.log(updated);
+                    console.log('--- Se actualizo posicion de: ---');
+                    console.log(updated);
 
                     try {
-
                         Chofer.publishUpdate(updated[0].id, {chofer: updated[0]});
                     } catch (e) {
-                        console.log(e);
+                        console.log('ChoferController:152' + e);
                     }
 
                     return res.json({updated: true});
                 })
 
     },
-    getChoferes: function(req, res) {
-
-    },
-    setDisponibilidadChofer: function(req, res) {
-    },
-    updateStatus: function(req, res) {
-
-    },
     validateToken: function(req, res) {
+
         var token = req.param('token');
+
         jwToken.verify(token, function(err, token) {
-            if (err)
+
+            if (err) {
+                console.log('ChoferController:168' + err);
                 return res.json({valid: false});
+            }
 
 //    req.token = token; // This is the decrypted token or the payload you provided
 
@@ -178,12 +193,15 @@ module.exports = {
     },
     servicio: function(req, res) {
 
+        var that = this;
+
         if (!req.isSocket) {
+
             return res.badRequest();
         }
         var solicitud = req.param('solicitud');
 
-        var chofer = req.param('chofer');
+        var chofer = req.session.choferId;
 
 
         Solicitud.update({id: solicitud.id}, {
@@ -201,32 +219,45 @@ module.exports = {
 
             Cliente.findOne({id: solicitud[0].cliente}).exec(function(err, cliente) {
 
-                sails.sockets.broadcast('cliente_' + solicitud[0].cliente, 'solicitud.aceptada', solicitud[0]);
+
 
                 Servicio.create({
                     cliente: solicitud[0].cliente,
-                    chofer: chofer.id,
+                    chofer: chofer,
                     solicitud: solicitud[0].id
                 }).exec(function(err, servicio) {
 
                     if (err) {
                         return res.json({err: err});
                     }
-
                     Servicio.subscribe(req, servicio.id);
                     Servicio.publishCreate(servicio, req);
 
-                    Chofer.update({id: chofer.id}, {status: 'enservicio'}).exec(function(err, chofer) {
+                    Chofer.update({id: chofer}, {status: 'enservicio'}).exec(function(err, chofer) {
 
                         if (err) {
                             return res.json({err: err});
                         }
+                        Solicitud.findOne({id: servicio.solicitud}).exec(function(err, solicitud) {
 
-                        sails.sockets.broadcast('cliente_' + cliente.id, 'servicio.iniciada', {servicio: servicio, chofer: chofer[0]});
+                            if (err) {
+                                return res.json({err: err});
+                            }
 
-                        sails.sockets.broadcast('chofer_' + chofer[0].id, 'servicio.iniciada', {servicio: servicio});
+                            that._addQueueMsg('cliente', chofer[0].id, cliente.id, 'servicio.iniciada', {solicitud: solicitud, servicio: servicio, chofer: chofer[0]}).then(function(response) {
 
-                        return res.json({servicio: servicio, cliente: cliente});
+                                return res.json({err:false,servicio: servicio, cliente: cliente});
+
+                            },function(err){
+                                
+                               return res.json({err: err, servicio: servicio, cliente: cliente}); 
+                                
+                            });
+//                            sails.sockets.broadcast('cliente_' + cliente.id, 'servicio.iniciada', { solicitud:solicitud,servicio:servicio, chofer:chofer[0]});
+
+
+                        })
+
                     })
 
                 })
@@ -237,13 +268,21 @@ module.exports = {
 
     },
     onPlace: function(req, res) {
+
         if (!req.isSocket) {
+
             return res.badRequest();
         }
         var servicio = req.param('servicio');
 
+        if (!servicio) {
+            console.log('Falta parametro de servicio : Linea 256');
+        }
+
         Chofer.findOne({id: servicio.chofer}).exec(function(err, chofer) {
+
             if (err) {
+                console.log('ChoferController:262' + err);
                 return res.json({err: err});
             }
             Cliente.findOne({id: servicio.cliente}).exec(function(err, cliente) {
@@ -264,9 +303,10 @@ module.exports = {
         if (!req.isSocket) {
             return res.badRequest();
         }
-        
-        var servicio = req.param('servicio');
 
+        var that = this;
+        var servicio = req.param('servicio');
+        var inicio_viaje_app = req.param('inicio_viaje_app');
         var inicio_viaje = req.param('inicio_viaje');
 
         Servicio.update({id: servicio.id}, {
@@ -278,17 +318,17 @@ module.exports = {
                 return res.json({err: err});
             }
 
-            Cliente.findOne({id: servicio.cliente}).exec(function(err, cliente) {
 
-                if (err) {
-                    return res.json({err: err});
-                }
+            that._addQueueMsg('cliente', req.session.choferId, servicio.cliente, 'servicio.inicioViaje', {servicio: servicio}).then(function(response) {
+                
+                return res.json({err: false, servicio: result, msg:response});
 
-                sails.sockets.broadcast('cliente_' + cliente.id, 'servicio.inicio', {servicio: servicio});
+            },function(err,response){
+               
+               return res.json({err: err, servicio: result, msg:response});
+               
             })
-
-            return res.json({servicio: result});
-
+                    
         })
 
 
@@ -567,6 +607,130 @@ module.exports = {
             res.json(solicitud);
 
         })
+    },
+    trackRecorridoServicio: function(req, res) {
+
+        var servicio = req.param('ServId');
+        var lat = req.param('lat');
+        var lon = req.param('lon');
+
+
+        Servicio.findOne({id: servicio}).exec(function(err, servicio) {
+
+            var points = servicio.recorridoChofer ? servicio.recorridoChofer : [];
+
+            points.push({lat: lat, lon: lon, date: new Date()});
+
+            Servicio.update({id: servicio}, {recorridoChofer: points}).exec(function(err, servicio) {
+
+                if (err) {
+                    return res.json({err: err});
+                }
+
+                res.ok(servicio);
+
+            })
+
+
+        })
+
+    },
+    _addQueueMsg: function(tipo, idOrigen, idDestino, evento, data) {
+
+        var deferred = Q.defer();
+            intentos = 0;
+
+        if (tipo != 'cliente') {
+            console.log('Error debe de ser chofer o cliente');
+        }
+
+        if (!idOrigen) {
+
+            console.log('Falta parametro idOrigen');
+        }
+        if (!idDestino) {
+
+            console.log('Falta parametro idDestino');
+        }
+
+        Queue.create({tipo: tipo, event: evento, idOrigen: idOrigen, idDestino: idDestino, data: data}).exec(function(err, msg) {
+
+            if (err) {
+                deferred.reject(new Error(err));
+            }
+
+            
+            sails.sockets.broadcast(msg.tipo + '_' + msg.idDestino[0], msg.event, msg);
+
+            intentos++;
+
+            var interval = setInterval(function(msg) {
+                
+
+                Queue.findOne({id: msg.id}).exec(function(err, msg) {
+
+                    if (err) {
+                        deferred.reject(new Error(err));
+                    }
+
+                    if (!msg.entregado) {
+
+                        sails.sockets.broadcast(msg.tipo + '_' + msg.idDestino[0], msg.event, msg);
+                        
+                        
+                        if (intentos == 5) {
+
+                            deferred.reject('msg_no_entregado',msg);
+                            
+                            clearInterval(interval);
+
+                            Queue.update({id: msg.id}, {intentos: intentos}).exec(function() {
+
+                            });
+
+                        }
+                        
+                    } else {
+                        deferred.resolve(msg);
+                        clearInterval(interval);
+
+                        Queue.update({id: msg.id}, {intentos: intentos}).exec(function() {
+
+                        });
+
+                    }
+
+                })
+                
+                intentos++;
+                
+            }, 3000, msg);
+
+
+        });
+
+        return deferred.promise;
+    },
+    getChofer: function(req, res) {
+
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+
+        var choferId = req.session.choferId;
+
+
+        Chofer.findOne({id: choferId}).exec(function(err, chofer) {
+
+            if (err) {
+                return res.json({err: err});
+            }
+
+            res.json(chofer);
+
+        })
+
+
     }
 
 

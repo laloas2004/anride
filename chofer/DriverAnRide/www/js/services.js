@@ -79,8 +79,8 @@ angular.module('app.services', [])
                     return q.promise;
                 },
                 suscribe: function() {
-                    
-                    
+
+
                     var q = $q.defer();
                     $sails.post("/choferes/suscribe", {choferId: $localStorage.chofer.id})
                             .success(function(data, status, headers, jwr) {
@@ -212,7 +212,7 @@ angular.module('app.services', [])
 
 
         })
-        .factory('solicitudService', function($http, $q, $sails, $rootScope,$localStorage) {
+        .factory('solicitudService', function($http, $q, $sails, $rootScope, $localStorage) {
 
             return {
                 getDireccion: function(location) {
@@ -237,11 +237,11 @@ angular.module('app.services', [])
                     return q.promise;
                 },
                 getSolicitudPendiente: function() {
-                    
+
                     var q = $q.defer();
-                    
+
                     var chofer = $localStorage.chofer.id;
-             
+
                     $sails.get("/choferes/solicitud/pendiente", {ChoferId: chofer})
                             .success(function(servicio, status, headers, jwr) {
                                 q.resolve(servicio);
@@ -260,24 +260,25 @@ angular.module('app.services', [])
         .factory('servicioService', function($http, $q, $sails, $rootScope) {
 
             return {
-                getDireccion: function(location) {
+                iniciaViaje: function(servicio,inicio_viaje) {
+                    
                     var q = $q.defer();
+                    
+                                    $sails.post("/choferes/servicio/inicio", {servicio:servicio, inicio_viaje:inicio_viaje})
 
-                    var config = {
-                        url: "https://maps.googleapis.com/maps/api/geocode/json?",
-                        method: "GET",
-                        params: {
-                            latlng: location.coords.latitude + ',' + location.coords.longitude,
-                            key: $rootScope.google_key
-                        }
-                    };
-                    $http(config)
-                            .then(function(response) {
-                                q.resolve(response);
-                            }).catch(function(err) {
-                        q.reject(err);
+                                            .success(function(data, status, headers, jwr) {
+                                                
+                                                debugger;
+                                                q.resolve(data);
 
-                    });
+
+                                            })
+                                            .error(function(data, status, headers, jwr) {
+                                                debugger;
+                                                q.reject(data);
+                                                console.error('Error:' + data);
+                                            });
+                                
 
                     return q.promise;
                 }
@@ -310,6 +311,86 @@ angular.module('app.services', [])
 
                     return q.promise;
                 }
+
+            }
+
+
+        })
+        .factory('dbService', function($http, $q, $sails, $rootScope, $cordovaSQLite, $localStorage) {
+
+            db = $cordovaSQLite.openDB({name: "anride.db", iosDatabaseLocation: 'default'});
+
+            return {
+                setInicioViaje: function(inicio_viaje) {
+
+//  $cordovaSQLite.execute(db, 'DROP TABLE inicioViajes;');
+
+
+                    $cordovaSQLite.execute(db, 'CREATE TABLE IF NOT EXISTS inicioViajes (id INTEGER PRIMARY KEY AUTOINCREMENT,idServicio TEXT, inicio_viaje TEXT, entregado NUMERIC)');
+
+                    var q = $q.defer();
+
+                    var idServicio = $localStorage.servicio.id;
+
+                    var viaje = JSON.stringify(inicio_viaje);
+
+                    var query = "INSERT INTO inicioViajes (idServicio,inicio_viaje, entregado) VALUES (?,?,?)";
+
+                    $cordovaSQLite.execute(db, query, [idServicio, viaje, false]).then(function(res) {
+
+                        q.resolve(res);
+                        debugger;
+                        console.log("INSERT ID -> " + res.insertId);
+
+                    }, function(err) {
+
+                        q.reject(err);
+                        console.error(err);
+                    });
+
+                    return q.promise;
+
+                },
+                getInicioViaje: function(idInicioViaje) {
+
+                  var q = $q.defer();
+
+                    var query = "SELECT * FROM inicioViajes WHERE id=" + idInicioViaje;
+
+                    $cordovaSQLite.execute(db, query).then(function(res) {
+                        debugger;
+                        q.resolve(res);
+
+
+                    }, function(err) {
+
+                        q.reject(err);
+                        console.error(err);
+                    });
+
+                    return q.promise;
+
+                },
+                confirmacionInicioViaje: function(idInicioViaje) {
+
+                    var q = $q.defer();
+
+                    var query = "UPDATE inicioViajes SET entregado = 1 WHERE id=" + idInicioViaje;
+
+                    $cordovaSQLite.execute(db, query).then(function(res) {
+                        debugger;
+                        q.resolve(res);
+
+
+                    }, function(err) {
+
+                        q.reject(err);
+                        console.error(err);
+                    });
+
+                    return q.promise;
+                }
+
 
             }
 

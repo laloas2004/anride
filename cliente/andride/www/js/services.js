@@ -214,13 +214,12 @@ angular.module('app.services', [])
         .factory('solicitudService', function($http, $q, $sails, $rootScope, $localStorage) {
 
             return {
+                
                 sendSolicitud: function(solicitud) {
 
                     var q = $q.defer();
-                    var data = {
-                        solicitud: solicitud
-                    };
-                    $sails.post("/clientes/solicitud", data)
+
+                    $sails.post("/clientes/solicitud", {solicitud: solicitud})
                             .success(function(data, status, headers, jwr) {
 
                                 q.resolve(data);
