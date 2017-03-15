@@ -1,4 +1,4 @@
-angular.module('app.controllers', ['ngSails', 'ngCordova','angularMoment'])
+angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
         .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout, AuthService, $state) {
 
             $scope.platform = ionic.Platform.platform();
@@ -200,8 +200,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova','angularMoment'])
 
                                 markerChofer.remove();
                             }
-
-
 
 
 
@@ -416,7 +414,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova','angularMoment'])
                 $ionicLoading,
                 $cordovaDialogs,
                 $interval,
-                $timeout) {
+                $timeout,
+                $cordovaLocalNotification) {
 
             $scope.$storage = $localStorage;
             $scope.servicioAceptado = false;
@@ -443,17 +442,19 @@ angular.module('app.controllers', ['ngSails', 'ngCordova','angularMoment'])
 
             $scope.selectJob = function() {
 
+                $timeout.cancel($scope.timeoutSolicitud);
+
                 $ionicLoading.show({
                     template: 'Aceptando...',
                     showBackdrop: false
                 });
 
                 $scope.servicioAceptado = true;
-                
-                
+
+
                 $scope.timeoutServicio = $timeout(function() {
 
-                    $cordovaDialogs.alert('Ocurrio un error de comunicacion, revisa tu conexion a internet e intentalo mas tarde.','Sin Comunicacion con nuestro Servidor' , 'OK')
+                    $cordovaDialogs.alert('Ocurrio un error de comunicacion, revisa tu conexion a internet e intentalo mas tarde.', 'Sin Comunicacion con nuestro Servidor', 'OK')
                             .then(function() {
                                 ionic.Platform.exitApp();
                             });
@@ -464,6 +465,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova','angularMoment'])
                 $sails.post("/choferes/servicio", {solicitud: $localStorage.solicitud, chofer: $localStorage.chofer})
 
                         .success(function(data, status, headers, jwr) {
+
+                            $timeout.cancel($scope.timeoutServicio);
 
                             if (data.err == 'msg_no_entregado') {
 
@@ -484,11 +487,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova','angularMoment'])
                                                 $ionicLoading.hide();
 
                                             } else if (btnIndex == 2) {
-                                                
+
                                                 $rootScope.cliente = data.cliente;
                                                 $localStorage.cliente = data.cliente;
                                                 $localStorage.servicio = data.servicio;
-                                                $localStorage.socketId = data.socketId;    
+                                                $localStorage.socketId = data.socketId;
                                                 $ionicLoading.hide();
                                                 $sails.post("/choferes/servicio/cancel", {servicioId: $localStorage.servicio.id})
                                                         .success(function(data, status, headers, jwr) {
@@ -542,8 +545,18 @@ angular.module('app.controllers', ['ngSails', 'ngCordova','angularMoment'])
 
             }
 
+            $scope.timeoutSolicitud = $timeout(function() {
+
+                if (!$scope.servicioAceptado) {
+
+                    delete $localStorage.solicitud;
+                    $state.go('app.main', {});
+                }
+
+            }, 30000);
 
             $scope.$on('$destroy', function() {
+                $timeout.cancel($scope.timeoutSolicitud);
                 $timeout.cancel($scope.timeoutServicio);
             });
         })
@@ -665,7 +678,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova','angularMoment'])
 
                             servicioService.iniciaViaje($localStorage.servicio, $scope.inicio_viaje).then(function(data) {
 
-                                if (data.err == 'msg_no_entregado'){
+                                if (data.err == 'msg_no_entregado') {
 
                                     $cordovaDialogs.alert('El cliente no esta conactado', 'Se inicia el servicio sin notificar al Cliente', 'OK')
                                             .then(function() {
@@ -737,7 +750,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova','angularMoment'])
 
 
         })
-        .controller('ServicioCtrl', function($scope, $sails, $localStorage, $rootScope, $ionicPopup, $state, $ionicLoading, $cordovaGeolocation,amMoment) {
+        .controller('ServicioCtrl', function($scope, $sails, $localStorage, $rootScope, $ionicPopup, $state, $ionicLoading, $cordovaGeolocation, amMoment) {
 
             $scope.tiempo = {};
             $scope.tiempo.horas = 0;
@@ -797,17 +810,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova','angularMoment'])
                 $localStorage.servicio = {};
                 $state.go('app.main', {});
             }
-            $scope.iniciaTrackViaje = function(){
-                
-                
-                
+            $scope.iniciaTrackViaje = function() {
+
+
+
             }
             $scope.inicioContador = function() {
 
                 var fecha_inicio = $scope.servicio.inicio_fecha;
-                
-               debugger; 
-                
+
+                debugger;
+
 
 
             }
@@ -825,8 +838,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova','angularMoment'])
 //            }
             $scope.inicioContador();
 
-            
-            
+
+
 
         })
         

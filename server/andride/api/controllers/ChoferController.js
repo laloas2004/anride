@@ -529,7 +529,7 @@ module.exports = {
         }
 
         var servicioId = req.param('servicioId');
-
+        var that = this;
 
         Servicio.update({id: servicioId}, {status: 'cancelada', cancelo: 'chofer'}).exec(function(err, serv) {
 
@@ -545,8 +545,16 @@ module.exports = {
                 if (err) {
                     return res.json({err: err});
                 }
-
-                sails.sockets.broadcast(cliente.socketId, 'servicio.cancelado', {servicio: serv[0]});
+                
+                that._addQueueMsg('cliente', req.session.choferId, cliente.id, 'servicio.cancelado', {servicio: serv[0]}).then(function(response){
+                    
+                    
+                },function(err){
+                    
+                 console.log(err);
+                    
+                });
+//                sails.sockets.broadcast(cliente.socketId, 'servicio.cancelado', {servicio: serv[0]});
 
                 Chofer.update({id: req.session.choferId}, {status: 'activo'}).exec(function(err, chofer) {
                     if (err) {

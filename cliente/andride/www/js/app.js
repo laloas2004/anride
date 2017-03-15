@@ -10,7 +10,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
 ])
         .run(function($ionicPlatform, $rootScope, $window, $cordovaNetwork, $ionicPopup) {
 //Validar que este conectado a internet.
-            $rootScope.serverIp = "http://192.168.1.66:1337";
+            $rootScope.serverIp = "http://104.131.116.22:1337";
 
             $rootScope.google_key = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
 
@@ -182,7 +182,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
         })
         .config(['$sailsProvider', function($sailsProvider) {
 
-                $sailsProvider.url = "http://192.168.1.66:1337";
+                $sailsProvider.url = "http://104.131.116.22:1337";
                 $sailsProvider.debug = true; 
                 //digital ocean.
 //                $sailsProvider.url = 'http://104.131.116.22:1337';

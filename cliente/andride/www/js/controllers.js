@@ -55,10 +55,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $cordovaDialogs) {
 
 
-
-
             $scope.intervalReconnect = {};
-
+            $scope.vistaAlertinicioViaje = 0;
+            $scope.vistaAlertFinViaje = 0;
             $sails.on('connect', function(data) {
 
                 if ($localStorage.cliente.id) {
@@ -111,7 +110,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $sails.post("cliente/mensaje/confirma", {idQueue: data.id})
                         .success(function(queue, status, headers, jwr) {
                             
-                            debugger;
+                          
                             $localStorage.chofer = data.data.chofer;
                             $localStorage.servicio = data.data.servicio;
                             $localStorage.solicitud = data.data.solicitud;
@@ -131,14 +130,20 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
             $sails.on('servicio.inicioViaje', function(data) {
-
+                
+                
+       
                 $sails.post("cliente/mensaje/confirma", {idQueue: data.id})
                         .success(function(queue, status, headers, jwr) {
+                            if ($scope.vistaAlertinicioViaje == 0) {
+                                $cordovaDialogs.alert('El chofer a iniciado su Viaje', 'Servicio Iniciado', 'OK')
+                                        .then(function() {
+                                            // callback success
+                                            $scope.vistaAlertinicioViaje = 1;
+                                        });
+                            }
                             
-                            $cordovaDialogs.alert('El chofer a iniciado su Viaje','Servicio Iniciado' , 'OK')
-                                    .then(function() {
-                                        // callback success
-                                    });
+                             $scope.vistaAlertinicioViaje = 1;
 //                            alert('servicio.inicioViaje');
   
                         })
@@ -1021,7 +1026,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             
                             $sails.on('chofer', function(data) {
                                 
-                                debugger;
+                           
                                 
                                 try{
                                     
