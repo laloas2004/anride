@@ -76,7 +76,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         $sails.get('/cliente/mensajes', {})
                                 .success(function(data, status, headers, jwr) {
                                     
-                                     
+                                 $ionicLoading.hide();    
 
                                 })
 
@@ -90,6 +90,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
             $sails.on('disconnect', function(data) {
+                
+                 $scope.disconnect = $ionicLoading.show({
+                        template: 'UPS!, Hay problemas para comunicarnos con la red, revisa la conexion...',
+                        showBackdrop: false
+                    });
 
                 console.log('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
 

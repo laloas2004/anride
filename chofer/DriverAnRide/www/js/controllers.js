@@ -77,8 +77,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
                 if ($localStorage.chofer.id) {
                     AuthService.suscribe().then(function(response) {
-                        console.log('Suscribe Chofer:');
-                        console.log(response);
+                        
+
+                        $ionicLoading.hide(); 
+//                        console.log('Suscribe Chofer:');
+//                        console.log(response);
                     }, function(e) {
                         console.error(e);
                     });
@@ -87,8 +90,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
             });
             $sails.on('disconnect', function(data) {
+                
+                 $scope.disconnect = $ionicLoading.show({
+                        template: 'UPS!, Hay problemas para comunicarnos con la red, revisa la conexion...',
+                        showBackdrop: false
+                    });
 
-                alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
+//                alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
             });
             $sails.on('servicio', function(data) {
 

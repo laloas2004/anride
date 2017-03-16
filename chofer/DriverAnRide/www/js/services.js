@@ -84,7 +84,8 @@ angular.module('app.services', [])
                     var q = $q.defer();
                     $sails.post("/choferes/suscribe", {choferId: $localStorage.chofer.id})
                             .success(function(data, status, headers, jwr) {
-
+                                
+                                $localStorage.chofer = data.chofer;
                                 $localStorage.socketId = data.socketId;
                                 q.resolve(data);
                             })

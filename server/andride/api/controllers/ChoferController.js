@@ -127,7 +127,7 @@ module.exports = {
 
                     }
 
-                    return res.json({suscrito: true, socketId: socketId});
+                    return res.json({suscrito: true, socketId: socketId,chofer:chofer[0]});
 
                 });
 
