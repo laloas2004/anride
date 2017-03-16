@@ -80,7 +80,8 @@ module.exports = {
 
         if (choferId) {
             Chofer.update({id: choferId}, {online: false, status: 'inactivo'}).exec(function(err, chofer) {
-                req.logout();
+                req.session.destroy();
+                req.session = null;
                 res.json({chofer: chofer[0], logout: true});
 
             });
