@@ -120,7 +120,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
             $sails.on('servicio.iniciada', function(data) {
-
+                debugger;
                 clearTimeout($rootScope.timeoutSolicitud);
 
                 $sails.post("cliente/mensaje/confirma", {idQueue: data.id})
@@ -761,7 +761,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     }, 90000);
 
                     solicitudService.sendSolicitud(solicitud).then(function(response) {
-
+                        debugger;
                         clearTimeout($rootScope.timeoutSolicitud);
 
                         if (response.respuesta.respuesta != 'aceptada') {
@@ -1125,7 +1125,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             }
 
             $scope.$storage = $localStorage;
-
+            
+            if($localStorage.solicitud.origen.coords){
+            
             var latLngChofer = new google.maps.LatLng($localStorage.solicitud.origen.coords.latitude, $localStorage.solicitud.origen.coords.longitude);
 
             var mapOptions = {
@@ -1160,7 +1162,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 console.log(e);
             }
 
-
+            }
         })
         .controller('ViajesCtrl', function($scope, $ionicHistory) {
 

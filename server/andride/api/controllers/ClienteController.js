@@ -339,6 +339,9 @@ module.exports = {
         var tiempo_espera = 30;
 
 
+            sails.log(solicitud);
+
+
         Solicitud.create({
             origen: solicitud.origen,
             destino: solicitud.destino,
