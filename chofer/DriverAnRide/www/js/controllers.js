@@ -907,13 +907,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             }
             $scope.iniciaTrackViaje = function() {
 
-
-                debugger;
-
-                $scope.$watch('$storage.position.lat', function(newVal, oldVal) {
-                    console.log('changed latitude');
-                }, true);
                 $scope.$watch('$storage.position', function(newVal, oldVal) {
+                    
+                    
+                    
+                    
                     console.log('changed');
                 }, true);
 

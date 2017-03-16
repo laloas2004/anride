@@ -75,8 +75,20 @@ module.exports = {
 
     },
     logout: function(req, res) {
-        req.logout();
-        res.redirect('/');
+
+        var choferId = req.session.choferId;
+
+        if (choferId) {
+            Chofer.update({id: choferId}, {online: false, status: 'inactivo'}).exec(function(err, chofer) {
+                req.logout();
+                res.json({chofer: chofer[0], logout: true});
+
+            });
+
+        } else {
+            res.json({logout: false});
+        }
+
     },
     suscribe: function(req, res) {
 

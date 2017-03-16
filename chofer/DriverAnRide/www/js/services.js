@@ -74,8 +74,25 @@ angular.module('app.services', [])
 
                     var q = $q.defer();
 
-                    $localStorage.$reset();
-                    q.resolve();
+                    var config = {
+                        url: $rootScope.serverIp + "/choferes/logout",
+                        method: "POST",
+                        params: {}
+                    };
+
+                    $http(config)
+                            .then(function(response) {
+
+                                $localStorage.$reset();
+
+                                q.resolve(response);
+
+                            }).catch(function(err) {
+
+                        q.reject(err);
+
+                    });
+
                     return q.promise;
                 },
                 suscribe: function() {
