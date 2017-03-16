@@ -187,6 +187,19 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                             }
                         }
                     })
+                                          .state('app.registro', {
+                        url: '/registro',
+                        cache:false,
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/registro.html',
+                                controller: 'RegistroCtrl',
+                                params:{
+                                    
+                                }
+                            }
+                        }
+                    })
                   
 
             $urlRouterProvider.otherwise('/app/login');

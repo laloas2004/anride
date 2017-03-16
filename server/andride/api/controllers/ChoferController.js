@@ -214,6 +214,11 @@ module.exports = {
             return res.badRequest();
         }
         var solicitud = req.param('solicitud');
+        
+        if(!solicitud){
+            console.error('Solicitud es obligatoria');
+            return res.serverError('El parametro de Solicitud es obligatoria');
+        }
 
         var chofer = req.session.choferId;
 

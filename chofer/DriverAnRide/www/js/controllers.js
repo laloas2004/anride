@@ -77,9 +77,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
                 if ($localStorage.chofer.id) {
                     AuthService.suscribe().then(function(response) {
-                        
 
-                        $ionicLoading.hide(); 
+
+                        $ionicLoading.hide();
 //                        console.log('Suscribe Chofer:');
 //                        console.log(response);
                     }, function(e) {
@@ -90,11 +90,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
             });
             $sails.on('disconnect', function(data) {
-                
-                 $scope.disconnect = $ionicLoading.show({
-                        template: 'UPS!, Hay problemas para comunicarnos con la red, revisa la conexion...',
-                        showBackdrop: false
-                    });
+
+                $scope.disconnect = $ionicLoading.show({
+                    template: 'UPS!, Hay problemas para comunicarnos con la red, revisa la conexion...',
+                    showBackdrop: false
+                });
 
 //                alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
             });
@@ -195,11 +195,15 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 //                            console.log('Se ejecuto watchPosition:');
 //                            console.log('Lat: ' + position.coords.latitude + ' Lon:' + position.coords.longitude);
 
-
                             try {
-
-                                $scope.$storage.position.lon = position.coords.longitude;
-                                $scope.$storage.position.lat = position.coords.latitude;
+                                if ($scope.$storage.position) {
+                                    $scope.$storage.position.lon = position.coords.longitude;
+                                    $scope.$storage.position.lat = position.coords.latitude;
+                                } else {
+                                    $scope.$storage.position = {};
+                                    $scope.$storage.position.lon = position.coords.longitude;
+                                    $scope.$storage.position.lat = position.coords.latitude;
+                                }
 
                             } catch (e) {
                                 console.log(e);
@@ -908,10 +912,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             $scope.iniciaTrackViaje = function() {
 
                 $scope.$watch('$storage.position', function(newVal, oldVal) {
-                    
-                    
-                    
-                    
+
+
+
+
                     console.log('changed');
                 }, true);
 
@@ -940,6 +944,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             $scope.iniciaTrackViaje();
 
 
+        })
+        .controller('RegistroCtrl', function($scope,
+                $ionicHistory) {
+
+                    
 
         })
-        
