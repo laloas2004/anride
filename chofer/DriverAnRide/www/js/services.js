@@ -107,8 +107,8 @@ angular.module('app.services', [])
                     var q = $q.defer();
 
                     var data = {
-                        lat: location.coords.latitude,
-                        lon: location.coords.longitude,
+                        lat: location.latitude,
+                        lon: location.longitude,
                         email: $localStorage.chofer.email
                     };
 
@@ -389,6 +389,12 @@ angular.module('app.services', [])
                     });
 
                     return q.promise;
+                },
+                trackServicioPoints:function(idServicio,position){
+                   
+                $cordovaSQLite.execute(db, 'CREATE TABLE IF NOT EXISTS pointsServicio (id INTEGER PRIMARY KEY AUTOINCREMENT,idServicio TEXT, lat NUMERIC, lon NUMERIC, fecha NUMERIC)');
+   
+                    
                 }
 
 

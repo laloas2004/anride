@@ -164,10 +164,15 @@ module.exports = {
     },
     _enviaSolicitudaChofer: function(tiempo_espera, finn) {
 
-        var deferred = Q.defer()
+        var deferred = Q.defer();
+
         var num_chofer = 0;
         if (finn.choferesDisponibles.choferes) {
-            var cant_chofer = finn.choferesDisponibles.choferes.length || 0;
+            try {
+                var cant_chofer = finn.choferesDisponibles.choferes.length || 0;
+            } catch (e) {
+                console.log(e);
+            }
         } else {
             var cant_chofer = 0;
         }
@@ -175,8 +180,13 @@ module.exports = {
         var loop = function(tiempo_espera, finn) {
             var tiempo = 0;
 
-            var solicitud_chofer = finn.choferesDisponibles.choferes[num_chofer];
+            try {
+                var solicitud_chofer = finn.choferesDisponibles.choferes[num_chofer];
+            } catch (e) {
 
+                console.log(e);
+
+            }
 
             Chofer.findOne({id: solicitud_chofer._id}).exec(function(err, chofer) {
 
@@ -187,9 +197,10 @@ module.exports = {
 
                         if (tiempo == 0) {
 
-                            sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda', finn);
+                            sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda', {solicitud:finn, tiempo_espera: tiempo_espera});
                         }
-                        sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.cont', {tiempo: tiempo, tiempo_espera: tiempo_espera});
+                        
+//                        sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.cont', {tiempo: tiempo, tiempo_espera: tiempo_espera});
 
                         tiempo++;
 
@@ -241,6 +252,22 @@ module.exports = {
 
                             }
                         }
+
+
+                        Solicitud.findOne({id: finn.id}).exec(function(err, record) {
+
+                            if (record.status) {
+
+                                if (record.status == 'aceptada') {
+                                    
+                                    sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.aceptada');
+                                    clearInterval(interval);
+                                    deferred.resolve({respuesta: 'aceptada'});
+
+                                }
+                            }
+                        });
+
 
                     }, 1000, tiempo_espera, finn);
 

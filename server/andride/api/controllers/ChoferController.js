@@ -8,6 +8,7 @@
 var Q = require('q');
 
 module.exports = {
+    
     create: function(req, res) {
 
 
@@ -680,6 +681,7 @@ module.exports = {
                     if (err) {
                         deferred.reject(new Error(err));
                     }
+                    
 
                     if (!msg.entregado) {
 
@@ -710,9 +712,9 @@ module.exports = {
 
                 })
                 
-                intentos++;
                 
-            }, 3000, msg);
+            intentos++;    
+            }, 4000, msg);
 
 
         });

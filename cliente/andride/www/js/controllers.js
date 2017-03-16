@@ -1,5 +1,12 @@
 angular.module('app.controllers', ['ngSails', 'ngCordova'])
-        .controller('AppCtrl', function($scope, $rootScope, $ionicModal, $timeout, $state, AuthService, $localStorage, $cordovaNetwork) {
+        .controller('AppCtrl', function($scope,
+                $rootScope,
+                $ionicModal,
+                $timeout,
+                $state,
+                AuthService,
+                $localStorage,
+                $cordovaNetwork) {
 
 
             $rootScope.seleccionoDestino = false;
@@ -63,16 +70,18 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 if ($localStorage.cliente.id) {
 
                     AuthService.suscribe().then(function(response) {
-                        
+
                         console.log(response);
-                        
-                        $sails.get('/cliente/mensajes',{})
+
+                        $sails.get('/cliente/mensajes', {})
                                 .success(function(data, status, headers, jwr) {
                                     
+                                     
+
                                 })
-                        
-                    },function(err){
-                        
+
+                    }, function(err) {
+
                     });
 
                 }
@@ -82,35 +91,37 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             $sails.on('disconnect', function(data) {
 
-            console.log('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
+                console.log('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
 
             });
 
             $sails.on('servicio.onplace', function(data) {
 
-                $cordovaLocalNotification.schedule({
-                    id: 1,
-                    title: 'Tu Auto ha Llegado',
-                    text: 'El An Ride ha Llegado al punto',
-                    data: {
-                        customProperty: 'custom value'
-                    }
-                }).then(function(result) {
-                    
-                    console.log(result);
-                });
+                if (data.servicio.id == $localStorage.servicio.id) {
 
+                    $cordovaLocalNotification.schedule({
+                        id: 1,
+                        title: 'Tu Auto ha Llegado',
+                        text: 'El An Ride ha Llegado al punto',
+                        data: {
+                            customProperty: 'custom value'
+                        }
+                    }).then(function(result) {
 
+                        console.log(result);
+                    });
+
+                }
             });
 
             $sails.on('servicio.iniciada', function(data) {
-                
+
                 clearTimeout($rootScope.timeoutSolicitud);
-                
+
                 $sails.post("cliente/mensaje/confirma", {idQueue: data.id})
                         .success(function(queue, status, headers, jwr) {
-                            
-                          
+
+
                             $localStorage.chofer = data.data.chofer;
                             $localStorage.servicio = data.data.servicio;
                             $localStorage.solicitud = data.data.solicitud;
@@ -121,7 +132,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                         })
                         .error(function(data, status, headers, jwr) {
-                            
+
                             console.log(data);
 
                         });
@@ -130,9 +141,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
             $sails.on('servicio.inicioViaje', function(data) {
-                
-                
-       
+
+
+
                 $sails.post("cliente/mensaje/confirma", {idQueue: data.id})
                         .success(function(queue, status, headers, jwr) {
                             if ($scope.vistaAlertinicioViaje == 0) {
@@ -142,10 +153,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                             $scope.vistaAlertinicioViaje = 1;
                                         });
                             }
-                            
-                             $scope.vistaAlertinicioViaje = 1;
+
+                            $scope.vistaAlertinicioViaje = 1;
 //                            alert('servicio.inicioViaje');
-  
+
                         })
                         .error(function(data, status, headers, jwr) {
 
@@ -153,7 +164,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                         });
 
-                
+
             });
 
             $sails.on('servicio.finalizado', function(data) {
@@ -168,9 +179,23 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
             $sails.on('servicio.cancelado', function(data) {
-                $cordovaDialogs.alert('El servicio ha sido cancelado por el Chofer, por favor vuelva a pedir otro servicio.', 'Servicio Cancelado', 'OK');
-                delete $localStorage.servicio;
-                $state.go('app.map', {});
+
+                $sails.post("cliente/mensaje/confirma", {idQueue: data.id})
+                        .success(function(queue, status, headers, jwr) {
+
+                            $cordovaDialogs.alert('El servicio ha sido cancelado por el Chofer, por favor vuelva a pedir otro servicio.', 'Servicio Cancelado', 'OK');
+                            delete $localStorage.servicio;
+                            $state.go('app.map', {});
+
+
+                        })
+                        .error(function(data, status, headers, jwr) {
+
+                            console.log(data);
+
+                        });
+
+
 
             });
 
@@ -374,9 +399,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             };
             $scope.getChoferes = function() {
-                
+
                 var q = $q.defer();
-                
+
                 $scope.choferesDisponibles = {};
 
                 choferService.getChoferes($scope.position).then(function(response) {
@@ -394,7 +419,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         })
 
                         q.reject(response.error);
-                        
+
                     } else {
 
 
@@ -709,12 +734,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         showBackdrop: false
                     });
                     $localStorage.solicitud = $rootScope.solicitud;
-                    
-                    $rootScope.timeoutSolicitud = setTimeout(function(){
-                        
-                        
-                        
-                        
+
+                    $rootScope.timeoutSolicitud = setTimeout(function() {
+
+
+
+
                         $ionicPopup.alert({
                             title: 'No contamos con choferes disponibles',
                             template: 'es este momento, por favor intentalo mas tarde...'
@@ -727,13 +752,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             });
 
                         })
- 
-                    },90000);
-                    
+
+                    }, 90000);
+
                     solicitudService.sendSolicitud(solicitud).then(function(response) {
-                        
+
                         clearTimeout($rootScope.timeoutSolicitud);
-                        
+
                         if (response.respuesta.respuesta != 'aceptada') {
 
                             $ionicLoading.hide();
@@ -753,26 +778,26 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                 });
 
                             })
-                        }else{
-                          console.log(response.respuesta.respuesta);
+                        } else {
+                            console.log(response.respuesta.respuesta);
                         }
-                            
-                                
-                    },function(err){
-                        
+
+
+                    }, function(err) {
+
                         console.log(err);
                         $ionicPopup.alert({
-                                title: 'No contamos con choferes disponibles',
-                                template: 'es este momento, por favor intentalo mas tarde...'
-                            }).then(function(){
-                                 $scope.hidePanels('inicio', function() {
-                                    $scope.hideBubble = false;
-                                    $rootScope.solicitud.destino = {};
-                                    $rootScope.solicitud.direccion_destino = 'SE REQUIERE UN DESTINO';
-                                });
-   
-                            })
-      
+                            title: 'No contamos con choferes disponibles',
+                            template: 'es este momento, por favor intentalo mas tarde...'
+                        }).then(function() {
+                            $scope.hidePanels('inicio', function() {
+                                $scope.hideBubble = false;
+                                $rootScope.solicitud.destino = {};
+                                $rootScope.solicitud.direccion_destino = 'SE REQUIERE UN DESTINO';
+                            });
+
+                        })
+
                     })
 
                 }
@@ -797,7 +822,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 servicioService.getSolicitudPendiente().then(function(response) {
 
-                
+
                     if (response.length > 0) {
 
                         $localStorage.servicio = response[0];
@@ -1005,16 +1030,18 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             };
 
                             markerChoferServicio.setMap(null);
-                            try{
+                            
+                            try {
+
+                                var lat = data.lat || 0;
+                                var lon = data.lon || 0;
+
+                            } catch (e) {
                                 
-                            var lat = data.chofer.lat || 0;
-                            var lon = data.chofer.lon || 0;
-                              
-                            }catch(e){  
-                            console.log(e);    
+                                console.log(e);
                             }
-                            
-                            
+
+
                             var latLngChofer = new google.maps.LatLng(lat, lon);
 
                             markerChoferServicio = new google.maps.Marker({
@@ -1023,36 +1050,34 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                 map: $scope.mapa_chofer,
                                 icon: imageChofer
                             });
-                            
+
                             $sails.on('chofer', function(data) {
-                                
-                           
-                                
-                                try{
-                                    
-                                   markerChoferServicio.setMap(null);
 
-                                var lat = data.data.chofer.lat || 0;
-                                var lon = data.data.chofer.lon || 0;
-                                var latLngChofer = new google.maps.LatLng(lat, lon);
+                                try {
 
-                                markerChoferServicio = new google.maps.Marker({
-                                    position: latLngChofer,
-                                    title: '',
-                                    map: $scope.mapa_chofer,
-                                    icon: imageChofer
-                                });   
-                                    
-                                }catch(e){
+                                    markerChoferServicio.setMap(null);
+
+                                    var lat = data.data.chofer.lat || 0;
+                                    var lon = data.data.chofer.lon || 0;
+                                    var latLngChofer = new google.maps.LatLng(lat, lon);
+
+                                    markerChoferServicio = new google.maps.Marker({
+                                        position: latLngChofer,
+                                        title: '',
+                                        map: $scope.mapa_chofer,
+                                        icon: imageChofer
+                                    });
+
+                                } catch (e) {
                                     console.log(e);
                                 }
-                              
+
 
                             })
 
                         })
                         .error(function(data, status, headers, jwr) {
-                            
+
                             console.log(data);
 
                         });
@@ -1075,7 +1100,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                 $sails.post("/clientes/servicio/cancel", data)
                                         .success(function(data, status, headers, jwr) {
                                             $sails.off('chofer', function() {
-                                                
+
                                             });
 
                                             delete $localStorage.servicio;
@@ -1095,7 +1120,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             }
 
             $scope.$storage = $localStorage;
-            
+
             var latLngChofer = new google.maps.LatLng($localStorage.solicitud.origen.coords.latitude, $localStorage.solicitud.origen.coords.longitude);
 
             var mapOptions = {
@@ -1124,7 +1149,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 icon: imageUser
             });
             try {
-                
+
                 $scope.updateMarkerServicio($localStorage.chofer.id);
             } catch (e) {
                 console.log(e);
