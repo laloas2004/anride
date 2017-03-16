@@ -339,7 +339,7 @@ module.exports = {
         var tiempo_espera = 30;
 
 
-            sails.log(solicitud);
+//            sails.log(solicitud);
 
 
         Solicitud.create({

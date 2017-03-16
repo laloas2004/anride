@@ -504,7 +504,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
 
                 }, 120000);
-
+                debugger;
                 $sails.post("/choferes/servicio", {solicitud: $localStorage.solicitud, chofer: $localStorage.chofer})
 
                         .success(function(data, status, headers, jwr) {

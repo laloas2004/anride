@@ -262,10 +262,10 @@ module.exports = {
                             if (err) {
                                 return res.json({err: err});
                             }
-
+                            
                             that._addQueueMsg('cliente', chofer[0].id, cliente.id, 'servicio.iniciada', {solicitud: solicitud, servicio: servicio, chofer: chofer[0]}).then(function(response) {
 
-                                return res.json({err:false,servicio: servicio, cliente: cliente});
+                                return res.json({err:false, servicio: servicio, cliente: cliente});
 
                             },function(err){
                                 

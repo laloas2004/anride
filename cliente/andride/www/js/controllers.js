@@ -312,6 +312,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
 
                     $scope.position = position;
+                    
                     $scope.map.setCenter(new google.maps.LatLng($scope.position.coords.latitude, $scope.position.coords.longitude));
 
                     $scope.setDireccionOrigen(position).then(function() {
@@ -581,6 +582,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             };
             $scope.onSelectOrigen = function() {
+               
                 $rootScope.solicitud.origen = $scope.position;
                 $scope.hidePanels('origen');
             }
@@ -613,7 +615,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 clienteService.getDireccionDetails(place).then(function(place_detalle) {
 
                     $scope.position = {coords: {latitude: place_detalle.geometry.location.lat(), longitude: place_detalle.geometry.location.lng()}};
-
+                    debugger;
                     $rootScope.solicitud.origen = {coords: {latitude: place_detalle.geometry.location.lat(), longitude: place_detalle.geometry.location.lng()}};
 
                     $rootScope.solicitud.direccion_origen = place_detalle.formatted_address;
@@ -738,6 +740,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         template: 'Enviando Solicitud...',
                         showBackdrop: false
                     });
+                    
+                    debugger;
                     $localStorage.solicitud = $rootScope.solicitud;
 
                     $rootScope.timeoutSolicitud = setTimeout(function() {
