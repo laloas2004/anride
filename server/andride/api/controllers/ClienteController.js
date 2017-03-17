@@ -196,7 +196,7 @@ module.exports = {
                     var interval = setInterval(function(tiempo_espera, finn) {
 
                         if (tiempo == 0) {
-
+                            debugger;
                             sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda', {solicitud:finn, tiempo_espera: tiempo_espera});
                         }
                         
@@ -259,7 +259,7 @@ module.exports = {
                             if (record.status) {
 
                                 if (record.status == 'aceptada') {
-                                    
+                                    debugger;
                                     sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.aceptada');
                                     clearInterval(interval);
                                     deferred.resolve({respuesta: 'aceptada'});
@@ -361,7 +361,7 @@ module.exports = {
 
             Solicitud.subscribe(req, finn.id);
             Solicitud.publishCreate(finn, req);
-
+            debugger;
             that._enviaSolicitudaChofer(tiempo_espera, finn).then(function(respuesta) {
 
                 return res.json({respuesta: respuesta, solicitud: finn});

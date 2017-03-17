@@ -7,13 +7,16 @@
  */
 var Q = require('q');
 
+
 module.exports = {
-    
     getConfig: function(req, res) {
-        console.log(' req.isSocket ', req.isSocket);
-        console.log(' req.isAjax   ', req.isAjax);
-        console.log(' req.isJson   ', req.isJson);
-        return res.json(sails.config.andride_configuracion);
+
+        configTaxiapp.get().then(function(config) {
+
+            res.json(config);
+
+        });
+
     },
     
     getDireccion: function(req, res) {

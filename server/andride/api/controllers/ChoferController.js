@@ -80,8 +80,8 @@ module.exports = {
 
         if (choferId) {
             Chofer.update({id: choferId}, {online: false, status: 'inactivo'}).exec(function(err, chofer) {
-                req.session.destroy();
-                req.session = null;
+//                req.session.destroy();
+//                req.session = null;
                 res.json({chofer: chofer[0], logout: true});
 
             });
@@ -214,16 +214,20 @@ module.exports = {
             return res.badRequest();
         }
         var solicitud = req.param('solicitud');
-        
-        if(!solicitud){
+
+        if (!solicitud) {
             console.error('Solicitud es obligatoria');
             return res.serverError('El parametro de Solicitud es obligatoria');
+        }
+        debugger;
+        if (Object.prototype.toString.call(solicitud) === '[object Array]') {
+            console.log('Solicitud es array');
         }
 
         var chofer = req.session.choferId;
 
 
-        Solicitud.update({id: solicitud.id}, {
+        Solicitud.update({id:solicitud.id},{
             status: 'aceptada'
 
         }).exec(function(err, solicitud) {
@@ -235,9 +239,9 @@ module.exports = {
 
             Solicitud.publishUpdate(solicitud[0].id, {status: 'aceptada', solicitud: solicitud[0]}, req);
 
-
-            Cliente.findOne({id: solicitud[0].cliente}).exec(function(err, cliente) {
-
+            
+            
+            Cliente.findOne({id:solicitud[0].cliente}).exec(function(err, cliente) {
 
 
                 Servicio.create({
@@ -262,6 +266,8 @@ module.exports = {
                             if (err) {
                                 return res.json({err: err});
                             }
+                            
+                            debugger;
                             
                             that._addQueueMsg('cliente', chofer[0].id, cliente.id, 'servicio.iniciada', {solicitud: solicitud, servicio: servicio, chofer: chofer[0]}).then(function(response) {
 
@@ -308,6 +314,7 @@ module.exports = {
                 if (err) {
                     return res.json({err: err});
                 }
+                debugger;
                 sails.sockets.broadcast('cliente_' + cliente.id, 'servicio.onplace', {servicio: servicio, chofer: chofer});
                 return res.json({enviado: true});
             })
