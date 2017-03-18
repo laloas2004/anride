@@ -1,54 +1,65 @@
- <%- include ../includes/menu %>
+<%- include ../includes/menu %>
 
 <div class="container">
 
-<div class="row">
-<div class ="col-md-12">
-<div class="page-header">
-<h1>Solicitudes</h1>
-<div>
-<table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Nombre Cliente</th>
-        <th>Email</th>
-        <th>Origen de Viaje</th>
-        <th>Destino de Viaje</th>
-        <th>Distancia / Tiempo</th>
-        <th>Fecha / Hora</th>
-        <th>Operaciones</th>
-      </tr>
-    </thead>
-<tbody>
-    
-    <%  
-                      _.each(solicitudes,function(solicitud){ %>
-      <tr>
-        <td><%= solicitud.cliente.nombre%> <%= solicitud.cliente.apellido%></td>
-        <td><%= solicitud.cliente.email%></td>
-        <td><%= solicitud.direccion_origen%></td>
-        <td><%= solicitud.direccion_destino%></td>
-        <td><%= solicitud.matrix.data.rows[0].elements[0].distance.text%> <br><%= solicitud.matrix.data.rows[0].elements[0].duration.text%></td>
-        <td><%= solicitud.createdAt%></td>
-        <td><a href="#" class="btn btn-primary">Asignar a Chofer</a></td>
-      </tr><% })%>
-</tbody>
-    </table>
+    <div class="row">
+        <div class ="col-md-12">
+            <div class="page-header">
+                <h1>Solicitudes</h1>
+                <div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nombre Cliente</th>
+                                <th>Email</th>
+                                <th>Origen de Viaje</th>
+                                <th>Destino de Viaje</th>
+                                <th>Distancia / Tiempo</th>
+                                <th>Fecha / Hora</th>
+                                <th>Operaciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
-</div>
-</div>
+                            <%  
+                            _.each(solicitudes,function(solicitud){ 
+
+                            if(solicitud.matrix.data.rows[0]){
+
+                            distancia = solicitud.matrix.data.rows[0].elements[0].distance.text || 0;
+                            duration =  solicitud.matrix.data.rows[0].elements[0].duration.text || 0;
+                            }else{
+                            distancia = 'no dato';
+                            duration = 'no dato';
+
+                            }
+                            %>
+                            <tr>
+                                <td><%= solicitud.cliente.nombre%> <%= solicitud.cliente.apellido %></td>
+                                <td><%= solicitud.cliente.email%></td>
+                                <td><%= solicitud.direccion_origen%></td>
+                                <td><%= solicitud.direccion_destino%></td>
+                                <td><%= distancia%> <br><%=duration %></td>
+                                <td><%= solicitud.createdAt%></td>
+                                <td><a href="#" class="btn btn-primary">Asignar a Chofer</a></td>
+                            </tr><% })%>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
 
 
-</div>
-<script>
+        </div>
+        <script>
 
- io.socket.on('solicitud', function(msg) {
+            io.socket.on('solicitud', function(msg) {
 
-alert('Nueva Solicitud');
+                alert('Nueva Solicitud');
 
-location.reload();
+                location.reload();
 
             });
 
 
-</script>
+        </script>

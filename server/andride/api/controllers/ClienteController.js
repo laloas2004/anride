@@ -508,23 +508,50 @@ module.exports = {
 
         var idCliente = req.session.clienteId;
         
-        if(idCliente){
+        if (idCliente) {
+
+            Queue.findOne({idDestino: {"$in": [idCliente]}, entregado: false}).exec(function(err, msg) {
+
+                if (err) {
+
+                    return res.serverError(err);
+                }
+
+                if (msg) {
+
+                    sails.sockets.broadcast(msg.tipo + '_' + msg.idDestino[0], msg.event, msg);
+                }
+                res.ok({ok: true, msg: msg});
+            })
+
+        }
+    },
+    getServicioStatus: function(req, res) {
+
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+
+        var id = req.param('idServicio');
+
+        if (!id) {
+
+            return res.json({err: 'Falta parametro id obligatorio'});
+        }
+
+        Servicio.findOne({id:id}).exec(function(err, servicio){
             
-        Queue.findOne({idDestino: {"$in": [idCliente]}, entregado: false}).exec(function(err, msg) {
+          if (err) {
 
-            if (err) {
-
-                return res.serverError(err);
-            }
-
-            if (msg) {
-
-                sails.sockets.broadcast(msg.tipo + '_' + msg.idDestino[0], msg.event, msg);
-            }
-            res.ok({ok: true});
+                    return res.serverError(err);
+                }
+                
+                
+          return res.json({status:servicio.status});      
+            
         })
 
-    }}
+    }
 
 
 };

@@ -75,8 +75,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                         $sails.get('/cliente/mensajes', {})
                                 .success(function(data, status, headers, jwr) {
-                                    
-                                 $ionicLoading.hide();    
+
+                                    $ionicLoading.hide();
 
                                 })
 
@@ -90,11 +90,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
             $sails.on('disconnect', function(data) {
-                
-                 $scope.disconnect = $ionicLoading.show({
-                        template: 'UPS!, Hay problemas para comunicarnos con la red, revisa la conexion...',
-                        showBackdrop: false
-                    });
+
+                $scope.disconnect = $ionicLoading.show({
+                    template: 'UPS!, Hay problemas para comunicarnos con la red, revisa la conexion...',
+                    showBackdrop: false
+                });
 
                 console.log('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
 
@@ -120,27 +120,69 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
             $sails.on('servicio.iniciada', function(data) {
-                debugger;
-                clearTimeout($rootScope.timeoutSolicitud);
+                
+                // Si llega un evento de la cola de mensajes se valida que el servicio no este cancelado o finalizado.
+                var idServicio = data.data.servicio.id || 0;
 
-                $sails.post("cliente/mensaje/confirma", {idQueue: data.id})
-                        .success(function(queue, status, headers, jwr) {
+                if (idServicio != 0) {
+                    $sails.get("/cliente/servicio/status", {idServicio: idServicio})
+                            .success(function(dataStatus, status, headers, jwr) {
+
+                                debugger;
+                                if (dataStatus.status == 'cancelada' || dataStatus.status == 'finalizado') {
+
+                                    clearTimeout($rootScope.timeoutSolicitud);
+
+                                    $sails.post("cliente/mensaje/confirma", {idQueue: data.id})
+                                            .success(function(queue, status, headers, jwr) {
+
+                                                console.log('El servicio esta cancelado o finalizado');
 
 
-                            $localStorage.chofer = data.data.chofer;
-                            $localStorage.servicio = data.data.servicio;
-                            $localStorage.solicitud = data.data.solicitud;
-                            $scope.$storage = $localStorage;
+                                            })
+                                            .error(function(data, status, headers, jwr) {
 
-                            $state.go('app.servicio_aprovado', {});
+                                                console.log(data);
+
+                                            });
+
+                                } else {
+
+                                    clearTimeout($rootScope.timeoutSolicitud);
+
+                                    $sails.post("cliente/mensaje/confirma", {idQueue: data.id})
+                                            .success(function(queue, status, headers, jwr) {
 
 
-                        })
-                        .error(function(data, status, headers, jwr) {
+                                                $localStorage.chofer = data.data.chofer;
+                                                $localStorage.servicio = data.data.servicio;
+                                                $localStorage.solicitud = data.data.solicitud;
+                                                $scope.$storage = $localStorage;
 
-                            console.log(data);
+                                                $state.go('app.servicio_aprovado', {});
 
-                        });
+
+                                            })
+                                            .error(function(data, status, headers, jwr) {
+
+                                                console.log(data);
+
+                                            });
+
+
+                                }
+
+
+                            })
+                            .error(function(data, status, headers, jwr) {
+
+                                console.log(data);
+
+                            });
+
+                }
+
+
 
 
             });
@@ -174,7 +216,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             $sails.on('servicio.finalizado', function(data) {
 
-                $cordovaDialogs.alert('Hemos llegado al destino de su servicio, el total es de: $' + data.totales[0].monto + ' MXN', 'Servicio Terminado', 'OK');
+                $cordovaDialogs.alert('Hemos llegado al destino de su servicio, el total es de: $' + data.totales[0].monto.toFixed(2) + ' MXN', 'Servicio Terminado', 'OK');
                 delete $localStorage.servicio;
 //                delete $localStorage.solicitud;
 //                delete $localStorage.chofer;
@@ -312,7 +354,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
 
                     $scope.position = position;
-                    
+
                     $scope.map.setCenter(new google.maps.LatLng($scope.position.coords.latitude, $scope.position.coords.longitude));
 
                     $scope.setDireccionOrigen(position).then(function() {
@@ -546,9 +588,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     showBackdrop: false
                 });
 
-                var posOptions = {timeout: 100000, enableHighAccuracy: true};
 
-                $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
+                $cordovaGeolocation.getCurrentPosition({timeout: 100000, enableHighAccuracy: true}).then(function(position) {
 
                     $scope.position = position;
                     $scope.map.setCenter(new google.maps.LatLng($scope.position.coords.latitude, $scope.position.coords.longitude));
@@ -582,7 +623,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             };
             $scope.onSelectOrigen = function() {
-               
+
                 $rootScope.solicitud.origen = $scope.position;
                 $scope.hidePanels('origen');
             }
@@ -615,7 +656,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 clienteService.getDireccionDetails(place).then(function(place_detalle) {
 
                     $scope.position = {coords: {latitude: place_detalle.geometry.location.lat(), longitude: place_detalle.geometry.location.lng()}};
-                    debugger;
+
                     $rootScope.solicitud.origen = {coords: {latitude: place_detalle.geometry.location.lat(), longitude: place_detalle.geometry.location.lng()}};
 
                     $rootScope.solicitud.direccion_origen = place_detalle.formatted_address;
@@ -652,8 +693,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 if ($scope.DestinoBusqueda.query) {
                     clienteService.searchDireccion($scope.DestinoBusqueda.query, $scope.solicitud.origen.coords).then(function(response) {
                         $scope.DestinoResponse = response;
-                    }, function() {
-
+                    }, function(err) {
+                        console.error(err);
                     });
 
                 }
@@ -671,17 +712,33 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 clienteService.getDistancia($scope.solicitud).then(function(response) {
 
                     $rootScope.solicitud.matrix = response;
+                    try {
 
-                    var matrix_tiempo = response.data.rows[0].elements[0].duration.value;
-                    var matrix_distancia = response.data.rows[0].elements[0].distance.value;
+                        var matrix_tiempo = response.data.rows[0].elements[0].duration.value || 0;
+                        var matrix_distancia = response.data.rows[0].elements[0].distance.value || 0;
+
+                    } catch (e) {
+
+                        console.error(e);
+
+                    }
+
 
                     clienteService.getEstimacionMonto($rootScope.solicitud, matrix_distancia, matrix_tiempo).then(function(response) {
                         $scope.montoEstimado = response.data.montoEstimado;
 
                         q.resolve(response);
+                    }, function(err) {
+                        q.reject(err);
+                        console.error(err);
                     });
 
-                })
+                }, function(err) {
+
+                    console.error(err);
+                    q.reject(err);
+
+                });
 
                 return q.promise;
             }
@@ -720,19 +777,88 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 var solicitud = $rootScope.solicitud;
 
-                console.log($rootScope.solicitud);
-
 
                 if (!solicitud.origen.coords) {
                     console.log('El origen no puede ir vacio');
-//                    alert('El origen no puede ir vacio');
-                } else if (!solicitud.destino.coords) {
-                    console.log('El destino no puede ir vacio');
-//                    alert('El destino no puede ir vacio');
+
+                    $ionicPopup.alert({
+                        title: 'Error 1',
+                        template: 'Upps, Lo sentimos,ocurrrio un error fatal, intentalo mas tarde...'
+                    }).then(function() {
+                        $scope.hidePanels('inicio', function() {
+                            $scope.hideBubble = false;
+                            $rootScope.solicitud.destino = {};
+                            $rootScope.solicitud.direccion_destino = 'SE REQUIERE UN DESTINO';
+                            $state.go('app.map', {});
+                        });
+
+                    })
 
                 } else if (!solicitud.destino.coords) {
+                    console.log('El destino no puede ir vacio');
+                    $ionicPopup.alert({
+                        title: 'Error 2',
+                        template: 'Upps, Lo sentimos,ocurrrio un error fatal, intentalo mas tarde...'
+                    }).then(function() {
+                        $scope.hidePanels('inicio', function() {
+                            $scope.hideBubble = false;
+                            $rootScope.solicitud.destino = {};
+                            $rootScope.solicitud.direccion_destino = 'SE REQUIERE UN DESTINO';
+                            $state.go('app.map', {});
+                        });
+
+                    })
+
+                } else if (!solicitud.cliente) {
                     console.log('El cliente no puede ir vacio');
-//                    alert('El cliente no puede ir vacio');
+                    $ionicPopup.alert({
+                        title: 'Error 3',
+                        template: 'Upps, Lo sentimos,ocurrrio un error fatal, intentalo mas tarde...'
+                    }).then(function() {
+                        $scope.hidePanels('inicio', function() {
+                            $scope.hideBubble = false;
+                            $rootScope.solicitud.destino = {};
+                            $rootScope.solicitud.direccion_destino = 'SE REQUIERE UN DESTINO';
+                            $state.go('app.map', {});
+                        });
+
+                    })
+
+                } else if (!$rootScope.solicitud.choferesDisponibles.choferes) {
+
+
+                    console.log('Se debe de tener al menos un chofer disponible');
+
+                    $ionicPopup.alert({
+                        title: 'Error 4',
+                        template: 'Upps, Lo sentimos,ocurrrio un error fatal, intentalo mas tarde...'
+                    }).then(function() {
+                        $scope.hidePanels('inicio', function() {
+                            $scope.hideBubble = false;
+                            $rootScope.solicitud.destino = {};
+                            $rootScope.solicitud.direccion_destino = 'SE REQUIERE UN DESTINO';
+                            $state.go('app.map', {});
+                        });
+
+                    })
+
+                } else if (!$rootScope.solicitud.choferesDisponibles.choferes.length > 0) {
+
+
+                    console.log('Se debe de tener al menos un chofer disponible');
+
+                    $ionicPopup.alert({
+                        title: 'Error 5',
+                        template: 'Upps, Lo sentimos,ocurrrio un error fatal, intentalo mas tarde...'
+                    }).then(function() {
+                        $scope.hidePanels('inicio', function() {
+                            $scope.hideBubble = false;
+                            $rootScope.solicitud.destino = {};
+                            $rootScope.solicitud.direccion_destino = 'SE REQUIERE UN DESTINO';
+                            $state.go('app.map', {});
+                        });
+
+                    })
 
                 } else {
 
@@ -740,9 +866,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         template: 'Enviando Solicitud...',
                         showBackdrop: false
                     });
-                    
+
                     debugger;
-                    $localStorage.solicitud = $rootScope.solicitud;
+                    $localStorage.solicitud = solicitud;
 
                     $rootScope.timeoutSolicitud = setTimeout(function() {
 
@@ -765,7 +891,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     }, 90000);
 
                     solicitudService.sendSolicitud(solicitud).then(function(response) {
-                        debugger;
+
                         clearTimeout($rootScope.timeoutSolicitud);
 
                         if (response.respuesta.respuesta != 'aceptada') {
@@ -841,6 +967,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         $sails.get("/cliente/solicitud", {SolId: response[0].solicitud})
                                 .success(function(response, status, headers, jwr) {
 
+
+                                    debugger;
+
+
                                     $localStorage.solicitud = response;
 
                                     $state.go('app.servicio_aprovado', {});
@@ -849,14 +979,24 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                                 })
                                 .error(function(err) {
-                                    console.log(err);
+                                    console.error(err);
                                 });
                     }
 
                 })
 
 
+                $interval(function() {
+                    console.log('se ejecuto mensajes');
+                    $sails.get('/cliente/mensajes', {})
+                            .success(function(data, status, headers, jwr) {
 
+                                $ionicLoading.hide();
+
+                            })
+
+
+                }, 30000);
 
             })
 
@@ -1039,14 +1179,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             };
 
                             markerChoferServicio.setMap(null);
-                            
+
                             try {
 
                                 var lat = data.lat || 0;
                                 var lon = data.lon || 0;
 
                             } catch (e) {
-                                
+
                                 console.log(e);
                             }
 
@@ -1121,50 +1261,48 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                         })
                                         .error(function(data, status, headers, jwr) {
                                         });
-
                             }
-
 
                         });
             }
 
             $scope.$storage = $localStorage;
-            
-            if($localStorage.solicitud.origen.coords){
-            
-            var latLngChofer = new google.maps.LatLng($localStorage.solicitud.origen.coords.latitude, $localStorage.solicitud.origen.coords.longitude);
 
-            var mapOptions = {
-                center: latLngChofer,
-                zoom: 16,
-                mapTypeId: google.maps.MapTypeId.ROADMAP,
-                mapTypeControl: false,
-                streetViewControl: false,
-                draggable: false
-            };
+            if ($localStorage.solicitud.origen.coords) {
 
-            $scope.mapa_chofer = new google.maps.Map(document.getElementById("mapa_chofer"), mapOptions);
+                var latLngChofer = new google.maps.LatLng($localStorage.solicitud.origen.coords.latitude, $localStorage.solicitud.origen.coords.longitude);
 
-            $scope.mapa_chofer.setClickableIcons(false);
+                var mapOptions = {
+                    center: latLngChofer,
+                    zoom: 16,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    mapTypeControl: false,
+                    streetViewControl: false,
+                    draggable: false
+                };
 
-            var imageUser = {
-                url: 'img/user.png',
-                size: new google.maps.Size(32, 32),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(0, 32)
-            };
-            new google.maps.Marker({
-                position: latLngChofer,
-                title: '',
-                map: $scope.mapa_chofer,
-                icon: imageUser
-            });
-            try {
+                $scope.mapa_chofer = new google.maps.Map(document.getElementById("mapa_chofer"), mapOptions);
 
-                $scope.updateMarkerServicio($localStorage.chofer.id);
-            } catch (e) {
-                console.log(e);
-            }
+                $scope.mapa_chofer.setClickableIcons(false);
+
+                var imageUser = {
+                    url: 'img/user.png',
+                    size: new google.maps.Size(32, 32),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(0, 32)
+                };
+                new google.maps.Marker({
+                    position: latLngChofer,
+                    title: '',
+                    map: $scope.mapa_chofer,
+                    icon: imageUser
+                });
+                try {
+
+                    $scope.updateMarkerServicio($localStorage.chofer.id);
+                } catch (e) {
+                    console.log(e);
+                }
 
             }
         })

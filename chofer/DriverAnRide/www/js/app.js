@@ -53,7 +53,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                     })
                     .state('app.main', {
                         url: '/main',
-                        
+                        cache:false,
                         views: {
                             'menuContent': {
                                 templateUrl: 'templates/home.html',

@@ -213,18 +213,23 @@ module.exports = {
 
             return res.badRequest();
         }
+        
+        
         var solicitud = req.param('solicitud');
+        var chofer = req.session.choferId;
 
         if (!solicitud) {
             console.error('Solicitud es obligatoria');
-            return res.serverError('El parametro de Solicitud es obligatoria');
+            return res.json(401, {err: 'Email y Password son requeridos.'});
         }
-        debugger;
+        if (!chofer) {
+            console.error('Chofer Session no existe');
+            return res.json(401, {err: 'Chofer Session no existe'});
+        }
+        
         if (Object.prototype.toString.call(solicitud) === '[object Array]') {
             console.log('Solicitud es array');
         }
-
-        var chofer = req.session.choferId;
 
 
         Solicitud.update({id:solicitud.id},{
@@ -234,6 +239,7 @@ module.exports = {
 
 
             if (err) {
+                
                 return res.json({err: err});
             }
 
@@ -261,13 +267,15 @@ module.exports = {
                         if (err) {
                             return res.json({err: err});
                         }
+                        
                         Solicitud.findOne({id: servicio.solicitud}).exec(function(err, solicitud) {
 
                             if (err) {
                                 return res.json({err: err});
                             }
                             
-                            debugger;
+                              if(!chofer[0].id){return res.json(401, {err: 'falta parametro origen en linea 279.'});}
+                              if(!chofer[0].id){return res.json(401, {err: 'falta parametro destino en linea 279.'});}
                             
                             that._addQueueMsg('cliente', chofer[0].id, cliente.id, 'servicio.iniciada', {solicitud: solicitud, servicio: servicio, chofer: chofer[0]}).then(function(response) {
 
@@ -332,10 +340,14 @@ module.exports = {
 
         var that = this;
         var servicio = req.param('servicio');
-        var inicio_viaje_app = req.param('inicio_viaje_app');
         var inicio_viaje = req.param('inicio_viaje');
+        
+        
+        if(!servicio){return res.json(401, {err: 'falta parametro servicio en linea 347.'});}
+        if(!inicio_viaje){return res.json(401, {err: 'falta parametro inicio_viaje en linea 349.'});}
 
         Servicio.update({id: servicio.id}, {
+            
             status: 'enproceso',
             inicio_viaje: inicio_viaje.posicion,
             inicio_fecha: inicio_viaje.fechaHora}).exec(function(err, result) {
@@ -525,11 +537,23 @@ module.exports = {
         var choferId = req.session.choferId;
         var action = req.param('action');
 
-        Chofer.update({id: choferId}, {status: action}).exec(function(err, chofer) {
+        if (action == 'activo') {
+            
+            Chofer.update({id: choferId}, {status: action, online: true}).exec(function(err, chofer) {
 
-            res.ok(chofer[0]);
+                res.ok(chofer[0]);
 
-        })
+            })
+        } else {
+            
+            Chofer.update({id: choferId}, {status: action}).exec(function(err, chofer) {
+
+                res.ok(chofer[0]);
+
+            })
+        }
+
+
 
 
     },
@@ -739,7 +763,7 @@ module.exports = {
                 
                 
             intentos++;    
-            }, 4000, msg);
+            }, 10000, msg);
 
 
         });

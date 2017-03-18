@@ -19,13 +19,13 @@
                                         <input type="text" class="form-control" name="nombre" id="nombre">
                                     </div>
                                 </div>
-                                 <div class="row">
+                                <div class="row">
                                     <div class = "col-md-12">
                                         <label for="slogan">Slogan Empresa:</label>
                                         <input type="text" class="form-control" name="slogan" id="slogan">
                                     </div>
                                 </div>
-                                 <div class="row">
+                                <div class="row">
                                     <div class = "col-md-12">
                                         <label for="logo_utl_def">Logo Empresa:</label>
                                         <input type="text" class="form-control" name="logo_utl_def" id="logo_utl_def">
@@ -43,7 +43,7 @@
                                         <input type="text" class="form-control" name="nombre_app_cliente" id="nombre_app_cliente">
                                     </div>
                                 </div>
-                                 <div class="row">
+                                <div class="row">
                                     <div class = "col-md-12">
                                         <label for="nombre_app_chofer">Nombre App Chofer:</label>
                                         <input type="text" class="form-control" name="nombre_app_chofer" id="nombre_app_chofer">
@@ -55,62 +55,116 @@
 
 
                     </div>
-                    <div class="col-md-6"></div>
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Tarifas</div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class = "col-md-12">
+                                        <label for="tarifa_kilometro">Tarifa Por Kilometro</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">$</span>
+                                            <input type="number" class="form-control" value="<%=config.tarifa_kilometro%>" name="tarifa_kilometro"  id="tarifa_kilometro" required>
+                                            <span class="input-group-addon">MXN</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class = "col-md-12">
+                                        <label for="tarifa_cancel">Tarifa de cancelacion</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">$</span>
+                                            <input type="number" class="form-control" value="<%=config.tarifa_cancel%>" name="tarifa_cancel" required="true" id="tarifa_cancel">
+                                            <span class="input-group-addon">MXN</span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class = "col-md-12">
+                                        <label for="tarifa_minuto">Tarifa por minuto</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">$</span>
+                                            <input type="number" class="form-control" value="<%=config.tarifa_minuto%>" name="tarifa_minuto" required="true">
+                                            <span class="input-group-addon">MXN</span>
+                                        </div>
+                                    </div>
+                                </div> 
+                                <div class="row">
+                                    <div class = "col-md-12">
+                                        <label for="tarifa_minima">Tarifa Minima</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">$</span>
+
+                                            <input type="text" class="form-control" value="<%=config.tarifa_minima%>" name="tarifa_minima" required="true" id="tarifa_minima">
+                                            <span class="input-group-addon">MXN</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                            </div></div></div>
 
 
                 </div>
 
 
-                <div>
-
-                    <div class="row">
-                        <div class = "col-md-12">
-                            <label for="tarixkm">Tarifa Por Kilometro</label>
-                            <input type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class = "col-md-12">
-                            <label for="tarixkm">Radio de Busqueda</label>
-                            <input type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class = "col-md-12">
-                            <label for="tarixkm">Tarifa de cancelacion</label>
-                            <input type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class = "col-md-12">
-                            <label for="tarixkm">Tarifa por Espera (por minuto)</label>
-                            <input type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class = "col-md-12">
-                            <label for="tarixkm">Cuenta de Conekta</label>
-                            <input type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class = "col-md-12">
-                            <label for="tarixkm">Key de Conekta</label>
-                            <input type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class = "col-md-12">
-                            <label for="tarixkm">Key de Google Maps</label>
-                            <input type="text" class="form-control">
-                        </div>
-                    </div>
-
-
-
-
-                </div>
             </div>
 
 
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Mapas</div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class = "col-md-12">
+                                <label for="dist_busqueda_servi">Radio de Busqueda</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" value="<%=config.dist_busqueda_servi%>" name="dist_busqueda_servi" id="dist_busqueda_servi">
+                                    <span class="input-group-addon">KM.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class = "col-md-12">
+                                <label for="tarixkm">Zoom Mapa</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class = "col-md-12">
+                                <label for="tarixkm">Cuenta de Conekta</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class = "col-md-12">
+                                <label for="tarixkm">Key de Conekta</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class = "col-md-12">
+                                <label for="tarixkm">Key de Google Maps</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+
+
+                    </div></div></div></div>
+        <div class="col-md-6">
+            <div class="row" style="margin:20px;">
+                <div class="col-md-12 text-right">
+                    <button type="button" class="btn btn-lg btn-success">Guardar</button>  
+
+                </div>
+            </div>  
+
         </div>
+    </div>
+
+</div>
+<%- include ../includes/footer %>

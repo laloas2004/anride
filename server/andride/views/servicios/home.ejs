@@ -26,6 +26,8 @@
 
 var monto = servicio.monto || 000;
 
+if(servicio.cliente){
+
 %>
       <tr>
         
@@ -37,7 +39,7 @@ var monto = servicio.monto || 000;
         <td><%=servicio.status%></td>
         <td><a href="#" class="btn btn-primary">Ver Detalle</a></td>
 
-      </tr><% })%>
+      </tr><% }})%>
 </tbody>
     </table>
 

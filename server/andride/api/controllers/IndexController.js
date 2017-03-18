@@ -51,6 +51,7 @@ module.exports = {
         
         var tiempo = parseFloat(req.param('timepo'));
         var distancia = parseFloat(req.param('distancia'));
+        
 
         var tarifa_base = 9;
         var tarifakm = 8;

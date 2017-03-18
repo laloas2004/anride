@@ -48,6 +48,7 @@ module.exports.routes = {
     'get /cliente/choferes': 'ClienteController.getChoferes',
     'get /cliente/viajes': 'ClienteController.getViajes',
     'get /cliente/servicio/pendiente': 'ClienteController.getServicioPendiente',
+    'get /cliente/servicio/status': 'ClienteController.getServicioStatus',
     'get /cliente/solicitud': 'ClienteController.getSolicitud',
     'get /cliente/mensajes': 'ClienteController.getQueueMsg',
     'post cliente/mensaje/confirma': 'ClienteController.confirmaMsg',

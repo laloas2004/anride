@@ -72,8 +72,16 @@ module.exports = {
         res.view('pagos/home', {saludos: 'saludos!!'});
     },
     indexConfiguracion: function(req, res) {
+        
+        
+         configTaxiapp.get().then(function(config) {
 
-        res.view('configuracion/home', {saludos: 'saludos!!'});
+            res.view('configuracion/home', {config:config});
+
+        });
+        
+
+        
     },
     newCliente: function(req, res) {
         return res.view('clientes/new_cliente', {});

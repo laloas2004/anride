@@ -8,15 +8,22 @@
     <div class="padding light-bg">
 
         <span class="badge badge-balanced"><div ng-click="cancelarViaje()">Cancelar Viaje</div></span>
-<a href="geo:?daddr={{pickup.solicitud.origen.coords.latitude}},{{pickup.solicitud.origen.coords.longitude}}" target="_system">
+       
+            <span class="badge badge-balanced"><div> 
+                    <a href="geo:0,0?q=dallas" data-rel="external">Abrir Google Maps</a>
+                </div></span>
+        
       <div class="item item-icon-left rounded balanced-bg margin-top light">
         <i class="icon ion-ios-location-outline"></i>
         <div>
+            
+
           <h4 class="light">Direccion Origen</h4>
           <span>{{pickup.direccion_origen}}</span>
+            
         </div>
       </div>
-</a>
+
       <div class="item item-icon-left no-border rounded margin-top">
         <i class="icon ion-ios-flag-outline"></i>
         <div>

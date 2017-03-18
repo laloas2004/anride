@@ -504,7 +504,19 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
 
                 }, 120000);
-                debugger;
+                
+                if(!$localStorage.chofer){
+                    
+                  console.error('Error: Falta parametro Chofer.');  
+                }
+                
+                if(!$localStorage.solicitud){
+                   
+                    console.error('Error: Falta parametro Solicitud.'); 
+                }
+                
+                
+                
                 $sails.post("/choferes/servicio", {solicitud: $localStorage.solicitud, chofer: $localStorage.chofer})
 
                         .success(function(data, status, headers, jwr) {
