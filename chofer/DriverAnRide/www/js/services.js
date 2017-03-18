@@ -101,7 +101,7 @@ angular.module('app.services', [])
                     var q = $q.defer();
                     $sails.post("/choferes/suscribe", {choferId: $localStorage.chofer.id})
                             .success(function(data, status, headers, jwr) {
-                                
+
                                 $localStorage.chofer = data.chofer;
                                 $localStorage.socketId = data.socketId;
                                 q.resolve(data);
@@ -278,44 +278,73 @@ angular.module('app.services', [])
         .factory('servicioService', function($http, $q, $sails, $rootScope) {
 
             return {
-                iniciaViaje: function(servicio,inicio_viaje) {
-                    
+                iniciaViaje: function(servicio, inicio_viaje) {
+
                     var q = $q.defer();
-                    
-                                    $sails.post("/choferes/servicio/inicio", {servicio:servicio, inicio_viaje:inicio_viaje})
 
-                                            .success(function(data, status, headers, jwr) {
-                                                
-                                                debugger;
-                                                q.resolve(data);
+                    $sails.post("/choferes/servicio/inicio", {servicio: servicio, inicio_viaje: inicio_viaje})
+
+                            .success(function(data, status, headers, jwr) {
+
+                                debugger;
+                                q.resolve(data);
 
 
-                                            })
-                                            .error(function(data, status, headers, jwr) {
-                                                debugger;
-                                                q.reject(data);
-                                                console.error('Error:' + data);
-                                            });
-                                
+                            })
+                            .error(function(data, status, headers, jwr) {
+                                debugger;
+                                q.reject(data);
+                                console.error('Error:' + data);
+                            });
+
 
                     return q.promise;
                 },
-                
-                distancia2points: function(lat1,lon1,lat2,lon2) {
+                distancia2points: function(lat1, lon1, lat2, lon2) {
+
                     
+                        Number.prototype.toRad = function() {
+                            return this * Math.PI / 180;
+                        }
+                   
+
                     var q = $q.defer();
+
+                    if (!lat1 || !lon1) {
+
+                        q.reject('Faltan parametros.');
+                    }
+                    if (!lat2 || !lon2) {
+
+                        q.reject('Faltan parametros.');
+                    }
+                    
+                    console.log(lat1);
+                    console.log(lon1);
+                    console.log(lat2);
+                    console.log(lon2);
+                    
+                    lat1 = Number(lat1); 
+                    lon1 = Number(lon1);
+                    lat2 = Number(lat2);
+                    lon2 = Number(lon2);
+                    
                     var R = 6371; // km
                     var dLat = (lat2 - lat1).toRad();
                     var dLon = (lon2 - lon1).toRad();
+                    
                     var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
                             Math.cos(lat1.toRad()) * Math.cos(lat2.toRad()) *
                             Math.sin(dLon / 2) * Math.sin(dLon / 2);
                     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
                     var d = R * c;
-                    
+
                     q.resolve(d);
-                    return q.promise;
                     
+                    alert('Service Distancia: '+ d);
+                    
+                    return q.promise;
+
                 }
 
             }
@@ -388,7 +417,7 @@ angular.module('app.services', [])
                 },
                 getInicioViaje: function(idInicioViaje) {
 
-                  var q = $q.defer();
+                    var q = $q.defer();
 
                     var query = "SELECT * FROM inicioViajes WHERE id=" + idInicioViaje;
 
@@ -425,12 +454,37 @@ angular.module('app.services', [])
 
                     return q.promise;
                 },
-                trackServicioPoints:function(idServicio,position){
-                   
-                $cordovaSQLite.execute(db, 'CREATE TABLE IF NOT EXISTS pointsServicio (id INTEGER PRIMARY KEY AUTOINCREMENT,idServicio TEXT, lat NUMERIC, lon NUMERIC, fecha NUMERIC)');
-   
-                    
-                }
+                trackServicioPoints: function(idServicio, position) {
+
+                    var q = $q.defer();
+
+                    $cordovaSQLite.execute(db, 'CREATE TABLE IF NOT EXISTS pointsServicio (id INTEGER PRIMARY KEY AUTOINCREMENT,idServicio TEXT, lat NUMERIC, lon NUMERIC, fecha NUMERIC)');
+                    var fecha = new Date();
+                    var query = "INSERT INTO  pointsServicio (idServicio,lat,lon,fecha) VALUES ()";
+
+                    $cordovaSQLite.execute(db, query, [idServicio,position.lat,position.lon,fecha]).then(function(res) {
+                        debugger;
+                        q.resolve(res);
+
+
+                    }, function(err) {
+
+                        q.reject(err);
+                        console.error(err);
+                    });
+
+                    return q.promise;
+
+
+                },
+                getServicioGeoTrack: function(idServicio) {
+
+                
+
+                },
+                
+                
+
 
 
             }

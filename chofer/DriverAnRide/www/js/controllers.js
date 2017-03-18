@@ -504,19 +504,19 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
 
                 }, 120000);
-                
-                if(!$localStorage.chofer){
-                    
-                  console.error('Error: Falta parametro Chofer.');  
+
+                if (!$localStorage.chofer) {
+
+                    console.error('Error: Falta parametro Chofer.');
                 }
-                
-                if(!$localStorage.solicitud){
-                   
-                    console.error('Error: Falta parametro Solicitud.'); 
+
+                if (!$localStorage.solicitud) {
+
+                    console.error('Error: Falta parametro Solicitud.');
                 }
-                
-                
-                
+
+
+
                 $sails.post("/choferes/servicio", {solicitud: $localStorage.solicitud, chofer: $localStorage.chofer})
 
                         .success(function(data, status, headers, jwr) {
@@ -860,7 +860,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 $ionicLoading,
                 $cordovaGeolocation,
                 amMoment,
-                $interval) {
+                $interval,
+                servicioService) {
 
             $scope.$storage = $localStorage;
             $scope.tiempo = {};
@@ -922,36 +923,79 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 $state.go('app.main', {});
             }
             $scope.iniciaTrackViaje = function() {
+                $scope.$storage.positions = [];
+                
+                $scope.watchservicio = $scope.$watch('$storage.position', function(newVal, oldVal) {
+                    
+                    $scope.distancia=0;
+                    
+                    if (newVal !== oldVal) {
+                        
+                        if (newVal.lat !== oldVal.lat || newVal.lon !== oldVal.lon) {
+                            
+                            
+                            
+                            $scope.$storage.positions.push(newVal);
+                            
+                            if ($scope.$storage.positions.length > 1) {
+                                
+                                console.log('positions > 1');
 
-                $scope.$watch('$storage.position', function(newVal, oldVal) {
+                                angular.forEach($scope.$storage.positions, function(value, key) {
 
+                                    if ((key + 1) <= $scope.$storage.positions.length) {
+                                        
+                                        console.log('key:'+key);
+                                        
+                                        var points1 = value;
+                                        var points2 = $scope.$storage.positions[key + 1];
+                                        
+                                        console.log(points1);
+                                        console.log(points2);
 
+                                        servicioService.distancia2points($scope.$storage.positions).then(function(err, distancia) {
+
+                                            $scope.distancia = $scope.distancia+distancia;
+                                            
+                                            console.log($scope.distancia);
+
+                                        });
+                                    }
+                                })
+
+                            }
+
+                        }
+                    }
 
 
                     console.log('changed');
                 }, true);
 
-            }
-            $scope.inicioContador = function() {
+            },
+                    $scope.terminaTrackViaje = function() {
 
-                $scope.intervalViaje = $interval(function() {
+                    },
+                    $scope.inicioContador = function() {
 
-                    var fecha_inicio = moment($scope.servicio.inicio_fecha);
-                    var ahora = moment();
+                        $scope.intervalViaje = $interval(function() {
 
-                    var diff_segundos = (ahora.diff(fecha_inicio) / 1000);
-                    var diff_min = parseInt(diff_segundos / 60);
+                            var fecha_inicio = moment($scope.servicio.inicio_fecha);
+                            var ahora = moment();
 
-                    $scope.tiempo.segundos = parseInt(diff_segundos % 60);
-                    $scope.tiempo.min = parseInt(diff_min % 60);
+                            var diff_segundos = (ahora.diff(fecha_inicio) / 1000);
+                            var diff_min = parseInt(diff_segundos / 60);
+
+                            $scope.tiempo.segundos = parseInt(diff_segundos % 60);
+                            $scope.tiempo.min = parseInt(diff_min % 60);
 
 
-                    $scope.tiempo.horas = parseInt(diff_min / 60);
+                            $scope.tiempo.horas = parseInt(diff_min / 60);
 
 
-                }, 1000);
+                        }, 1000);
 
-            }
+                    }
             $scope.inicioContador();
             $scope.iniciaTrackViaje();
 
@@ -960,6 +1004,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
         .controller('RegistroCtrl', function($scope,
                 $ionicHistory) {
 
-                    
+
 
         })
