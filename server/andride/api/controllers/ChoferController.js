@@ -268,17 +268,23 @@ module.exports = {
                             return res.json({err: err});
                         }
                         
-                        Solicitud.findOne({id: servicio.solicitud}).exec(function(err, solicitud) {
-
+                        Solicitud.findOne({id:servicio.solicitud}).exec(function(err, solicitud) {
+                                
                             if (err) {
                                 return res.json({err: err});
                             }
                             
                               if(!chofer[0].id){return res.json(401, {err: 'falta parametro origen en linea 279.'});}
                               if(!chofer[0].id){return res.json(401, {err: 'falta parametro destino en linea 279.'});}
-                            
+                              
+                              
+                            try{
+                                
+                                console.log('Cliente:');
+                                console.log(cliente);
+                                
                             that._addQueueMsg('cliente', chofer[0].id, cliente.id, 'servicio.iniciada', {solicitud: solicitud, servicio: servicio, chofer: chofer[0]}).then(function(response) {
-
+                            
                                 return res.json({err:false, servicio: servicio, cliente: cliente});
 
                             },function(err){
@@ -286,6 +292,10 @@ module.exports = {
                                return res.json({err: err, servicio: servicio, cliente: cliente}); 
                                 
                             });
+                            
+                            }catch(e){
+                              console.error(e);  
+                            }
 //                            sails.sockets.broadcast('cliente_' + cliente.id, 'servicio.iniciada', { solicitud:solicitud,servicio:servicio, chofer:chofer[0]});
 
 

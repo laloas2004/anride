@@ -986,17 +986,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 })
 
 
-                $interval(function() {
-                    console.log('se ejecuto mensajes');
-                    $sails.get('/cliente/mensajes', {})
-                            .success(function(data, status, headers, jwr) {
-
-                                $ionicLoading.hide();
-
-                            })
-
-
-                }, 30000);
+//                $interval(function() {
+//                    console.log('se ejecuto mensajes');
+//                    $sails.get('/cliente/mensajes', {})
+//                            .success(function(data, status, headers, jwr) {
+//
+//                                $ionicLoading.hide();
+//
+//                            })
+//
+//
+//                }, 30000);
 
             })
 
