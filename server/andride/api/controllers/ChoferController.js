@@ -245,7 +245,8 @@ module.exports = {
 
             Solicitud.publishUpdate(solicitud[0].id, {status: 'aceptada', solicitud: solicitud[0]}, req);
 
-            
+            console.log('Solicitud');
+            console.log(solicitud);
             
             Cliente.findOne({id:solicitud[0].cliente}).exec(function(err, cliente) {
 
