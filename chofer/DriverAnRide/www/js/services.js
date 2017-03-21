@@ -341,7 +341,7 @@ angular.module('app.services', [])
 
                     q.resolve(d);
                     
-//                    alert('Service Distancia: '+ d);
+                    console.log('Service Distancia: '+ d);
                     
                     return q.promise;
 

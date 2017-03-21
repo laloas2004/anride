@@ -658,6 +658,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
 
                         $state.go('app.main', {});
+                        
                     }, function(err) {
                         console.log('AuthService.suscribe()');
                         console.log(err);
@@ -885,13 +886,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
                 $scope.fin_viaje = {fechaHora: new Date(), posicion: $localStorage.position};
 
-                var data = {servicio: $localStorage.servicio, fin_viaje: $scope.fin_viaje};
-                $sails.post("/choferes/servicio/final", data)
+
+                $sails.post("/choferes/servicio/final", {servicio: $localStorage.servicio, fin_viaje: $scope.fin_viaje})
 
                         .success(function(data, status, headers, jwr) {
 
                             $scope.totales = data;
                             $ionicLoading.hide();
+
+
+                            clearInterval($scope.intervalViaje);
+
                             $ionicPopup.show({
                                 templateUrl: 'templates/popup_cobrar.html',
                                 title: 'Total a Pagar',
@@ -923,40 +928,45 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 $state.go('app.main', {});
             }
             $scope.iniciaTrackViaje = function() {
-                $scope.$storage.positions = [];
                 
+                
+                $scope.$storage.positions = [];
+
                 $scope.watchservicio = $scope.$watch('$storage.position', function(newVal, oldVal) {
-                    
-                    $scope.distancia=0;
-                    
+
+                    $scope.distancia = 0;
+
                     if (newVal !== oldVal) {
-                        
+
                         if (newVal.lat !== oldVal.lat || newVal.lon !== oldVal.lon) {
-                            
-                            
-                            
+
                             $scope.$storage.positions.push(newVal);
-                            
+
                             if ($scope.$storage.positions.length > 1) {
-                                
+
                                 console.log('positions > 1');
 
                                 angular.forEach($scope.$storage.positions, function(value, key) {
 
                                     if ((key + 1) <= $scope.$storage.positions.length) {
-                                        
-                                        console.log('key:'+key);
-                                        
+
+                                        console.log('key:' + key);
+
                                         var points1 = value;
                                         var points2 = $scope.$storage.positions[key + 1];
-                                        
+
                                         console.log(points1);
                                         console.log(points2);
+                                        
+                                          var lat1=points1.lat;
+                                          var lon1=points1.lon;
+                                          var lat2=points2.lat;
+                                          var lon2=points2.lon;
+                                        
+                                        servicioService.distancia2points(lat1,lon1,lat2,lon2).then(function(err, distancia) {
 
-                                        servicioService.distancia2points($scope.$storage.positions).then(function(err, distancia) {
+                                            $scope.distancia = $scope.distancia + distancia;
 
-                                            $scope.distancia = $scope.distancia+distancia;
-                                            
                                             console.log($scope.distancia);
 
                                         });
