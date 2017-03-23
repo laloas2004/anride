@@ -220,16 +220,14 @@ module.exports = {
 
         if (!solicitud) {
             console.error('Solicitud es obligatoria');
-            return res.json(401, {err: 'Email y Password son requeridos.'});
+            return res.json(401, {err: 'Solicitud es obligatoria'});
         }
         if (!chofer) {
             console.error('Chofer Session no existe');
             return res.json(401, {err: 'Chofer Session no existe'});
         }
         
-        if (Object.prototype.toString.call(solicitud) === '[object Array]') {
-            console.log('Solicitud es array');
-        }
+        
 
 
         Solicitud.update({id:solicitud.id},{
@@ -248,7 +246,7 @@ module.exports = {
             console.log('Solicitud');
             console.log(solicitud);
             
-            Cliente.findOne({id:solicitud[0].cliente}).exec(function(err, cliente) {
+            Cliente.findOne({id:solicitud[0].cliente}).exec(function(err, cliente){
 
 
                 Servicio.create({
@@ -391,14 +389,42 @@ module.exports = {
         var servicio = req.param('servicio');
 
         var fin_viaje = req.param('fin_viaje');
+        
+        var recorrido = req.param('recorrido');
+        
+        var distancia = req.param('distancia');
+        
+        
+        if(!servicio){
+           console.log('Falta parametro servicio terminaViaje'); 
+        }
+        
+        if(!fin_viaje){
+            
+            console.log('Falta parametro fin_viaje terminaViaje'); 
+            
+        }
+        
+        if(!recorrido){
+          
+            console.log('Falta parametro recorrido terminaViaje'); 
+        }
+        
+        if(!distancia){
+           console.log('Falta parametro distancia terminaViaje');  
+        }
+        
 
         var that = this;
 
         Servicio.update({
             id: servicio.id}, {status: 'finalizado',
             fin_viaje: fin_viaje.posicion,
-            fin_fecha: fin_viaje.fechaHora}).exec(function(err, result) {
-
+            fin_fecha: fin_viaje.fechaHora,
+            distancia: distancia,
+            recorridoChofer:recorrido
+        }).exec(function(err, result) {
+           
             if (err) {
                 return res.json({err: err});
             }
