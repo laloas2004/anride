@@ -49,18 +49,21 @@ module.exports = {
         var tiempo = parseFloat(req.param('timepo'));
         var distancia = parseFloat(req.param('distancia'));
         
-        if(!tiempo){
-            
+        console.log(tiempo);
+        console.log(distancia);
+
+        if (!tiempo) {
+
             console.log('falta parametro tiempo');
         }
-        
-        if(!distancia){
+
+        if (!distancia) {
             console.log('falta parametro distancia');
         }
 
         configTaxiapp.get().then(function(config) {
 
-            
+
 
             var tarifa_base = parseFloat(config.tarifa_base);
             var tarifakm = parseFloat(config.tarifa_kilometro);
@@ -68,7 +71,7 @@ module.exports = {
             var tarifa_mini = parseFloat(config.tarifa_minima);
             var monto = 0;
 
-            monto = tarifa_base + (tarifakm * (distancia / 1000));
+            monto = tarifa_base + ((tarifakm * (distancia / 1000)));
 
 
             if (monto < tarifa_mini) {
