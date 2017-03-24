@@ -9,7 +9,6 @@ var Q = require('q');
 
 
 module.exports = {
-    
     getConfig: function(req, res) {
 
         configTaxiapp.get().then(function(config) {
@@ -19,7 +18,6 @@ module.exports = {
         });
 
     },
-    
     getDireccion: function(req, res) {
         console.log(' req.isSocket ', req.isSocket);
         console.log(' req.isAjax   ', req.isAjax);
@@ -33,7 +31,6 @@ module.exports = {
             return res.json(val);
         });
     },
-    
     getMatrix: function(req, res) {
         var location1 = {
             lat: req.param('lat1'),
@@ -47,23 +44,38 @@ module.exports = {
             return res.json(val);
         });
     },
-    
     montoEstimado: function(req, res) {
-        
+
         var tiempo = parseFloat(req.param('timepo'));
         var distancia = parseFloat(req.param('distancia'));
-        
 
-        var tarifa_base = 9;
-        var tarifakm = 8;
-        var tarifaxmin = 3;
-        var monto = 0;
+        configTaxiapp.get().then(function(config) {
+
+            res.json(config);
 
 
-        monto = tarifa_base + (tarifakm * (distancia / 1000));
+
+            var tarifa_base = config.tarifa_base;
+            var tarifakm = config.tarifa_kilometro;
+            var tarifaxmin = config.tarifa_minuto;
+            var tarifa_mini = config.tarifa_minima;
+            var monto = 0;
 
 
-        return res.json({montoEstimado: monto});
+            monto = tarifa_base + (tarifakm * (distancia / 1000));
+            
+            
+            if(monto < tarifa_mini){
+                
+                monto = tarifa_mini;
+            }
+
+
+            return res.json({montoEstimado: monto});
+        }, function(err) {
+
+            return res.badRequest();
+        });
 
     }
 };
