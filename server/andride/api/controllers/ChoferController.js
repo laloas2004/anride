@@ -8,7 +8,6 @@
 var Q = require('q');
 
 module.exports = {
-    
     create: function(req, res) {
 
 
@@ -140,7 +139,7 @@ module.exports = {
 
                     }
 
-                    return res.json({suscrito: true, socketId: socketId,chofer:chofer[0]});
+                    return res.json({suscrito: true, socketId: socketId, chofer: chofer[0]});
 
                 });
 
@@ -213,8 +212,8 @@ module.exports = {
 
             return res.badRequest();
         }
-        
-        
+
+
         var solicitud = req.param('solicitud');
         var chofer = req.session.choferId;
 
@@ -226,18 +225,18 @@ module.exports = {
             console.error('Chofer Session no existe');
             return res.json(401, {err: 'Chofer Session no existe'});
         }
-        
-        
 
 
-        Solicitud.update({id:solicitud.id},{
+
+
+        Solicitud.update({id: solicitud.id}, {
             status: 'aceptada'
 
         }).exec(function(err, solicitud) {
 
 
             if (err) {
-                
+
                 return res.json({err: err});
             }
 
@@ -245,8 +244,8 @@ module.exports = {
 
             console.log('Solicitud');
             console.log(solicitud);
-            
-            Cliente.findOne({id:solicitud[0].cliente}).exec(function(err, cliente){
+
+            Cliente.findOne({id: solicitud[0].cliente}).exec(function(err, cliente) {
 
 
                 Servicio.create({
@@ -266,34 +265,38 @@ module.exports = {
                         if (err) {
                             return res.json({err: err});
                         }
-                        
-                        Solicitud.findOne({id:servicio.solicitud}).exec(function(err, solicitud) {
-                                
+
+                        Solicitud.findOne({id: servicio.solicitud}).exec(function(err, solicitud) {
+
                             if (err) {
                                 return res.json({err: err});
                             }
-                            
-                              if(!chofer[0].id){return res.json(401, {err: 'falta parametro origen en linea 279.'});}
-                              if(!chofer[0].id){return res.json(401, {err: 'falta parametro destino en linea 279.'});}
-                              
-                              
-                            try{
-                                
+
+                            if (!chofer[0].id) {
+                                return res.json(401, {err: 'falta parametro origen en linea 279.'});
+                            }
+                            if (!chofer[0].id) {
+                                return res.json(401, {err: 'falta parametro destino en linea 279.'});
+                            }
+
+
+                            try {
+
                                 console.log('Cliente:');
                                 console.log(cliente);
-                                
-                            that._addQueueMsg('cliente', chofer[0].id, cliente.id, 'servicio.iniciada', {solicitud: solicitud, servicio: servicio, chofer: chofer[0]}).then(function(response) {
-                            
-                                return res.json({err:false, servicio: servicio, cliente: cliente});
 
-                            },function(err){
-                                
-                               return res.json({err: err, servicio: servicio, cliente: cliente}); 
-                                
-                            });
-                            
-                            }catch(e){
-                              console.error(e);  
+                                that._addQueueMsg('cliente', chofer[0].id, cliente.id, 'servicio.iniciada', {solicitud: solicitud, servicio: servicio, chofer: chofer[0]}).then(function(response) {
+
+                                    return res.json({err: false, servicio: servicio, cliente: cliente});
+
+                                }, function(err) {
+
+                                    return res.json({err: err, servicio: servicio, cliente: cliente});
+
+                                });
+
+                            } catch (e) {
+                                console.error(e);
                             }
 //                            sails.sockets.broadcast('cliente_' + cliente.id, 'servicio.iniciada', { solicitud:solicitud,servicio:servicio, chofer:chofer[0]});
 
@@ -350,13 +353,16 @@ module.exports = {
         var that = this;
         var servicio = req.param('servicio');
         var inicio_viaje = req.param('inicio_viaje');
-        
-        
-        if(!servicio){return res.json(401, {err: 'falta parametro servicio en linea 347.'});}
-        if(!inicio_viaje){return res.json(401, {err: 'falta parametro inicio_viaje en linea 349.'});}
+
+
+        if (!servicio) {
+            return res.json(401, {err: 'falta parametro servicio en linea 347.'});
+        }
+        if (!inicio_viaje) {
+            return res.json(401, {err: 'falta parametro inicio_viaje en linea 349.'});
+        }
 
         Servicio.update({id: servicio.id}, {
-            
             status: 'enproceso',
             inicio_viaje: inicio_viaje.posicion,
             inicio_fecha: inicio_viaje.fechaHora}).exec(function(err, result) {
@@ -367,15 +373,15 @@ module.exports = {
 
 
             that._addQueueMsg('cliente', req.session.choferId, servicio.cliente, 'servicio.inicioViaje', {servicio: servicio}).then(function(response) {
-                
-                return res.json({err: false, servicio: result, msg:response});
 
-            },function(err,response){
-               
-               return res.json({err: err, servicio: result, msg:response});
-               
+                return res.json({err: false, servicio: result, msg: response});
+
+            }, function(err, response) {
+
+                return res.json({err: err, servicio: result, msg: response});
+
             })
-                    
+
         })
 
 
@@ -389,31 +395,30 @@ module.exports = {
         var servicio = req.param('servicio');
 
         var fin_viaje = req.param('fin_viaje');
-        
+
         var recorrido = req.param('recorrido');
-        
+
         var distancia = req.param('distancia');
-        
-        
-        if(!servicio){
-           console.log('Falta parametro servicio terminaViaje'); 
+
+
+        if (!servicio) {
+            console.log('Falta parametro servicio terminaViaje');
         }
-        
-        if(!fin_viaje){
-            
-            console.log('Falta parametro fin_viaje terminaViaje'); 
-            
+
+        if (!fin_viaje) {
+
+            console.log('Falta parametro fin_viaje terminaViaje');
+
         }
-        
-        if(!recorrido){
-          
-            console.log('Falta parametro recorrido terminaViaje'); 
+
+        if (!recorrido) {
+
+            console.log('Falta parametro recorrido terminaViaje');
         }
-        
-        if(!distancia){
-           console.log('Falta parametro distancia terminaViaje');  
+        console.log(distancia);
+        if (!distancia) {
+            console.log('Falta parametro distancia terminaViaje');
         }
-        
 
         var that = this;
 
@@ -421,10 +426,10 @@ module.exports = {
             id: servicio.id}, {status: 'finalizado',
             fin_viaje: fin_viaje.posicion,
             fin_fecha: fin_viaje.fechaHora,
-            distancia: distancia,
-            recorridoChofer:recorrido
+            distance: distancia,
+            recorridoChofer: recorrido
         }).exec(function(err, result) {
-           
+
             if (err) {
                 return res.json({err: err});
             }
@@ -436,7 +441,6 @@ module.exports = {
                 Servicio.update({
                     id: servicio.id}, {
                     tiempo: respuesta.tiempo,
-                    distancia: respuesta.distancia,
                     monto: respuesta.monto
                 }).exec(function(err, result) {
                     if (err) {
@@ -478,56 +482,44 @@ module.exports = {
 
         var deferred = Q.defer();
 
-        var tarifa_base = 9;
-        var tarifakm = 8;
-        var tarifaxmin = 3;
-        var monto = 0;
+        configTaxiapp.get().then(function(config) {
 
-        var fecha_inicio = new Date(servicio.inicio_fecha);
+            console.log(config);
 
-        var fecha_fin = new Date(servicio.fin_fecha);
+            var distancia_km = 0;
+            var monto = 0;
+            var tarifa_base = parseFloat(config.tarifa_base);
+            var tarifakm = parseFloat(config.tarifa_kilometro);
+            var tarifaxmin = parseFloat(config.tarifa_minuto);
+            var monto_minimo = parseFloat(config.tarifa_minima);
 
-        var segundos = (fecha_fin - fecha_inicio) / 1000;
+            var fecha_inicio = new Date(servicio.inicio_fecha);
 
-        var minutos = Math.floor(segundos % 3600) / 60;
-        var location1 = {};
-        var location2 = {};
-        try {
-            location1 = {
-                lat: servicio.inicio_viaje.lat,
-                lon: servicio.inicio_viaje.lon
-            };
-        } catch (e) {
+            var fecha_fin = new Date(servicio.fin_fecha);
 
-            console.log("Location 1:" + e);
+            var segundos = (fecha_fin - fecha_inicio) / 1000;
 
-        }
-        try {
-            location2 = {
-                lat: servicio.fin_viaje.lat,
-                lon: servicio.fin_viaje.lon
-            };
-        } catch (e) {
+            var minutos = Math.floor(segundos % 3600) / 60;
+            
+            try {
+                
+                var distancia_km = servicio.distance / 1000;
+                
+            } catch (e) {
+                
+                console.log(e);
+            }
 
-            console.log("Location 2:" + e);
+            monto = (tarifakm * distancia_km) + (tarifaxmin * minutos) + tarifa_base;
 
-        }
+            if (monto < monto_minimo) {
+                monto = monto_minimo;
+            }
 
-
-        GmapService.getMatrix(location1, location2).then(function(val) {
-
-            var distancia = val.rows[0].elements[0].distance.value;
-
-            monto = (tarifakm * distancia) + (tarifaxmin * minutos) + tarifa_base;
-
-            deferred.resolve({tiempo: minutos, distancia: distancia, monto: monto});
-
+            deferred.resolve({tiempo: minutos, monto: monto});
         }, function(err) {
-
-            return res.json(err);
+            deferred.reject(err);
         });
-//
-
         return deferred.promise;
     },
     cancelaViaje: function(req, res) {
@@ -575,14 +567,14 @@ module.exports = {
         var action = req.param('action');
 
         if (action == 'activo') {
-            
+
             Chofer.update({id: choferId}, {status: action, online: true}).exec(function(err, chofer) {
 
                 res.ok(chofer[0]);
 
             })
         } else {
-            
+
             Chofer.update({id: choferId}, {status: action}).exec(function(err, chofer) {
 
                 res.ok(chofer[0]);
@@ -632,14 +624,14 @@ module.exports = {
                 if (err) {
                     return res.json({err: err});
                 }
-                
-                that._addQueueMsg('cliente', req.session.choferId, cliente.id, 'servicio.cancelado', {servicio: serv[0]}).then(function(response){
-                    
-                    
-                },function(err){
-                    
-                 console.log(err);
-                    
+
+                that._addQueueMsg('cliente', req.session.choferId, cliente.id, 'servicio.cancelado', {servicio: serv[0]}).then(function(response) {
+
+
+                }, function(err) {
+
+                    console.log(err);
+
                 });
 //                sails.sockets.broadcast(cliente.socketId, 'servicio.cancelado', {servicio: serv[0]});
 
@@ -733,7 +725,7 @@ module.exports = {
     _addQueueMsg: function(tipo, idOrigen, idDestino, evento, data) {
 
         var deferred = Q.defer();
-            intentos = 0;
+        intentos = 0;
 
         if (tipo != 'cliente') {
             console.log('Error debe de ser chofer o cliente');
@@ -754,30 +746,30 @@ module.exports = {
                 deferred.reject(new Error(err));
             }
 
-            
+
             sails.sockets.broadcast(msg.tipo + '_' + msg.idDestino[0], msg.event, msg);
 
             intentos++;
 
             var interval = setInterval(function(msg) {
-                
+
 
                 Queue.findOne({id: msg.id}).exec(function(err, msg) {
 
                     if (err) {
                         deferred.reject(new Error(err));
                     }
-                    
+
 
                     if (!msg.entregado) {
 
                         sails.sockets.broadcast(msg.tipo + '_' + msg.idDestino[0], msg.event, msg);
-                        
-                        
+
+
                         if (intentos == 5) {
 
-                            deferred.reject('msg_no_entregado',msg);
-                            
+                            deferred.reject('msg_no_entregado', msg);
+
                             clearInterval(interval);
 
                             Queue.update({id: msg.id}, {intentos: intentos}).exec(function() {
@@ -785,7 +777,7 @@ module.exports = {
                             });
 
                         }
-                        
+
                     } else {
                         deferred.resolve(msg);
                         clearInterval(interval);
@@ -797,9 +789,9 @@ module.exports = {
                     }
 
                 })
-                
-                
-            intentos++;    
+
+
+                intentos++;
             }, 10000, msg);
 
 

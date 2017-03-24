@@ -9,6 +9,7 @@ var Q = require('q');
 
 
 module.exports = {
+    
     getConfig: function(req, res) {
 
         configTaxiapp.get().then(function(config) {

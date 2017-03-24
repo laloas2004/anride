@@ -36,7 +36,7 @@ module.exports = {
         tiempo: {
             type: "float"
         },
-        distancia: {
+        distance: {
             type: "float"
         },
         monto: {
