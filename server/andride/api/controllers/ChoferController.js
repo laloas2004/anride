@@ -175,8 +175,8 @@ module.exports = {
                     }
 
 
-                    console.log('--- Se actualizo posicion de: ---');
-                    console.log(updated);
+//                    console.log('--- Se actualizo posicion de: ---');
+//                    console.log(updated);
 
                     try {
                         Chofer.publishUpdate(updated[0].id, {chofer: updated[0]});
