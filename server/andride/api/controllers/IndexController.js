@@ -53,23 +53,20 @@ module.exports = {
 
             res.json(config);
 
-
-
-            var tarifa_base = config.tarifa_base;
-            var tarifakm = config.tarifa_kilometro;
-            var tarifaxmin = config.tarifa_minuto;
-            var tarifa_mini = config.tarifa_minima;
+            var tarifa_base = parseFloat(config.tarifa_base);
+            var tarifakm = parseFloat(config.tarifa_kilometro);
+            var tarifaxmin = parseFloat(config.tarifa_minuto);
+            var tarifa_mini = parseFloat(config.tarifa_minima);
             var monto = 0;
 
 
             monto = tarifa_base + (tarifakm * (distancia / 1000));
-            
-            
-            if(monto < tarifa_mini){
-                
+
+
+            if (monto < tarifa_mini) {
+
                 monto = tarifa_mini;
             }
-
 
             return res.json({montoEstimado: monto});
         }, function(err) {
