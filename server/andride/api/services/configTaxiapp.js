@@ -27,10 +27,12 @@ module.exports = {
         fs.writeFileSync('./config/taxiapp.json', string, 'utf-8', function(err) {
 
             if (err) {
+                
                 deferred.reject(new Error(err));
             }
-            deferred.resolve(obj);
-            console.log("The file was saved!");
+            
+            
+            deferred.resolve(true);
 
         });
 

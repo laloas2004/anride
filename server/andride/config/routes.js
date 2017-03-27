@@ -109,6 +109,7 @@ module.exports.routes = {
     
     
     'get /admin/configuracion': 'AdminController.indexConfiguracion',
+    'post /admin/configuracion': 'AdminController.saveConfiguracion',
     
     
     'post /admin/servicio': 'AdminController.suscribe',

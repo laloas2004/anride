@@ -6,8 +6,8 @@
  */
 
 module.exports = {
-    index:function(req, res){
-        
+    index: function(req, res) {
+
     },
     indexCliente: function(req, res) {
 
@@ -27,7 +27,7 @@ module.exports = {
             if (err) {
                 return res.json(err.status, {err: err});
             }
-            
+
             res.view('solicitudes/home', {solicitudes: solicitudes});
         })
 
@@ -72,16 +72,28 @@ module.exports = {
         res.view('pagos/home', {saludos: 'saludos!!'});
     },
     indexConfiguracion: function(req, res) {
-        
-        
-         configTaxiapp.get().then(function(config) {
 
-            res.view('configuracion/home', {config:config});
+        configTaxiapp.get().then(function(config) {
+
+            res.view('configuracion/home', {config: config});
 
         });
-        
 
-        
+    },
+    saveConfiguracion: function(req, res) {
+
+        var params = req.allParams();
+
+        configTaxiapp.save(params).then(function(config) {
+
+
+            return res.redirect('/admin/configuracion');
+
+        }, function(err) {
+            console.log(err);
+        });
+
+
     },
     newCliente: function(req, res) {
         return res.view('clientes/new_cliente', {});
