@@ -24,18 +24,13 @@ module.exports = {
         
         var deferred = Q.defer();
         var string = JSON.stringify(json);
-        fs.writeFileSync('./config/taxiapp.json', string, 'utf-8', function(err) {
-
+        var file = fs.writeFileSync('./config/taxiapp.json', string, 'utf-8', function(err) {
             if (err) {
-                
                 deferred.reject(new Error(err));
             }
             
-            
-            deferred.resolve(true);
-
         });
-
+        deferred.resolve(file);
         return deferred.promise;
     }
 
