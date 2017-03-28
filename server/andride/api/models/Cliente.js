@@ -12,7 +12,7 @@ module.exports = {
         nombre: {
             type: "string"
         },
-        apellidos: {
+        apellido: {
             type: "string"
         },
         email: {

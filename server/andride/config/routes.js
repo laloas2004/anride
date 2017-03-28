@@ -52,6 +52,8 @@ module.exports.routes = {
     'get /cliente/solicitud': 'ClienteController.getSolicitud',
     'get /cliente/mensajes': 'ClienteController.getQueueMsg',
     'post cliente/mensaje/confirma': 'ClienteController.confirmaMsg',
+    'post cliente/registro/validar': 'ClienteController.validarEmail',
+    'post /cliente/registro': 'ClienteController.create',
     //Chofer
     'post /chofer': 'ChoferController.create',
     'get /chofer': 'ChoferController.getChofer',

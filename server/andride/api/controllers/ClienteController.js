@@ -41,16 +41,51 @@ module.exports = {
         });
     },
     create: function(req, res) {
-
-        console.log('se ejecuto registrar');
-
-        if (req.isSocket) {
-
-
-
-            return res.json(req.socket);
-
+        
+        console.log(req.allParams());
+        
+        var usuario = JSON.parse(req.param('usuario'));
+        
+       
+        if (!usuario.nombre) {
+            return res.json(401, {err: 'nombre required'});
         }
+
+        if (!usuario.apellido) {
+            return res.json(401, {err: 'apellido required'});
+        }
+
+        if (!usuario.celular) {
+            return res.json(401, {err: 'celular required'});
+        }
+        if (!usuario.email) {
+            return res.json(401, {err: 'email required'});
+        }
+        if (!usuario.password) {
+            return res.json(401, {err: 'password required'});
+        }
+
+        Cliente.create({
+            nombre: usuario.nombre,
+            apellido: usuario.apellido,
+            email: usuario.email,
+            numCel: usuario.celular,
+            password: usuario.password
+        }).exec(function(err, cliente) {
+
+            if (err) {
+                return res.json(403, {err: 'Error al registrar'});
+            }
+
+            delete cliente.password;
+
+            res.json({
+                cliente: cliente,
+                token: jwToken.issue({id: cliente.id})
+            });
+
+        });
+
 
     },
     login: function(req, res) {
@@ -59,6 +94,7 @@ module.exports = {
         var req_password = req.param('password');
 
         if (!req_email || !req_password) {
+
             return res.json(401, {err: 'email and password required'});
         }
 
@@ -197,9 +233,9 @@ module.exports = {
 
                         if (tiempo == 0) {
                             debugger;
-                            sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda', {solicitud:finn, tiempo_espera: tiempo_espera});
+                            sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda', {solicitud: finn, tiempo_espera: tiempo_espera});
                         }
-                        
+
 //                        sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.cont', {tiempo: tiempo, tiempo_espera: tiempo_espera});
 
                         tiempo++;
@@ -366,9 +402,9 @@ module.exports = {
 
                 return res.json({respuesta: respuesta, solicitud: finn});
 
-            },function(err){
-                
-               return res.json({err: err}); 
+            }, function(err) {
+
+                return res.json({err: err});
             })
 
         })
@@ -501,13 +537,13 @@ module.exports = {
 
     },
     getQueueMsg: function(req, res) {
-        
+
         if (!req.isSocket) {
             return res.badRequest();
         }
 
         var idCliente = req.session.clienteId;
-        
+
         if (idCliente) {
 
             Queue.findOne({idDestino: {"$in": [idCliente]}, entregado: false}).exec(function(err, msg) {
@@ -539,17 +575,48 @@ module.exports = {
             return res.json({err: 'Falta parametro id obligatorio'});
         }
 
-        Servicio.findOne({id:id}).exec(function(err, servicio){
-            
-          if (err) {
+        Servicio.findOne({id: id}).exec(function(err, servicio) {
 
+            if (err) {
+
+                return res.serverError(err);
+            }
+
+            return res.json({status: servicio.status});
+
+        })
+    },
+    validarEmail: function(req, res) {
+
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+
+        var email = req.param('email');
+
+
+
+        if (email) {
+
+            Cliente.findOne({email: email}).exec(function(err, cliente) {
+
+                if (err) {
                     return res.serverError(err);
                 }
-                
-                
-          return res.json({status:servicio.status});      
-            
-        })
+
+                if (cliente) {
+
+                    return res.json({valido: false});
+
+                } else {
+                    return res.json({valido: true});
+                }
+
+            });
+
+        } else {
+            return res.badRequest();
+        }
 
     }
 
