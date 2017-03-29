@@ -466,6 +466,28 @@ module.exports = {
     },
     getViajes: function(req, res) {
 
+        if (!req.isSocket) {
+
+            return res.badRequest();
+        }
+        
+        debugger;
+
+        var clienteId = req.session.clienteId;
+
+        if (!clienteId) {
+            return res.json(403, {err: 'Session required'});
+        }
+
+        Servicio.find({where:{cliente: clienteId,status:'finalizado' },limit:30}).populate('solicitud').sort('updateAt ASC').exec(function(err, servi) {
+
+            if (err) {
+                return res.json({err: err});
+            }
+
+            res.json(servi);
+
+        });
 
     },
     getServicioPendiente: function(req, res) {

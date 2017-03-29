@@ -6,11 +6,13 @@
  */
 
 module.exports = {
-
-  attributes: {
-      servicio:{
-          model: 'Servicio'
-      }
-  }
+    attributes: {
+        servicio: {
+            model: 'Servicio'
+        },
+        cliente: {
+            model: 'cliente'
+        }
+    }
 };
 

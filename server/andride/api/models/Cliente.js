@@ -45,6 +45,9 @@ module.exports = {
         aprovado: {
             type: 'boolean',
             defaultsTo: false
+        },
+        formasPago:{
+           type: 'json' 
         }
     },
     comparePassword: function(password, chofer, cb) {
