@@ -46,7 +46,7 @@ module.exports = {
     },
     montoEstimado: function(req, res) {
 
-        var tiempo = parseFloat(req.param('timepo'));
+        var tiempo = parseFloat(req.param('tiempo'));
         var distancia = parseFloat(req.param('distancia'));
         
         console.log(tiempo);
