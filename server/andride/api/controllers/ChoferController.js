@@ -334,7 +334,6 @@ module.exports = {
                 if (err) {
                     return res.json({err: err});
                 }
-                debugger;
                 sails.sockets.broadcast('cliente_' + cliente.id, 'servicio.onplace', {servicio: servicio, chofer: chofer});
                 return res.json({enviado: true});
             })
