@@ -351,7 +351,7 @@ angular.module('app.services', [])
 
                                 q.resolve(response.data.cliente);
 
-                                q.resolve(response);
+//                                q.resolve(response);
 
                             }).catch(function(err) {
 
@@ -386,6 +386,33 @@ angular.module('app.services', [])
 
                             });
                     return q.promise;
+                },
+                registro:function(data){
+
+                    var q = $q.defer();
+
+                    $http({
+                        url: $rootScope.serverIp + "/cliente/registro",
+                        method: "POST",
+                        params: {
+                            usuario: data
+                        }
+                    })
+                            .then(function(response) {
+
+                            $localStorage.token = response.data.token;
+                            $localStorage.cliente = response.data.cliente;
+                            q.resolve(response.data.cliente);
+
+                            })
+                            .catch(function(err) {
+                               
+                               q.reject(err);
+
+                            })
+
+                    return q.promise;
+                                        
                 }
 
             }

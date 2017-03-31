@@ -120,7 +120,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
             $sails.on('servicio.iniciada', function(data) {
-                
+
                 // Si llega un evento de la cola de mensajes se valida que el servicio no este cancelado o finalizado.
                 var idServicio = data.data.servicio.id || 0;
 
@@ -128,12 +128,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     $sails.get("/cliente/servicio/status", {idServicio: idServicio})
                             .success(function(dataStatus, status, headers, jwr) {
 
-                                debugger;
+
                                 if (dataStatus.status == 'cancelada' || dataStatus.status == 'finalizado') {
 
                                     clearTimeout($rootScope.timeoutSolicitud);
 
-                                    $sails.post("cliente/mensaje/confirma", {idQueue: data.id})
+                                    $sails.post("/cliente/mensaje/confirma", {idQueue: data.id})
                                             .success(function(queue, status, headers, jwr) {
 
                                                 console.log('El servicio esta cancelado o finalizado');
@@ -150,7 +150,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                                     clearTimeout($rootScope.timeoutSolicitud);
 
-                                    $sails.post("cliente/mensaje/confirma", {idQueue: data.id})
+                                    $sails.post("/cliente/mensaje/confirma", {idQueue: data.id})
                                             .success(function(queue, status, headers, jwr) {
 
 
@@ -191,7 +191,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
 
-                $sails.post("cliente/mensaje/confirma", {idQueue: data.id})
+                $sails.post("/cliente/mensaje/confirma", {idQueue: data.id})
                         .success(function(queue, status, headers, jwr) {
                             if ($scope.vistaAlertinicioViaje == 0) {
                                 $cordovaDialogs.alert('El chofer a iniciado su Viaje', 'Servicio Iniciado', 'OK')
@@ -227,7 +227,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             $sails.on('servicio.cancelado', function(data) {
 
-                $sails.post("cliente/mensaje/confirma", {idQueue: data.id})
+                $sails.post("/cliente/mensaje/confirma", {idQueue: data.id})
                         .success(function(queue, status, headers, jwr) {
 
                             $cordovaDialogs.alert('El servicio ha sido cancelado por el Chofer, por favor vuelva a pedir otro servicio.', 'Servicio Cancelado', 'OK');
@@ -753,7 +753,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         }};
 
                     $rootScope.solicitud.direccion_destino = place_detalle.formatted_address;
-
+                    
+                    debugger;
                     $interval.cancel($scope.intervalUpdateChoferes);
 
                     $scope.calcularEstimado().then(function(response) {
@@ -771,8 +772,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             };
             $scope.crearsolicitud = function() {
-
-
+                debugger;
+             $interval.cancel($scope.intervalUpdateChoferes);
                 // valido informacion para crear la solicitud.
 
                 var solicitud = $rootScope.solicitud;
@@ -867,7 +868,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         showBackdrop: false
                     });
 
-                    debugger;
+                   
                     $localStorage.solicitud = solicitud;
 
                     $rootScope.timeoutSolicitud = setTimeout(function() {
@@ -967,8 +968,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         $sails.get("/cliente/solicitud", {SolId: response[0].solicitud})
                                 .success(function(response, status, headers, jwr) {
 
-
-                                    debugger;
 
 
                                     $localStorage.solicitud = response;
@@ -1260,6 +1259,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                                         })
                                         .error(function(data, status, headers, jwr) {
+                                            console.error(data);
                                         });
                             }
 
@@ -1306,13 +1306,96 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             }
         })
-        .controller('ViajesCtrl', function($scope, $ionicHistory) {
+        .controller('ViajesCtrl', function($scope, $ionicHistory, $sails) {
 
-//            $sails.get("cliente/viajes")
+
+
+            $scope.init = function() {
+
+
+                $sails.get("/cliente/viajes", {})
+                        .success(function(data, status, headers, jwr) {
+
+
+                            $scope.records = data;
+
+
+                        })
+                        .error(function(data, status, headers, jwr) {
+
+
+
+                            console.error(data);
+                        })
+            }
+
+
+
+            $scope.init();
 
         })
-        .controller('PagosCtrl', function($scope, $ionicHistory) {
+        .controller('PagosCtrl', function($scope, $ionicHistory, $ionicModal, moment) {
 
+            $scope.anio = parseInt(moment().format('YYYY'));
+            $scope.card = {};
+            $ionicModal.fromTemplateUrl('templates/add_tarjeta.html', {
+                scope: $scope,
+                animation: 'slide-in-up'
+            }).then(function(modal) {
+
+                $scope.modal_add_tarjeta = modal;
+            });
+
+
+            $scope.getFormasPago = function() {
+
+            }
+            $scope.addFormaPago = function() {
+                $scope.modal_add_tarjeta.show();
+
+            }
+
+            $scope.create_token = function() {
+
+                $scope.card.address = {};
+
+                if (!Conekta.card.validateNumber($scope.card.number)) {
+                    alert('el numero de tarjeta no es valido.');
+                    return;
+                }
+
+                if (!Conekta.card.validateExpirationDate($scope.card.exp_month, $scope.card.exp_year)) {
+                    alert('el fecha de expìracion no es valido.');
+                    return;
+                }
+
+                if (!Conekta.card.validateCVC($scope.card.cvc)) {
+                    alert('el codigo de seguridad no es valido.');
+                    return;
+                }
+                $scope.last_num = $scope.card.number[13],$scope.card.number[12],$scope.card.number[13],$scope.card.number[14];
+                
+                $scope.card_brand = Conekta.card.getBrand($scope.card.number); 
+
+                var tokenParams = {card: $scope.card};
+
+
+                Conekta.token.create(tokenParams, $scope.successResponseHandler, $scope.errorResponseHandler);
+
+
+            }
+            $scope.successResponseHandler = function(token) {
+                console.log(token);
+              
+              $sails.post("/cliente/pay/add",{data:{token:token,last_nums:$scope.last_num,card_brand:$scope.card_brand}})
+              
+              
+            }
+
+            $scope.errorResponseHandler = function(err) {
+                console.log(err);
+                debugger;
+            }
 
 
         })
@@ -1328,15 +1411,88 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
         })
+        .controller('ConfiguracionCtrl', function($scope, $ionicHistory) {
+
+
+
+        })
+
+
         .controller('CancelCtrl', function($scope, $ionicHistory) {
 
             var razones = [{id: 1, title: ""}]
 
 
         })
+
         .controller('BuscandoCtrl', function($scope, $ionicHistory) {
 
 
+
+        })
+
+        .controller('RegistroCtrl', function($scope, $ionicHistory, $sails, $ionicPopup, AuthService, $rootScope, $ionicSideMenuDelegate, $ionicLoading, $state) {
+
+            $scope.validate = function() {
+                $ionicLoading.show({
+                    template: 'Enviando Informacion de Registro...',
+                    showBackdrop: false
+                });
+
+
+                if ($scope.r.email) {
+
+                    $sails.post("/cliente/registro/validar", {email: $scope.r.email})
+                            .success(function(val, status, headers, jwr) {
+
+                                if (!val.valido) {
+                                    $ionicLoading.hide();
+                                    var alertPopup = $ionicPopup.alert({
+                                        title: 'Ya existe una cuenta con ese email.',
+                                        template: 'Por favor entre con su cuenta.'
+                                    });
+
+                                    return;
+
+                                } else {
+                                    $scope.registro();
+                                }
+
+                            })
+                            .error(function(err) {
+                                $ionicLoading.hide();
+                                console.error(err);
+
+                            });
+
+                }
+
+
+            }
+
+            $scope.registro = function() {
+
+                AuthService.registro($scope.r)
+                        .then(function(response) {
+
+                            $rootScope.solicitud.cliente = response;
+                            $ionicSideMenuDelegate.canDragContent(true);
+
+                            AuthService.suscribe().then(function(response) {
+                                $ionicLoading.hide();
+                                $state.go('app.map', {});
+                            }, function(err) {
+                                $ionicLoading.hide();
+                            });
+
+
+                        }, function(err) {
+                            $ionicLoading.hide();
+                            console.error(err);
+
+                        })
+
+            }
 
         })
 

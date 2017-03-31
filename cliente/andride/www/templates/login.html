@@ -1,55 +1,56 @@
 <ion-view view-title="Login" hide-nav-bar="true" class="login-bg">
-  <ion-content class="login-bg">
+    <ion-content class="login-bg">
 
-      <div class="login-content" ng-controller="LoginCtrl">
+        <div class="login-content" ng-controller="LoginCtrl">
 
-      <div class="light-bg">
+            <div class="light-bg">
 
-        <!-- Logo -->
-        <div class="padding text-center">
-          <div class="logo">
-            
-          </div>
-          <h2 class="dark">
-            AnRide
-          </h2>
-          <p class="dark">Ve a donde quieras con An Ride</p>
+                <!-- Logo -->
+                <div class="padding text-center">
+                    <div class="logo">
+
+                    </div>
+                    <h2 class="dark">
+                        AnRide
+                    </h2>
+                    <p class="dark">Ve a donde quieras con An Ride</p>
+                </div>
+
+                <!-- Login form -->
+                <form name="form_login">
+                    <div class="list padding">
+                        <label class="item item-input">
+                            <i class="ion-ios-email-outline light icon-label"></i>
+                            <input type="email" placeholder="Email" ng-model="email" required="true">
+                        </label>
+                        <label class="item item-input">
+                            <i class="ion-ios-locked-outline light icon-label"></i>
+                            <input type="password" placeholder="Password" ng-model="password" required="true">
+                        </label>
+                    </div>
+                    <div class="padding">
+                        <button class="button button-block button-balanced" ng-click="validate()" ng-disabled="form_login.$invalid">
+                            Entrar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="padding"></div>
+
+            <!-- Other links -->
+            <div class="row">
+
+                <div class="col">
+                    <span class="light">Olvidaste tu password?</span>
+                </div>
+                <div class="col text-right">
+                    <a ui-sref="app.registro" class="light">Nuevo? <span class="balanced">Registrate aqui!</span></a>
+                </div>
+
+            </div>
+
         </div>
 
-        <!-- Login form -->
-        <div class="list padding">
-          <label class="item item-input">
-            <i class="ion-ios-email-outline light icon-label"></i>
-            <input type="email" placeholder="Email" ng-model="email" required value="chofer5@gmail.com">
-          </label>
-          <label class="item item-input">
-            <i class="ion-ios-locked-outline light icon-label"></i>
-            <input type="password" placeholder="Password" ng-model="password" required value="22222">
-          </label>
-        </div>
-        <div class="padding">
-            <button class="button button-block button-balanced" ng-click="validate()">
-            Entrar
-          </button>
-        </div>
-
-      </div>
-
-      <div class="padding"></div>
-
-      <!-- Other links -->
-      <div class="row">
-
-        <div class="col">
-          <span class="light">Olvidaste tu password?</span>
-        </div>
-        <div class="col text-right">
-          <a ui-sref="auth.register" class="light">Nuevo? <span class="balanced">Registrate como Conductor!</span></a>
-        </div>
-
-      </div>
-
-    </div>
-
-  </ion-content>
+    </ion-content>
 </ion-view>

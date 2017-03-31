@@ -3,18 +3,25 @@
 -->
 <ion-view view-title="Formas de Pago">
 
-  <ion-content class="checkout stable-bg">
+    <ion-content class="checkout stable-bg" ng-controller="PagosCtrl">
+        
     <div class="list">
 
-      <ion-radio ng-model="choice" ng-value="'A'" ng-change="changeMethod('cash')">
-        Efectivo
-        <p class="text-hint">Use cash</p>
+      <ion-radio ng-model="choice" ng-value="'cash'" ng-change="changeMethod('cash')">
+        Pago en Efectivo 
+       <p class="text-hint">(MXN)</p>
       </ion-radio>
 
-      <ion-radio ng-model="choice" ng-value="'B'" ng-change="changeMethod('cash')">
+      <ion-radio ng-model="choice" ng-value="'card'" ng-change="changeMethod('cash')">
         Tarjeta Bancaria
-        <p class="text-hint">Credit card XXX71</p>
+        <p class="text-hint">Tarjeta XXX71</p>
+        
       </ion-radio>
+        <ion-item class="item-icon-left" ng-click="addFormaPago()">
+             <i class="icon ion-plus"></i>
+          Agregar Forma de Pago  
+            
+        </ion-item>
 
     </div>
 

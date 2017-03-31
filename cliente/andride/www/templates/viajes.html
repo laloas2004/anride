@@ -4,14 +4,16 @@
   records is a $scope variable in HistoryCtrl (controllers.js)
   HistoryCtrl pull data from Trips service (services.js)
 -->
-<ion-view view-title="History">
+<ion-view view-title="Historial de Viajes">
   <ion-content>
     <ion-list>
       <ion-item class="item-icon-right" ng-repeat="record in records">
         <div>
-          <div class="bold">{{ record.time }}</div>
-          <div>From: {{ record.from }}</div>
-          <div>To: {{ record.to }}</div>
+          <div class="bold">{{record.createdAt | amDateFormat:'DD/MM/YYYY HH:mm'}}</div>
+          <div>Origen : <br>{{ record.solicitud.direccion_origen }}</div>
+          <div>Destino: <br>{{ record.solicitud.direccion_destino }}</div>
+          <div>Distancia:{{record.distancia/1000}} KM.</div>
+          <div>Monto:${{record.monto}}MXN</div>
         </div>
         <i class="icon ion-android-star-outline"></i>
       </ion-item>

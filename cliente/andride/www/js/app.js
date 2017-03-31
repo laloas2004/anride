@@ -6,7 +6,9 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
     'app.services',
     'ngCordova',
     'ngSails',
-    'ngStorage'
+    'ngStorage',
+    'angularMoment'
+    
 ])
         .run(function($ionicPlatform, $rootScope, $window, $cordovaNetwork, $ionicPopup) {
 //Validar que este conectado a internet.
@@ -73,8 +75,8 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                                 templateUrl: 'templates/map.html',
                                 controller: 'MapCtrl'
                             }
-                        },
-                        cache: false
+                        }
+                        
                     })
 //                    .state('app.origen', {
 //                        url: '/origen',
@@ -105,6 +107,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                     })
                     .state('app.viajes', {
                         url: '/viajes',
+                        cache:false,
                         views: {
                             'menuContent': {
                                 templateUrl: 'templates/viajes.html',
@@ -176,6 +179,15 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                             }
                         },
                         cache: false
+                    })
+                       .state('app.registro', {
+                        url: '/registro',
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/registro.html',
+                                controller: 'RegistroCtrl'
+                            }
+                        }
                     })
 
             $urlRouterProvider.otherwise('/app/login');
