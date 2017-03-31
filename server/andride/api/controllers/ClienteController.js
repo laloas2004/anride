@@ -482,18 +482,18 @@ module.exports = {
             return res.badRequest();
         }
         
-
         var clienteId = req.session.clienteId;
 
         if (!clienteId) {
             return res.json(403, {err: 'Session required'});
         }
 
-        Servicio.find({where:{cliente: clienteId,status:'finalizado' },limit:30}).populate('solicitud').sort('updateAt ASC').exec(function(err, servi) {
+        Servicio.find({where:{cliente: clienteId,status:'finalizado' },limit:30, sort:'createdAt DESC'}).populate('solicitud').exec(function(err, servi) {
 
             if (err) {
                 return res.json({err: err});
             }
+            debugger;
 
             res.json(servi);
 
