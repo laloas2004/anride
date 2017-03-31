@@ -106,7 +106,7 @@ module.exports = {
             }
             if (cliente.online) {
 
-                return res.json(401, {err: 'El Usuario esta en Uso.'});
+                console.log('El Usuario esta en Uso.');
             }
 
             Cliente.comparePassword(req_password, cliente, function(err, valid) {

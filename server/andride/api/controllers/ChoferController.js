@@ -47,7 +47,7 @@ module.exports = {
 
             if (chofer.online) {
 
-                return res.json(401, {err: 'El Usuario esta en Uso.'});
+                console.log('El Usuario esta en Uso.');
             }
 
             Chofer.comparePassword(req_password, chofer, function(err, valid) {
