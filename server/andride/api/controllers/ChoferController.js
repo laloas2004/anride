@@ -61,7 +61,8 @@ module.exports = {
                 } else {
                     console.log('-- Login Chofer | ' + chofer.email);
                     delete chofer.password;
-
+                    req.session.choferId = chofer.id;
+                    req.session.online = true;
                     res.json({
                         chofer: chofer,
                         token: jwToken.issue({id: chofer.id})
@@ -499,13 +500,13 @@ module.exports = {
             var segundos = (fecha_fin - fecha_inicio) / 1000;
 
             var minutos = Math.floor(segundos % 3600) / 60;
-            
+
             try {
-                
+
                 var distancia_km = servicio.distance / 1000;
-                
+
             } catch (e) {
-                
+
                 console.log(e);
             }
 
@@ -819,7 +820,6 @@ module.exports = {
 
 
     }
-
 
 
 };  

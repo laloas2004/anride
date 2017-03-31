@@ -128,7 +128,7 @@ module.exports = {
 //                            console.log('Se Actualizo el SocketId de ' + chofer.emial);
 //                        })
 //                    }
-
+                    req.session.clienteId = cliente.id;
                     res.json({
                         cliente: cliente,
                         token: jwToken.issue({id: cliente.id})
@@ -170,9 +170,21 @@ module.exports = {
             return res.badRequest();
         }
         var socketId = sails.sockets.getId(req);
-        var clienteId = req.param('clienteId');
-//        console.log(req.allParams());
 
+        var clienteId = req.session.clienteId;
+
+        if (!socketId) {
+
+            return res.json(403, {err: 'Socket Id requerido en suscribe.'});
+
+        }
+
+        if (!clienteId) {
+            return res.json(403, {err: 'Cliente Id requerido en suscribe.'});
+
+        }
+                
+                
         sails.log('My socket ID is Cliente : ' + socketId);
 
         sails.sockets.join(req, 'cliente_' + clienteId, function(err) {
@@ -182,6 +194,7 @@ module.exports = {
             }
 
             Cliente.update({id: clienteId}, {socketId: socketId, online: true}).exec(function(err, clientesUpdate) {
+                
                 if (err) {
                     return res.json({suscrito: false});
                 }
@@ -538,7 +551,12 @@ module.exports = {
         if (!req.isSocket) {
             return res.badRequest();
         }
+        debugger;
         var idMsg = req.param('idQueue');
+        
+        if(!idMsg){
+           return res.json(403, {err: 'Id de Mensaje required'});  
+        }
 
         if (!idMsg) {
             console.log('Falta parametro idMsg')
@@ -560,7 +578,8 @@ module.exports = {
         if (!req.isSocket) {
             return res.badRequest();
         }
-
+        
+        debugger;
         var idCliente = req.session.clienteId;
 
         if (idCliente) {
@@ -636,6 +655,29 @@ module.exports = {
         } else {
             return res.badRequest();
         }
+
+    },
+    
+    addPayment: function(req, res) {
+
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+        var pago = req.param('data');
+        var clienteId = req.session.clienteId;
+
+        Cliente.findOne({id: clienteId}).exec(function(err, cliente) {
+
+            if (err) {
+                return res.json({err: err});
+            }
+          var id = cliente.formasPago.length+1; 
+          debugger;
+          cliente.formasPago.push({id:id,data:pago});  
+            
+
+        });
+
 
     }
 

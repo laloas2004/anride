@@ -47,7 +47,11 @@ module.exports = {
             defaultsTo: false
         },
         formasPago:{
-           type: 'json' 
+           type: 'array' 
+        },
+        formaPagoSel:{
+           type: 'string',
+           defaultsTo: 'efectivo'
         }
     },
     comparePassword: function(password, chofer, cb) {

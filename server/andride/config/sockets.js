@@ -113,10 +113,13 @@ module.exports.sockets = {
    afterDisconnect: function(session, socket, cb) {
        
        if(session.choferId){
+           
            var choferId = session.choferId;
            
      Chofer.update({id: choferId}, {socketId:'', online:false}).exec(function(err,chofer) {
+         
                 sails.sockets.blast('chofer_online', chofer);
+                
                 console.log(choferId + ': Se Desconecto Chofer');
 
             });
@@ -134,8 +137,7 @@ module.exports.sockets = {
            
        }
        
-      
-       
+     
        
      // By default: do nothing.
    return cb();
