@@ -657,7 +657,6 @@ module.exports = {
         }
 
     },
-    
     addPayment: function(req, res) {
 
         if (!req.isSocket) {
@@ -679,6 +678,12 @@ module.exports = {
         });
 
 
+    },
+    getPayments:function(req, res){
+        
+        
+        
+        
     }
 
 

@@ -63,6 +63,10 @@ module.exports = {
         aprovado: {
             type: 'boolean',
             defaultsTo: false
+        },
+        eliminado: {
+            type: 'boolean',
+            defaultsTo: false
         }
     },
     beforeCreate: function(attrs, cb) {

@@ -55,6 +55,10 @@ module.exports = {
         },
         detalleCancel: {
             type: "json",
+        },
+        eliminado: {
+            type: 'boolean',
+            defaultsTo: false
         }
     }
 };

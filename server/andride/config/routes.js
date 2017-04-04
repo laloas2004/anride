@@ -55,8 +55,6 @@ module.exports.routes = {
     'post /cliente/registro/validar': 'ClienteController.validarEmail',
     'post /cliente/registro': 'ClienteController.create',
     'post /cliente/pay/add': 'ClienteController.addPayment',
-    
-    
     //Chofer
     'post /chofer': 'ChoferController.create',
     'get /chofer': 'ChoferController.getChofer',
@@ -70,14 +68,12 @@ module.exports.routes = {
     'post /choferes/servicio/inicio': 'ChoferController.empiezaViaje',
     'post /choferes/servicio/final': 'ChoferController.terminaViaje',
     'get /choferes/servicio': 'ChoferController.getServicio',
-    
     'get /choferes/solicitud/pendiente': 'ChoferController.getServicioPendiente',
     'get /choferes/solicitud': 'ChoferController.getSolicitud',
     'post /choferes/servicio/cancelo/cliente': 'ChoferController.canceloCliente',
     'post /choferes/estatus': 'ChoferController.cambiarStatus',
     'post /choferes/servicio/cancel': 'ChoferController.cancelarServicio',
     'post /choferes/servicio/track': 'ChoferController.trackRecorridoServicio',
-    
 //    'get /choferes/solicitud_prueba': 'ChoferController.solicitud',
     /***************************************************************************
      *                                                                          *
@@ -91,32 +87,23 @@ module.exports.routes = {
 
     'get /admin/clientes': 'AdminController.indexCliente',
     'get /admin/clientes/new': 'AdminController.newCliente',
+    'get /admin/clientes/edit/:cliente': 'AdminController.editCliente',
+    'get /admin/clientes/servicios/:clienteId': 'AdminController.getClienteServicios',
     'post /admin/clientes/new': 'AdminController.saveCliente',
-    
-   
+    'post /admin/clientes/edit/:clienteId': 'AdminController.updateCliente',
     'get /admin/solicitudes': 'AdminController.indexSolicitudes',
-    
-    
     'get /admin/servicios': 'AdminController.indexServicios',
-    
-    
     'get /admin/choferes': 'AdminController.indexChoferes',
     'get /admin/choferes/new': 'AdminController.newChofer',
     'post /admin/choferes/new': 'AdminController.saveChofer',
     'get /admin/choferes/delete/:choferId': 'AdminController.deleteChofer',
     'get /admin/choferes/mapa': 'AdminController.getChoferes',
     
-    
+    'get /admin/choferes/edit/:choferId': 'AdminController.editChofer',
+    'post /admin/choferes/edit/:choferId': 'AdminController.updateChofer',
     'get /admin/autos': 'AdminController.indexAutos',
-    
-    
     'get /admin/pagos': 'AdminController.indexPagos',
-    
-    
     'get /admin/configuracion': 'AdminController.indexConfiguracion',
     'post /admin/configuracion': 'AdminController.saveConfiguracion',
-    
-    
     'post /admin/servicio': 'AdminController.suscribe',
-
 };

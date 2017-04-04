@@ -33,11 +33,15 @@ module.exports = {
         tipodePago: {
             type: "string"
         },
-        status:{
-          type: "string",
-          enum: ['creada', 'enbusqueda', 'aceptada', 'finalizada', 'sincobertura'],
-          defaultsTo: 'creada'
+        status: {
+            type: "string",
+            enum: ['creada', 'enbusqueda', 'aceptada', 'finalizada', 'sincobertura'],
+            defaultsTo: 'creada'
+        },
+        eliminado: {
+            type: 'boolean',
+            defaultsTo: false
         }
-        
+
     }
 };

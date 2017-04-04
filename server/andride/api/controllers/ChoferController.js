@@ -38,8 +38,6 @@ module.exports = {
 
         Chofer.findOne({email: req_email}).exec(function(err, chofer) {
 
-
-
             if (!chofer) {
                 return res.json(401, {err: 'Usuario o contraseña Invalidos.'});
 

@@ -40,7 +40,7 @@
                                 <td><%= solicitud.direccion_origen%></td>
                                 <td><%= solicitud.direccion_destino%></td>
                                 <td><%= distancia%> <br><%=duration %></td>
-                                <td><%= solicitud.createdAt%></td>
+                                <td><%= moment(solicitud.createdAt).format('DD-MM-YYYY HH:mm')%></td>
                                 <td><a href="#" class="btn btn-primary">Asignar a Chofer</a></td>
                             </tr><% })%>
                         </tbody>

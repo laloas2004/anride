@@ -46,12 +46,16 @@ module.exports = {
             type: 'boolean',
             defaultsTo: false
         },
-        formasPago:{
-           type: 'array' 
+        formasPago: {
+            type: 'array'
         },
-        formaPagoSel:{
-           type: 'string',
-           defaultsTo: 'efectivo'
+        formaPagoSel: {
+            type: 'string',
+            defaultsTo: 'efectivo'
+        },
+        eliminado: {
+            type: 'boolean',
+            defaultsTo: false
         }
     },
     comparePassword: function(password, chofer, cb) {
@@ -92,13 +96,13 @@ module.exports = {
         });
     },
     beforeUpdate: function(attrs, cb) {
-        
+
         if (attrs.newPassword) {
-            
+
             bcrypt.genSalt(10, function(err, salt) {
-                
+
                 bcrypt.hash(attrs.password, salt, function(err, hash) {
-                    
+
                     if (err) {
                         console.log(err);
                         cb(err);
@@ -109,8 +113,8 @@ module.exports = {
                 });
             });
         } else {
-            
-             cb();
+
+            cb();
         }
     }
 };

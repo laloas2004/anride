@@ -12,6 +12,13 @@ module.exports = {
         },
         cliente: {
             model: 'cliente'
+        },
+        forma:{
+            type: 'string',
+        },
+        monto:{
+            type: 'float',
+            
         }
     }
 };

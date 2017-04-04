@@ -23,14 +23,13 @@
                         </thead>
                         <tbody>
                             <%  
-
                             _.each(choferes,function(chofer){ %>
                             <tr>
                                 <td><%= chofer.nombre%></td>
                                 <td><%= chofer.apellido%></td>
                                 <td><%= chofer.email%></td>
                                 <td><%= chofer.numCel%></td>
-                                <td><a href="#" class="btn btn-primary">Editar</a> <a href="#" class="btn btn-primary">Autos</a> <a href="/admin/choferes/delete/<%= chofer.id%>" class="btn btn-danger">Eliminar</a></td>
+                                <td><a href="<%='/admin/choferes/edit/'+chofer.id %>" class="btn btn-primary">Editar</a> <a href="#" class="btn btn-primary">Autos</a> <a href="#" class="btn btn-primary">Servicios</a> <a href="/admin/choferes/delete/<%= chofer.id%>" class="btn btn-danger">Bloquear</a></td>
                             </tr><% })%>
                         </tbody>
                     </table>

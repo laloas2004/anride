@@ -1,0 +1,57 @@
+<%- include ../includes/menu %>
+
+<div class="container">
+
+    <div class="row">
+        <div class ="col-md-12">
+            <div class="page-header">
+                <h1>Editar Chofer</h1>
+                <div>
+                    <form role="form" method="POST">
+                        <input type="hidden" class="form-control" id="chofer.id" name="chofer[id]" value="<%=chofer.id%>">
+                        <div class="form-group">
+                            <label for="chofer.nombre">Nombre</label>
+                            <input type="text" class="form-control" id="chofer.nombre"
+                                   placeholder="Introduce un Nombre" name="chofer[nombre]" required value="<%=chofer.nombre%>">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="chofer.apellido">Apellidos</label>
+                            <input type="text" class="form-control" id="chofer.apellido"
+                                   placeholder="Introduce Apellidos" name="chofer[apellido]" required value="<%=chofer.apellido %>" >
+                                   </div>
+                                   <div class="form-group">
+                                   <label for="chofer.email">Email</label>
+                            <input type="email" class="form-control" id="chofer.email"
+                                   placeholder="Introduce un Email" name="chofer[email]" required style="text-transform: lowercase;" value="<%=chofer.email %>" readonly>
+                                   </div>
+                                   <div class="form-group">
+                                   <label for="chofer.password">Password</label>
+                            <input type="password" class="form-control" id="chofer.password"
+                                   placeholder="Introduce un Password" name="chofer[password]">
+                                   </div>
+                                   <div class="form-group">
+                                   <label for="chofer.numCel">Telefono Cel.</label>
+                            <input type="text" class="form-control" id="chofer.numCel"
+                                   placeholder="Introduce Celular" name="chofer[numCel]" required value="<%=chofer.numCel || ''%>">
+                                   </div>
+                                   <button type="submit" class="btn btn-default">Guardar</button>
+                            </form>
+                        </div>
+                </div>
+
+
+            </div>
+            <script>
+                $(document).ready(function() {
+
+
+
+
+
+                });
+
+
+
+
+            </script>

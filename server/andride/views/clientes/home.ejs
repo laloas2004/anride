@@ -29,7 +29,7 @@
         <td><%= cliente.apellido%></td>
         <td><%= cliente.email%></td>
         <td><%= cliente.numCel%></td>
-        <td><a href="#" class="btn btn-primary">Editar</a> <a href="#" class="btn btn-danger">Eliminar</a></td>
+        <td><a href="<%='/admin/clientes/edit/'+cliente.id%>" class="btn btn-primary">Editar</a> <a href="<%= '/admin/clientes/servicios/'+ cliente.id%>" class="btn btn-primary"> Servicios </a></td>
       </tr>
 <% })%>
 </tbody>
