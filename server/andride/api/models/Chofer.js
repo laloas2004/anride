@@ -67,9 +67,36 @@ module.exports = {
         eliminado: {
             type: 'boolean',
             defaultsTo: false
+        },
+        direccion: {
+            type: 'string'
+        },
+        telefono: {
+            type: 'string'
+        },
+        municipio: {
+            type: 'string'
+        },
+        numLicencia: {
+            type: 'string'
+        },
+        numCelector: {
+            type: 'string'
+        },
+        comDomicioFile: {
+            type: 'string'
+        },
+        credeElectorile:{
+            type: 'string'
+        },
+        liceConducionFile:{
+            type: 'string'
+        },
+        cartaNopenalesFile:{
+            type: 'string'
         }
     },
-    beforeCreate: function(attrs, cb) {
+    beforeCreate: function (attrs, cb) {
         console.log(attrs);
         var location = {};
         location.lat = attrs.lat || 0;
@@ -79,10 +106,10 @@ module.exports = {
             coordinates: [parseFloat(location.lon), parseFloat(location.lat)]
         };
 
-        bcrypt.genSalt(10, function(err, salt) {
-            
-            bcrypt.hash(attrs.password, salt, function(err, hash) {
-                
+        bcrypt.genSalt(10, function (err, salt) {
+
+            bcrypt.hash(attrs.password, salt, function (err, hash) {
+
                 if (err) {
                     console.log(err);
                     cb(err);
@@ -95,12 +122,12 @@ module.exports = {
 
 
     },
-    beforeUpdate: function(attrs, cb) {
+    beforeUpdate: function (attrs, cb) {
 
 
         cb();
     },
-    getChoferesCercanos: function(ClientCoordinates, maxDistance, limitChoferes) {
+    getChoferesCercanos: function (ClientCoordinates, maxDistance, limitChoferes) {
 
         var maxdist = maxDistance || 16093.4;
 
@@ -114,7 +141,7 @@ module.exports = {
 
         var deferred = Q.defer();
 
-        Chofer.native(function(err, collection) {
+        Chofer.native(function (err, collection) {
 
             if (err)
                 return res.serverError(err);
@@ -134,7 +161,7 @@ module.exports = {
 
             }, {
                 password: 0
-            }).limit(limit).toArray(function(err, results) {
+            }).limit(limit).toArray(function (err, results) {
 
                 if (err) {
 
@@ -146,7 +173,7 @@ module.exports = {
         })
         return deferred.promise;
     },
-    toJSON: function() {
+    toJSON: function () {
 
         var obj = this.toObject();
         delete obj.password;
@@ -155,9 +182,9 @@ module.exports = {
 //        delete obj._csrf;
         return obj;
     },
-    comparePassword: function(password, chofer, cb) {
+    comparePassword: function (password, chofer, cb) {
 
-        bcrypt.compare(password, chofer.password, function(err, match) {
+        bcrypt.compare(password, chofer.password, function (err, match) {
 
             if (err)
                 cb(err);

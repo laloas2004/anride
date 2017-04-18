@@ -1,0 +1,84 @@
+<%- include ../includes/menu %>
+
+<div class="container">
+
+    <div class="row">
+        <div class ="col-md-12">
+            <div class="page-header">
+                <h1>Nuevo Auto</h1>
+                <div>
+                    <form role="form" method="POST">
+
+                        <div class="form-group">
+                            <label for="auto.marca">Marca</label>
+                            <input type="text" class="form-control" id="auto.marca"
+                                   placeholder="Introduce una marca" name="auto[marca]" required>
+                        </div>
+
+
+
+                        <div class="form-group">
+                            <label for="chofer.apellido">Modelo</label>
+                            <input type="text" class="form-control" id="auto.modelo"
+                                   placeholder="Introduce Modelo" name="auto[modelo]" required >
+                        </div>
+                        <div class="form-group">
+                            <label for="chofer.email">Año</label>
+                            <input type="number" class="form-control" id="auto.anio"
+                                   placeholder="Introduce un Año" name="auto[anio]" required style="text-transform: lowercase;" min="2000" max="2017">
+                        </div>
+                        <div class="form-group">
+                            <label for="auto.password">Numero Placas</label>
+                            <input type="text" class="form-control" id="auto.placas"
+                                   placeholder="Introduce un Numero de Placas" name="auto[placas]" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="auto.color">Color</label>
+                            <input type="text" class="form-control" id="auto.color"
+                                   placeholder="Introduce Color del Auto" name="auto[color]" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="auto.empSeguro">Compañia de Seguros</label>
+                            <input type="text" class="form-control" id="auto.empSeguro"
+                                   placeholder="Introduce Empresa que proporciona el seguro" name="auto[empSeguro]" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="auto.numSeguro">Numero de Poliza de Seguro</label>
+                            <input type="text" class="form-control" id="auto.numSeguro"
+                                   placeholder="Introduce Numero de Poliza" name="auto[numSeguro]" required>
+                        </div>
+                         <div class="form-group">
+                            <label for="auto.vigenciaPoliza">Vigencia Poliza de Seguro</label>
+                            <input type="date" class="form-control" id="auto.vigenciaPoliza"
+                                   placeholder="Introduce vigencia de Poliza" name="auto[vigenciaPoliza]" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="auto.polizaImage">Poliza de Seguro Digitalizada</label>
+                            <input type="file" accept="image/*" class="form-control" id="auto.polizaImage"
+                                   placeholder="Introduce Imagen de la Poliza" name="auto[polizaImage]" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="auto.imagen">Imagen Auto</label>
+                            <input type="file" accept="image/*" class="form-control" id="auto.color"
+                                   placeholder="Introduce Imagen del Auto" name="auto[imagen]" required>
+                        </div>
+                        <button type="submit" class="btn btn-default">Guardar</button>
+                    </form>
+                </div>
+            </div>
+
+
+        </div>
+        <script>
+            $(document).ready(function() {
+
+
+
+
+
+            });
+
+
+
+
+        </script>

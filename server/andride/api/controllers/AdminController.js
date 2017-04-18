@@ -6,12 +6,17 @@
  */
 
 module.exports = {
-    index: function(req, res) {
+    login:function(req, res){
+        
+        
+    res.view('login', {clientes: ''});    
+    },
+    index: function (req, res) {
 
     },
-    indexCliente: function(req, res) {
+    indexCliente: function (req, res) {
 
-        Cliente.find().exec(function(err, clientes) {
+        Cliente.find().exec(function (err, clientes) {
 
             res.view('clientes/home', {clientes: clientes});
 
@@ -20,14 +25,15 @@ module.exports = {
 
 
     },
-    indexSolicitudes: function(req, res) {
+    
+    indexSolicitudes: function (req, res) {
         var limit = req.param('limit') || 20;
         var moment = require('moment');
 
 
 
 
-        Solicitud.find().sort('createdAt desc').limit(limit).populate('cliente').exec(function(err, solicitudes) {
+        Solicitud.find().sort('createdAt desc').limit(limit).populate('cliente').exec(function (err, solicitudes) {
             if (err) {
                 return res.json(err.status, {err: err});
             }
@@ -37,9 +43,9 @@ module.exports = {
 
 
     },
-    indexServicios: function(req, res) {
+    indexServicios: function (req, res) {
         var limit = req.param('limit') || 20;
-        Servicio.find().sort('createdAt desc').limit(limit).populate('solicitud').populate('cliente').populate('chofer').exec(function(err, servicios) {
+        Servicio.find().sort('createdAt desc').limit(limit).populate('solicitud').populate('cliente').populate('chofer').exec(function (err, servicios) {
 
             if (err) {
                 return res.json(err.status, {err: err});
@@ -49,7 +55,7 @@ module.exports = {
         })
 
     },
-    indexChoferes: function(req, res) {
+    indexChoferes: function (req, res) {
 
 //        if (req.isSocket) {
 //            sails.sockets.join(req, "funSockets", function(err) {
@@ -61,54 +67,88 @@ module.exports = {
 //        }
 
 
-        Chofer.find().exec(function(err, choferes) {
-            console.log(choferes);
+        Chofer.find().exec(function (err, choferes) {
+//            console.log(choferes);
             res.view('choferes/home', {choferes: choferes});
         });
 
     },
-    indexAutos: function(req, res) {
+    indexAutos: function (req, res) {
 
-        res.view('autos/home', {saludos: 'saludos!!'});
+        var choferId = req.param('chofer');
+        var that = this;
+
+        Chofer.findOne({id: choferId}).exec(function (err, chofer) {
+
+            if (err) {
+                return res.json(err.status, {err: err});
+            }
+            
+            that.chofer = chofer;
+            debugger;
+            Auto.find({choferes: choferId}).exec(function (err, autos) {
+                if (err) {
+                    return res.json(err.status, {err: err});
+                }
+                console.log('indexAutos');
+                console.log(that.chofer);
+                
+                res.view('autos/home', {chofer: that.chofer, autos: autos});
+
+
+            });
+
+        })
+
+
+
+
     },
-    indexPagos: function(req, res) {
+    newAuto: function (req, res) {
+
+
+        res.view('autos/new_auto', {saludos: 'saludos!!'});
+
+    },
+    indexPagos: function (req, res) {
 
         res.view('pagos/home', {saludos: 'saludos!!'});
     },
-    indexConfiguracion: function(req, res) {
+    indexConfiguracion: function (req, res) {
 
-        configTaxiapp.get().then(function(config) {
+        configTaxiapp.get().then(function (config) {
 
             res.view('configuracion/home', {config: config});
 
         });
 
     },
-    saveConfiguracion: function(req, res) {
+    saveConfiguracion: function (req, res) {
 
         var params = req.allParams();
 
-        configTaxiapp.save(params).then(function(config) {
+        configTaxiapp.save(params).then(function (config) {
 
 
             return res.redirect('/admin/configuracion');
 
-        }, function(err) {
+        }, function (err) {
+
             console.log(err);
         });
 
 
     },
-    newCliente: function(req, res) {
+    newCliente: function (req, res) {
         return res.view('clientes/new_cliente', {});
     },
-    saveCliente: function(req, res) {
+    saveCliente: function (req, res) {
 
         var cliente = req.param('cliente');
 
 
 
-        Cliente.create(cliente).exec(function(err, cliente) {
+        Cliente.create(cliente).exec(function (err, cliente) {
             if (err) {
                 return res.json(err.status, {err: err});
             }
@@ -120,7 +160,7 @@ module.exports = {
         })
 
     },
-    editCliente: function(req, res) {
+    editCliente: function (req, res) {
 
         var clienteId = req.param('cliente');
 
@@ -131,13 +171,13 @@ module.exports = {
             return res.json(403, {err: 'Id de Cliente es Oblgatorio.'});
         }
 
-        Cliente.findOne({id: clienteId}).exec(function(err, cliente) {
+        Cliente.findOne({id: clienteId}).exec(function (err, cliente) {
 
             if (err) {
                 return res.json(err.status, {err: err});
             }
 
-            console.log(cliente);
+//            console.log(cliente);
 
             return res.view('clientes/edit_cliente', {cliente: cliente});
 
@@ -146,7 +186,7 @@ module.exports = {
 
 
     },
-    updateCliente: function(req, res) {
+    updateCliente: function (req, res) {
 
         var cliente = req.param('cliente');
         console.log('Update');
@@ -158,7 +198,7 @@ module.exports = {
 
         if (cliente.password == '') {
 
-            Cliente.update({id: cliente.id}, {nombre: cliente.nombre, apellido: cliente.apellido, numCel: cliente.numCel}).exec(function(err, cliente) {
+            Cliente.update({id: cliente.id}, {nombre: cliente.nombre, apellido: cliente.apellido, numCel: cliente.numCel}).exec(function (err, cliente) {
 
                 if (err) {
                     return res.json(err.status, {err: err});
@@ -170,7 +210,7 @@ module.exports = {
             });
         } else {
 
-            Cliente.update({id: cliente.id}, {nombre: cliente.nombre, apellido: cliente.apellido, numCel: cliente.numCel, newPassword: cliente.password}).exec(function(err, cliente) {
+            Cliente.update({id: cliente.id}, {nombre: cliente.nombre, apellido: cliente.apellido, numCel: cliente.numCel, newPassword: cliente.password}).exec(function (err, cliente) {
 
                 if (err) {
                     return res.json(err.status, {err: err});
@@ -187,7 +227,7 @@ module.exports = {
 
 
     },
-    getClienteServicios: function(req, res) {
+    getClienteServicios: function (req, res) {
 
         var clienteId = req.param('clienteId');
 
@@ -195,25 +235,25 @@ module.exports = {
             return res.json(403, {err: 'Cliente es Oblgatorio.'});
         }
 
-        Servicio.find({cliente: clienteId, status: 'finalizado'}).sort('updatedAt DESC').populate('cliente').populate('solicitud').exec(function(err, servicios) {
+        Servicio.find({cliente: clienteId, status: 'finalizado'}).sort('updatedAt DESC').populate('cliente').populate('solicitud').exec(function (err, servicios) {
 
             if (err) {
                 return res.json(err.status, {err: err});
             }
 
-            console.log(servicios);
+//            console.log(servicios);
 
             return res.view('clientes/servicios_cliente', {servicios: servicios});
 
         })
 
     },
-    getChoferes: function(req, res) {
+    getChoferes: function (req, res) {
         if (!req.isSocket) {
             return res.badRequest();
         }
 
-        Chofer.find({online: true}).exec(function(err, choferes) {
+        Chofer.find({online: true}).exec(function (err, choferes) {
 
 
             return res.json(choferes);
@@ -221,35 +261,35 @@ module.exports = {
         });
 
     },
-    newChofer: function(req, res) {
+    newChofer: function (req, res) {
 
         return res.view('choferes/new_chofer', {});
     },
-    saveChofer: function(req, res) {
+    saveChofer: function (req, res) {
 
 
 
         var chofer = req.param('chofer');
 
-        Chofer.create(chofer).exec(function(err, chofer) {
+        Chofer.create(chofer).exec(function (err, chofer) {
 
             if (err) {
                 return res.json(err.status, {err: err});
             }
 
 
-            console.log(chofer);
+//            console.log(chofer);
 
             return res.redirect('/admin/choferes');
 
         })
 
     },
-    deleteChofer: function(req, res) {
+    deleteChofer: function (req, res) {
 
         var ChoferId = req.param('choferId');
 
-        Chofer.destroy({id: ChoferId}).exec(function(err) {
+        Chofer.destroy({id: ChoferId}).exec(function (err) {
 
             if (err) {
                 return res.negotiate(err);
@@ -259,7 +299,7 @@ module.exports = {
         });
 
     },
-    editChofer: function(req, res) {
+    editChofer: function (req, res) {
 
         var choferId = req.param('choferId');
 
@@ -267,7 +307,7 @@ module.exports = {
             return res.json(403, {err: 'Id de Chofer es Oblgatorio.'});
         }
 
-        Chofer.findOne({id: choferId}).exec(function(err, chofer) {
+        Chofer.findOne({id: choferId}).exec(function (err, chofer) {
 
             if (err) {
                 return res.json(err.status, {err: err});
@@ -280,19 +320,19 @@ module.exports = {
         });
 
     },
-    updateChofer: function(req, res) {
+    updateChofer: function (req, res) {
 
         var chofer = req.param('chofer');
 
         if (!chofer) {
             return res.json(403, {err: 'Chofer es Oblgatorio.'});
         }
-        
-        console.log(chofer);
+
+//        console.log(chofer);
 
         if (chofer.password) {
 
-            Chofer.update({id: chofer.id}, {}).exec(function() {
+            Chofer.update({id: chofer.id}, {}).exec(function () {
 
                 return res.redirect('/admin/choferes');
 
@@ -301,7 +341,7 @@ module.exports = {
 
         } else {
 
-            Chofer.update({id: chofer.id}, {}).exec(function() {
+            Chofer.update({id: chofer.id}, {}).exec(function () {
 
                 return res.redirect('/admin/choferes');
 
@@ -310,7 +350,7 @@ module.exports = {
         }
 
     },
-    suscribe: function(req, res) {
+    suscribe: function (req, res) {
 
 //     Solicitud.find()
 

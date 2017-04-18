@@ -84,7 +84,7 @@ module.exports.routes = {
      * for configuration options and examples.                                  *
      *                                                                          *
      ***************************************************************************/
-
+    'get /login': 'AdminController.login',
     'get /admin/clientes': 'AdminController.indexCliente',
     'get /admin/clientes/new': 'AdminController.newCliente',
     'get /admin/clientes/edit/:cliente': 'AdminController.editCliente',
@@ -101,7 +101,8 @@ module.exports.routes = {
     
     'get /admin/choferes/edit/:choferId': 'AdminController.editChofer',
     'post /admin/choferes/edit/:choferId': 'AdminController.updateChofer',
-    'get /admin/autos': 'AdminController.indexAutos',
+    'get /admin/autos/:chofer': 'AdminController.indexAutos',
+    'get /admin/autos/new/:chofer': 'AdminController.newAuto',
     'get /admin/pagos': 'AdminController.indexPagos',
     'get /admin/configuracion': 'AdminController.indexConfiguracion',
     'post /admin/configuracion': 'AdminController.saveConfiguracion',

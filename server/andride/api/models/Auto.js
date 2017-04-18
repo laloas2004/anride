@@ -28,6 +28,9 @@ module.exports = {
             collection: 'Chofer',
             via: 'autos'
         },
+        PolizaSegFile: {
+            type: "string"
+        },
         eliminado: {
             type: 'boolean',
             defaultsTo: false
