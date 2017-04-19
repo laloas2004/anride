@@ -5,17 +5,15 @@
     <div class="row">
         <div class ="col-md-12">
             <div class="page-header">
-                <h1>Nuevo Auto</h1>
+                <h1>Nuevo Auto para <%=chofer.nombre%> <%=chofer.apellido%></h1>
                 <div>
                     <form role="form" method="POST">
-
+                        <input type="hidden" class="form-control" id="auto.chofer" name="auto[chofer]" value="<%=chofer.id%>">
                         <div class="form-group">
                             <label for="auto.marca">Marca</label>
                             <input type="text" class="form-control" id="auto.marca"
                                    placeholder="Introduce una marca" name="auto[marca]" required>
                         </div>
-
-
 
                         <div class="form-group">
                             <label for="chofer.apellido">Modelo</label>
@@ -47,20 +45,20 @@
                             <input type="text" class="form-control" id="auto.numSeguro"
                                    placeholder="Introduce Numero de Poliza" name="auto[numSeguro]" required>
                         </div>
-                         <div class="form-group">
+                        <div class="form-group">
                             <label for="auto.vigenciaPoliza">Vigencia Poliza de Seguro</label>
                             <input type="date" class="form-control" id="auto.vigenciaPoliza"
-                                   placeholder="Introduce vigencia de Poliza" name="auto[vigenciaPoliza]" required>
+                                   name="auto[vigenciaPoliza]" required>
                         </div>
                         <div class="form-group">
                             <label for="auto.polizaImage">Poliza de Seguro Digitalizada</label>
                             <input type="file" accept="image/*" class="form-control" id="auto.polizaImage"
-                                   placeholder="Introduce Imagen de la Poliza" name="auto[polizaImage]" required>
+                                   name="auto[polizaImage]" >
                         </div>
                         <div class="form-group">
                             <label for="auto.imagen">Imagen Auto</label>
                             <input type="file" accept="image/*" class="form-control" id="auto.color"
-                                   placeholder="Introduce Imagen del Auto" name="auto[imagen]" required>
+                                   name="auto[imagen]" >
                         </div>
                         <button type="submit" class="btn btn-default">Guardar</button>
                     </form>
@@ -70,7 +68,7 @@
 
         </div>
         <script>
-            $(document).ready(function() {
+            $(document).ready(function () {
 
 
 

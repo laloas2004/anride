@@ -21,9 +21,8 @@ module.exports = {
 
         res.view('login', {clientes: ''});
     },
-    
     logout: function (req, res) {
-        
+
         // "Forget" the user from the session.
         // Subsequent requests from this user agent will NOT have `req.session.me`.
         req.session.me = null;
@@ -104,36 +103,69 @@ module.exports = {
         var choferId = req.param('chofer');
         var that = this;
 
+        Chofer.findOne({id: choferId}).populate('autos').exec(function (err, chofer) {
+
+            if (err) {
+                return res.json(err.status, {err: err});
+            }
+
+            Auto.find().populate('choferes', {where: {chofer: chofer.id}}).exec(function (err, autos) {
+
+                res.view('autos/home', {chofer: chofer, autos: autos});
+
+
+            })
+
+
+        });
+
+    },
+    newAuto: function (req, res) {
+
+        var choferId = req.param('chofer');
+
         Chofer.findOne({id: choferId}).exec(function (err, chofer) {
 
             if (err) {
                 return res.json(err.status, {err: err});
             }
 
-            that.chofer = chofer;
-            debugger;
-            Auto.find({choferes: choferId}).exec(function (err, autos) {
-                if (err) {
-                    return res.json(err.status, {err: err});
-                }
-                console.log('indexAutos');
-                console.log(that.chofer);
 
-                res.view('autos/home', {chofer: that.chofer, autos: autos});
-
-
-            });
+            res.view('autos/new_auto', {chofer: chofer});
 
         })
 
 
 
-
     },
-    newAuto: function (req, res) {
+    saveAuto: function (req, res) {
+
+        var auto = req.param('auto');
+
+        var chofer = auto.chofer;
+        
+        delete auto.chofer;
+        
+        Auto.create(auto).exec(function (err, auto) {
+
+            if (err) {
+                return res.json(err.status, {err: err});
+            }
 
 
-        res.view('autos/new_auto', {saludos: 'saludos!!'});
+            auto.choferes.add(chofer);
+
+            auto.save(function (err) {
+
+                return res.redirect('/admin/choferes');
+
+
+            });
+
+
+
+        });
+
 
     },
     indexPagos: function (req, res) {

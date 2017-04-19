@@ -103,6 +103,7 @@ module.exports.routes = {
     'post /admin/choferes/edit/:choferId': 'AdminController.updateChofer',
     'get /admin/autos/:chofer': 'AdminController.indexAutos',
     'get /admin/autos/new/:chofer': 'AdminController.newAuto',
+    'post /admin/autos/new/:chofer': 'AdminController.saveAuto',
     'get /admin/pagos': 'AdminController.indexPagos',
     'get /admin/configuracion': 'AdminController.indexConfiguracion',
     'post /admin/configuracion': 'AdminController.saveConfiguracion',

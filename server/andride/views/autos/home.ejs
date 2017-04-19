@@ -21,17 +21,24 @@
         <th>Operaciones</th>
       </tr>
     </thead>
-<tbody>
-      <tr>
-        <td>10</td>
-        <td>Jesus</td>
-        <td>Acevedo</td>
-        <td>laloas_2004@yahoo.com.mx</td>
-        <td>8110162454</td>
-        <td><a href="#" class="btn btn-primary">Editar</a><a href="#" class="btn btn-danger">Bloquear</a></td>
-      </tr>
-</tbody>
-    </table>
+    <tbody>
+
+        <%  
+        _.each(autos,function(auto){ 
+        %>
+        <tr>
+            <td><%= auto.marca%></td>
+            <td><%= auto.modelo%></td>
+            <td><%= auto.anio%></td>
+            <td><%= auto.placas%></td>
+            <td><%= auto.color%></td>
+            <td><%= auto.empSeguro%> | <%= auto.numSeguro%></td>
+            <td><%= auto.vigenciaPoliza %></td>
+            <td><a href="#" class="btn btn-primary">Editar</a> <a href="#" class="btn btn-danger">Bloquear</a></td>
+        </tr>
+        <% })%>
+    </tbody>
+</table>
 
 </div>
 </div>

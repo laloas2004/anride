@@ -24,9 +24,19 @@ module.exports = {
         imagen: {
             type: "string"
         },
+        
         choferes: {
             collection: 'Chofer',
             via: 'autos'
+        },
+        empSeguro:{
+          type: "string"    
+        },
+        numSeguro:{
+           type: "string"    
+        },
+        vigenciaPoliza:{
+          type: "date"      
         },
         PolizaSegFile: {
             type: "string"
