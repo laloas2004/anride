@@ -7,6 +7,7 @@
             <div class="page-header">
                 <h1>Solicitudes</h1>
                 <div>
+                    <div class=""><a href="/admin/clientes/new" class="btn btn-default" id="btn_cliente">Nueva Solicitud</a></div>
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -16,7 +17,7 @@
                                 <th>Destino de Viaje</th>
                                 <th>Distancia / Tiempo</th>
                                 <th>Fecha / Hora</th>
-                                <th>Operaciones</th>
+                              <!--  <th>Operaciones</th>-->
                             </tr>
                         </thead>
                         <tbody>
@@ -41,7 +42,7 @@
                                 <td><%= solicitud.direccion_destino%></td>
                                 <td><%= distancia%> <br><%=duration %></td>
                                 <td><%= moment(solicitud.createdAt).format('DD-MM-YYYY HH:mm')%></td>
-                                <td><a href="#" class="btn btn-primary">Asignar a Chofer</a></td>
+                              <!--  <td><a href="#" class="btn btn-primary">Asignar a Chofer</a></td>-->
                             </tr><% })%>
                         </tbody>
                     </table>
@@ -50,10 +51,10 @@
             </div>
 
 
-        </div>
+        </div></div></div>
         <script>
 
-            io.socket.on('solicitud', function(msg) {
+            io.socket.on('solicitud', function (msg) {
 
                 alert('Nueva Solicitud');
 

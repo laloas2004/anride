@@ -6,10 +6,37 @@
  */
 
 module.exports = {
-    login:function(req, res){
+    login: function (req, res) {
+
+
+//        console.log(res);
+
+        // See `api/responses/login.js`
+//        return res.login({
+//            email: req.param('email'),
+//            password: req.param('password'),
+//            successRedirect: '/',
+//            invalidRedirect: '/login'
+//        });
+
+        res.view('login', {clientes: ''});
+    },
+    
+    logout: function (req, res) {
         
-        
-    res.view('login', {clientes: ''});    
+        // "Forget" the user from the session.
+        // Subsequent requests from this user agent will NOT have `req.session.me`.
+        req.session.me = null;
+
+        // If this is not an HTML-wanting browser, e.g. AJAX/sockets/cURL/etc.,
+        // send a simple response letting the user agent know they were logged out
+        // successfully.
+        if (req.wantsJSON) {
+            return res.ok('Logged out successfully!');
+        }
+
+        // Otherwise if this is an HTML-wanting browser, do a redirect.
+        return res.redirect('/');
     },
     index: function (req, res) {
 
@@ -25,7 +52,6 @@ module.exports = {
 
 
     },
-    
     indexSolicitudes: function (req, res) {
         var limit = req.param('limit') || 20;
         var moment = require('moment');
@@ -83,7 +109,7 @@ module.exports = {
             if (err) {
                 return res.json(err.status, {err: err});
             }
-            
+
             that.chofer = chofer;
             debugger;
             Auto.find({choferes: choferId}).exec(function (err, autos) {
@@ -92,7 +118,7 @@ module.exports = {
                 }
                 console.log('indexAutos');
                 console.log(that.chofer);
-                
+
                 res.view('autos/home', {chofer: that.chofer, autos: autos});
 
 
