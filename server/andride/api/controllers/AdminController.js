@@ -9,15 +9,7 @@ module.exports = {
     login: function (req, res) {
 
 
-//        console.log(res);
 
-        // See `api/responses/login.js`
-//        return res.login({
-//            email: req.param('email'),
-//            password: req.param('password'),
-//            successRedirect: '/',
-//            invalidRedirect: '/login'
-//        });
 
         res.view('login', {clientes: ''});
     },
@@ -109,7 +101,9 @@ module.exports = {
                 return res.json(err.status, {err: err});
             }
 
-            Auto.find().populate('choferes', {where: {chofer: chofer.id}}).exec(function (err, autos) {
+            Auto.find({chofer: chofer.id}).exec(function (err, autos) {
+
+//                debugger;
 
                 res.view('autos/home', {chofer: chofer, autos: autos});
 
@@ -117,7 +111,7 @@ module.exports = {
             })
 
 
-        });
+        })
 
     },
     newAuto: function (req, res) {
@@ -136,16 +130,16 @@ module.exports = {
         })
 
 
-
     },
     saveAuto: function (req, res) {
 
         var auto = req.param('auto');
 
         var chofer = auto.chofer;
-        
-        delete auto.chofer;
-        
+
+
+//        debugger;
+
         Auto.create(auto).exec(function (err, auto) {
 
             if (err) {

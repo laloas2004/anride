@@ -7,7 +7,10 @@
             <div class="page-header">
                 <h1>Nuevo Auto para <%=chofer.nombre%> <%=chofer.apellido%></h1>
                 <div>
-                    <form role="form" method="POST">
+                    <div class=""><a href="" onclick="window.history.back();" class="btn btn-default"><< Regresar</a></div>
+
+                    <form role="form" method="POST" id="new_auto_form" >
+                        
                         <input type="hidden" class="form-control" id="auto.chofer" name="auto[chofer]" value="<%=chofer.id%>">
                         <div class="form-group">
                             <label for="auto.marca">Marca</label>
@@ -23,7 +26,7 @@
                         <div class="form-group">
                             <label for="chofer.email">Año</label>
                             <input type="number" class="form-control" id="auto.anio"
-                                   placeholder="Introduce un Año" name="auto[anio]" required style="text-transform: lowercase;" min="2000" max="2017">
+                                   placeholder="Introduce un Año" name="auto[anio]" required min="1990">
                         </div>
                         <div class="form-group">
                             <label for="auto.password">Numero Placas</label>

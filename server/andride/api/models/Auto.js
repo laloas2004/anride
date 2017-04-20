@@ -26,7 +26,7 @@ module.exports = {
         },
         
         choferes: {
-            collection: 'Chofer',
+            collection: 'chofer',
             via: 'autos'
         },
         empSeguro:{
