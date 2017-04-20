@@ -5,12 +5,12 @@
     <div class="row">
         <div class ="col-md-12">
             <div class="page-header">
-                <h1>Nuevo Auto para <%=chofer.nombre%> <%=chofer.apellido%></h1>
+                <h1>Nuevo Auto de <%=chofer.nombre%> <%=chofer.apellido%></h1>
                 <div>
                     <div class=""><a href="" onclick="window.history.back();" class="btn btn-default"><< Regresar</a></div>
 
                     <form role="form" method="POST" id="new_auto_form" >
-                        
+
                         <input type="hidden" class="form-control" id="auto.chofer" name="auto[chofer]" value="<%=chofer.id%>">
                         <div class="form-group">
                             <label for="auto.marca">Marca</label>
@@ -56,12 +56,22 @@
                         <div class="form-group">
                             <label for="auto.polizaImage">Poliza de Seguro Digitalizada</label>
                             <input type="file" accept="image/*" class="form-control" id="auto.polizaImage"
-                                   name="auto[polizaImage]" >
+                                   name="polizaImage" >
+                        </div>
+                        <div class="form-group">
+                            <label for="auto.polizaImage">Tarjeta de Circulación</label>
+                            <input type="file" accept="image/*" class="form-control" id="auto.polizaImage"
+                                   name="tarjetaCiculacion" >
+                        </div>
+                        <div class="form-group">
+                            <label for="auto.polizaImage">Placas</label>
+                            <input type="file" accept="image/*" class="form-control" id="auto.polizaImage"
+                                   name="placasAutoImage" >
                         </div>
                         <div class="form-group">
                             <label for="auto.imagen">Imagen Auto</label>
                             <input type="file" accept="image/*" class="form-control" id="auto.color"
-                                   name="auto[imagen]" >
+                                   name="imagenAuto" >
                         </div>
                         <button type="submit" class="btn btn-default">Guardar</button>
                     </form>

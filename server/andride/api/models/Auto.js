@@ -24,19 +24,20 @@ module.exports = {
         imagen: {
             type: "string"
         },
-        
         choferes: {
             collection: 'chofer',
-            via: 'autos'
+            via: 'autos',
+            through: 'choferauto'
+
         },
-        empSeguro:{
-          type: "string"    
+        empSeguro: {
+            type: "string"
         },
-        numSeguro:{
-           type: "string"    
+        numSeguro: {
+            type: "string"
         },
-        vigenciaPoliza:{
-          type: "date"      
+        vigenciaPoliza: {
+            type: "date"
         },
         PolizaSegFile: {
             type: "string"

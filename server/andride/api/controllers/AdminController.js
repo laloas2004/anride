@@ -101,6 +101,8 @@ module.exports = {
                 return res.json(err.status, {err: err});
             }
 
+debugger;
+
             Auto.find({chofer: chofer.id}).exec(function (err, autos) {
 
 //                debugger;

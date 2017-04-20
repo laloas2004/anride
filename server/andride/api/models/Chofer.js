@@ -37,6 +37,7 @@ module.exports = {
         autos: {
             collection: 'Auto',
             via: 'choferes',
+            through: 'choferauto',
             dominant: true
         },
         status: {
