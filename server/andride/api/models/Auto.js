@@ -25,10 +25,9 @@ module.exports = {
             type: "string"
         },
         choferes: {
-            collection: 'chofer',
+            collection: 'Chofer',
             via: 'autos',
             through: 'choferauto'
-
         },
         empSeguro: {
             type: "string"

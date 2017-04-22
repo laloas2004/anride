@@ -817,6 +817,15 @@ module.exports = {
         })
 
 
+    },
+    getAutos: function (req, res) {
+
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+
+        var choferId = req.session.choferId;
+
     }
 
 

@@ -93,7 +93,7 @@ module.exports = {
     indexAutos: function (req, res) {
 
         var choferId = req.param('chofer');
-        var that = this;
+        that = this;
 
         Chofer.findOne({id: choferId}).populate('autos').exec(function (err, chofer) {
 
@@ -101,16 +101,34 @@ module.exports = {
                 return res.json(err.status, {err: err});
             }
 
-debugger;
+            ChoferAuto.find({chofer: chofer.id}).exec(function (err, relations) {
 
-            Auto.find({chofer: chofer.id}).exec(function (err, autos) {
+                that.autos = [];
 
-//                debugger;
+                if (relations.length == 0) {
+                    res.view('autos/home', {chofer: chofer, autos: that.autos});
+                } else {
 
-                res.view('autos/home', {chofer: chofer, autos: autos});
+                    for (n = 0; n < relations.length; n++) {
+
+                        Auto.findOne({id: relations[n].auto}).exec(function (err, auto) {
+
+                            that.autos.push(auto);
+
+                            if (n == relations.length) {
+
+                                res.view('autos/home', {chofer: chofer, autos: that.autos});
 
 
-            })
+                            }
+
+                        })
+
+                    }
+                }
+
+            });
+
 
 
         })
