@@ -87,13 +87,13 @@ module.exports = {
         comDomicioFile: {
             type: 'string'
         },
-        credeElectorile:{
+        credeElectorile: {
             type: 'string'
         },
-        liceConducionFile:{
+        liceConducionFile: {
             type: 'string'
         },
-        cartaNopenalesFile:{
+        cartaNopenalesFile: {
             type: 'string'
         }
     },
@@ -192,7 +192,7 @@ module.exports = {
             if (match) {
                 cb(null, true);
             } else {
-                cb(err);
+                cb(err, false);
             }
         })
     }

@@ -8,14 +8,14 @@
 var Q = require('q');
 
 module.exports = {
-    create: function(req, res) {
+    create: function (req, res) {
 
 
 //        if (req.body.password !== req.body.confirmPassword) {
 //            return res.json(401, {err: 'Password doesn\'t match, What a shame!'});
 //        }
 
-        Chofer.create(req.body).exec(function(err, chofer) {
+        Chofer.create(req.body).exec(function (err, chofer) {
 
             if (err) {
                 return res.json(err.status, {err: err});
@@ -27,8 +27,9 @@ module.exports = {
 
         });
     },
-    login: function(req, res) {
-
+    login: function (req, res) {
+        
+            debugger;
         var req_email = req.param('email');
         var req_password = req.param('password');
 
@@ -36,7 +37,7 @@ module.exports = {
             return res.json(401, {err: 'Email y Password son requeridos.'});
         }
 
-        Chofer.findOne({email: req_email}).exec(function(err, chofer) {
+        Chofer.findOne({email: req_email}).exec(function (err, chofer) {
 
             if (!chofer) {
                 return res.json(401, {err: 'Usuario o contraseña Invalidos.'});
@@ -48,7 +49,7 @@ module.exports = {
                 console.log('El Usuario esta en Uso.');
             }
 
-            Chofer.comparePassword(req_password, chofer, function(err, valid) {
+            Chofer.comparePassword(req_password, chofer, function (err, valid) {
 
                 if (err) {
                     return res.json(403, {err: 'Acceso Restringido'});
@@ -72,12 +73,12 @@ module.exports = {
         });
 
     },
-    logout: function(req, res) {
+    logout: function (req, res) {
 
         var choferId = req.session.choferId;
 
         if (choferId) {
-            Chofer.update({id: choferId}, {online: false, status: 'inactivo'}).exec(function(err, chofer) {
+            Chofer.update({id: choferId}, {online: false, status: 'inactivo'}).exec(function (err, chofer) {
 //                req.session.destroy();
 //                req.session = null;
                 res.json({chofer: chofer[0], logout: true});
@@ -89,7 +90,7 @@ module.exports = {
         }
 
     },
-    suscribe: function(req, res) {
+    suscribe: function (req, res) {
 
         if (!req.isSocket) {
             return res.badRequest();
@@ -104,7 +105,7 @@ module.exports = {
 
         }
 
-        sails.sockets.join(req, 'chofer_' + choferId, function(err) {
+        sails.sockets.join(req, 'chofer_' + choferId, function (err) {
 
             if (err) {
 
@@ -112,7 +113,7 @@ module.exports = {
             }
 
 
-            Chofer.update({id: choferId}, {socketId: socketId, online: true}).exec(function(err, chofer) {
+            Chofer.update({id: choferId}, {socketId: socketId, online: true}).exec(function (err, chofer) {
 
                 if (err) {
 
@@ -125,7 +126,7 @@ module.exports = {
 
                 sails.log('Suscribe Chofer: ' + choferId + ' -- ' + chofer.email);
 
-                Queue.findOne({idOrigen: {"$in": [choferId]}, entregado: false}).exec(function(err, msg) {
+                Queue.findOne({idOrigen: {"$in": [choferId]}, entregado: false}).exec(function (err, msg) {
 
                     if (err) {
 
@@ -149,10 +150,10 @@ module.exports = {
 
 
     },
-    signup: function(req, res) {
+    signup: function (req, res) {
 
     },
-    trackChofer: function(req, res) {
+    trackChofer: function (req, res) {
 
         if (!req.isSocket) {
 
@@ -167,7 +168,7 @@ module.exports = {
         Chofer.update({email: email},
         {lat: lat, lon: lon, location: {type: "Point", coordinates: [parseFloat(lon), parseFloat(lat)]}, socketId: socketId, online: true})
 
-                .exec(function(err, updated) {
+                .exec(function (err, updated) {
                     if (err) {
                         console.log('ChoferController:142' + err);
                         return res.json({updated: false});
@@ -187,11 +188,11 @@ module.exports = {
                 })
 
     },
-    validateToken: function(req, res) {
+    validateToken: function (req, res) {
 
         var token = req.param('token');
 
-        jwToken.verify(token, function(err, token) {
+        jwToken.verify(token, function (err, token) {
 
             if (err) {
                 console.log('ChoferController:168' + err);
@@ -203,7 +204,7 @@ module.exports = {
             return res.json({valid: true});
         });
     },
-    servicio: function(req, res) {
+    servicio: function (req, res) {
 
         var that = this;
 
@@ -231,7 +232,7 @@ module.exports = {
         Solicitud.update({id: solicitud.id}, {
             status: 'aceptada'
 
-        }).exec(function(err, solicitud) {
+        }).exec(function (err, solicitud) {
 
 
             if (err) {
@@ -244,14 +245,14 @@ module.exports = {
             console.log('Solicitud');
             console.log(solicitud);
 
-            Cliente.findOne({id: solicitud[0].cliente}).exec(function(err, cliente) {
+            Cliente.findOne({id: solicitud[0].cliente}).exec(function (err, cliente) {
 
 
                 Servicio.create({
                     cliente: solicitud[0].cliente,
                     chofer: chofer,
                     solicitud: solicitud[0].id
-                }).exec(function(err, servicio) {
+                }).exec(function (err, servicio) {
 
                     if (err) {
                         return res.json({err: err});
@@ -259,13 +260,13 @@ module.exports = {
                     Servicio.subscribe(req, servicio.id);
                     Servicio.publishCreate(servicio, req);
 
-                    Chofer.update({id: chofer}, {status: 'enservicio'}).exec(function(err, chofer) {
+                    Chofer.update({id: chofer}, {status: 'enservicio'}).exec(function (err, chofer) {
 
                         if (err) {
                             return res.json({err: err});
                         }
 
-                        Solicitud.findOne({id: servicio.solicitud}).exec(function(err, solicitud) {
+                        Solicitud.findOne({id: servicio.solicitud}).exec(function (err, solicitud) {
 
                             if (err) {
                                 return res.json({err: err});
@@ -284,11 +285,11 @@ module.exports = {
                                 console.log('Cliente:');
                                 console.log(cliente);
 
-                                that._addQueueMsg('cliente', chofer[0].id, cliente.id, 'servicio.iniciada', {solicitud: solicitud, servicio: servicio, chofer: chofer[0]}).then(function(response) {
+                                that._addQueueMsg('cliente', chofer[0].id, cliente.id, 'servicio.iniciada', {solicitud: solicitud, servicio: servicio, chofer: chofer[0]}).then(function (response) {
 
                                     return res.json({err: false, servicio: servicio, cliente: cliente});
 
-                                }, function(err) {
+                                }, function (err) {
 
                                     return res.json({err: err, servicio: servicio, cliente: cliente});
 
@@ -311,7 +312,7 @@ module.exports = {
         })
 
     },
-    onPlace: function(req, res) {
+    onPlace: function (req, res) {
 
         if (!req.isSocket) {
 
@@ -323,13 +324,13 @@ module.exports = {
             console.log('Falta parametro de servicio : Linea 256');
         }
 
-        Chofer.findOne({id: servicio.chofer}).exec(function(err, chofer) {
+        Chofer.findOne({id: servicio.chofer}).exec(function (err, chofer) {
 
             if (err) {
                 console.log('ChoferController:262' + err);
                 return res.json({err: err});
             }
-            Cliente.findOne({id: servicio.cliente}).exec(function(err, cliente) {
+            Cliente.findOne({id: servicio.cliente}).exec(function (err, cliente) {
                 if (err) {
                     return res.json({err: err});
                 }
@@ -342,7 +343,7 @@ module.exports = {
 
 
     },
-    empiezaViaje: function(req, res) {
+    empiezaViaje: function (req, res) {
 
         if (!req.isSocket) {
             return res.badRequest();
@@ -363,18 +364,18 @@ module.exports = {
         Servicio.update({id: servicio.id}, {
             status: 'enproceso',
             inicio_viaje: inicio_viaje.posicion,
-            inicio_fecha: inicio_viaje.fechaHora}).exec(function(err, result) {
+            inicio_fecha: inicio_viaje.fechaHora}).exec(function (err, result) {
 
             if (err) {
                 return res.json({err: err});
             }
 
 
-            that._addQueueMsg('cliente', req.session.choferId, servicio.cliente, 'servicio.inicioViaje', {servicio: servicio}).then(function(response) {
+            that._addQueueMsg('cliente', req.session.choferId, servicio.cliente, 'servicio.inicioViaje', {servicio: servicio}).then(function (response) {
 
                 return res.json({err: false, servicio: result, msg: response});
 
-            }, function(err, response) {
+            }, function (err, response) {
 
                 return res.json({err: err, servicio: result, msg: response});
 
@@ -384,7 +385,7 @@ module.exports = {
 
 
     },
-    terminaViaje: function(req, res) {
+    terminaViaje: function (req, res) {
 
         if (!req.isSocket) {
 
@@ -426,7 +427,7 @@ module.exports = {
             fin_fecha: fin_viaje.fechaHora,
             distance: distancia,
             recorridoChofer: recorrido
-        }).exec(function(err, result) {
+        }).exec(function (err, result) {
 
             if (err) {
                 return res.json({err: err});
@@ -434,18 +435,18 @@ module.exports = {
 
 
 
-            that._calcularCobro(result[0]).then(function(respuesta) {
+            that._calcularCobro(result[0]).then(function (respuesta) {
 
                 Servicio.update({
                     id: servicio.id}, {
                     tiempo: respuesta.tiempo,
                     monto: respuesta.monto
-                }).exec(function(err, result) {
+                }).exec(function (err, result) {
                     if (err) {
                         return res.json({err: err});
                     }
 
-                    Cliente.findOne({id: servicio.cliente}).exec(function(err, cliente) {
+                    Cliente.findOne({id: servicio.cliente}).exec(function (err, cliente) {
 
                         if (err) {
                             return res.json({err: err});
@@ -456,7 +457,7 @@ module.exports = {
                     })
 
 
-                    Chofer.update({id: req.session.choferId}, {status: 'activo'}).exec(function(err, chofer) {
+                    Chofer.update({id: req.session.choferId}, {status: 'activo'}).exec(function (err, chofer) {
 
                         if (err) {
                             return res.json({err: err});
@@ -476,11 +477,11 @@ module.exports = {
 
 
     },
-    _calcularCobro: function(servicio) {
+    _calcularCobro: function (servicio) {
 
         var deferred = Q.defer();
 
-        configTaxiapp.get().then(function(config) {
+        configTaxiapp.get().then(function (config) {
 
             console.log(config);
 
@@ -515,17 +516,17 @@ module.exports = {
             }
 
             deferred.resolve({tiempo: minutos, monto: monto});
-        }, function(err) {
+        }, function (err) {
             deferred.reject(err);
         });
         return deferred.promise;
     },
-    cancelaViaje: function(req, res) {
+    cancelaViaje: function (req, res) {
 
 
 
     },
-    canceloCliente: function(req, res) {
+    canceloCliente: function (req, res) {
 
         if (!req.isSocket) {
             return res.badRequest();
@@ -535,13 +536,13 @@ module.exports = {
 
         var fin_viaje = req.param('fin_viaje');
 
-        Servicio.update({id: servicioId}, {fin_viaje: fin_viaje.posicion, fin_fecha: fin_viaje.fechaHora}).exec(function(err, servi) {
+        Servicio.update({id: servicioId}, {fin_viaje: fin_viaje.posicion, fin_fecha: fin_viaje.fechaHora}).exec(function (err, servi) {
 
             if (err) {
                 return res.json({err: err});
             }
 
-            Chofer.update({id: req.session.choferId}, {status: 'activo'}).exec(function(err, chofer) {
+            Chofer.update({id: req.session.choferId}, {status: 'activo'}).exec(function (err, chofer) {
                 if (err) {
                     return res.json({err: err});
                 }
@@ -555,7 +556,7 @@ module.exports = {
 
 
     },
-    cambiarStatus: function(req, res) {
+    cambiarStatus: function (req, res) {
 
         if (!req.isSocket) {
             return res.badRequest();
@@ -566,14 +567,14 @@ module.exports = {
 
         if (action == 'activo') {
 
-            Chofer.update({id: choferId}, {status: action, online: true}).exec(function(err, chofer) {
+            Chofer.update({id: choferId}, {status: action, online: true}).exec(function (err, chofer) {
 
                 res.ok(chofer[0]);
 
             })
         } else {
 
-            Chofer.update({id: choferId}, {status: action}).exec(function(err, chofer) {
+            Chofer.update({id: choferId}, {status: action}).exec(function (err, chofer) {
 
                 res.ok(chofer[0]);
 
@@ -584,7 +585,7 @@ module.exports = {
 
 
     },
-    getServicio: function(req, res) {
+    getServicio: function (req, res) {
 
         if (!req.isSocket) {
             return res.badRequest();
@@ -593,14 +594,14 @@ module.exports = {
         var servicioId = req.param('servicioId');
 
 
-        Servicio.findOne({id: servicioId}).exec(function(err, servicio) {
+        Servicio.findOne({id: servicioId}).exec(function (err, servicio) {
 
             res.ok(servicio);
 
         })
 
     },
-    cancelarServicio: function(req, res) {
+    cancelarServicio: function (req, res) {
         if (!req.isSocket) {
             return res.badRequest();
         }
@@ -608,7 +609,7 @@ module.exports = {
         var servicioId = req.param('servicioId');
         var that = this;
 
-        Servicio.update({id: servicioId}, {status: 'cancelada', cancelo: 'chofer'}).exec(function(err, serv) {
+        Servicio.update({id: servicioId}, {status: 'cancelada', cancelo: 'chofer'}).exec(function (err, serv) {
 
             if (err) {
 
@@ -617,23 +618,23 @@ module.exports = {
 
             Servicio.publishUpdate(serv[0].id, {servicio: serv[0]}, req);
 
-            Cliente.findOne({id: serv[0].cliente}).exec(function(err, cliente) {
+            Cliente.findOne({id: serv[0].cliente}).exec(function (err, cliente) {
 
                 if (err) {
                     return res.json({err: err});
                 }
 
-                that._addQueueMsg('cliente', req.session.choferId, cliente.id, 'servicio.cancelado', {servicio: serv[0]}).then(function(response) {
+                that._addQueueMsg('cliente', req.session.choferId, cliente.id, 'servicio.cancelado', {servicio: serv[0]}).then(function (response) {
 
 
-                }, function(err) {
+                }, function (err) {
 
                     console.log(err);
 
                 });
 //                sails.sockets.broadcast(cliente.socketId, 'servicio.cancelado', {servicio: serv[0]});
 
-                Chofer.update({id: req.session.choferId}, {status: 'activo'}).exec(function(err, chofer) {
+                Chofer.update({id: req.session.choferId}, {status: 'activo'}).exec(function (err, chofer) {
                     if (err) {
                         return res.json({err: err});
                     }
@@ -648,7 +649,7 @@ module.exports = {
 
 
     },
-    getServicioPendiente: function(req, res) {
+    getServicioPendiente: function (req, res) {
 
 
         if (!req.isSocket) {
@@ -660,7 +661,7 @@ module.exports = {
         Servicio.find({
             chofer: choferId,
             status: {'!': ['finalizado', 'cancelada']}
-        }).sort('updateAt ASC').exec(function(err, servi) {
+        }).sort('updateAt ASC').exec(function (err, servi) {
 
             if (err) {
                 return res.json({err: err});
@@ -674,7 +675,7 @@ module.exports = {
         })
 
     },
-    getSolicitud: function(req, res) {
+    getSolicitud: function (req, res) {
 
         if (!req.isSocket) {
             return res.badRequest();
@@ -682,7 +683,7 @@ module.exports = {
 
         var SolId = req.param('SolId');
 
-        Solicitud.findOne({id: SolId}).exec(function(err, solicitud) {
+        Solicitud.findOne({id: SolId}).exec(function (err, solicitud) {
 
             if (err) {
                 return res.json({err: err});
@@ -693,20 +694,20 @@ module.exports = {
 
         })
     },
-    trackRecorridoServicio: function(req, res) {
+    trackRecorridoServicio: function (req, res) {
 
         var servicio = req.param('ServId');
         var lat = req.param('lat');
         var lon = req.param('lon');
 
 
-        Servicio.findOne({id: servicio}).exec(function(err, servicio) {
+        Servicio.findOne({id: servicio}).exec(function (err, servicio) {
 
             var points = servicio.recorridoChofer ? servicio.recorridoChofer : [];
 
             points.push({lat: lat, lon: lon, date: new Date()});
 
-            Servicio.update({id: servicio}, {recorridoChofer: points}).exec(function(err, servicio) {
+            Servicio.update({id: servicio}, {recorridoChofer: points}).exec(function (err, servicio) {
 
                 if (err) {
                     return res.json({err: err});
@@ -720,7 +721,7 @@ module.exports = {
         })
 
     },
-    _addQueueMsg: function(tipo, idOrigen, idDestino, evento, data) {
+    _addQueueMsg: function (tipo, idOrigen, idDestino, evento, data) {
 
         var deferred = Q.defer();
         intentos = 0;
@@ -738,7 +739,7 @@ module.exports = {
             console.log('Falta parametro idDestino');
         }
 
-        Queue.create({tipo: tipo, event: evento, idOrigen: idOrigen, idDestino: idDestino, data: data}).exec(function(err, msg) {
+        Queue.create({tipo: tipo, event: evento, idOrigen: idOrigen, idDestino: idDestino, data: data}).exec(function (err, msg) {
 
             if (err) {
                 deferred.reject(new Error(err));
@@ -749,10 +750,10 @@ module.exports = {
 
             intentos++;
 
-            var interval = setInterval(function(msg) {
+            var interval = setInterval(function (msg) {
 
 
-                Queue.findOne({id: msg.id}).exec(function(err, msg) {
+                Queue.findOne({id: msg.id}).exec(function (err, msg) {
 
                     if (err) {
                         deferred.reject(new Error(err));
@@ -770,7 +771,7 @@ module.exports = {
 
                             clearInterval(interval);
 
-                            Queue.update({id: msg.id}, {intentos: intentos}).exec(function() {
+                            Queue.update({id: msg.id}, {intentos: intentos}).exec(function () {
 
                             });
 
@@ -780,7 +781,7 @@ module.exports = {
                         deferred.resolve(msg);
                         clearInterval(interval);
 
-                        Queue.update({id: msg.id}, {intentos: intentos}).exec(function() {
+                        Queue.update({id: msg.id}, {intentos: intentos}).exec(function () {
 
                         });
 
@@ -797,7 +798,7 @@ module.exports = {
 
         return deferred.promise;
     },
-    getChofer: function(req, res) {
+    getChofer: function (req, res) {
 
         if (!req.isSocket) {
             return res.badRequest();
@@ -806,7 +807,7 @@ module.exports = {
         var choferId = req.session.choferId;
 
 
-        Chofer.findOne({id: choferId}).exec(function(err, chofer) {
+        Chofer.findOne({id: choferId}).exec(function (err, chofer) {
 
             if (err) {
                 return res.json({err: err});
@@ -819,12 +820,55 @@ module.exports = {
 
     },
     getAutos: function (req, res) {
+        
+        debugger;
 
         if (!req.isSocket) {
             return res.badRequest();
         }
 
         var choferId = req.session.choferId;
+        that = this;
+
+        Chofer.findOne({id: choferId}).populate('autos').exec(function (err, chofer) {
+
+            if (err) {
+                return res.json(err.status, {err: err});
+            }
+
+            ChoferAuto.find({chofer: chofer.id}).exec(function (err, relations) {
+
+                that.autos = [];
+
+                if (relations.length == 0) {
+                    res.json({chofer: chofer, autos: that.autos});
+
+
+                } else {
+
+                    for (n = 0; n < relations.length; n++) {
+
+                        Auto.findOne({id: relations[n].auto}).exec(function (err, auto) {
+
+                            that.autos.push(auto);
+
+                            if (n == relations.length) {
+
+                                res.json({chofer: chofer, autos: that.autos});
+
+
+                            }
+
+                        })
+
+                    }
+                }
+
+            });
+
+
+
+        })
 
     }
 
