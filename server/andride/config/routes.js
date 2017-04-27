@@ -75,6 +75,7 @@ module.exports.routes = {
     'post /choferes/servicio/cancel': 'ChoferController.cancelarServicio',
     'post /choferes/servicio/track': 'ChoferController.trackRecorridoServicio',
     'get /chofer/autos': 'ChoferController.getAutos',
+    'post /chofer/auto/activar': 'ChoferController.setAutoActivo',
 //    'get /choferes/solicitud_prueba': 'ChoferController.solicitud',
     /***************************************************************************
      *                                                                          *

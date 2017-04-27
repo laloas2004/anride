@@ -28,8 +28,8 @@ module.exports = {
         });
     },
     login: function (req, res) {
-        
-            debugger;
+
+        debugger;
         var req_email = req.param('email');
         var req_password = req.param('password');
 
@@ -820,8 +820,7 @@ module.exports = {
 
     },
     getAutos: function (req, res) {
-        
-        debugger;
+
 
         if (!req.isSocket) {
             return res.badRequest();
@@ -830,7 +829,7 @@ module.exports = {
         var choferId = req.session.choferId;
         that = this;
 
-        Chofer.findOne({id: choferId}).populate('autos').exec(function (err, chofer) {
+        Chofer.findOne({id: choferId}).populate('autoActivo').exec(function (err, chofer) {
 
             if (err) {
                 return res.json(err.status, {err: err});
@@ -849,11 +848,19 @@ module.exports = {
                     for (n = 0; n < relations.length; n++) {
 
                         Auto.findOne({id: relations[n].auto}).exec(function (err, auto) {
+                            auto.checked = false;
+                            if (chofer.autoActivo) {
+
+                                if (chofer.autoActivo == auto.id) {
+                                    auto.checked = true;
+                                }
+
+                            }
+
 
                             that.autos.push(auto);
 
                             if (n == relations.length) {
-
                                 res.json({chofer: chofer, autos: that.autos});
 
 
@@ -869,6 +876,41 @@ module.exports = {
 
 
         })
+
+    },
+    setAutoActivo: function (req, res) {
+
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+
+        var choferId = req.session.choferId;
+        var autoId = req.param('idAuto');
+        if (!autoId) {
+            return res.badRequest();
+        }
+
+        that = this;
+
+        Chofer.update({id: choferId}, {autoActivo: autoId}).exec(function (err, updated) {
+
+            if (err) {
+
+                return res.json({err: err});
+            }
+            
+            
+
+            Chofer.findOne({id:updated[0].id}).populate('autoActivo').exec(function (err, chofer) {
+
+                res.json(chofer);
+
+            })
+
+
+
+        });
+
 
     }
 
