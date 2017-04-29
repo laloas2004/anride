@@ -12,8 +12,8 @@
           <div class="bold">{{record.createdAt | amDateFormat:'DD/MM/YYYY HH:mm'}}</div>
           <div>Origen : <br>{{ record.solicitud.direccion_origen }}</div>
           <div>Destino: <br>{{ record.solicitud.direccion_destino }}</div>
-          <div>Distancia:{{record.distancia/1000}} KM.</div>
-          <div>Monto:${{record.monto}}MXN</div>
+          <div>Distancia:{{record.distance/1000}} KM.</div>
+          <div>Monto:${{record.monto.toFixed(2)}}MXN</div>
         </div>
         <i class="icon ion-android-star-outline"></i>
       </ion-item>

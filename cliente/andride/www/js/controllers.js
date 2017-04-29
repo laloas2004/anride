@@ -65,25 +65,28 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.intervalReconnect = {};
             $scope.vistaAlertinicioViaje = 0;
             $scope.vistaAlertFinViaje = 0;
-            $sails.on('connect', function(data) {
+            $sails.on('connect', function (data) {
 
                 if ($localStorage.cliente.id) {
 
-                    AuthService.suscribe().then(function(response) {
+                    AuthService.suscribe().then(function (response) {
 
                         console.log(response);
 
                         $sails.get('/cliente/mensajes', {})
-                                .success(function(data, status, headers, jwr) {
+                                .success(function (data, status, headers, jwr) {
 
                                     $ionicLoading.hide();
 
                                 })
 
-                    }, function(err) {
-
+                    }, function (err) {
+                        console.log(err);
+                        $ionicLoading.hide();
                     });
 
+                } else {
+                    $ionicLoading.hide();
                 }
 
 
@@ -95,6 +98,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     template: 'UPS!, Hay problemas para comunicarnos con la red, revisa la conexion...',
                     showBackdrop: false
                 });
+                
+                $interval.cancel($scope.intervalUpdateChoferes);
 
                 console.log('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
 
@@ -123,8 +128,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 // Si llega un evento de la cola de mensajes se valida que el servicio no este cancelado o finalizado.
                 var idServicio = data.data.servicio.id || 0;
+                
+                debugger;
 
                 if (idServicio != 0) {
+                    
                     $sails.get("/cliente/servicio/status", {idServicio: idServicio})
                             .success(function(dataStatus, status, headers, jwr) {
 
@@ -136,6 +144,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                     $sails.post("/cliente/mensaje/confirma", {idQueue: data.id})
                                             .success(function(queue, status, headers, jwr) {
 
+                                            debugger;
                                                 console.log('El servicio esta cancelado o finalizado');
 
 
@@ -152,7 +161,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                                     $sails.post("/cliente/mensaje/confirma", {idQueue: data.id})
                                             .success(function(queue, status, headers, jwr) {
-
 
                                                 $localStorage.chofer = data.data.chofer;
                                                 $localStorage.servicio = data.data.servicio;
@@ -367,7 +375,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                                 $scope.intervalUpdateChoferes = $interval(function() {
 
-                                    $scope.setDireccionOrigen(position).then(function() {
+//                                    $scope.setDireccionOrigen(position).then(function() {
                                         $scope.getChoferes().then(function() {
                                             $scope.renderChoferesMap().then(function() {
 
@@ -378,9 +386,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                         })
 
 
-                                    })
+//                                    })
 
-                                }, 30000);
+                                }, 60000);
 
                             })
 
@@ -428,6 +436,16 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
                     });
+
+                    google.maps.event.addListener($scope.map, "zoom_changed", function() {
+
+                        var center = new google.maps.LatLng($scope.position.coords.latitude, $scope.position.coords.longitude);
+
+                        $scope.map.setCenter(center);
+
+
+                    });
+                     
 
                 }, function(err) {
 
@@ -490,7 +508,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     var calle = response.data.results[0].address_components[1].long_name;
                     var numero = response.data.results[0].address_components[0].long_name;
                     var colonia = response.data.results[0].address_components[2].long_name;
-
+                    debugger;
                     $rootScope.solicitud.direccion_origen = calle + ' ' + numero + ' ' + colonia;
                     q.resolve(response);
                 });
@@ -658,7 +676,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     $scope.position = {coords: {latitude: place_detalle.geometry.location.lat(), longitude: place_detalle.geometry.location.lng()}};
 
                     $rootScope.solicitud.origen = {coords: {latitude: place_detalle.geometry.location.lat(), longitude: place_detalle.geometry.location.lng()}};
-
+                    debugger;
                     $rootScope.solicitud.direccion_origen = place_detalle.formatted_address;
 
 
@@ -943,6 +961,26 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             $scope.$on('$ionicView.beforeEnter', function(event, data) {
 
+                if ($localStorage.cliente.id) {
+
+                    AuthService.suscribe().then(function(response) {
+
+                        console.log(response);
+
+                        $sails.get('/cliente/mensajes', {})
+                                .success(function(data, status, headers, jwr) {
+
+                                    $ionicLoading.hide();
+
+                                })
+
+                    }, function(err) {
+
+                    });
+
+                }
+
+
 //                    $ionicPlatform.registerBackButtonAction(function(event) {
 //                        debugger;
 //                        event.preventDefault();
@@ -998,6 +1036,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 //                }, 30000);
 
             })
+            
+             
+            
 
         })
         .controller('SideMenuCtrl', function($scope, $ionicHistory) {
@@ -1308,10 +1349,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
         })
         .controller('ViajesCtrl', function($scope, $ionicHistory, $sails) {
 
-
-
             $scope.init = function() {
-
 
                 $sails.get("/cliente/viajes", {})
                         .success(function(data, status, headers, jwr) {
@@ -1338,6 +1376,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             $scope.anio = parseInt(moment().format('YYYY'));
             $scope.card = {};
+            $scope.formas_pago = [];
+            
+            $scope.formas_pago.push({id:0,value:'efectivo',title:'Pago en Efectivo',subtitle:'(MXN)'});
+            
             $ionicModal.fromTemplateUrl('templates/add_tarjeta.html', {
                 scope: $scope,
                 animation: 'slide-in-up'
@@ -1350,6 +1392,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.getFormasPago = function() {
 
             }
+            
             $scope.addFormaPago = function() {
                 $scope.modal_add_tarjeta.show();
 
