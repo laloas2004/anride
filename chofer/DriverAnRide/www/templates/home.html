@@ -3,10 +3,9 @@
     <ion-content scroll="false" class="dark-bg">
 
         <div class="padding text-center">
-            <h4 class="gray">version 1.3</h4>
             <h3 class="gray">{{ $storage.chofer.nombre + ' ' + $storage.chofer.apellido}}</h3>
             <h4 class="gray">{{ $storage.chofer.email}}</h4>
-
+            <h4 class="gray">{{ $storage.autoActivo.marca}} {{ $storage.autoActivo.modelo}} {{ $storage.autoActivo.placas}}</h4>
 
 
             <!--  <div class="padding gray-bg">
@@ -19,7 +18,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <button class="button button-block button-dark" ng-click="seleccionarAuto()">Elegir Auto</button>
+                    <button class="button button-block button-dark" ng-click="goSeleccionarAuto()">Elegir Auto</button>
                 </div>
             </div>
 

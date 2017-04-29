@@ -12,7 +12,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
 //Validar que este conectado a internet.
 //            $rootScope.serverIp = "http://192.168.1.66:1337";
 
-            $rootScope.serverIp = "http://104.131.116.22:1337";
+            $rootScope.serverIp = "http://192.168.15.98:1337";
             
             $rootScope.google_key  = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
             
@@ -55,7 +55,6 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                     })
                     .state('app.main', {
                         url: '/main',
-                        cache:false,
                         views: {
                             'menuContent': {
                                 templateUrl: 'templates/home.html',
@@ -140,6 +139,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                     })
                      .state('app.pickup', {
                         url: '/pickup',
+                        cache:false,
                         views: {
                             'menuContent': {
                                 templateUrl: 'templates/pickup.html',
@@ -152,6 +152,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                     })
                        .state('app.servicio', {
                         url: '/servicio',
+                        cache:false,
                         views: {
                             cache:false,
                             'menuContent': {
@@ -189,15 +190,26 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                             }
                         }
                     })
-                                          .state('app.registro', {
+                    .state('app.registro', {
                         url: '/registro',
-                        cache:false,
+                        cache: false,
                         views: {
                             'menuContent': {
                                 templateUrl: 'templates/registro.html',
                                 controller: 'RegistroCtrl',
-                                params:{
-                                    
+                                params: {
+                                }
+                            }
+                        }
+                    })
+                     .state('app.selAuto', {
+                        url: '/autos',
+                        cache: false,
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/seleccionar_auto.html',
+                                controller: 'AutosCtrl',
+                                params: {
                                 }
                             }
                         }
@@ -209,7 +221,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
         .config(['$sailsProvider', function($sailsProvider) {
                 
 //                $sailsProvider.url = "http://192.168.1.66:1337";
-                $sailsProvider.url = "http://104.131.116.22:1337";
+                $sailsProvider.url = "http://192.168.15.98:1337";
                 $sailsProvider.debug = true;                
                 //digital ocean.
 //                $sailsProvider.url = 'http://104.131.116.22:1337';

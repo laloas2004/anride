@@ -222,6 +222,22 @@ angular.module('app.services', [])
                     });
 
                     return q.promise;
+                },
+                
+                getAutos: function () {
+
+                    var q = $q.defer();
+
+                    $sails.get("/chofer/autos", {})
+                            .success(function (autos, status, headers, jwr) {
+                                q.resolve(autos);
+                            })
+                            .error(function (err) {
+                                q.reject(err);
+                            });
+
+                    return q.promise;
+
                 }
 
             }
@@ -319,10 +335,10 @@ angular.module('app.services', [])
                         q.reject('Faltan parametros.');
                     }
                     
-                    console.log(lat1);
-                    console.log(lon1);
-                    console.log(lat2);
-                    console.log(lon2);
+//                    console.log(lat1);
+//                    console.log(lon1);
+//                    console.log(lat2);
+//                    console.log(lon2);
                     
                     lat1 = Number(lat1); 
                     lon1 = Number(lon1);
@@ -341,7 +357,7 @@ angular.module('app.services', [])
 
                     q.resolve(d);
                     
-                    console.log('Service Distancia: '+ d);
+//                    console.log('Service Distancia: '+ d);
                     
                     return q.promise;
 
