@@ -493,7 +493,7 @@ module.exports = {
             if (err) {
                 return res.json({err: err});
             }
-            debugger;
+//            debugger;
 
             res.json(servi);
 
@@ -551,7 +551,7 @@ module.exports = {
         if (!req.isSocket) {
             return res.badRequest();
         }
-        debugger;
+//        debugger;
         var idMsg = req.param('idQueue');
         
         if(!idMsg){
@@ -579,7 +579,7 @@ module.exports = {
             return res.badRequest();
         }
         
-        debugger;
+//        debugger;
         var idCliente = req.session.clienteId;
 
         if (idCliente) {
@@ -671,7 +671,7 @@ module.exports = {
                 return res.json({err: err});
             }
           var id = cliente.formasPago.length+1; 
-          debugger;
+//          debugger;
           cliente.formasPago.push({id:id,data:pago});  
             
 
@@ -685,6 +685,5 @@ module.exports = {
         
         
     }
-
 
 };

@@ -248,6 +248,8 @@ module.exports = {
             Cliente.findOne({id: solicitud[0].cliente}).exec(function (err, cliente) {
 
 
+                
+
                 Servicio.create({
                     cliente: solicitud[0].cliente,
                     chofer: chofer,
@@ -260,49 +262,58 @@ module.exports = {
                     Servicio.subscribe(req, servicio.id);
                     Servicio.publishCreate(servicio, req);
 
-                    Chofer.update({id: chofer}, {status: 'enservicio'}).exec(function (err, chofer) {
+                    Chofer.update({id: chofer}, {status: 'enservicio'}).exec(function (err, updated) {
 
-                        if (err) {
-                            return res.json({err: err});
-                        }
 
-                        Solicitud.findOne({id: servicio.solicitud}).exec(function (err, solicitud) {
+                        Chofer.find({id: updated[0].id}).populate('autoActivo').exec(function (err, chofer) {
+                            
+                            if (err) {
+                                return res.json({err: err});
+                            }
+
+
 
                             if (err) {
                                 return res.json({err: err});
                             }
 
-                            if (!chofer[0].id) {
-                                return res.json(401, {err: 'falta parametro origen en linea 279.'});
-                            }
-                            if (!chofer[0].id) {
-                                return res.json(401, {err: 'falta parametro destino en linea 279.'});
-                            }
+                            Solicitud.findOne({id: servicio.solicitud}).exec(function (err, solicitud) {
+
+                                if (err) {
+                                    return res.json({err: err});
+                                }
+
+                                if (!chofer[0].id) {
+                                    return res.json(401, {err: 'falta parametro origen en linea 279.'});
+                                }
+                                if (!chofer[0].id) {
+                                    return res.json(401, {err: 'falta parametro destino en linea 279.'});
+                                }
 
 
-                            try {
+                                try {
 
-                                console.log('Cliente:');
-                                console.log(cliente);
+                                    console.log('Cliente:');
+                                    console.log(cliente);
 
-                                that._addQueueMsg('cliente', chofer[0].id, cliente.id, 'servicio.iniciada', {solicitud: solicitud, servicio: servicio, chofer: chofer[0]}).then(function (response) {
+                                    that._addQueueMsg('cliente', chofer[0].id, cliente.id, 'servicio.iniciada', {solicitud: solicitud, servicio: servicio, chofer: chofer[0]}).then(function (response) {
 
-                                    return res.json({err: false, servicio: servicio, cliente: cliente});
+                                        return res.json({err: false, servicio: servicio, cliente: cliente});
 
-                                }, function (err) {
+                                    }, function (err) {
 
-                                    return res.json({err: err, servicio: servicio, cliente: cliente});
+                                        return res.json({err: err, servicio: servicio, cliente: cliente});
 
-                                });
+                                    });
 
-                            } catch (e) {
-                                console.error(e);
-                            }
+                                } catch (e) {
+                                    console.error(e);
+                                }
 //                            sails.sockets.broadcast('cliente_' + cliente.id, 'servicio.iniciada', { solicitud:solicitud,servicio:servicio, chofer:chofer[0]});
 
 
-                        })
-
+                            })
+                        });
                     })
 
                 })
@@ -520,11 +531,6 @@ module.exports = {
             deferred.reject(err);
         });
         return deferred.promise;
-    },
-    cancelaViaje: function (req, res) {
-
-
-
     },
     canceloCliente: function (req, res) {
 
@@ -898,10 +904,10 @@ module.exports = {
 
                 return res.json({err: err});
             }
-            
-            
 
-            Chofer.findOne({id:updated[0].id}).populate('autoActivo').exec(function (err, chofer) {
+
+
+            Chofer.findOne({id: updated[0].id}).populate('autoActivo').exec(function (err, chofer) {
 
                 res.json(chofer);
 
