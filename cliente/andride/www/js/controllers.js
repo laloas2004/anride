@@ -1057,20 +1057,20 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     icon: '',
                     state: 'app.viajes'
                 },
-                {
-                    id: 3,
-                    name: 'Pagos',
-                    level: 0,
-                    icon: '',
-                    state: 'app.pagos'
-                },
-                {
-                    id: 4,
-                    name: 'Notificaciones',
-                    level: 0,
-                    icon: '',
-                    state: 'app.notificaciones'
-                },
+//                {
+//                    id: 3,
+//                    name: 'Pagos',
+//                    level: 0,
+//                    icon: '',
+//                    state: 'app.pagos'
+//                },
+//                {
+//                    id: 4,
+//                    name: 'Notificaciones',
+//                    level: 0,
+//                    icon: '',
+//                    state: 'app.notificaciones'
+//                },
 //                {
 //                    id: 5,
 //                    name: 'Destinos Guardados',
@@ -1078,13 +1078,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 //                    icon: '',
 //                    state: 'app.destinos'
 //                },
-                {
-                    id: 6,
-                    name: 'Configuracion',
-                    level: 0,
-                    icon: '',
-                    state: 'app.configuracion'
-                },
+//                {
+//                    id: 6,
+//                    name: 'Configuracion',
+//                    level: 0,
+//                    icon: '',
+//                    state: 'app.configuracion'
+//                },
                 {
                     id: 7,
                     name: 'Ayuda',
@@ -1306,7 +1306,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                         });
             }
-
+            debugger;
             $scope.$storage = $localStorage;
 
             if ($localStorage.solicitud.origen.coords) {

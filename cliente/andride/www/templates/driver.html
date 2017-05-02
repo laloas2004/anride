@@ -5,46 +5,55 @@
 -->
 <ion-view hide-nav-bar="true">  
     <ion-content scroll="false">
-        <!--<div class="driver-top dark-bg light text-center">
+        <div class="driver-top dark-bg light text-center">
             <span>Encontramos un chofer para tu servicio</span>
-        </div>-->
-        <div class="row">
-            <div class="col">
-                <div id="mapa_chofer" style="width: 100%; height: 380px;">
-                    
+        </div>
+
+        <div class="driver-info rlt text-center">
+            <div class="row">
+                <div class="col">
+                    <div class="driver-picture padding-bottom">
+
+                        <img class="circle" src="img/avatarDefault.png" alt=""/>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="driver-info rlt text-center">
-
-          <!--  <div class="driver-picture padding-bottom">
-
-                <img class="circle" src="img/thumb/adam.jpg" alt=""/>
-            </div>-->
-
-
-            <h3 class="no-margin balanced"></h3>
-            <h5 class="no-margin">{{$storage.chofer.nombre}} {{$storage.chofer.apellido}}</h5>
-
-            <div class="driver-plate row">
-
+            <div class="row" style="margin-top: 50px;">
                 <div class="col">
-                    <div class="text-hint">Placas</div>
-                    <strong>XXXXXX</strong>
+                    <h3 class="no-margin balanced"></h3>
+                    <div class="text-hint">Nombre Chofer</div>
+                    <h5 class="no-margin">{{$storage.chofer.nombre}} {{$storage.chofer.apellido}}</h5>
+                </div>
+            </div>
+            <div class="driver-plate" >
+
+                <div class="row">
+                    <div class="text-hint" style="width: 100%;">Modelo Auto</div><br>
+                    <strong>{{$storage.chofer.autoActivo.modelo}}</strong>
+                </div>
+            </div>
+            <div class="driver-plate">
+                <div class="row">
+                    <div class="text-hint" style="width: 100%;">Marca Auto</div><br>
+                    <strong>{{$storage.chofer.autoActivo.marca}}</strong>
+                </div>
+            </div>
+
+            <div class="driver-plate">
+
+                <div class="row">
+                    <div class="text-hint" style="width: 100%;">Placas</div><br>
+                    <strong>{{$storage.chofer.autoActivo.placas}}</strong>
                 </div>
 
-                <div class="col">
-                    <div class="text-hint">Forma de Pago</div>
-                    <strong>Efectivo</strong>
-                </div>
             </div>
             <div class="bottom-buttons row">
                 <div class="col">
                     <div class="button button-block" ng-click="cancelarServicio()">Cancelar</div>
                 </div>
-              <!--  <div class="col-50">
-                    <div class="button button-balanced button-block" ng-click="track()">Continuar</div>
-                </div>-->
+                <!--  <div class="col-50">
+                      <div class="button button-balanced button-block" ng-click="track()">Continuar</div>
+                  </div>-->
             </div>
         </div>
 
