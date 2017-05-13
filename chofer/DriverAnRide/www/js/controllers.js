@@ -176,6 +176,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             $scope.watchposition = function() {
 
                 var actualizo = false;
+                
+                
 
 
                 var watchOptions = {
@@ -223,14 +225,31 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
                                 markerChofer.remove();
                             }
+                            
+                            debugger;
 
                             $scope.map.addMarker({
-                                'position': myPosition
-                            }, function(marker) {
+                                'position': myPosition,
+                                'icon': {url: '.img/car-icon.png',
+                                'size': {
+                                        width: 32,
+                                        height: 32
+                                    }}
+                            }, function (marker) {
 
                                 markerChofer = marker;
 
+                                marker.setIcon({
+                                    'url': 'img/car-icon.png',
+                                    'size': {
+                                        width: 32,
+                                        height: 32
+                                    }
+                                });
+
                             });
+
+
 
                             $scope.map.moveCamera({
                                 'target': myPosition,
@@ -374,32 +393,33 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                     icon: "",
                     level: 0,
                     state: 'app.main'
-                }, {
-                    id: 2,
-                    name: 'Cartera',
-                    level: 0,
-                    icon: '',
-                    state: 'app.cartera'
-                }, {
-                    id: 3,
-                    name: 'Historial de Viajes',
-                    level: 0,
-                    icon: '',
-                    state: 'app.historial'
-                }, {
-                    id: 4,
-                    name: 'Configuracion',
-                    level: 0,
-                    icon: '',
-                    state: 'app.configuracion'
-                },
-                {
-                    id: 4,
-                    name: 'Ayuda',
-                    level: 0,
-                    icon: '',
-                    state: 'app.ayuda'
-                },
+                }, 
+//                {
+//                    id: 2,
+//                    name: 'Cartera',
+//                    level: 0,
+//                    icon: '',
+//                    state: 'app.cartera'
+//                }, {
+//                    id: 3,
+//                    name: 'Historial de Viajes',
+//                    level: 0,
+//                    icon: '',
+//                    state: 'app.historial'
+//                }, {
+//                    id: 4,
+//                    name: 'Configuracion',
+//                    level: 0,
+//                    icon: '',
+//                    state: 'app.configuracion'
+//                },
+//                {
+//                    id: 4,
+//                    name: 'Ayuda',
+//                    level: 0,
+//                    icon: '',
+//                    state: 'app.ayuda'
+//                },
                 {
                     id: 5,
                     name: 'Salir',
@@ -700,7 +720,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 $ionicLoading,
                 $cordovaGeolocation,
                 servicioService,
-                $timeout) {
+                $timeout,
+                $cordovaLaunchNavigator) {
 
             $scope.$storage = $localStorage;
             $scope.$storage.colaMsg = [];
@@ -855,7 +876,18 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
 
             }
-
+$scope.abrirNavegacion = function(){
+    
+        var destination = [latitude, longitude];
+	var start = null;
+    $cordovaLaunchNavigator.navigate(destination, start).then(function() {
+      console.log("Navigator launched");
+    }, function (err) {
+      console.error(err);
+    });
+    
+    
+}
 
         })
         .controller('ServicioCtrl', function($scope,

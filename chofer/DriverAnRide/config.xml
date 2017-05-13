@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.ionicframework.Driverandride" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.websiete.anride-conductor" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <plugin name="cordova-background-geolocation-lt">
     <variable name="LOCATION_ALWAYS_USAGE_DESCRIPTION" value="Background location-tracking is required"/>
     <variable name="LOCATION_WHEN_IN_USE_USAGE_DESCRIPTION" value="Background location-tracking is required"/>
@@ -10,7 +10,7 @@
         App para Driver An Ride.
     </description>
   <author email="abelardo@websiete.com" href="http://websiete.com/">
-      Jesus Abelardo Acevedo Santos
+      
     </author>
   <content src="index.html"/>
   <access origin="*"/>
