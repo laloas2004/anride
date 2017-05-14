@@ -878,6 +878,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             }
 $scope.abrirNavegacion = function(){
     
+    debugger;
+        var longitude = 0;
+        var latitude = 0;
         var destination = [latitude, longitude];
 	var start = null;
     $cordovaLaunchNavigator.navigate(destination, start).then(function() {

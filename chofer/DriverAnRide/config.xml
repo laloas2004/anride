@@ -9,9 +9,7 @@
   <description>
         App para Driver An Ride.
     </description>
-  <author email="abelardo@websiete.com" href="http://websiete.com/">
-      
-    </author>
+  <author email="abelardo@websiete.com" href="http://websiete.com/"/>
   <content src="index.html"/>
   <access origin="*"/>
   <preference name="webviewbounce" value="false"/>
@@ -47,6 +45,10 @@
     <icon src="resources/ios/icon/icon-small@2x.png" width="58" height="58"/>
     <icon src="resources/ios/icon/icon-small@3x.png" width="87" height="87"/>
     <splash src="resources/ios/splash/Default-568h@2x~iphone.png" width="640" height="1136"/>
+    <splash src="resources/ios/splash/Default-667h.png" width="750" height="1334"/>
+    <splash src="resources/ios/splash/Default-736h.png" width="1242" height="2208"/>
+    <splash src="resources/ios/splash/Default-Portrait@2x~ipad.png" width="1536" height="2048"/>
+    <splash src="resources/ios/splash/Default-Portrait@~ipadpro.png" width="2048" height="2732"/>
     <splash src="resources/ios/splash/Default-Portrait~ipad.png" width="768" height="1024"/>
     <splash src="resources/ios/splash/Default@2x~iphone.png" width="640" height="960"/>
     <splash src="resources/ios/splash/Default~iphone.png" width="320" height="480"/>
@@ -62,5 +64,7 @@
     <splash src="resources/android/splash/drawable-port-mdpi-screen.png" density="port-mdpi"/>
     <splash src="resources/android/splash/drawable-port-hdpi-screen.png" density="port-hdpi"/>
     <splash src="resources/android/splash/drawable-port-xhdpi-screen.png" density="port-xhdpi"/>
+    <splash src="resources/android/splash/drawable-port-xxhdpi-screen.png" density="port-xxhdpi"/>
+    <splash src="resources/android/splash/drawable-port-xxxhdpi-screen.png" density="port-xxxhdpi"/>
   </platform>
 </widget>
