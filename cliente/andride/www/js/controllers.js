@@ -129,7 +129,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 // Si llega un evento de la cola de mensajes se valida que el servicio no este cancelado o finalizado.
                 var idServicio = data.data.servicio.id || 0;
                 
-                debugger;
+                
 
                 if (idServicio != 0) {
                     
@@ -144,7 +144,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                     $sails.post("/cliente/mensaje/confirma", {idQueue: data.id})
                                             .success(function(queue, status, headers, jwr) {
 
-                                            debugger;
+                                          
                                                 console.log('El servicio esta cancelado o finalizado');
 
 
@@ -166,7 +166,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                                 $localStorage.servicio = data.data.servicio;
                                                 $localStorage.solicitud = data.data.solicitud;
                                                 $scope.$storage = $localStorage;
-
+                                                
+                                                debugger;
                                                 $state.go('app.servicio_aprovado', {});
 
 
@@ -1309,43 +1310,43 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             debugger;
             $scope.$storage = $localStorage;
 
-            if ($localStorage.solicitud.origen.coords) {
-
-                var latLngChofer = new google.maps.LatLng($localStorage.solicitud.origen.coords.latitude, $localStorage.solicitud.origen.coords.longitude);
-
-                var mapOptions = {
-                    center: latLngChofer,
-                    zoom: 16,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP,
-                    mapTypeControl: false,
-                    streetViewControl: false,
-                    draggable: false
-                };
-
-                $scope.mapa_chofer = new google.maps.Map(document.getElementById("mapa_chofer"), mapOptions);
-
-                $scope.mapa_chofer.setClickableIcons(false);
-
-                var imageUser = {
-                    url: 'img/user.png',
-                    size: new google.maps.Size(32, 32),
-                    origin: new google.maps.Point(0, 0),
-                    anchor: new google.maps.Point(0, 32)
-                };
-                new google.maps.Marker({
-                    position: latLngChofer,
-                    title: '',
-                    map: $scope.mapa_chofer,
-                    icon: imageUser
-                });
-                try {
-
-                    $scope.updateMarkerServicio($localStorage.chofer.id);
-                } catch (e) {
-                    console.log(e);
-                }
-
-            }
+//            if ($localStorage.solicitud.origen.coords) {
+//
+//                var latLngChofer = new google.maps.LatLng($localStorage.solicitud.origen.coords.latitude, $localStorage.solicitud.origen.coords.longitude);
+//
+//                var mapOptions = {
+//                    center: latLngChofer,
+//                    zoom: 16,
+//                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+//                    mapTypeControl: false,
+//                    streetViewControl: false,
+//                    draggable: false
+//                };
+//
+//                $scope.mapa_chofer = new google.maps.Map(document.getElementById("mapa_chofer"), mapOptions);
+//
+//                $scope.mapa_chofer.setClickableIcons(false);
+//
+//                var imageUser = {
+//                    url: 'img/user.png',
+//                    size: new google.maps.Size(32, 32),
+//                    origin: new google.maps.Point(0, 0),
+//                    anchor: new google.maps.Point(0, 32)
+//                };
+//                new google.maps.Marker({
+//                    position: latLngChofer,
+//                    title: '',
+//                    map: $scope.mapa_chofer,
+//                    icon: imageUser
+//                });
+//                try {
+//
+//                    $scope.updateMarkerServicio($localStorage.chofer.id);
+//                } catch (e) {
+//                    console.log(e);
+//                }
+//
+//            }
         })
         .controller('ViajesCtrl', function($scope, $ionicHistory, $sails) {
 
@@ -1459,21 +1460,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
         })
-
-
         .controller('CancelCtrl', function($scope, $ionicHistory) {
 
             var razones = [{id: 1, title: ""}]
 
 
         })
-
         .controller('BuscandoCtrl', function($scope, $ionicHistory) {
 
 
 
         })
-
         .controller('RegistroCtrl', function($scope, $ionicHistory, $sails, $ionicPopup, AuthService, $rootScope, $ionicSideMenuDelegate, $ionicLoading, $state) {
 
             $scope.validate = function() {
