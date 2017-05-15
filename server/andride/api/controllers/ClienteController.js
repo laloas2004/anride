@@ -381,6 +381,7 @@ module.exports = {
 //        console.log(req.allParams());
 
         var solicitud = req.param('solicitud');
+        var origen = req.param('origen');
         var socketId = sails.sockets.getId(req);
         var that = this;
 
@@ -389,9 +390,9 @@ module.exports = {
 
 //            sails.log(solicitud);
 
-
+debugger;
         Solicitud.create({
-            origen: solicitud.origen,
+            origen: origen,
             destino: solicitud.destino,
             matrix: solicitud.matrix,
             cliente: solicitud.cliente,
