@@ -1,9 +1,9 @@
-//
-//var passport = require('passport'),
-//        LocalStrategy = require('passport-local').Strategy,
-//        bcrypt = require('bcrypt');
-//
-//
+
+var passport = require('passport'),
+        LocalStrategy = require('passport-local').Strategy,
+        bcrypt = require('bcrypt');
+
+
 //passport.serializeChofer(function(chofer, done) {
 //    done(null, chofer.id);
 //});

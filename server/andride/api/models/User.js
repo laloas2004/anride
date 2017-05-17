@@ -18,9 +18,15 @@ module.exports = {
         },
         rol: {
             type: 'string',
+            defaultsTo: 'operador',
             enum: ['admin', 'operador'],
         }
     },
+    toJSON: function() {
+            var obj = this.toObject();
+            delete obj.password;
+            return obj;
+        },
     /**
      * Create a new user using the provided inputs,
      * but encrypt the password first.

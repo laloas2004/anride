@@ -25,7 +25,7 @@ module.exports.policies = {
      *                                                                          *
      ***************************************************************************/
 
-    // '*': true,
+     '*': true,
 
     /***************************************************************************
      *                                                                          *
@@ -49,9 +49,9 @@ module.exports.policies = {
     // }
 
 
-//    ChoferController: {
-//        '*': ['isChoferAuth'],
-//        'login': false,
-//        'create': false
-//    }
+    AdminController: {
+        '*': ['isAdminAuth'],
+        'login': false,
+        'create': false
+    }
 };
