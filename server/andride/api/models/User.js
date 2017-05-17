@@ -1,16 +1,12 @@
 
-/**
- * User.js
- *
- * @description :: TODO: You might write a short summary of how this model works and what it represents here.
- * @docs        :: http://sailsjs.org/#!documentation/models
- */
+var bcrypt = require('bcrypt');
 
 module.exports = {
     attributes: {
         email: {
             type: 'email',
-            required: true
+            required: true,
+            unique: true
         },
         password: {
             type: 'string',
@@ -22,22 +18,11 @@ module.exports = {
             enum: ['admin', 'operador'],
         }
     },
-    toJSON: function() {
-            var obj = this.toObject();
-            delete obj.password;
-            return obj;
-        },
-    /**
-     * Create a new user using the provided inputs,
-     * but encrypt the password first.
-     *
-     * @param  {Object}   inputs
-     *                     • name     {String}
-     *                     • email    {String}
-     *                     • password {String}
-     * @param  {Function} cb
-     */
-
+    toJSON: function () {
+        var obj = this.toObject();
+        delete obj.password;
+        return obj;
+    },
     signup: function (inputs, cb) {
         // Create a user
         User.create({
@@ -48,16 +33,6 @@ module.exports = {
         })
                 .exec(cb);
     },
-    /**
-     * Check validness of a login using the provided inputs.
-     * But encrypt the password first.
-     *
-     * @param  {Object}   inputs
-     *                     • email    {String}
-     *                     • password {String}
-     * @param  {Function} cb
-     */
-
     attemptLogin: function (inputs, cb) {
         // Create a user
         User.findOne({
@@ -66,5 +41,19 @@ module.exports = {
             password: inputs.password
         })
                 .exec(cb);
+    },
+    beforeCreate: function (user, cb) {
+        bcrypt.genSalt(10, function (err, salt) {
+            bcrypt.hash(user.password, salt, function (err, hash) {
+                if (err) {
+                    console.log(err);
+                    cb(err);
+                } else {
+                    user.password = hash;
+                    cb();
+                }
+            });
+        });
     }
+
 };

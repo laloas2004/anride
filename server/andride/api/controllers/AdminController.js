@@ -5,30 +5,33 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+
+var passport = require('passport');
+
 module.exports = {
-    
     login: function (req, res) {
+        
+        passport.authenticate('local', function (err, user, info) {
+            if ((err) || (!user)) {
+                return res.send({
+                    message: info.message,
+                    user: user
+                });
+            }
+            req.logIn(user, function (err) {
+                if (err)
+                    res.send(err);
+                return res.send({
+                    message: info.message,
+                    user: user
+                });
+            });
 
-
-
-
-        res.view('login', {clientes: ''});
+        })(req, res);
     },
     logout: function (req, res) {
-
-        // "Forget" the user from the session.
-        // Subsequent requests from this user agent will NOT have `req.session.me`.
-        req.session.me = null;
-
-        // If this is not an HTML-wanting browser, e.g. AJAX/sockets/cURL/etc.,
-        // send a simple response letting the user agent know they were logged out
-        // successfully.
-        if (req.wantsJSON) {
-            return res.ok('Logged out successfully!');
-        }
-
-        // Otherwise if this is an HTML-wanting browser, do a redirect.
-        return res.redirect('/');
+        req.logout();
+        res.redirect('/');
     },
     index: function (req, res) {
 
