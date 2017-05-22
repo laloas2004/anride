@@ -10,6 +10,7 @@ var passport = require('passport');
 
 module.exports = {
     home: function (req, res) {
+        
         res.view('homepage', {});
     },
     login: function (req, res) {
