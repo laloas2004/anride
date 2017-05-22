@@ -15,23 +15,13 @@ module.exports = {
         rol: {
             type: 'string',
             defaultsTo: 'operador',
-            enum: ['admin', 'operador'],
+            enum: ['admin', 'operador','delegado'],
         }
     },
     toJSON: function () {
         var obj = this.toObject();
         delete obj.password;
         return obj;
-    },
-    signup: function (inputs, cb) {
-        // Create a user
-        User.create({
-            name: inputs.name,
-            email: inputs.email,
-            // TODO: But encrypt the password first
-            password: inputs.password
-        })
-                .exec(cb);
     },
     attemptLogin: function (inputs, cb) {
         // Create a user

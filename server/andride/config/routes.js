@@ -29,9 +29,7 @@ module.exports.routes = {
  * `assets` directory)                                                      *
  *                                                                          *
  ***************************************************************************/
-'/': {
-view: 'homepage'
-},
+'/': 'AdminController.home',
         //Controllers Comunes.
         'get /config': 'IndexController.getConfig',
         'get /direccion': 'IndexController.getDireccion',
@@ -87,7 +85,9 @@ view: 'homepage'
          *                                                                          *
          ***************************************************************************/
         'get /login': {view:'login'},
+        'get /signup': {view:'signup'},
         'post /login': 'AdminController.login',
+        'post /user': 'AdminController.user',
         '/logout': 'AdminController.logout',
         'get /admin/clientes': 'AdminController.indexCliente',
         'get /admin/clientes/new': 'AdminController.newCliente',
@@ -111,4 +111,4 @@ view: 'homepage'
         'get /admin/configuracion': 'AdminController.indexConfiguracion',
         'post /admin/configuracion': 'AdminController.saveConfiguracion',
         'post /admin/servicio': 'AdminController.suscribe',
-        };
+};

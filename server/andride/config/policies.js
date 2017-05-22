@@ -51,7 +51,8 @@ module.exports.policies = {
 
     AdminController: {
         '*': ['isAdminAuth'],
-        'login': false,
-        'create': false
+        'login': true,
+        'user': true,
+        
     }
 };

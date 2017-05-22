@@ -9,22 +9,33 @@
 var passport = require('passport');
 
 module.exports = {
+    home: function (req, res) {
+        res.view('homepage', {});
+    },
     login: function (req, res) {
-        
+
+
         passport.authenticate('local', function (err, user, info) {
+
+
             if ((err) || (!user)) {
+
                 return res.send({
                     message: info.message,
                     user: user
                 });
+
             }
             req.logIn(user, function (err) {
                 if (err)
                     res.send(err);
-                return res.send({
-                    message: info.message,
-                    user: user
-                });
+
+                return res.redirect('/');
+
+//                return res.send({
+//                    message: info.message,
+//                    user: user
+//                });
             });
 
         })(req, res);
@@ -32,6 +43,27 @@ module.exports = {
     logout: function (req, res) {
         req.logout();
         res.redirect('/');
+    },
+    user: function (req, res) {
+
+        var email = req.param('email');
+
+        var password = req.param('password');
+
+        User.create({email: email, password: password}).exec(function (err, user) {
+
+
+
+            if (err) {
+
+                return res.json(err.status, {err: err});
+            }
+
+
+            return res.redirect('/');
+
+        });
+
     },
     index: function (req, res) {
 
@@ -358,7 +390,7 @@ module.exports = {
 
             return res.redirect('/admin/choferes');
 
-        })
+        });
 
     },
     deleteChofer: function (req, res) {
