@@ -469,7 +469,13 @@ module.exports = {
     },
     indexDelegados:function(req, res){
         
-     res.view('delegados/home', {saludos: 'saludos!!'});   
+        User.find({rol:'delegado'}).exec(function(err, delegados){
+
+            res.view('delegados/home', {delegados:delegados});     
+            
+        });
+        
+     
     },
     newDelegado:function(req, res){
         
@@ -479,7 +485,7 @@ module.exports = {
      
         var delegado = req.param('delegado');
 
-        Chofer.create(delegado).exec(function (err, chofer) {
+        User.create(delegado).exec(function (err, user) {
 
             if (err) {
                 return res.json(err.status, {err: err});

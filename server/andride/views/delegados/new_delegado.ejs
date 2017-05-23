@@ -7,7 +7,7 @@
             <div class="page-header">
                 <h1>Nuevo Delegado</h1>
                 <div>
-                    <form role="form" method="POST">
+                    <form role="form" method="POST" action="/admin/delegados">
                     <input type="hidden" name="delegado[rol]" value="delegado">
                         <div class="form-group">
                             <label for="delegado.nombre">Nombre</label>
@@ -49,7 +49,7 @@
                         <div class="form-group">
                             <label for="delegado.imagen">Imagen de Delegado</label>
                             <input type="file" class="form-control" id="delegado.imagen"
-                                   name="delegado[imagen]" required accept="image/*">
+                                   name="delegado[imagen]" accept="image/*">
                         </div>
                         <button type="submit" class="btn btn-default">Guardar</button>
                     </form>
