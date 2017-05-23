@@ -95,6 +95,10 @@ module.exports = {
         },
         cartaNopenalesFile: {
             type: 'string'
+        },
+        delegado:{
+            
+           model: 'user'
         }
     },
     beforeCreate: function (attrs, cb) {

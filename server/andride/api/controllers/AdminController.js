@@ -471,7 +471,26 @@ module.exports = {
         
      res.view('delegados/home', {saludos: 'saludos!!'});   
     },
+    newDelegado:function(req, res){
+        
+      return res.view('delegados/new_delegado', {});   
+    },
     saveDelegado:function(req, res){
+     
+        var delegado = req.param('delegado');
+
+        Chofer.create(delegado).exec(function (err, chofer) {
+
+            if (err) {
+                return res.json(err.status, {err: err});
+            }
+
+
+//            console.log(chofer);
+
+            return res.redirect('/admin/delegados');
+
+        });
         
     }
 };

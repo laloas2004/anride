@@ -112,6 +112,7 @@ module.exports.routes = {
         'post /admin/configuracion': 'AdminController.saveConfiguracion',
         'post /admin/servicio': 'AdminController.suscribe',
         'get /admin/delegados': 'AdminController.indexDelegados',
+        'get /admin/delegados/new': 'AdminController.newDelegado',
         'post /admin/delegados': 'AdminController.saveDelegado',
         
 };

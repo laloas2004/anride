@@ -12,10 +12,25 @@ module.exports = {
             type: 'string',
             required: true
         },
+        nombre: {
+            type: 'string'
+        },
+        apellido: {
+            type: 'string'
+        },
+        numCel: {
+            type: 'string'
+        },
+        domicilio: {
+            type: 'string'
+        },
+        imagen: {
+            type: 'string'
+        },
         rol: {
             type: 'string',
             defaultsTo: 'operador',
-            enum: ['admin', 'operador','delegado'],
+            enum: ['admin', 'operador', 'delegado'],
         }
     },
     toJSON: function () {
