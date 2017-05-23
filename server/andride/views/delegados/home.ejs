@@ -21,13 +21,15 @@
                             </tr>
                         </thead>
                         <tbody>
-
+<%  
+                            _.each(delegados,function(delegado){ %>
                             <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td><%= delegado.nombre%></td>
+                                <td><%= delegado.apellido%></td>
+                                <td><%= delegado.email%></td>
+                                <td><%= delegado.numCel%></td>
                             </tr>
+                            <% })%>
                         </tbody>
                     </table>
 
