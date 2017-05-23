@@ -1,0 +1,128 @@
+<%- include ../includes/menu %>
+
+<div class="container">
+    <div class="page-header">
+                <h1>Delegados</h1>
+                <div>
+                    <div class=""><a href="/admin/choferes/new" class="btn btn-default">Nuevo Delegado</a></div>
+    <div id="map" style="height:450px;margin-top:10px;" class="col-md-12">
+
+    </div>
+    <div class="row ">
+        <div class ="col-md-12">
+            
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Apellidos</th>
+                                <th>Email</th>
+                                <th>Telefono</th>
+                                <th>Operaciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <%  
+                            _.each(choferes,function(chofer){ %>
+                            <tr>
+                                <td><%= chofer.nombre%></td>
+                                <td><%= chofer.apellido%></td>
+                                <td><%= chofer.email%></td>
+                                <td><%= chofer.numCel%></td>
+                                <td><a href="<%='/admin/choferes/edit/'+chofer.id %>" class="btn btn-primary">Editar</a> <a href="<%='/admin/autos/'+chofer.id %>" class="btn btn-primary">Autos</a> <a href="#" class="btn btn-primary">Servicios</a> <a href="/admin/choferes/delete/<%= chofer.id%>" class="btn btn-danger">Bloquear</a></td>
+                            </tr><% })%>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+
+        </div>
+        <script>
+
+            var markersChoferes = [];
+            function initMap() {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: {lat: 25.747215080976115, lng: -100.29709576508179},
+                    zoom: 12
+                });
+
+                if (navigator.geolocation) {
+
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        var pos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+
+                        map.setCenter(pos);
+
+
+
+                    })
+
+
+                }
+
+                setMarkersChoferes(map);
+            }
+
+
+
+
+
+            function setMarkersChoferes() {
+
+
+
+                io.socket.get("/admin/choferes/mapa", {}, function(resData, jwres) {
+
+
+
+                    $.each(resData, function(index, value) {
+
+                        if (value.lat && value.lon) {
+
+                            var myLatLng = {lat: value.lat, lng: value.lon};
+
+                            markersChoferes.push(new google.maps.Marker({
+                                position: myLatLng,
+                                map: map,
+                                title: value.nombre
+                            }));
+
+                        }
+
+
+
+                    })
+
+
+
+
+                });
+
+
+            }
+
+            function resetMarkers(cb) {
+                $.each(markersChoferes, function(index, value) {
+                    value.setMap(null);
+
+                });
+
+                cb();
+            }
+
+            io.socket.on('chofer_online', function(msg) {
+
+                resetMarkers(setMarkersChoferes);
+
+            });
+
+
+        </script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWp8rfTpYiFsnn2tLEx4VupIqkLCqQllA&callback=initMap"
+                async defer>
+        </script>

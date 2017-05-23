@@ -466,6 +466,13 @@ module.exports = {
 
 
 
+    },
+    indexDelegados:function(req, res){
+        
+     res.view('delegados/home', {saludos: 'saludos!!'});   
+    },
+    saveDelegado:function(req, res){
+        
     }
 };
 
