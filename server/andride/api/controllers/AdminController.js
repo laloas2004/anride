@@ -111,19 +111,17 @@ module.exports = {
     },
     indexChoferes: function (req, res) {
 
-//        if (req.isSocket) {
-//            sails.sockets.join(req, "funSockets", function(err) {
-//                return res.json({
-//                    message: 'Subscribed to a fun room called ' + 'un grupo' + '!'
-//                });
-//            });
-//           
-//        }
-
-
-        Chofer.find().exec(function (err, choferes) {
+        Chofer.find().populate('delegado').exec(function (err, choferes) {
 //            console.log(choferes);
-            res.view('choferes/home', {choferes: choferes});
+
+            User.find({rol:'delegado'}).exec(function (err, delegados) {
+                
+                debugger;
+            res.view('choferes/home', {choferes: choferes, delegados:delegados});
+
+            });
+
+            
         });
 
     },

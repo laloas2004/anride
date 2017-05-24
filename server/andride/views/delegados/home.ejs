@@ -28,6 +28,8 @@
                                 <td><%= delegado.apellido%></td>
                                 <td><%= delegado.email%></td>
                                 <td><%= delegado.numCel%></td>
+                                <td><a href="<%='/admin/choferes/edit/'+delegado.id %>" class="btn btn-primary">Editar</a>   <a href="/admin/delegado/delete/<%= delegado.id%>" class="btn btn-danger">Eliminar</a></td>
+
                             </tr>
                             <% })%>
                         </tbody>

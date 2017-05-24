@@ -97,7 +97,6 @@ module.exports = {
             type: 'string'
         },
         delegado:{
-            
            model: 'user'
         }
     },
