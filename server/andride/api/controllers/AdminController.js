@@ -11,7 +11,26 @@ var passport = require('passport');
 module.exports = {
     home: function (req, res) {
 
-        res.view('homepage', {});
+        var clientes_conectados = "";
+        var choferes_conectados = "";
+
+        Cliente.find({online: true}).exec(function (err, clientes) {
+            clientes_conectados = clientes.length;
+            Chofer.find({online: true}).exec(function (err, choferes) {
+                
+                choferes_conectados = choferes.length;
+
+
+                res.view('homepage', {clientes_conectados: clientes_conectados,choferes_conectados:choferes_conectados});
+            });
+
+
+
+
+
+        });
+
+
     },
     login: function (req, res) {
 
