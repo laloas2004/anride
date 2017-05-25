@@ -96,8 +96,8 @@ module.exports = {
         cartaNopenalesFile: {
             type: 'string'
         },
-        delegado:{
-           model: 'user'
+        delegado: {
+            model: 'user'
         }
     },
     beforeCreate: function (attrs, cb) {
@@ -128,8 +128,26 @@ module.exports = {
     },
     beforeUpdate: function (attrs, cb) {
 
+        if (attrs.password) {
 
-        cb();
+            bcrypt.genSalt(10, function (err, salt) {
+
+                bcrypt.hash(attrs.password, salt, function (err, hash) {
+
+                    if (err) {
+                        console.log(err);
+                        cb(err);
+                    } else {
+                        attrs.password = hash;
+                        cb();
+                    }
+                });
+            });
+        } else {
+            
+            cb();
+
+        }
     },
     getChoferesCercanos: function (ClientCoordinates, maxDistance, limitChoferes) {
 

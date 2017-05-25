@@ -10,7 +10,7 @@ var passport = require('passport');
 
 module.exports = {
     home: function (req, res) {
-        
+
         res.view('homepage', {});
     },
     login: function (req, res) {
@@ -114,14 +114,14 @@ module.exports = {
         Chofer.find().populate('delegado').exec(function (err, choferes) {
 //            console.log(choferes);
 
-            User.find({rol:'delegado'}).exec(function (err, delegados) {
-                
-                debugger;
-            res.view('choferes/home', {choferes: choferes, delegados:delegados});
+            User.find({rol: 'delegado'}).exec(function (err, delegados) {
+
+
+                return res.view('choferes/home', {choferes: choferes, delegados: delegados});
 
             });
 
-            
+
         });
 
     },
@@ -193,7 +193,6 @@ module.exports = {
         var chofer = auto.chofer;
 
 
-//        debugger;
 
         Auto.create(auto).exec(function (err, auto) {
 
@@ -370,11 +369,15 @@ module.exports = {
     },
     newChofer: function (req, res) {
 
-        return res.view('choferes/new_chofer', {});
+
+        User.find({rol: 'delegado'}).exec(function (err, delegados) {
+            return res.view('choferes/new_chofer', {delegados: delegados});
+
+        });
+
+
     },
     saveChofer: function (req, res) {
-
-
 
         var chofer = req.param('chofer');
 
@@ -414,16 +417,18 @@ module.exports = {
             return res.json(403, {err: 'Id de Chofer es Oblgatorio.'});
         }
 
-        Chofer.findOne({id: choferId}).exec(function (err, chofer) {
+        Chofer.findOne({id: choferId}).populate('delegado').exec(function (err, chofer) {
 
             if (err) {
                 return res.json(err.status, {err: err});
             }
+            
+            
+            User.find({rol: 'delegado'}).exec(function (err, delegados) {
 
+                return res.view('choferes/edit_chofer', {chofer: chofer, delegados: delegados});
 
-
-            return res.view('choferes/edit_chofer', {chofer: chofer});
-
+            });
         });
 
     },
@@ -437,9 +442,11 @@ module.exports = {
 
 //        console.log(chofer);
 
-        if (chofer.password) {
-
-            Chofer.update({id: chofer.id}, {}).exec(function () {
+        if (chofer.password == "") {
+            
+            delete chofer.password;
+            
+            Chofer.update({id: chofer.id}, chofer).exec(function () {
 
                 return res.redirect('/admin/choferes');
 
@@ -448,7 +455,7 @@ module.exports = {
 
         } else {
 
-            Chofer.update({id: chofer.id}, {}).exec(function () {
+            Chofer.update({id: chofer.id}, chofer).exec(function () {
 
                 return res.redirect('/admin/choferes');
 
@@ -465,22 +472,22 @@ module.exports = {
 
 
     },
-    indexDelegados:function(req, res){
-        
-        User.find({rol:'delegado'}).exec(function(err, delegados){
+    indexDelegados: function (req, res) {
 
-            res.view('delegados/home', {delegados:delegados});     
-            
+        User.find({rol: 'delegado'}).exec(function (err, delegados) {
+
+            res.view('delegados/home', {delegados: delegados});
+
         });
-        
-     
+
+
     },
-    newDelegado:function(req, res){
-        
-      return res.view('delegados/new_delegado', {});   
+    newDelegado: function (req, res) {
+
+        return res.view('delegados/new_delegado', {});
     },
-    saveDelegado:function(req, res){
-     
+    saveDelegado: function (req, res) {
+
         var delegado = req.param('delegado');
 
         User.create(delegado).exec(function (err, user) {
@@ -495,7 +502,7 @@ module.exports = {
             return res.redirect('/admin/delegados');
 
         });
-        
+
     }
 };
 
