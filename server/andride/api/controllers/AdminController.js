@@ -7,6 +7,7 @@
 
 
 var passport = require('passport');
+var moment = require('moment');
 
 module.exports = {
     home: function (req, res) {
@@ -15,18 +16,26 @@ module.exports = {
         var choferes_conectados = "";
 
         Cliente.find({online: true}).exec(function (err, clientes) {
+            
+            
+            if (err) {
+                return res.json(err.status, {err: err});
+            }
+
+            
             clientes_conectados = clientes.length;
+            
             Chofer.find({online: true}).exec(function (err, choferes) {
                 
+                if (err) {
+                return res.json(err.status, {err: err});
+            }
+
+                
                 choferes_conectados = choferes.length;
-
-
+                
                 res.view('homepage', {clientes_conectados: clientes_conectados,choferes_conectados:choferes_conectados});
             });
-
-
-
-
 
         });
 
