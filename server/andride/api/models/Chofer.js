@@ -78,6 +78,9 @@ module.exports = {
         municipio: {
             type: 'string'
         },
+        ife: {
+            type: 'string'
+        },
         numLicencia: {
             type: 'string'
         },
@@ -144,7 +147,7 @@ module.exports = {
                 });
             });
         } else {
-            
+
             cb();
 
         }

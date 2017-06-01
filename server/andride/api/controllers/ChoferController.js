@@ -918,6 +918,39 @@ module.exports = {
         });
 
 
+    },
+    validarEmail: function (req, res) {
+
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+
+        var email = req.param('email');
+
+
+
+        if (email) {
+
+            Chofer.findOne({email: email}).exec(function (err, chofer) {
+
+                if (err) {
+                    return res.serverError(err);
+                }
+
+                if (chofer) {
+
+                    return res.json({valido: false});
+
+                } else {
+                    return res.json({valido: true});
+                }
+
+            });
+
+        } else {
+            return res.badRequest();
+        }
+
     }
 
 
