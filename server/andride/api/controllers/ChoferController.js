@@ -10,22 +10,51 @@ var Q = require('q');
 module.exports = {
     create: function (req, res) {
 
+            
+        console.log(req.allParams());
+        
+        var chofer = JSON.parse(req.param('chofer'));
+        
+       
+        if (!chofer.nombre) {
+            return res.json(401, {err: 'nombre required'});
+        }
 
-//        if (req.body.password !== req.body.confirmPassword) {
-//            return res.json(401, {err: 'Password doesn\'t match, What a shame!'});
-//        }
+        if (!chofer.apellido) {
+            return res.json(401, {err: 'apellido required'});
+        }
 
-        Chofer.create(req.body).exec(function (err, chofer) {
+        if (!chofer.celular) {
+            return res.json(401, {err: 'celular required'});
+        }
+        if (!chofer.email) {
+            return res.json(401, {err: 'email required'});
+        }
+        if (!chofer.password) {
+            return res.json(401, {err: 'password required'});
+        }
+
+        Chofer.create({
+            nombre: chofer.nombre,
+            apellido: chofer.apellido,
+            email: chofer.email,
+            numCel: chofer.celular,
+            password: chofer.password
+        }).exec(function(err, chofer) {
 
             if (err) {
-                return res.json(err.status, {err: err});
+                return res.json(403, {err: 'Error al registrar'});
             }
 
-            if (chofer) {
-                res.json(200, {chofer: chofer, token: jwToken.issue({id: chofer.id})});
-            }
+            delete chofer.password;
+
+            res.json({
+                chofer: chofer,
+                token: jwToken.issue({id: chofer.id})
+            });
 
         });
+
     },
     login: function (req, res) {
 
