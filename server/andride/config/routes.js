@@ -94,12 +94,20 @@ module.exports.routes = {
         'post /user': 'AdminController.user',
         '/logout': 'AdminController.logout',
         'get /admin/clientes': 'AdminController.indexCliente',
+        'post /admin/clientes/validar': 'AdminController.validateCliente',
         'get /admin/clientes/new': 'AdminController.newCliente',
         'get /admin/clientes/edit/:cliente': 'AdminController.editCliente',
         'get /admin/clientes/servicios/:clienteId': 'AdminController.getClienteServicios',
         'post /admin/clientes/new': 'AdminController.saveCliente',
         'post /admin/clientes/edit/:clienteId': 'AdminController.updateCliente',
+        
+        
+        
         'get /admin/solicitudes': 'AdminController.indexSolicitudes',
+        'get /admin/solicitudes/new': 'AdminController.newSolicitud',
+        
+        
+        
         'get /admin/servicios': 'AdminController.indexServicios',
         'get /admin/choferes': 'AdminController.indexChoferes',
         'get /admin/choferes/new': 'AdminController.newChofer',

@@ -16,13 +16,17 @@ module.exports = {
             type: "string"
         },
         email: {
-            type: "email"
+            type: "email",
+            unique: true,
+            required: true
         },
         password: {
             type: "string"
         },
         numCel: {
-            type: 'string'
+            type: 'string',
+            unique: true,
+            required: true
         },
         solicitudes: {
             collection: 'solicitud',
@@ -58,9 +62,9 @@ module.exports = {
             defaultsTo: false
         }
     },
-    comparePassword: function(password, chofer, cb) {
+    comparePassword: function (password, chofer, cb) {
 
-        bcrypt.compare(password, chofer.password, function(err, match) {
+        bcrypt.compare(password, chofer.password, function (err, match) {
 
             if (err)
                 cb(err);
@@ -71,20 +75,20 @@ module.exports = {
             }
         })
     },
-    changePassword: function(newPassword, cb) {
+    changePassword: function (newPassword, cb) {
         this.newPassword = newPassword;
-        this.save(function(err, u) {
+        this.save(function (err, u) {
             return cb(err, u);
         });
     },
-    toJSON: function() {
+    toJSON: function () {
         var obj = this.toObject();
         return obj;
     },
-    beforeCreate: function(attrs, cb) {
+    beforeCreate: function (attrs, cb) {
 
-        bcrypt.genSalt(10, function(err, salt) {
-            bcrypt.hash(attrs.password, salt, function(err, hash) {
+        bcrypt.genSalt(10, function (err, salt) {
+            bcrypt.hash(attrs.password, salt, function (err, hash) {
                 if (err) {
                     console.log(err);
                     cb(err);
@@ -95,13 +99,13 @@ module.exports = {
             });
         });
     },
-    beforeUpdate: function(attrs, cb) {
+    beforeUpdate: function (attrs, cb) {
 
         if (attrs.newPassword) {
 
-            bcrypt.genSalt(10, function(err, salt) {
+            bcrypt.genSalt(10, function (err, salt) {
 
-                bcrypt.hash(attrs.password, salt, function(err, hash) {
+                bcrypt.hash(attrs.password, salt, function (err, hash) {
 
                     if (err) {
                         console.log(err);

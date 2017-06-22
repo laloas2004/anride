@@ -7,7 +7,7 @@
 
 
 var passport = require('passport');
-var moment = require('moment');
+    moment = require('moment');
 
 module.exports = {
     home: function (req, res) {
@@ -112,9 +112,6 @@ module.exports = {
         var limit = req.param('limit') || 20;
         var moment = require('moment');
 
-
-
-
         Solicitud.find().sort('createdAt desc').limit(limit).populate('cliente').exec(function (err, solicitudes) {
             if (err) {
                 return res.json(err.status, {err: err});
@@ -124,6 +121,11 @@ module.exports = {
         });
 
 
+    },
+    newSolicitud:function(req, res){
+        
+        
+     res.view('solicitudes/new_solicitud', {moment: moment});   
     },
     indexServicios: function (req, res) {
         var limit = req.param('limit') || 20;
@@ -280,9 +282,10 @@ module.exports = {
 
         var cliente = req.param('cliente');
 
-
+        cliente.email = cliente.email.toLowerCase();
 
         Cliente.create(cliente).exec(function (err, cliente) {
+            
             if (err) {
                 return res.json(err.status, {err: err});
             }
@@ -319,6 +322,9 @@ module.exports = {
 
 
 
+    },
+    validateCliente:function(req, res){
+        
     },
     updateCliente: function (req, res) {
 

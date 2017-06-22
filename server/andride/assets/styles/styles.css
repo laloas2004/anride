@@ -74,5 +74,5 @@ form[role=login] > div {
 
 #new_auto_form input{
     
-    text-transform: uppercase;  
+    /*text-transform: uppercase;*/  
 }

@@ -5,53 +5,203 @@
     <div class="row">
         <div class ="col-md-12">
             <div class="page-header">
-                <h1>Nueva solicitud de Servicio</h1>
+                <h1>Nueva Solicitud</h1>
                 <div>
                     <form role="form" method="POST">
 
-                        <div class="form-group">
-                            <label for="cliente.nombre">Nombre</label>
-                            <input type="text" class="form-control" id="cliente.nombre"
-                                   placeholder="Introduce un Nombre" name="cliente[nombre]" required>
+
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Direccion Origen</div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label for="servicio.origen">Origen</label>
+                                    <input type="text" class="form-control" id="servicio_origen"
+                                           placeholder="Introduce un Origen" name="servicio[origen]" required>
+                                    <input type="hidden" class="form-control" id="coords_origen" name="servicio[coords_origen]">
+                                </div>
+                                <div class="form-group">
+                                    <label for="origen_ciudad">Ciudad</label>
+                                    <input type="text" class="form-control" id="origen_ciudad" readonly="true">
+
+                                </div>
+                                <div class="form-group">
+                                    <label for="origen_estado">Estado</label>
+                                    <input type="text" class="form-control" id="origen_estado" readonly="true">
+
+                                </div>
+                                <div class="form-group">
+                                    <label for="origen_cp">CP</label>
+                                    <input type="text" class="form-control" id="origen_cp" readonly="true">
+
+                                </div>
+
+
+                            </div>
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="cliente.apellido">Apellidos</label>
-                            <input type="text" class="form-control" id="cliente.apellido"
-                                   placeholder="Introduce Apellidos" name="cliente[apellido]" required >
-                                   </div>
-                                   <div class="form-group">
-                                   <label for="cliente.email">Email</label>
-                            <input type="email" class="form-control" id="cliente.email"
-                                   placeholder="Introduce un Email" name="cliente[email]" required style="text-transform: lowercase;">
-                                   </div>
-                                   <div class="form-group">
-                                   <label for="cliente.password">Password</label>
-                            <input type="password" class="form-control" id="cliente.password"
-                                   placeholder="Introduce un Password" name="cliente[password]" required>
-                                   </div>
-                                   <div class="form-group">
-                                   <label for="cliente.numCel">Telefono Cel.</label>
-                            <input type="text" class="form-control" id="cliente.numCel"
-                                   placeholder="Introduce Celular" name="cliente[numCel]" required>
-                                   </div>
-                                   <button type="submit" class="btn btn-default">Guardar</button>
-                            </form>
-                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Direccion Destino</div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label for="cliente.apellido">Destino</label>
+                                    <input type="text" class="form-control" id="servicio_destino"
+                                           placeholder="Introduce Destino" name="servicio[destino]" required >
+                                    <input type="hidden" class="form-control" id="coords_destino" name="servicio[coords_destino]">
+                                </div>
+                                <div class="form-group">
+                                    <label for="origen_ciudad">Ciudad</label>
+                                    <input type="text" class="form-control" id="origen_ciudad" readonly="true">
+
+                                </div>
+                                <div class="form-group">
+                                    <label for="origen_estado">Estado</label>
+                                    <input type="text" class="form-control" id="origen_estado" readonly="true">
+
+                                </div>
+                                <div class="form-group">
+                                    <label for="origen_cp">CP</label>
+                                    <input type="text" class="form-control" id="origen_cp" readonly="true">
+
+                                </div>
+                            </div></div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Datos del Cliente</div>
+                            <div class="panel-body">
+
+                                <div class="form-group">
+                                    <label for="cliente.email">Numero Celular</label>
+                                    <input type="email" class="form-control" id="cliente.email"
+                                           placeholder="Introduce un Email" name="cliente[email]" required style="text-transform: lowercase;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cliente.email">Correo electronico</label>
+                                    <input type="email" class="form-control" id="cliente.email"
+                                           placeholder="Introduce un Email" name="cliente[email]" required style="text-transform: lowercase;">
+                                </div>
+                            </div></div>
+
+                        <button type="submit" class="btn btn-default">Enviar Solicitud</button>
+                    </form>
+
+                    <div id="map" style="height:450px;margin-top:10px;" class="col-md-12"></div> 
                 </div>
-
-
             </div>
-            <script>
-                $(document).ready(function() {
 
 
+        </div>
+        <script>
 
+            var placeSearch, autocomplete;
 
+            var componentForm_origen = {
+                street_number: 'short_name',
+                route: 'long_name',
+                locality: 'long_name',
+                administrative_area_level_1: 'short_name',
+                country: 'long_name',
+                postal_code: 'short_name'
+            };
 
+            function initMap() {
+
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: {lat: 25.747215080976115, lng: -100.29709576508179},
+                    zoom: 12
                 });
 
+                // Create the autocomplete object, restricting the search to geographical
+                // location types.
+                autocomplete_origen = new google.maps.places.Autocomplete(
+                        /** @type {!HTMLInputElement} */(document.getElementById('servicio_origen')),
+                        {types: ['geocode']});
+
+                autocomplete_destino = new google.maps.places.Autocomplete(
+                        /** @type {!HTMLInputElement} */(document.getElementById('servicio_destino')),
+                        {types: ['geocode']});
+
+                // When the user selects an address from the dropdown, populate the address
+                // fields in the form.
+                autocomplete_origen.addListener('place_changed', fillInAddress_origen);
+                autocomplete_destino.addListener('place_changed', fillInAddress_origen);
 
 
 
-            </script>
+            }
+
+
+            function fillInAddress_destino() {
+                // Get the place details from the autocomplete object.
+                var place = autocomplete.getPlace();
+                debugger;
+                for (var component in componentForm_origen) {
+
+                    document.getElementById(component).value = '';
+                    document.getElementById(component).disabled = false;
+                }
+
+                // Get each component of the address from the place details
+                // and fill the corresponding field on the form.
+                for (var i = 0; i < place.address_components.length; i++) {
+
+                    var addressType = place.address_components[i].types[0];
+
+                    if (componentForm_origen[addressType]) {
+
+                        var val = place.address_components[i][componentForm_origen[addressType]];
+
+                        document.getElementById(addressType).value = val;
+                    }
+                }
+            }
+            function fillInAddress_origen() {
+                // Get the place details from the autocomplete object.
+                var place = autocomplete.getPlace();
+                debugger;
+                for (var component in componentForm_origen) {
+
+                    document.getElementById(component).value = '';
+                    document.getElementById(component).disabled = false;
+                }
+
+                // Get each component of the address from the place details
+                // and fill the corresponding field on the form.
+                for (var i = 0; i < place.address_components.length; i++) {
+
+                    var addressType = place.address_components[i].types[0];
+
+                    if (componentForm_origen[addressType]) {
+
+                        var val = place.address_components[i][componentForm_origen[addressType]];
+
+                        document.getElementById(addressType).value = val;
+                    }
+                }
+            }
+
+
+            $(document).ready(function () {
+
+                /*        $('#servicio_origen').on('input', function (e) {
+                 
+                 $('#servicio_origen').autocomplete({
+                 source: ['prueba', 'prueba 2']
+                 });
+                 
+                 });
+                 
+                 $('#servicio_destino').on('input', function (e) {
+                 alert('cambio');
+                 });*/
+
+
+            });
+
+
+
+
+        </script>
+
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWp8rfTpYiFsnn2tLEx4VupIqkLCqQllA&libraries=places&callback=initMap"
+                async defer>
+        </script>
