@@ -1,5 +1,48 @@
 <ion-view view-title="Registro" hide-nav-bar="true" class="">
-  <ion-content class="">
-REGISTRO
-  </ion-content>
+    <ion-content class="login-bg">
+
+        <div class="login-content" ng-controller="RegistroCtrl" style="width: 95%;">
+
+            <div class="light-bg">
+
+                <div class="list padding">
+                    <h3>Registrarse como Conductor</h3>
+                    <form name="form_registro" novalidate>
+
+                        <label class="item item-input">
+                            <i class="ion-ios-email-outline light icon-label"></i>
+                            <input type="text" placeholder="Nombre" ng-model="r.nombre" ng-required="true" ng-minlength="4">
+                        </label>
+                        <label class="item item-input">
+                            <i class="ion-ios-email-outline light icon-label"></i>
+                            <input type="text" placeholder="Apellido" ng-model="r.apellido" ng-required="true" ng-minlength="4">
+                        </label>
+                        <label class="item item-input">
+                            <i class="ion-ios-email-outline light icon-label"></i>
+                            <input type="number" placeholder="Celular" ng-model="r.celular" ng-required="true" ng-minlength="8">
+                        </label>
+                        <label class="item item-input">
+                            <i class="ion-ios-email-outline light icon-label"></i>
+                            <input type="email" placeholder="Email" ng-model="r.email" ng-required="true">
+                        </label>
+                        <label class="item item-input">
+                            <i class="ion-ios-locked-outline light icon-label"></i>
+                            <input type="password" placeholder="Password" ng-model="r.password" ng-required="true" ng-minlength="6">
+                        </label>
+                    </form>
+                </div> 
+
+                <div class="padding">
+                    <button class="button button-block button-balanced" ng-click="validate()" ng-disabled="form_registro.$invalid">
+                        Registrarse
+                    </button>
+                </div>
+            </div>   
+
+
+
+        </div>
+
+
+    </ion-content>
 </ion-view>

@@ -111,7 +111,35 @@ angular.module('app.services', [])
 
                             });
                     return q.promise;
-                }
+                },
+            registro:function(data){
+                
+                  var q = $q.defer();
+
+                    $http({
+                        url: $rootScope.serverIp + "/chofer/registro",
+                        method: "POST",
+                        params: {
+                            chofer: data
+                        }
+                    })
+                            .then(function(response) {
+
+                            $localStorage.token = response.data.token;
+                            $localStorage.chofer = response.data.chofer;
+                            q.resolve(response.data.chofer);
+
+                            })
+                            .catch(function(err) {
+                               
+                               q.reject(err);
+
+                            })
+
+                    return q.promise;
+                
+
+            }
 
             }
 

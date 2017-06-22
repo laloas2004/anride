@@ -226,7 +226,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                                 markerChofer.remove();
                             }
                             
-                            debugger;
+                           
 
                             $scope.map.addMarker({
                                 'position': myPosition,
@@ -878,9 +878,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             }
 $scope.abrirNavegacion = function(){
     
-    debugger;
-        var longitude = 0;
-        var latitude = 0;
+    
+        var longitude = $scope.$storage.solicitud.origen.coords.longitude || 0;
+        var latitude = $scope.$storage.solicitud.origen.coords.latitude || 0;
         var destination = [latitude, longitude];
 	var start = null;
     $cordovaLaunchNavigator.navigate(destination, start).then(function() {
@@ -1090,8 +1090,77 @@ $scope.abrirNavegacion = function(){
 
 
         })
-        .controller('RegistroCtrl', function($scope,
-                $ionicHistory) {
+        .controller('RegistroCtrl', function ($scope,
+                $ionicHistory,
+                $ionicLoading,
+                $sails,
+                $ionicPopup,
+                AuthService,
+                $rootScope,
+                $ionicSideMenuDelegate,
+                $state) {
+
+            $scope.validate = function () {
+                $ionicLoading.show({
+                    template: 'Enviando Informacion de Registro...',
+                    showBackdrop: false
+                });
+
+
+                if ($scope.r.email) {
+
+                    $sails.post("/chofer/registro/validar", {email: $scope.r.email})
+                            .success(function (val, status, headers, jwr) {
+
+                                if (!val.valido) {
+                                    $ionicLoading.hide();
+                                    var alertPopup = $ionicPopup.alert({
+                                        title: 'Ya existe una cuenta con ese email.',
+                                        template: 'Por favor entre con su cuenta.'
+                                    });
+
+                                    return;
+
+                                } else {
+                                    
+                                    $scope.registro();
+                                }
+
+                            })
+                            .error(function (err) {
+                                $ionicLoading.hide();
+                                console.error(err);
+
+                            });
+
+                }
+
+
+            }
+
+            $scope.registro = function () {
+
+                AuthService.registro($scope.r)
+                        .then(function (response) {
+
+//                            $rootScope.solicitud.chofer = response;
+                            $ionicSideMenuDelegate.canDragContent(true);
+
+                            AuthService.suscribe().then(function (response) {
+                                $ionicLoading.hide();
+                                $state.go('app.main', {});
+                            }, function (err) {
+                                $ionicLoading.hide();
+                            });
+
+
+                        }, function (err) {
+                            $ionicLoading.hide();
+                            console.error(err);
+
+                        })
+
+            }
 
 
 
