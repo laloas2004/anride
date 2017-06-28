@@ -12,32 +12,65 @@ var gcm = require('node-gcm');
 
 module.exports = {
     home: function (req, res) {
-
+        var start_today = moment().startOf('day').format(); // set to 12:00 am today
+        var end_today = moment().endOf('day').format(); // set to 23:59 pm today
         var clientes_conectados = "";
         var choferes_conectados = "";
+        var servicios_hoy = "";
+        var solicitudes_hoy = "";
 
-        Cliente.find({online: true}).exec(function (err, clientes) {
-            
-            
+
+        Solicitud.find().where({'createdAt': {$gte: start_today, $lt: end_today}}).exec(function (err, solictudes) {
+
             if (err) {
+
                 return res.json(err.status, {err: err});
+
             }
 
-            
-            clientes_conectados = clientes.length;
-            
-            Chofer.find({online: true}).exec(function (err, choferes) {
-                
+            solicitudes_hoy = solictudes.length;
+
+            Servicio.find({createdAt: {$gte: start_today, $lt: end_today}}).exec(function (err, servicios) {
+
                 if (err) {
-                return res.json(err.status, {err: err});
-            }
 
-                
-                choferes_conectados = choferes.length;
-                
-                res.view('homepage', {clientes_conectados: clientes_conectados,choferes_conectados:choferes_conectados});
+                    return res.json(err.status, {err: err});
+                }
+
+                servicios_hoy = servicios.length;
+
+
+
+
+                Cliente.find({online: true}).exec(function (err, clientes) {
+
+
+                    if (err) {
+                        return res.json(err.status, {err: err});
+                    }
+
+
+                    clientes_conectados = clientes.length;
+
+                    Chofer.find({online: true}).exec(function (err, choferes) {
+
+                        if (err) {
+                            return res.json(err.status, {err: err});
+                        }
+
+
+                        choferes_conectados = choferes.length;
+
+                        res.view('homepage', {
+                            clientes_conectados: clientes_conectados,
+                            choferes_conectados: choferes_conectados,
+                            servicios_hoy: servicios_hoy,
+                            solicitudes_hoy: solicitudes_hoy});
+                    });
+
+                });
+
             });
-
         });
 
 
@@ -123,10 +156,10 @@ module.exports = {
 
 
     },
-    newSolicitud:function(req, res){
-        
-        
-     res.view('solicitudes/new_solicitud', {moment: moment});   
+    newSolicitud: function (req, res) {
+
+
+        res.view('solicitudes/new_solicitud', {moment: moment});
     },
     indexServicios: function (req, res) {
         var limit = req.param('limit') || 20;
@@ -286,7 +319,7 @@ module.exports = {
         cliente.email = cliente.email.toLowerCase();
 
         Cliente.create(cliente).exec(function (err, cliente) {
-            
+
             if (err) {
                 return res.json(err.status, {err: err});
             }
@@ -324,8 +357,8 @@ module.exports = {
 
 
     },
-    validateCliente:function(req, res){
-        
+    validateCliente: function (req, res) {
+
     },
     updateCliente: function (req, res) {
 
@@ -457,8 +490,8 @@ module.exports = {
             if (err) {
                 return res.json(err.status, {err: err});
             }
-            
-            
+
+
             User.find({rol: 'delegado'}).exec(function (err, delegados) {
 
                 return res.view('choferes/edit_chofer', {chofer: chofer, delegados: delegados});
@@ -478,9 +511,9 @@ module.exports = {
 //        console.log(chofer);
 
         if (chofer.password == "") {
-            
+
             delete chofer.password;
-            
+
             Chofer.update({id: chofer.id}, chofer).exec(function () {
 
                 return res.redirect('/admin/choferes');
