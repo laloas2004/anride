@@ -60,6 +60,20 @@ module.exports = {
         eliminado: {
             type: 'boolean',
             defaultsTo: false
+        },
+        emailConfirm: {
+            type: 'boolean',
+            defaultsTo: false
+        },
+        numCelConfirm: {
+            type: 'boolean',
+            defaultsTo: false
+        },
+        keyValidationEmail: {
+            type: 'string'
+        },
+        keyValidationumCel: {
+            type: 'string'
         }
     },
     comparePassword: function (password, chofer, cb) {

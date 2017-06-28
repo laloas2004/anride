@@ -101,6 +101,20 @@ module.exports = {
         },
         delegado: {
             model: 'user'
+        },
+        emailConfirm: {
+            type: 'boolean',
+            defaultsTo: false
+        },
+        numCelConfirm: {
+            type: 'boolean',
+            defaultsTo: false
+        },
+        keyValidationEmail: {
+            type: 'string'
+        },
+        keyValidationumCel: {
+            type: 'string'
         }
     },
     beforeCreate: function (attrs, cb) {

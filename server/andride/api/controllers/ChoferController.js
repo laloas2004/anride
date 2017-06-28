@@ -10,12 +10,12 @@ var Q = require('q');
 module.exports = {
     create: function (req, res) {
 
-            
+
         console.log(req.allParams());
-        
+
         var chofer = JSON.parse(req.param('chofer'));
-        
-       
+
+
         if (!chofer.nombre) {
             return res.json(401, {err: 'nombre required'});
         }
@@ -40,7 +40,7 @@ module.exports = {
             email: chofer.email,
             numCel: chofer.celular,
             password: chofer.password
-        }).exec(function(err, chofer) {
+        }).exec(function (err, chofer) {
 
             if (err) {
                 return res.json(403, {err: 'Error al registrar'});
@@ -277,7 +277,7 @@ module.exports = {
             Cliente.findOne({id: solicitud[0].cliente}).exec(function (err, cliente) {
 
 
-                
+
 
                 Servicio.create({
                     cliente: solicitud[0].cliente,
@@ -295,7 +295,7 @@ module.exports = {
 
 
                         Chofer.find({id: updated[0].id}).populate('autoActivo').exec(function (err, chofer) {
-                            
+
                             if (err) {
                                 return res.json({err: err});
                             }
@@ -946,7 +946,6 @@ module.exports = {
 
         });
 
-
     },
     validarEmail: function (req, res) {
 
@@ -955,8 +954,6 @@ module.exports = {
         }
 
         var email = req.param('email');
-
-
 
         if (email) {
 
