@@ -37,7 +37,7 @@ if(servicio.cliente && servicio.chofer){
         <td><%= servicio.solicitud.tipodePago%></td>
         <td><%=servicio.createdAt %></td>
         <td><%=servicio.status%></td>
-        <td><a href="#" class="btn btn-primary">Ver Detalle</a></td>
+        <td><a href="./servicios/detalle/<%= servicio.id %>" class="btn btn-primary">Ver Detalle</a></td>
 
       </tr><% }})%>
 </tbody>

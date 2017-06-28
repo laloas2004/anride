@@ -162,7 +162,9 @@ module.exports = {
         res.view('solicitudes/new_solicitud', {moment: moment});
     },
     indexServicios: function (req, res) {
+        
         var limit = req.param('limit') || 20;
+        
         Servicio.find().sort('createdAt desc').limit(limit).populate('solicitud').populate('cliente').populate('chofer').exec(function (err, servicios) {
 
             if (err) {
@@ -172,6 +174,24 @@ module.exports = {
             res.view('servicios/home', {servicios: servicios});
         })
 
+    },
+    detalleServicios:function(req, res){
+        
+      var servi_id = req.param('serv_id');
+      
+      Servicio.find({id:servi_id}).populate('solicitud').exec(function(err,servicio){
+          
+         if (err) {
+                return res.json(err.status, {err: err});
+            } 
+          
+          console.log(servicio);
+          
+          res.view('servicios/detalle', {servicio: servicio[0]});
+          
+      });
+        
+        
     },
     indexChoferes: function (req, res) {
 

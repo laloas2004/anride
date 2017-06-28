@@ -109,6 +109,8 @@ module.exports.routes = {
         
         
         'get /admin/servicios': 'AdminController.indexServicios',
+        'get /admin/servicios/detalle/:serv_id': 'AdminController.detalleServicios',
+        
         'get /admin/choferes': 'AdminController.indexChoferes',
         'get /admin/choferes/new': 'AdminController.newChofer',
         'post /admin/choferes/new': 'AdminController.saveChofer',

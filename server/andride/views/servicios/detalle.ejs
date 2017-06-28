@@ -1,0 +1,35 @@
+<%- include ../includes/menu %>
+
+<div class="container">
+
+    <div class="row">
+        <div class ="col-md-12">
+            <div class="page-header">
+                <h1>Detalle Servicio</h1>
+                <div>
+                    <%= servicio.id %>
+                </div>
+            </div>
+
+            <div class="row">
+                <h3>Direccion Origen</h3>
+                <%= servicio.solicitud.direccion_origen%>
+            </div>
+            <div class="row">
+                <h3>Direccion Destino</h3>
+                <%= servicio.solicitud.direccion_destino%>
+            </div>
+            <div class="row">
+                <h3>Distancia</h3>
+                <%= servicio.distance%> KM
+            </div>
+            <div class="row">
+                <h3>Tiempo</h3>
+                <%= servicio.tiempo%> KM
+            </div>
+            <div class="row">
+                <h3>Monto</h3>
+                $<%= servicio.monto%>
+            </div>
+
+        </div></div></div>

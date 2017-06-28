@@ -12,7 +12,9 @@
             <li><a href="/admin/choferes">Choferes</a></li>
             <li><a href="/admin/delegados">Delegados</a></li>
             <li><a href="/admin/pagos">Pagos</a></li>
+            <% if(req.user.rol == 'admin'){%>
             <li><a href="/admin/configuracion">Configuracion</a></li>
+            <% } %>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
