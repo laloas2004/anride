@@ -404,7 +404,7 @@ module.exports = {
             });
         } else {
 
-            Cliente.update({id: cliente.id}, {nombre: cliente.nombre, apellido: cliente.apellido, numCel: cliente.numCel, newPassword: cliente.password}).exec(function (err, cliente) {
+            Cliente.update({id: cliente.id}, {nombre: cliente.nombre, apellido: cliente.apellido, numCel: cliente.numCel, password: cliente.password}).exec(function (err, cliente) {
 
                 if (err) {
                     return res.json(err.status, {err: err});

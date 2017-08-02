@@ -114,8 +114,10 @@ module.exports = {
         });
     },
     beforeUpdate: function (attrs, cb) {
+        
+        console.log(attrs);
 
-        if (attrs.newPassword) {
+        if (attrs.password) {
 
             bcrypt.genSalt(10, function (err, salt) {
 
@@ -133,6 +135,7 @@ module.exports = {
         } else {
 
             cb();
+
         }
     }
 };
