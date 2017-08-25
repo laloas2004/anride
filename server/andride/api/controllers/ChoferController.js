@@ -74,8 +74,9 @@ module.exports = {
             }
 
             if (chofer.online) {
-
+                
                 console.log('El Usuario esta en Uso.');
+                return res.json(401, {err: 'Usuario ya cuenta con una session activa.'});
             }
 
             Chofer.comparePassword(req_password, chofer, function (err, valid) {
