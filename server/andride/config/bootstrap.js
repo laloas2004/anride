@@ -14,6 +14,15 @@ module.exports.bootstrap = function (cb) {
     
     sails.moment = require('moment');
 	// Ensure we have 2dsphere index on Property so GeoSpatial queries can work!
+        
+        Chofer.update({},{online:false,status:'inactivo'}).exec(function(err, choferes){
+            
+        });
+        
+        Cliente.update({},{online:false}).exec(function(err,clientes){
+               
+        });
+        
 	sails.models.chofer.native(function (err, collection) {
 //		console.log('ejecuto el index de chofer');
 		collection.ensureIndex({
