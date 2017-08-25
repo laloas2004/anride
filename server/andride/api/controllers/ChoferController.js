@@ -90,6 +90,7 @@ module.exports = {
                 } else {
                     console.log('-- Login Chofer | ' + chofer.email);
                     delete chofer.password;
+                    req.session.chofer = chofer;
                     req.session.choferId = chofer.id;
                     req.session.online = true;
                     res.json({
@@ -131,7 +132,7 @@ module.exports = {
 
         if (!choferId) {
 
-            console.log('ChoferController:92 | Falta parammetro choferId');
+            console.log('ChoferController:92 | Falta parametro choferId');
 
         }
 
@@ -225,7 +226,7 @@ module.exports = {
         jwToken.verify(token, function (err, token) {
 
             if (err) {
-                console.log('ChoferController:168' + err);
+                console.log('ChoferController:168');
                 return res.json({valid: false});
             }
 
