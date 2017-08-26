@@ -117,6 +117,10 @@ module.exports.sockets = {
            var choferId = session.choferId;
            
                 Chofer.update({id: choferId}, {socketId:'', online:false, status:'inactivo' }).exec(function(err,chofer) {
+                    
+                    if(err){
+                        console.log(err);
+                    }
          
                 sails.sockets.blast('chofer_offline', chofer);
                 
@@ -131,6 +135,10 @@ module.exports.sockets = {
            var clienteId = session.clienteId;
            
            Cliente.update({id: clienteId}, { socketId: '', online:false }).exec(function(err,cliente) {
+               
+                if(err){
+                        console.log(err);
+                    }
                
                console.log(cliente.email + ': Se Desconecto Cliente');
            })
