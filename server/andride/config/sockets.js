@@ -130,7 +130,7 @@ module.exports.sockets = {
            
            var clienteId = session.clienteId;
            
-           Cliente.update({id: clienteId}, { socketId: '', online:false }).exec(function() {
+           Cliente.update({id: clienteId}, { socketId: '', online:false }).exec(function(err,cliente) {
                
                console.log(cliente.email + ': Se Desconecto Cliente');
            })
