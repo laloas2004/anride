@@ -144,7 +144,9 @@ module.exports = {
 
     },
     beforeUpdate: function (attrs, cb) {
-
+        
+        if(attrs){
+            
         if (attrs.password) {
 
             bcrypt.genSalt(10, function (err, salt) {
@@ -164,6 +166,8 @@ module.exports = {
 
             cb();
 
+        }}else{
+                cb();
         }
     },
     getChoferesCercanos: function (ClientCoordinates, maxDistance, limitChoferes) {

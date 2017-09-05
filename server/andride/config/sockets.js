@@ -122,9 +122,9 @@ module.exports.sockets = {
                         console.log(err);
                     }
          
-                sails.sockets.blast('chofer_offline', chofer);
+                sails.sockets.blast('chofer:offline', chofer[0]);
                 
-                console.log(chofer.email + ': Se Desconecto Chofer');
+                console.log(chofer[0].email + ': Se Desconecto Chofer');
 
             });
            
@@ -139,7 +139,9 @@ module.exports.sockets = {
                 if(err){
                         console.log(err);
                     }
-               
+                    
+                    
+               sails.sockets.blast('cliente:offline', cliente[0]);
                console.log(cliente[0].email + ': Se Desconecto Cliente');
            })
            

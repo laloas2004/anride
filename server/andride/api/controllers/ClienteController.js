@@ -145,11 +145,11 @@ module.exports = {
     },
     logout: function(req, res) {
 
-        console.log('se ejecuto registrar');
+        console.log('se ejecuto logout');
 
         if (req.isSocket) {
 
-
+             
 
             return res.json(req.socket);
 
@@ -160,11 +160,11 @@ module.exports = {
         
         if(req.session.cliente){
             
-             return res.json({valid: true,cliente:req.session.cliente});
+             return res.json({ valid: true, cliente:req.session.cliente });
              
         }else{
             
-             return res.json({valid: false});
+             return res.json({ valid: false });
             
         }
         
@@ -173,8 +173,10 @@ module.exports = {
     suscribe: function(req, res) {
 
         if (!req.isSocket) {
+            
             return res.badRequest();
         }
+        
         var socketId = sails.sockets.getId(req);
 
         var clienteId = req.session.clienteId;
@@ -186,12 +188,12 @@ module.exports = {
         }
 
         if (!clienteId) {
+            
             return res.json(403, {err: 'Cliente Id requerido en suscribe.'});
 
         }
                 
-                
-        sails.log('My socket ID is Cliente : ' + socketId);
+               
 
         sails.sockets.join(req, clienteId, function(err) {
 
@@ -199,14 +201,18 @@ module.exports = {
                 return res.serverError(err);
             }
 
-            Cliente.update({id:clienteId}, {socketId: socketId, online: true}).exec(function(err, clientesUpdate) {
+            Cliente.update({id:clienteId}, { socketId: socketId, online: true }).exec(function(err, cliente) {
+                
                 
                 if (err) {
-                    return res.json({suscrito: false});
+                    
+                    console.log(err);
+                    return res.json({ suscrito: false });
                 }
 
-
-                return res.json({suscrito: true, socketId: socketId});
+                console.log(cliente[0]);
+                
+                return res.json({suscrito: true, cliente:cliente[0]});
 
             });
         });
@@ -222,11 +228,13 @@ module.exports = {
         var num_chofer = 0;
         
         if (finn.choferesDisponibles.choferes) {
+            
             try {
                 
                 var cant_chofer = finn.choferesDisponibles.choferes.length || 0;
                 
             } catch (e) {
+                
                 console.log(e);
             }
         } else {
@@ -237,7 +245,9 @@ module.exports = {
             var tiempo = 0;
 
             try {
+                
                 var solicitud_chofer = finn.choferesDisponibles.choferes[num_chofer];
+                
             } catch (e) {
 
                 console.log(e);
@@ -252,8 +262,8 @@ module.exports = {
                     var interval = setInterval(function(tiempo_espera, finn) {
 
                         if (tiempo == 0) {
-                            
-                            sails.sockets.broadcast(chofer.Id, 'solicitud.enbusqueda', { solicitud: finn, tiempo_espera: tiempo_espera});
+                           
+                            sails.sockets.broadcast(chofer.id, 'solicitud.enbusqueda', { solicitud: finn, tiempo_espera: tiempo_espera});
                         }
 
 //                        sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.cont', {tiempo: tiempo, tiempo_espera: tiempo_espera});
@@ -261,8 +271,8 @@ module.exports = {
                         tiempo++;
 
                         if (tiempo == tiempo_espera) {
-
-                            sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.vencio');
+                           
+                            sails.sockets.broadcast(chofer.id, 'solicitud.enbusqueda.vencio');
 
                             num_chofer++;
 
@@ -275,9 +285,11 @@ module.exports = {
                                     if (record.status) {
 
                                         if (record.status == 'creada') {
+                                            
                                             loop(tiempo_espera, finn);
 
                                         } else {
+                                            
                                             deferred.resolve({respuesta: 'aceptada'});
                                         }
 
@@ -299,9 +311,11 @@ module.exports = {
                                             deferred.resolve({respuesta: 'sin_disponibilidad'});
 
                                         } else {
+                                            
                                             deferred.resolve({respuesta: 'aceptada'});
                                         }
                                     } else {
+                                        
                                         deferred.resolve({respuesta: 'sin_status'});
                                     }
                                 })
@@ -315,7 +329,8 @@ module.exports = {
                             if (record.status) {
 
                                 if (record.status == 'aceptada') {
-                                    sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.aceptada');
+                                   
+                                    sails.sockets.broadcast(chofer.id, 'solicitud.enbusqueda.aceptada');
                                     clearInterval(interval);
                                     deferred.resolve({respuesta: 'aceptada'});
 
@@ -378,7 +393,10 @@ module.exports = {
 
         return deferred.promise;
     },
+    
     solicitud: function(req, res) {
+        
+       
 
         if (!req.isSocket) {
 
@@ -415,6 +433,7 @@ module.exports = {
             }
 
             sails.sockets.broadcast(cliente.id, 'solicitud.creada', finn);
+            
             sails.sockets.blast('solicitud', finn, req);
 
             Solicitud.subscribe(req, finn.id);
@@ -432,6 +451,8 @@ module.exports = {
 
     },
     suscribeChofer: function(req, res) {
+        
+        debugger;
 
         if (!req.isSocket) {
 
@@ -502,8 +523,7 @@ module.exports = {
 
             if (err) {
                 return res.json({err: err});
-            }
-//            debugger;
+            }      
 
             res.json(servi);
 
@@ -561,7 +581,7 @@ module.exports = {
         if (!req.isSocket) {
             return res.badRequest();
         }
-//        debugger;
+
         var idMsg = req.param('idQueue');
         
         if(!idMsg){
@@ -589,7 +609,7 @@ module.exports = {
             return res.badRequest();
         }
         
-//        debugger;
+
         var idCliente = req.session.clienteId;
 
         if (idCliente) {
@@ -681,7 +701,7 @@ module.exports = {
                 return res.json({err: err});
             }
           var id = cliente.formasPago.length+1; 
-//          debugger;
+
           cliente.formasPago.push({id:id,data:pago});  
             
 

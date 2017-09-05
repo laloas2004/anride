@@ -124,11 +124,15 @@ module.exports = {
     suscribe: function (req, res) {
 
         if (!req.isSocket) {
+            
             return res.badRequest();
         }
+        
         var socketId = sails.sockets.getId(req);
 
         var choferId = req.session.choferId;
+        
+        var status = req.param('status') || 'inactivo';
 
         if (!choferId) {
 
@@ -144,7 +148,7 @@ module.exports = {
             }
 
 
-            Chofer.update({id:choferId}, { socketId: socketId, online: true } ).exec(function (err, chofer) {
+            Chofer.update({id:choferId}, { socketId:socketId, online: true, status:status } ).exec(function (err, chofer) {
 
                 if (err) {
 
@@ -154,9 +158,9 @@ module.exports = {
                 sails.sockets.blast('chofer_online', chofer, req);
 
 
-                sails.log('Suscribe Chofer: ' + choferId + ' -- ' + chofer.email);
+                sails.log('Suscribe Chofer: ' + choferId + ' -- ' + chofer[0].email);
 
-                Queue.findOne({idOrigen: {"$in": [choferId]}, entregado: false}).exec(function (err, msg) {
+                Queue.findOne({idOrigen: {"$in": [choferId]}, entregado: false}).exec(function (err, msg){
 
                     if (err) {
 
@@ -169,11 +173,9 @@ module.exports = {
 
                     }
 
-                    return res.json({suscrito: true, socketId: socketId, chofer: chofer[0]});
+                    return res.json({ suscrito: true, socketId: socketId, chofer: chofer[0]});
 
                 });
-
-
 
             });
         });
