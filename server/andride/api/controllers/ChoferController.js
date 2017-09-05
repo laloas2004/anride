@@ -58,7 +58,7 @@ module.exports = {
     },
     login: function (req, res) {
 
-        debugger;
+
         var req_email = req.param('email');
         var req_password = req.param('password');
 
@@ -128,7 +128,7 @@ module.exports = {
         }
         var socketId = sails.sockets.getId(req);
 
-        var choferId = req.param('choferId');
+        var choferId = req.session.choferId;
 
         if (!choferId) {
 
@@ -136,7 +136,7 @@ module.exports = {
 
         }
 
-        sails.sockets.join(req, 'chofer_' + choferId, function (err) {
+        sails.sockets.join(req, choferId, function (err) {
 
             if (err) {
 
@@ -144,7 +144,7 @@ module.exports = {
             }
 
 
-            Chofer.update({id: choferId}, {socketId: socketId, online: true}).exec(function (err, chofer) {
+            Chofer.update({id:choferId}, { socketId: socketId, online: true } ).exec(function (err, chofer) {
 
                 if (err) {
 
@@ -153,7 +153,6 @@ module.exports = {
 
                 sails.sockets.blast('chofer_online', chofer, req);
 
-                req.session.choferId = choferId;
 
                 sails.log('Suscribe Chofer: ' + choferId + ' -- ' + chofer.email);
 
@@ -166,7 +165,7 @@ module.exports = {
 
                     if (msg) {
 
-                        sails.sockets.broadcast(msg.tipo + '_' + msg.idDestino[0], msg.event, msg);
+                        sails.sockets.broadcast(msg.idDestino[0], msg.event, msg);
 
                     }
 
@@ -220,21 +219,14 @@ module.exports = {
 
     },
     validateToken: function (req, res) {
-
-        var token = req.param('token');
-
-        jwToken.verify(token, function (err, token) {
-
-            if (err) {
-                console.log('ChoferController:168');
-                return res.json({valid: false});
-            }
-
-//    req.token = token; // This is the decrypted token or the payload you provided
-
-            return res.json({valid: true});
-        });
+        
+        if(req.session.chofer){
+          return res.json({valid: true, chofer:req.session.chofer});  
+        }else{
+          return res.json({valid: false});  
+        }
     },
+    
     servicio: function (req, res) {
 
         var that = this;
@@ -273,12 +265,8 @@ module.exports = {
 
             Solicitud.publishUpdate(solicitud[0].id, {status: 'aceptada', solicitud: solicitud[0]}, req);
 
-            console.log('Solicitud');
-            console.log(solicitud);
 
             Cliente.findOne({id: solicitud[0].cliente}).exec(function (err, cliente) {
-
-
 
 
                 Servicio.create({
@@ -376,7 +364,7 @@ module.exports = {
                 if (err) {
                     return res.json({err: err});
                 }
-                sails.sockets.broadcast('cliente_' + cliente.id, 'servicio.onplace', {servicio: servicio, chofer: chofer});
+                sails.sockets.broadcast(cliente.id, 'servicio.onplace', {servicio: servicio, chofer: chofer});
                 return res.json({enviado: true});
             })
 
@@ -494,7 +482,7 @@ module.exports = {
                             return res.json({err: err});
                         }
 
-                        sails.sockets.broadcast('cliente_' + cliente.id, 'servicio.finalizado', {servicio: servicio, totales: result});
+                        sails.sockets.broadcast(cliente.id, 'servicio.finalizado', {servicio: servicio, totales: result});
 
                     })
 
@@ -783,7 +771,7 @@ module.exports = {
             }
 
 
-            sails.sockets.broadcast(msg.tipo + '_' + msg.idDestino[0], msg.event, msg);
+            sails.sockets.broadcast(msg.idDestino[0], msg.event, msg);
 
             intentos++;
 
@@ -799,7 +787,7 @@ module.exports = {
 
                     if (!msg.entregado) {
 
-                        sails.sockets.broadcast(msg.tipo + '_' + msg.idDestino[0], msg.event, msg);
+                        sails.sockets.broadcast(msg.idDestino[0], msg.event, msg);
 
 
                         if (intentos == 5) {

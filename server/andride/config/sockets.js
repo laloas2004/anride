@@ -140,7 +140,7 @@ module.exports.sockets = {
                         console.log(err);
                     }
                
-               console.log(cliente + ': Se Desconecto Cliente');
+               console.log(cliente[0].email + ': Se Desconecto Cliente');
            })
            
        }

@@ -128,7 +128,10 @@ module.exports = {
 //                            console.log('Se Actualizo el SocketId de ' + chofer.emial);
 //                        })
 //                    }
+                    req.session.cliente = cliente;
+                    req.session.cliente.online = true;
                     req.session.clienteId = cliente.id;
+                    
                     res.json({
                         cliente: cliente,
                         token: jwToken.issue({id: cliente.id})
@@ -154,15 +157,18 @@ module.exports = {
 
     },
     validateToken: function(req, res) {
-        var token = req.param('token');
-        jwToken.verify(token, function(err, token) {
-            if (err)
-                return res.json({valid: false});
-
-//    req.token = token; // This is the decrypted token or the payload you provided
-
-            return res.json({valid: true});
-        });
+        
+        if(req.session.cliente){
+            
+             return res.json({valid: true,cliente:req.session.cliente});
+             
+        }else{
+            
+             return res.json({valid: false});
+            
+        }
+        
+       
     },
     suscribe: function(req, res) {
 
@@ -187,20 +193,18 @@ module.exports = {
                 
         sails.log('My socket ID is Cliente : ' + socketId);
 
-        sails.sockets.join(req, 'cliente_' + clienteId, function(err) {
+        sails.sockets.join(req, clienteId, function(err) {
 
             if (err) {
                 return res.serverError(err);
             }
 
-            Cliente.update({id: clienteId}, {socketId: socketId, online: true}).exec(function(err, clientesUpdate) {
+            Cliente.update({id:clienteId}, {socketId: socketId, online: true}).exec(function(err, clientesUpdate) {
                 
                 if (err) {
                     return res.json({suscrito: false});
                 }
 
-
-                req.session.clienteId = clienteId;
 
                 return res.json({suscrito: true, socketId: socketId});
 
@@ -216,9 +220,12 @@ module.exports = {
         var deferred = Q.defer();
 
         var num_chofer = 0;
+        
         if (finn.choferesDisponibles.choferes) {
             try {
+                
                 var cant_chofer = finn.choferesDisponibles.choferes.length || 0;
+                
             } catch (e) {
                 console.log(e);
             }
@@ -246,7 +253,7 @@ module.exports = {
 
                         if (tiempo == 0) {
                             
-                            sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda', {solicitud: finn, tiempo_espera: tiempo_espera});
+                            sails.sockets.broadcast(chofer.Id, 'solicitud.enbusqueda', { solicitud: finn, tiempo_espera: tiempo_espera});
                         }
 
 //                        sails.sockets.broadcast(chofer.socketId, 'solicitud.enbusqueda.cont', {tiempo: tiempo, tiempo_espera: tiempo_espera});
@@ -383,6 +390,7 @@ module.exports = {
         var solicitud = req.param('solicitud');
         var origen = req.param('origen');
         var socketId = sails.sockets.getId(req);
+        var cliente = req.session.cliente;
         var that = this;
 
         var tiempo_espera = 30;
@@ -390,7 +398,8 @@ module.exports = {
 
 //            sails.log(solicitud);
 
-debugger;
+
+            
         Solicitud.create({
             origen: origen,
             destino: solicitud.destino,
@@ -405,7 +414,7 @@ debugger;
                 return res.json({err: err});
             }
 
-            sails.sockets.broadcast(socketId, 'solicitud.creada', finn);
+            sails.sockets.broadcast(cliente.id, 'solicitud.creada', finn);
             sails.sockets.blast('solicitud', finn, req);
 
             Solicitud.subscribe(req, finn.id);
@@ -594,7 +603,7 @@ debugger;
 
                 if (msg) {
 
-                    sails.sockets.broadcast(msg.tipo + '_' + msg.idDestino[0], msg.event, msg);
+                    sails.sockets.broadcast(msg.idDestino[0], msg.event, msg);
                 }
                 res.ok({ok: true, msg: msg});
             })
