@@ -13,14 +13,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 AuthService.suscribe().then(function(response) {
                     $state.go('app.main', {});
 
-                }, function(e) {
-                    console.error(e);
+                }, function(err) {
+                    
+                    console.error(err);
                 });
 
 
             }, function(err) {
                 console.log('AuthService.isAuthenticated()');
+                
                 console.log(err);
+                
                 $state.go('app.login', {});
 
             });
@@ -47,7 +50,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 $localStorage,
                 $sessionStorage,
                 $cordovaLocalNotification,
-                $cordovaDialogs) {
+                $cordovaDialogs,
+                $ionicGesture) {
 
             if (!$localStorage.autoActivo) {
 
@@ -69,34 +73,48 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             }
 
             $ionicPlatform.ready(function() {
-
-
+                
+             
                 var mapDiv = document.getElementById("map_canvas");
 
                 $scope.map = plugin.google.maps.Map.getMap(mapDiv);
 
-                $scope.map.setDebuggable(true);
+                $scope.map.setDebuggable(false);
 
 
             })
 
 
             $sails.on('connect', function(data) {
+                
+                
+            AuthService.isAuthenticated().then(function(response) {
 
-                if ($localStorage.chofer.id) {
-                    AuthService.suscribe().then(function(response) {
-
-
+                AuthService.suscribe().then(function(response) {
+                   
                         $ionicLoading.hide();
-//                        console.log('Suscribe Chofer:');
-//                        console.log(response);
-                    }, function(e) {
-                        console.error(e);
-                    });
+                        $localStorage.chofer.status = response.chofer.status;
+                    
 
-                }
+                }, function(err) {
+                    
+                    console.error(err);
+                });
+
+
+            }, function(err) {
+                 console.error(err);
+                 $ionicLoading.hide();
+                 $cordovaDialogs.alert('La session a expirado, favor de volver a logearse','Sesion Expirada' , 'OK')
+                            .then(function() {
+                                $state.go('app.login', {});
+                            });
+                              
+            });
+                
 
             });
+            
             $sails.on('disconnect', function(data) {
 
                 $scope.disconnect = $ionicLoading.show({
@@ -106,6 +124,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
 //                alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
             });
+            
             $sails.on('servicio', function(data) {
 
                 if (data.data.servicio.cancelo == "cliente") {
@@ -115,7 +134,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
                                 var fin_viaje = {fechaHora: new Date(), posicion: $localStorage.position};
 
-                                $sails.post("/choferes/servicio/cancelo/cliente", {servicioId: data.data.servicio.id, fin_viaje: fin_viaje})
+                                $sails.post("/choferes/servicio/cancelo/cliente", { servicioId: data.data.servicio.id, fin_viaje: fin_viaje})
 
                                         .success(function(data, status, headers, jwr) {
 
@@ -125,6 +144,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
                                         })
                                         .error(function(data, status, headers, jwr) {
+                                            
+                                            console.log(jwr);
 
                                         });
                             });
@@ -132,6 +153,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 }
 
             });
+            
             $sails.on('solicitud.enbusqueda', function(data) {
 
                 $cordovaLocalNotification.schedule({
@@ -177,9 +199,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
                 var actualizo = false;
                 
-                
-
-
+               
                 var watchOptions = {
                     timeout: 30000000,
                     maximumAge: 30000,
@@ -290,11 +310,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
                 });
             },
-                    $scope.cambiarEstadoChofer = function() {
+            $scope.cambiarEstadoChofer = function() {
+                
                         $ionicLoading.show({
                             template: 'Cambiando...',
                             showBackdrop: false
                         });
+                        
                         var action = '';
 
                         if ($localStorage.chofer.status == 'activo') {
@@ -323,9 +345,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                                     $ionicLoading.hide();
                                 })
                                 .error(function(data, status, headers, jwr) {
+                                    
+                                    console.log(jwr);
 
-
-                                })
+                                });
 
                     }
             $scope.$on('$ionicView.beforeEnter', function(event, data) {
@@ -659,6 +682,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 $ionicPlatform,
                 AuthService,
                 $localStorage,
+                $ionicLoading,
                 $state,
                 $cordovaDialogs) {
 
@@ -670,8 +694,27 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 event.preventDefault();
                 ionic.Platform.exitApp();
             }, 100);
+            
             $scope.validate = function() {
+                
+                if($scope.email && $scope.password){
+                   
+                $ionicLoading.show({
+                    template: 'Entrando...',
+                    showBackdrop: false
+                });
+                
                 $scope.login();
+                    
+                }else{
+                    
+                     $cordovaDialogs.alert('Introduce un usuario y password.', 'An Ride', 'OK')
+                            .then(function() {
+
+                            });
+                    
+                }
+
             };
             $scope.login = function() {
 
@@ -682,19 +725,24 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
                     AuthService.suscribe().then(function(response) {
 
-
+                        $ionicLoading.hide();
                         $state.go('app.main', {});
 
                     }, function(err) {
+                        $ionicLoading.hide();
                         console.log('AuthService.suscribe()');
                         console.log(err);
                     });
 
                 }, function(err) {
-
-                console.log(err);
-
-                    $cordovaDialogs.alert(err.data.err, err.data.err, 'OK')
+                    
+                    $ionicLoading.hide();
+                    
+                    var error_msg =  err.data.err || 'error en la conexion con el server,intentelo mas tarde';
+                    
+                            console.log(err);
+                    
+                    $cordovaDialogs.alert(error_msg, 'An Ride', 'OK')
                             .then(function() {
 
                             });

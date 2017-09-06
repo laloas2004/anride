@@ -2,15 +2,16 @@ angular.module('app.services', [])
         .factory('AuthService', function($http, $q, $sails, $rootScope, $localStorage, $sessionStorage) {
             return {
                 isAuthenticated: function() {
+                    
                     var q = $q.defer();
 
-                    if ($localStorage.token !== null && $localStorage.token !== "") {
+                 
 
                         var config = {
                             url: $rootScope.serverIp + "/choferes/validate",
                             method: "POST",
                             params: {
-                                token: $localStorage.token
+                               
                             }
                         };
 
@@ -28,10 +29,6 @@ angular.module('app.services', [])
 
                         });
 
-                    } else {
-
-                        q.reject('No exite Token de Authenticacion');
-                    }
 
                     return q.promise;
                 },
@@ -97,11 +94,10 @@ angular.module('app.services', [])
                 },
                 suscribe: function() {
 
-
                     var q = $q.defer();
-                    $sails.post("/choferes/suscribe", {choferId: $localStorage.chofer.id})
+                    $sails.post("/choferes/suscribe", {choferId: $localStorage.chofer.id, chofer:$localStorage.chofer, status:$localStorage.chofer.status})
                             .success(function(data, status, headers, jwr) {
-
+                               
                                 $localStorage.chofer = data.chofer;
                                 $localStorage.socketId = data.socketId;
                                 q.resolve(data);
@@ -330,13 +326,13 @@ angular.module('app.services', [])
 
                             .success(function(data, status, headers, jwr) {
 
-                                debugger;
+                               
                                 q.resolve(data);
 
 
                             })
                             .error(function(data, status, headers, jwr) {
-                                debugger;
+                             
                                 q.reject(data);
                                 console.error('Error:' + data);
                             });
@@ -447,7 +443,7 @@ angular.module('app.services', [])
                     $cordovaSQLite.execute(db, query, [idServicio, viaje, false]).then(function(res) {
 
                         q.resolve(res);
-                        debugger;
+                      
                         console.log("INSERT ID -> " + res.insertId);
 
                     }, function(err) {
@@ -466,7 +462,7 @@ angular.module('app.services', [])
                     var query = "SELECT * FROM inicioViajes WHERE id=" + idInicioViaje;
 
                     $cordovaSQLite.execute(db, query).then(function(res) {
-                        debugger;
+                       
                         q.resolve(res);
 
 
@@ -486,7 +482,7 @@ angular.module('app.services', [])
                     var query = "UPDATE inicioViajes SET entregado = 1 WHERE id=" + idInicioViaje;
 
                     $cordovaSQLite.execute(db, query).then(function(res) {
-                        debugger;
+                        
                         q.resolve(res);
 
 
@@ -507,7 +503,7 @@ angular.module('app.services', [])
                     var query = "INSERT INTO  pointsServicio (idServicio,lat,lon,fecha) VALUES ()";
 
                     $cordovaSQLite.execute(db, query, [idServicio,position.lat,position.lon,fecha]).then(function(res) {
-                        debugger;
+                       
                         q.resolve(res);
 
 

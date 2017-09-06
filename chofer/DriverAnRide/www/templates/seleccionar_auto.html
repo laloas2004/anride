@@ -8,7 +8,7 @@
             <div class="list">
                 <div class="item item-divider" ng-controller="AutosCtrl">
 
-                    <div class="item" ng-show="!autos.length">No tiene autos activos, favor de comunicarse con soporte para que active su auto.</div>
+                    <div class="item item-text-wrap" ng-show="!autos.length">No tiene autos activos, favor de comunicarse con soporte para que active su auto.</div>
 
                     <form>
                         <ion-radio ng-click="checkAutoActivo('{{auto.id}}')" ng-checked="{{auto.checked}}"   ng-repeat="auto in autos" ng-value="'0'">{{auto.marca}} - {{auto.modelo}} - {{auto.placas}} </ion-radio>
