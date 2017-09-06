@@ -396,7 +396,8 @@ module.exports = {
     
     solicitud: function(req, res) {
         
-       
+        
+       var that = this;
 
         if (!req.isSocket) {
 
@@ -406,16 +407,38 @@ module.exports = {
 //        console.log(req.allParams());
 
         var solicitud = req.param('solicitud');
+        
+        if(!solicitud){
+          return res.badRequest('solicitud es parametro requerido.');
+        }  
+        
+        if(solicitud == null){
+            
+            return res.badRequest('solicitud no puede ser null.');
+        }
+        
         var origen = req.param('origen');
+        
+        if(!origen){
+            
+          return res.badRequest('origen es parametro requerido.');  
+        }
+        
+        if(origen == null){
+            
+           return res.badRequest('origen no puede ser null.');   
+        }
+        
+        if(!origen.coords.latitude || !origen.coords.longitude){
+            
+           return res.badRequest('origen no tiene longitud o latitud.');  
+        }
+        
         var socketId = sails.sockets.getId(req);
+        
         var cliente = req.session.cliente;
-        var that = this;
-
+        
         var tiempo_espera = 30;
-
-
-//            sails.log(solicitud);
-
 
             
         Solicitud.create({
@@ -438,6 +461,7 @@ module.exports = {
 
             Solicitud.subscribe(req, finn.id);
             Solicitud.publishCreate(finn, req);
+            
             that._enviaSolicitudaChofer(tiempo_espera, finn).then(function(respuesta) {
 
                 return res.json({respuesta: respuesta, solicitud: finn});
@@ -447,12 +471,11 @@ module.exports = {
                 return res.json({err: err});
             })
 
-        })
+        });
 
     },
     suscribeChofer: function(req, res) {
         
-        debugger;
 
         if (!req.isSocket) {
 
