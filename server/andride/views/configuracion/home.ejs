@@ -64,7 +64,7 @@
                                             <label for="tarifa_base">Tarifa Base</label>
                                             <div class="input-group">
                                                 <span class="input-group-addon">$</span>
-                                                <input type="number" class="form-control" value="<%=config.tarifa_base%>" name="tarifa_base"  id="tarifa_base" required ="true">
+                                                <input type="number" class="form-control" value="<%=config.tarifa_base%>" name="tarifa_base"  id="tarifa_base" required ="true" step=".1" min="0">
                                                 <span class="input-group-addon">MXN</span>
                                             </div>
                                         </div>
@@ -74,7 +74,7 @@
                                             <label for="tarifa_kilometro">Tarifa Por Kilometro</label>
                                             <div class="input-group">
                                                 <span class="input-group-addon">$</span>
-                                                <input type="number" class="form-control" value="<%=config.tarifa_kilometro%>" name="tarifa_kilometro"  id="tarifa_kilometro" required="true">
+                                                <input type="number" class="form-control" value="<%=config.tarifa_kilometro%>" name="tarifa_kilometro"  id="tarifa_kilometro" required="true" step=".1" min="0">
                                                 <span class="input-group-addon">MXN</span>
                                             </div>
                                         </div>
@@ -85,7 +85,7 @@
                                             <label for="tarifa_cancel">Tarifa de cancelacion</label>
                                             <div class="input-group">
                                                 <span class="input-group-addon">$</span>
-                                                <input type="number" class="form-control" value="<%=config.tarifa_cancel%>" name="tarifa_cancel" required="true" id="tarifa_cancel">
+                                                <input type="number" class="form-control" value="<%=config.tarifa_cancel%>" name="tarifa_cancel" required="true" id="tarifa_cancel" step=".1" min="0">
                                                 <span class="input-group-addon">MXN</span>
                                             </div>
 
@@ -96,7 +96,7 @@
                                             <label for="tarifa_minuto">Tarifa por minuto</label>
                                             <div class="input-group">
                                                 <span class="input-group-addon">$</span>
-                                                <input type="number" class="form-control" value="<%=config.tarifa_minuto%>" name="tarifa_minuto" required="true">
+                                                <input type="number" class="form-control" value="<%=config.tarifa_minuto%>" name="tarifa_minuto" required="true" step=".1" min="0">
                                                 <span class="input-group-addon">MXN</span>
                                             </div>
                                         </div>
@@ -107,7 +107,7 @@
                                             <div class="input-group">
                                                 <span class="input-group-addon">$</span>
 
-                                                <input type="text" class="form-control" value="<%=config.tarifa_minima%>" name="tarifa_minima" required="true" id="tarifa_minima">
+                                                <input type="text" class="form-control" value="<%=config.tarifa_minima%>" name="tarifa_minima" required="true" id="tarifa_minima" step=".1" min="0">
                                                 <span class="input-group-addon">MXN</span>
                                             </div>
                                         </div>
