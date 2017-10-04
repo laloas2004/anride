@@ -7,6 +7,7 @@
 var Q = require('q');
 
 module.exports = {
+    
     getChoferes: function(req, res) {
 
         if (!req.isSocket) {
@@ -504,11 +505,14 @@ module.exports = {
 
         var servicioId = req.param('servicioId');
 
-        Servicio.update({id: servicioId}, {status: 'cancelada', cancelo: 'cliente'}).exec(function(err, serv) {
+        Servicio.update({id: servicioId}, { status: 'cancelada', cancelo: 'cliente'}).exec(function(err, serv) {
 
             if (err) {
+                
                 return res.json({err: err});
             }
+            
+            
 
 
             try {
@@ -629,6 +633,7 @@ module.exports = {
     getQueueMsg: function(req, res) {
 
         if (!req.isSocket) {
+            
             return res.badRequest();
         }
         

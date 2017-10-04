@@ -12,6 +12,30 @@ var gcm = require('node-gcm');
 
 module.exports = {
     home: function (req, res) {
+        
+        
+        User.findOne({id:req.session.passport.user}).exec(function(err,response){
+                      
+                      if(err){
+                          console.log(err);
+                      }
+                      
+                     req.session.user = response;
+                     
+              if(req.session.user.rol == 'delegado'){
+            
+                console.log('es delegado');
+                
+                
+            
+                return res.redirect('/admin/delegados/panel');
+            
+                 }else{
+                     
+                        
+        
+        
+    
         var start_today = moment().startOf('day').format(); // set to 12:00 am today
         var end_today = moment().endOf('day').format(); // set to 23:59 pm today
         var clientes_conectados = "";
@@ -71,9 +95,9 @@ module.exports = {
                 });
 
             });
-        });
-
-
+            });
+            }
+         });
     },
     login: function (req, res) {
 
@@ -90,9 +114,15 @@ module.exports = {
 
             }
             req.logIn(user, function (err) {
-                if (err)
-                    res.send(err);
-
+                
+                if (err){
+                    
+                     res.send(err);
+                }
+                
+               
+                  
+                  
                 return res.redirect('/');
 
 //                return res.send({
@@ -129,6 +159,8 @@ module.exports = {
 
     },
     index: function (req, res) {
+        
+        
 
     },
     indexCliente: function (req, res) {
