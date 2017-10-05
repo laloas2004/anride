@@ -62,6 +62,7 @@ module.exports = {
     },
     beforeUpdate:function(user,cb){
         
+
         if(user.password){
             
            bcrypt.genSalt(10, function (err, salt) {

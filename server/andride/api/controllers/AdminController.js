@@ -664,6 +664,8 @@ module.exports = {
            
            delete delegado.password;
         }
+        
+        delegado.email = delegado.email.toLowerCase();
      
       User.update({id:id},delegado).exec(function (err, user) {
 
