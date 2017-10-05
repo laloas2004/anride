@@ -624,6 +624,30 @@ module.exports = {
         });
 
     },
+    editDelegado:function(req, res){
+        var id = req.param('id');
+        
+        if(!id){
+            return res.badRequest('Falta parametro requerido.');
+        }
+        
+      User.findOne({id:id}).exec(function(err,delegado){
+         
+          if(err){
+              return res.serverError(err); 
+          }
+          
+         res.view('delegados/edit_delegado', {delegado:delegado});  
+          
+      });  
+        
+    },
+    
+    updateDelegado:function(req, res){
+       
+        
+        
+    },
     _sendPushNotification: function (msg) {
 
         var sender = new gcm.Sender('YOUR_API_KEY_HERE');

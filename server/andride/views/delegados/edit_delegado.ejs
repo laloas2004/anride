@@ -1,0 +1,68 @@
+<%- include ../includes/menu %>
+
+<div class="container">
+
+    <div class="row">
+        <div class ="col-md-12">
+            <div class="page-header">
+                <h1>Editar Delegado</h1>
+                <div>
+                    <form role="form" method="POST" action="/admin/delegados">
+                    <input type="hidden" name="delegado[rol]" value="delegado" value="<%= delegado.rol %>">
+                        <div class="form-group">
+                            <label for="delegado.nombre">Nombre</label>
+                            <input type="text" class="form-control" id="delegado.nombre"
+                                   placeholder="Introduce un Nombre" name="delegado[nombre]" required value="<%= delegado.nombre %>">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="delegado.apellido">Apellidos</label>
+                            <input type="text" class="form-control" id="delegado.apellido"
+                                   placeholder="Introduce Apellidos" name="delegado[apellido]" required value="<%= delegado.apellido %>" >
+                        </div>
+                        <div class="form-group">
+                            <label for="delegado.email">Email</label>
+                            <input type="email" class="form-control" id="delegado.email"
+                                   placeholder="Introduce un Email" name="delegado[email]" required value="<%= delegado.email %>" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="delegado.password">Password</label>
+                            <input type="password" class="form-control" id="delegado.password"
+                                   placeholder="Introduce un Password" name="delegado[password]" required >
+                        </div>
+                        <div class="form-group">
+                            <label for="delegado.numCel">Telefono Cel.</label>
+                            <input type="text" class="form-control" id="delegado.numCel"
+                                   placeholder="Introduce Celular" name="delegado[numCel]" required value="<%= delegado.numCel %>">
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="delegado.domicilio">Domicilio</label>
+                            <input type="text" class="form-control" id="delegado.domicilio"
+                                   placeholder="Introduce Domicilio Completo" name="delegado[domicilio]" required value="<%= delegado.domicilio %>">
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="delegado.imagen">Imagen de Delegado</label>
+                            <input type="file" class="form-control" id="delegado.imagen"
+                                   name="delegado[imagen]" accept="image/*">
+                        </div>
+                        <button type="submit" class="btn btn-default">Guardar</button>
+                    </form>
+                </div>
+            </div>
+
+
+        </div>
+        <script>
+            $(document).ready(function () {
+
+
+
+
+
+            });
+
+        </script>

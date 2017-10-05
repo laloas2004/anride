@@ -129,7 +129,10 @@ module.exports.routes = {
         
         'get /admin/delegados': 'AdminController.indexDelegados',
         'get /admin/delegados/new': 'AdminController.newDelegado',
+        'get /admin/delegados/edit/:id': 'AdminController.editDelegado',
         'post /admin/delegados': 'AdminController.saveDelegado',
+        
+        
         'get /admin/delegados/panel': 'DelegadoController.index',
         'get /admin/delegados/servicios/:id?': 'DelegadoController.servicios',
         'get /admin/delegados/autos': 'DelegadoController.autos',
