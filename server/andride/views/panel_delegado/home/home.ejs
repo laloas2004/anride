@@ -29,7 +29,14 @@
                                 <td><%= chofer.apellido%></td>
                                 <td><%= chofer.email%></td>
                                 <td><%= chofer.numCel%></td>
-                                <td><a href="<%='/admin/delegados/autos/'+chofer.id %>" class="btn btn-primary">Autos</a> <a href="<%='/admin/delegados/servicios/'+chofer.id %>" class="btn btn-primary">Servicios</a> <a href="/admin/choferes/delete/<%= chofer.id%>" class="btn btn-danger">Bloquear</a></td>
+                                <td><a href="<%='/admin/delegados/autos/'+chofer.id %>" class="btn btn-primary">Autos</a> 
+                                    <a href="<%='/admin/delegados/servicios/'+chofer.id %>" class="btn btn-primary">Servicios</a>
+                                    <% if(chofer.eliminado){ %>
+                                    <a href="/admin/delegados/choferes/bloquear/<%= chofer.id%>/false" class="btn btn-success">Desbloquear</a>
+                                    <% }else{ %>
+                                    <a href="/admin/delegados/choferes/bloquear/<%= chofer.id%>/true" class="btn btn-danger">Bloquear</a>
+                                    <%}%>
+                               </td>
                             </tr><% })%>
                         </tbody>
                     </table>
@@ -76,7 +83,7 @@
 
 
 
-                io.socket.get("/admin/choferes/mapa", {}, function(resData, jwres) {
+                io.socket.get("/admin/delegados/choferes/mapa", {}, function(resData, jwres) {
 
 
 

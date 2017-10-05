@@ -71,8 +71,8 @@ module.exports = {
                         
                        that.cont++;
                        
-                    console.log(cantChoferes);
-                    console.log(that.cont);   
+                    //console.log(cantChoferes);
+                    //console.log(that.cont);   
                     if(cantChoferes == that.cont){
                         
                        cb(); 
@@ -174,7 +174,40 @@ module.exports = {
     
     bloquearChofer:function(req,res){
         
+      var eliminado = req.param('eliminado');
+      var id = req.param('id');
+      
+      if(!eliminado || !id){
+          return res.badRequest('Falta parametro Requerido.');
+      }
+      
+      Chofer.update({id:id},{eliminado:eliminado}).exec(function(err,updated){
+          
+          if(err){
+            return res.serverError(err);  
+          }
+          
+        return res.redirect('/admin/delegados/panel');  
+          
+      });
+      
         
+    },
+    
+    getChoferesMap:function(req,res){
+        
+               if (!req.isSocket) {
+            return res.badRequest();
+        }
+        
+        var delegado = req.session.passport.user;
+
+        Chofer.find({ online: true, delegado:delegado}).exec(function (err, choferes) {
+
+            return res.json(choferes);
+
+        });
+ 
         
     }
     

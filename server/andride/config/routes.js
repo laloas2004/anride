@@ -134,4 +134,7 @@ module.exports.routes = {
         'get /admin/delegados/servicios/:id?': 'DelegadoController.servicios',
         'get /admin/delegados/autos': 'DelegadoController.autos',
         'get /admin/delegados/autos/:chofer': 'DelegadoController.autos',
+        'get /admin/delegados/choferes/mapa': 'DelegadoController.getChoferesMap',
+        'get /admin/delegados/choferes/bloquear/:id/:eliminado?': 'DelegadoController.bloquearChofer',
+
 };
