@@ -29,6 +29,8 @@ module.exports = {
     },
     servicios:function(req,res){
         
+        res.locals.layout = 'panel_delegado/layout';
+        
          that = this;
         
          this.servicios = [];
@@ -121,6 +123,8 @@ module.exports = {
     },
     
     autos:function(req,res){
+        
+        res.locals.layout = 'panel_delegado/layout';
         
     var choferId = req.param('chofer');
         that = this;
