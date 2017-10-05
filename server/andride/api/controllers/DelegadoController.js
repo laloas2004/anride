@@ -50,6 +50,10 @@ module.exports = {
                 }
                 
                 var cantChoferes = _.size(choferes);
+                if(cantChoferes == 0){
+                    
+                    cb();  
+                }
                 that.cont = 0;
 
                 _.forEach(choferes,function(value, key){
