@@ -22,7 +22,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <%  
+                            
+                            <% if(choferes.length == 0){%>
+                            <tr>
+                                <td><h4>Sin Choferes que Mostrar</h4></td>
+                                <td>SD</td>
+                                <td>SD</td>
+                                <td>SD</td>
+                                <td>SD</td>   
+                            </tr>
+                            <%}%>
+                            <% 
                             _.each(choferes,function(chofer){ %>
                             <tr>
                                 <td><%= chofer.nombre%></td>

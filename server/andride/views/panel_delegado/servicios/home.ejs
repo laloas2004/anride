@@ -15,6 +15,18 @@
       </tr>
     </thead>
 <tbody>
+    
+     <% if(servicios.length == 0){%>
+                            <tr>
+                                <td><h4>Sin Servicios que Mostrar</h4></td>
+                                <td>SD</td>
+                                <td>SD</td>
+                                <td>SD</td>
+                                <td>SD</td>
+                                <td>SD</td>
+                            </tr>
+                            <%}%>
+    
     <%  
 
          _.each(servicios,function(servicio){ 
