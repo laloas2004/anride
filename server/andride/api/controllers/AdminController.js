@@ -609,15 +609,17 @@ module.exports = {
     saveDelegado: function (req, res) {
 
         var delegado = req.param('delegado');
+        
+        if(!delegado){
+            
+           return res.badRequest('Falta parametro requerido'); 
+        }
 
         User.create(delegado).exec(function (err, user) {
 
             if (err) {
                 return res.json(err.status, {err: err});
             }
-
-
-//            console.log(chofer);
 
             return res.redirect('/admin/delegados');
 
@@ -645,6 +647,33 @@ module.exports = {
     
     updateDelegado:function(req, res){
        
+        var delegado = req.param('delegado'); 
+        
+        if(!delegado){
+            
+           return res.badRequest('Falta parametro requerido'); 
+        }
+        
+        var id = delegado.id;
+        
+        console.log(delegado);
+        
+        delete delegado.id;
+       
+       if(delegado.password == ''){
+           
+           delete delegado.password;
+        }
+     
+      User.update({id:id},delegado).exec(function (err, user) {
+
+            if (err) {
+                 return res.serverError(err); 
+            }
+
+            return res.redirect('/admin/delegados');
+
+        }); 
         
         
     },
