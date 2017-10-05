@@ -24,7 +24,7 @@ module.exports.globals = {
    * --save, then var async = require('async') at the top of any file.         *
    *                                                                           *
    ****************************************************************************/
-  // async: true,
+   async: true,
   /****************************************************************************
    *                                                                           *
    * Expose the sails instance representing your app. If this is disabled, you *

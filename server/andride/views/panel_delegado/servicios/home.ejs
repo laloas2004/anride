@@ -1,0 +1,45 @@
+<%- include ../includes/menu %>
+
+<div class="container">
+    <div class="page-header">
+                <h1>Servicios</h1>
+        <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Cliente</th>
+        <th>Chofer</th>
+        <th>Monto</th>
+        <th>Forma de Pago</th>
+        <th>Fecha / Hora</th>
+        <th>Estatus</th>
+      </tr>
+    </thead>
+<tbody>
+    <%  
+
+         _.each(servicios,function(servicio){ 
+
+var monto = servicio.monto || 000;
+
+if(servicio.cliente && servicio.chofer){
+
+%>
+      <tr>
+        
+        <td><%= servicio.cliente.email%></td>
+        <td><%= servicio.chofer.email%></td>
+        <td>$<%= monto.toFixed(2) %> MXN</td>
+        <td><%= servicio.solicitud.tipodePago%></td>
+        <td><%=servicio.createdAt %></td>
+        <td><%=servicio.status%></td>
+
+      </tr><% }})%>
+</tbody>
+    </table>        
+                
+                
+                </div>
+</div>
+        <script>
+
+        </script>

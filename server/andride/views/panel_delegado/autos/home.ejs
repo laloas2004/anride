@@ -1,0 +1,45 @@
+<%- include ../includes/menu %>
+
+<div class="container">
+
+    <div class="row">
+        <div class ="col-md-12">
+            <div class="page-header">
+                <h1>Autos de <%=chofer.nombre%> <%=chofer.apellido%></h1>
+                <div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Marca</th>
+                                <th>Modelo</th>
+                                <th>Año</th>
+                                <th>Placas</th>
+                                <th>Color</th>
+                                <th>Poliza Seg.</th>
+                                <th>Vigencia</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <%  
+                            _.each(autos,function(auto){ 
+                            %>
+                            <tr>
+                                <td><%= auto.marca%></td>
+                                <td><%= auto.modelo%></td>
+                                <td><%= auto.anio%></td>
+                                <td><%= auto.placas%></td>
+                                <td><%= auto.color%></td>
+                                <td><%= auto.empSeguro%> | <%= auto.numSeguro%></td>
+                                <td><%= auto.vigenciaPoliza %></td>
+                            </tr>
+                            <% })%>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+
+        </div>
