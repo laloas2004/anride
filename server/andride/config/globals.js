@@ -31,7 +31,7 @@ module.exports.globals = {
    * can still get access via req._sails.                                      *
    *                                                                           *
    ****************************************************************************/
-  sails: true,
+   sails: true,
   /****************************************************************************
    *                                                                           *
    * Expose each of your app's services as global variables (using their       *

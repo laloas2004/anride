@@ -439,6 +439,13 @@ module.exports = {
         
         var cliente = req.session.cliente;
         
+        if(!cliente){
+            
+            console.log('no esxiste la session del cliente');
+        }
+        
+        debugger;
+        
         var tiempo_espera = 30;
 
             

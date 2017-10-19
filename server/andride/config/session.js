@@ -44,7 +44,7 @@ module.exports.session = {
   *                                                                          *
   ***************************************************************************/
 
-  // adapter: 'redis',
+   adapter: 'redis',
 
   /***************************************************************************
   *                                                                          *
@@ -55,12 +55,12 @@ module.exports.session = {
   *                                                                          *
   ***************************************************************************/
 
-  // host: 'localhost',
-  // port: 6379,
-  // ttl: <redis session TTL in seconds>,
-  // db: 0,
+   host: 'localhost',
+   port: 6379,
+   //ttl: <redis session TTL in seconds>,
+   db: 1,
   // pass: <redis auth password>,
-  // prefix: 'sess:',
+   prefix: 'sess:',
 
 
   /***************************************************************************
@@ -74,8 +74,8 @@ module.exports.session = {
   *                                                                          *
   ***************************************************************************/
 
-   adapter: 'mongo',
-   url: 'mongodb://@localhost:27017/andride', // user, password and port optional
+   //adapter: 'mongo',
+   //url: 'mongodb://@localhost:27017/andride', // user, password and port optional
 
   /***************************************************************************
   *                                                                          *
@@ -89,12 +89,12 @@ module.exports.session = {
   *                                                                          *
   ***************************************************************************/
 
-   collection: 'sessions',
-   stringify: true,
-   mongoOptions: {
-     server: {
-       ssl: false
-     }
-   }
+   //collection: 'sessions',
+   //stringify: true,
+   //mongoOptions: {
+    // server: {
+    //   ssl: false
+    // }
+  // }
 
 };

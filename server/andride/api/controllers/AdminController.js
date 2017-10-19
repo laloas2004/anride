@@ -667,7 +667,7 @@ module.exports = {
         
         delegado.email = delegado.email.toLowerCase();
      
-      User.update({id:id},delegado).exec(function (err, user) {
+      User.update({ id:id },delegado).exec(function (err, user) {
 
             if (err) {
                  return res.serverError(err); 
