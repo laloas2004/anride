@@ -128,6 +128,7 @@ module.exports = {
             return res.badRequest();
         }
         
+        
         var socketId = sails.sockets.getId(req);
 
         var choferId = req.session.choferId;
@@ -135,7 +136,9 @@ module.exports = {
         var status = req.param('status') || 'inactivo';
 
         if (!choferId) {
-
+            
+            return res.badRequest('El Chofer no tiene sesion valida.');
+            
             console.log('ChoferController:92 | Falta parametro choferId');
 
         }
@@ -223,8 +226,13 @@ module.exports = {
     validateToken: function (req, res) {
         
         if(req.session.chofer){
-          return res.json({valid: true, chofer:req.session.chofer});  
+            
+                console.log('sesion valida:'+ req.session.chofer);
+                
+          return res.json({valid: true, chofer:req.session.chofer});
+          
         }else{
+            console.log('sesion chofer invalida');
           return res.json({valid: false});  
         }
     },
