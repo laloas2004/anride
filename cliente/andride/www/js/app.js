@@ -8,42 +8,50 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
     'ngSails',
     'ngStorage',
     'angularMoment'
-    
+
 ])
-        .run(function($ionicPlatform, $rootScope, $window, $cordovaNetwork, $ionicPopup) {
-//Validar que este conectado a internet.
-            $rootScope.serverIp = "http://192.168.1.68:1337";
+        .run(function ($ionicPlatform, $rootScope, $window, $cordovaNetwork, $ionicPopup) {
+        
+             //http://104.131.116.22:1337 -- server prod
+             
+             //192.168.1.69:1337 -- SH Ip adress.
+             
+             // 192.168.15.98:1337 -- San Nicolas IP.
+             
+             // Servidor prod nuevo "http://46.101.180.213";
+            
+            $rootScope.serverIp = "http://104.131.116.22";
 
             $rootScope.google_key = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
 
-            $window.addEventListener('offline', function() {
-                
+            $window.addEventListener('offline', function () {
+
                 $rootScope.$digest();
             });
-            $window.addEventListener('online', function() {
+            $window.addEventListener('online', function () {
 //              
 
 
-               
+
             });
 
-            $ionicPlatform.ready(function() {
-//
-//                var isOnline = $cordovaNetwork.isOnline();
-//
-//                if (!isOnline) {
-//
-//                    var alertPopup = $ionicPopup.alert({
-//                        title: 'Sin Acceso a Internet',
-//                        template: 'Ups, no pudimos comunicarnos con nuestro servidor, Revisa tu conexion a internet y vuelvelo a intentar...'
-//                    });
-//
-//                    alertPopup.then(function(res) {
-//                        ionic.Platform.exitApp();
-//                    });
+            $ionicPlatform.ready(function () {
+
+             //  var isOnline = $cordovaNetwork.isOnline();
+
+              /*  if (!isOnline) {
+
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'Sin Acceso a Internet',
+                        template: 'Ups, no pudimos comunicarnos con nuestro servidor, Revisa tu conexion a internet y vuelvelo a intentar...'
+                    });
+
+                    alertPopup.then(function(res) {
+                       // ionic.Platform.exitApp();
+                    });
 
 
-//                }
+                }*/
 
                 screen.lockOrientation('portrait');
 
@@ -57,7 +65,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                 }
             })
         })
-        .config(function($stateProvider, $urlRouterProvider) {
+        .config(function ($stateProvider, $urlRouterProvider) {
 
             $stateProvider
 
@@ -69,14 +77,14 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                     })
                     .state('app.map', {
                         url: '/map',
-                        cache:false,
+                        cache: false,
                         views: {
                             'menuContent': {
                                 templateUrl: 'templates/map.html',
                                 controller: 'MapCtrl'
                             }
                         }
-                        
+
                     })
 //                    .state('app.origen', {
 //                        url: '/origen',
@@ -107,7 +115,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                     })
                     .state('app.viajes', {
                         url: '/viajes',
-                        cache:false,
+                        cache: false,
                         views: {
                             'menuContent': {
                                 templateUrl: 'templates/viajes.html',
@@ -151,7 +159,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                             }
                         }
                     })
-                     .state('app.buscando_chofer', {
+                    .state('app.buscando_chofer', {
                         url: '/chofer',
                         views: {
                             'menuContent': {
@@ -160,7 +168,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                             }
                         }
                     })
-                      .state('app.servicio_aprovado', {
+                    .state('app.servicio_aprovado', {
                         url: '/servicio-aprovado',
                         cache: false,
                         views: {
@@ -180,7 +188,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                         },
                         cache: false
                     })
-                       .state('app.registro', {
+                    .state('app.registro', {
                         url: '/registro',
                         views: {
                             'menuContent': {
@@ -192,10 +200,10 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
 
             $urlRouterProvider.otherwise('/app/login');
         })
-        .config(['$sailsProvider', function($sailsProvider) {
+        .config(['$sailsProvider', function ($sailsProvider) {
 
-                $sailsProvider.url = "http://192.168.1.68:1337";
-                $sailsProvider.debug = false; 
+                $sailsProvider.url = "http://104.131.116.22";
+                $sailsProvider.debug = false;
                 //digital ocean.
 //                $sailsProvider.url = 'http://104.131.116.22:1337';
 

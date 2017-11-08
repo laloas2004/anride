@@ -218,16 +218,25 @@ angular.module('app.services', [])
                 sendSolicitud: function(solicitud) {
 
                     var q = $q.defer();
-
-                    $sails.post("/clientes/solicitud", {solicitud: solicitud})
+                    
+                    var origen = {};
+                    origen.coords= {};
+                    origen.coords.latitude = solicitud.origen.coords.latitude;
+                    origen.coords.longitude = solicitud.origen.coords.longitude;
+                    
+                    $sails.post("/clientes/solicitud", {solicitud: solicitud, origen:origen})
+                    
                             .success(function(data, status, headers, jwr) {
-
+                               
                                 q.resolve(data);
                             })
                             .error(function(data, status, headers, jwr) {
+                                
                                 q.reject(jwr);
 
                             });
+                            
+                            
                     return q.promise;
                 }
 
@@ -292,36 +301,38 @@ angular.module('app.services', [])
         .factory('AuthService', function($http, $q, $sails, $rootScope, $localStorage, $sessionStorage) {
             return {
                 isAuthenticated: function() {
+                    
                     var q = $q.defer();
 
-                    if ($localStorage.token !== null && $localStorage.token !== "") {
-
+                   
                         var config = {
                             url: $rootScope.serverIp + "/clientes/validate",
                             method: "POST",
                             params: {
-                                token: $localStorage.token
+ 
                             }
                         };
 
                         $http(config)
                                 .then(function(response) {
+                                    
                                     if (response.data.valid) {
-                                        q.resolve(response);
+                                        
+                                        q.resolve(response.data);
+                                
                                     } else {
+                                        
                                         q.reject('Token no Valido');
                                     }
 
 
                                 }).catch(function(err) {
+                                    
                             q.reject(err);
 
                         });
 
-                    } else {
-
-                        q.reject('No exite Token de Authenticacion');
-                    }
+                   
 
                     return q.promise;
                 },
@@ -370,21 +381,28 @@ angular.module('app.services', [])
                     q.resolve();
                     return q.promise;
                 },
-                suscribe: function() {
+                suscribe: function(cliente) {
+                    
                     var q = $q.defer();
+                    
                     var data = {
-                        clienteId: $localStorage.cliente.id
+                        
+                        cliente:cliente
                     };
+                    
                     $sails.post("/clientes/suscribe", data)
                             .success(function(data, status, headers, jwr) {
 
-                                $localStorage.socketId = data.socketId;
-                                q.resolve();
+                                console.log(data);
+                                q.resolve(data);
                             })
+                            
                             .error(function(data, status, headers, jwr) {
+                                
                                 q.reject(jwr);
 
                             });
+                            
                     return q.promise;
                 },
                 registro:function(data){

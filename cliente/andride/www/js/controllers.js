@@ -4,10 +4,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $ionicModal,
                 $timeout,
                 $state,
+                $sails,
                 AuthService,
                 $localStorage,
                 $cordovaNetwork) {
-
 
             $rootScope.seleccionoDestino = false;
 
@@ -22,14 +22,49 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 cliente: {},
                 status: 'iniciada',
             };
+            
+            $rootScope.alertActivo = null;
 
             $scope.platform = ionic.Platform.platform();
+            
+            // Revisa que se este Authenticado en el servidor.
 
             AuthService.isAuthenticated().then(function(response) {
-                $rootScope.solicitud.cliente = $localStorage.cliente;
-                $state.go('app.map', {});
+                
+                // Si si esta authenticado setea cliente en la solicitud.
+                
+                $rootScope.solicitud.cliente = response.cliente;
+                
+                // Se suscribe al usuaerio logeado.
+                
+                  AuthService.suscribe(response.cliente).then(function (response) {
+
+                    //Se busca si hay mensajes pendientes de este cliente.
+                    
+                        $sails.get('/cliente/mensajes', {})
+                        
+                                .success(function (data, status, headers, jwr) {
+
+                                  $state.go('app.map', {});  
+
+                                },function(err){
+                                    
+                                    console.log(err);
+                                    
+                                });
+
+                    }, function (err) {
+                        
+                        console.log(err);
+                        $state.go('app.map', {});  
+                        
+                    });
+                
+                
 
             }, function(err) {
+                
+                // si no esta auth se abren vista de login.
 
                 $state.go('app.login', {});
 
@@ -65,39 +100,62 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.intervalReconnect = {};
             $scope.vistaAlertinicioViaje = 0;
             $scope.vistaAlertFinViaje = 0;
+            
+            
             $sails.on('connect', function (data) {
+                
+                // Esto es lo que hace cuando se reconecta al socket.
+                
+                AuthService.isAuthenticated().then(function(response) {
+                
+                    $rootScope.solicitud.cliente = response.cliente;
+                
+                        AuthService.suscribe(response.cliente).then(function (response) {
 
-                if ($localStorage.cliente.id) {
 
-                    AuthService.suscribe().then(function (response) {
-
-                        console.log(response);
-
-                        $sails.get('/cliente/mensajes', {})
+                            $sails.get('/cliente/mensajes', {})
+                        
                                 .success(function (data, status, headers, jwr) {
 
+                                  $ionicLoading.hide();
+                                  
+                                },function(err){
+                                    console.log(err);
                                     $ionicLoading.hide();
-
-                                })
+                                });
 
                     }, function (err) {
+                        
                         console.log(err);
                         $ionicLoading.hide();
+                        
                     });
+                
+                
 
-                } else {
-                    $ionicLoading.hide();
-                }
+            }, function(err) {
+                
+                // Si se reconecta el socket y no esta auth, te abre la vista de login.
+                
+                $ionicLoading.hide();
+                
+                $state.go('app.login', {});
 
-
+            });
+                
+              
             });
 
             $sails.on('disconnect', function(data) {
+                
+                // Esto es lo que hace cuando se pierde la conexion al socket.
 
                 $scope.disconnect = $ionicLoading.show({
                     template: 'UPS!, Hay problemas para comunicarnos con la red, revisa la conexion...',
                     showBackdrop: false
                 });
+                
+                //// Si se desconecta del socket, se detiene la actualizacion de choferes por intevalos.
                 
                 $interval.cancel($scope.intervalUpdateChoferes);
 
@@ -106,6 +164,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
             $sails.on('servicio.onplace', function(data) {
+                
+                // Esto es lo que se hace cuando el chofer esta en el lugar de origen.
+                
+                // Valido que el servicio sea el mismo.
 
                 if (data.servicio.id == $localStorage.servicio.id) {
 
@@ -119,6 +181,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     }).then(function(result) {
 
                         console.log(result);
+                        
+                    },function(err){
+                        
+                        console.log(err);
+                        
                     });
 
                 }
@@ -130,16 +197,24 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 var idServicio = data.data.servicio.id || 0;
                 
                 
+                // Valido que el id de servicio sea valido.
 
                 if (idServicio != 0) {
+                    
+                    // Actualizo el status del servicio.
                     
                     $sails.get("/cliente/servicio/status", {idServicio: idServicio})
                             .success(function(dataStatus, status, headers, jwr) {
 
-
+                                // Si el servicio esta cancelado o finzalizado.
+                        
                                 if (dataStatus.status == 'cancelada' || dataStatus.status == 'finalizado') {
+                                    
+                                    // Se detiene la actualizacion de choferes por intevalos.
 
                                     clearTimeout($rootScope.timeoutSolicitud);
+                                    
+                                    // Se confirma al servidor que el mensaje nos llego.
 
                                     $sails.post("/cliente/mensaje/confirma", {idQueue: data.id})
                                             .success(function(queue, status, headers, jwr) {
@@ -156,18 +231,27 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                             });
 
                                 } else {
+                                    
+                                    // Si el servicio NO esta cancelado o finzalizado.
+                                    
+                                    // Se detiene la actualizacion de choferes por intevalos.
 
                                     clearTimeout($rootScope.timeoutSolicitud);
+                                    
+                                    // Se confirma al servidor que el mensaje nos llego.
 
                                     $sails.post("/cliente/mensaje/confirma", {idQueue: data.id})
                                             .success(function(queue, status, headers, jwr) {
+                                                
+                                                
+                                                // Se actualizan los datos del storage.
 
                                                 $localStorage.chofer = data.data.chofer;
                                                 $localStorage.servicio = data.data.servicio;
                                                 $localStorage.solicitud = data.data.solicitud;
                                                 $scope.$storage = $localStorage;
                                                 
-                                                debugger;
+                                                
                                                 $state.go('app.servicio_aprovado', {});
 
 
@@ -256,6 +340,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             });
 
             $sails.on('solicitud.creada', function(data) {
+                
                 $ionicLoading.hide();
                 $state.go('app.buscando_chofer', {});
 
@@ -373,7 +458,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             $scope.renderChoferesMap().then(function() {
                                 $scope.hideBubble = false;
                                 $ionicLoading.hide();
-
+                                
+                                /// Actualiza choferes en el mapa cada 60 segundos.
+                                
                                 $scope.intervalUpdateChoferes = $interval(function() {
 
 //                                    $scope.setDireccionOrigen(position).then(function() {
@@ -509,7 +596,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     var calle = response.data.results[0].address_components[1].long_name;
                     var numero = response.data.results[0].address_components[0].long_name;
                     var colonia = response.data.results[0].address_components[2].long_name;
-                    debugger;
                     $rootScope.solicitud.direccion_origen = calle + ' ' + numero + ' ' + colonia;
                     q.resolve(response);
                 });
@@ -635,14 +721,15 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
                 }, function(err) {
+                    
                     alert('No se recibio posicion del GPS');
+                    
                     console.log(err);
                 });
 
 
             };
             $scope.onSelectOrigen = function() {
-
                 $rootScope.solicitud.origen = $scope.position;
                 $scope.hidePanels('origen');
             }
@@ -677,7 +764,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     $scope.position = {coords: {latitude: place_detalle.geometry.location.lat(), longitude: place_detalle.geometry.location.lng()}};
 
                     $rootScope.solicitud.origen = {coords: {latitude: place_detalle.geometry.location.lat(), longitude: place_detalle.geometry.location.lng()}};
-                    debugger;
+                  
                     $rootScope.solicitud.direccion_origen = place_detalle.formatted_address;
 
 
@@ -773,7 +860,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                     $rootScope.solicitud.direccion_destino = place_detalle.formatted_address;
                     
-                    debugger;
+                    
                     $interval.cancel($scope.intervalUpdateChoferes);
 
                     $scope.calcularEstimado().then(function(response) {
@@ -791,7 +878,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             };
             $scope.crearsolicitud = function() {
-                debugger;
+                
              $interval.cancel($scope.intervalUpdateChoferes);
                 // valido informacion para crear la solicitud.
 
@@ -799,7 +886,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
                 if (!solicitud.origen.coords) {
-                    console.log('El origen no puede ir vacio');
+                    
+                    
+                    console.error('El origen no puede ir vacio');
 
                     $ionicPopup.alert({
                         title: 'Error 1',
@@ -815,6 +904,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     })
 
                 } else if (!solicitud.destino.coords) {
+                    
                     console.log('El destino no puede ir vacio');
                     $ionicPopup.alert({
                         title: 'Error 2',
@@ -830,6 +920,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     })
 
                 } else if (!solicitud.cliente) {
+                    
                     console.log('El cliente no puede ir vacio');
                     $ionicPopup.alert({
                         title: 'Error 3',
@@ -851,7 +942,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                     $ionicPopup.alert({
                         title: 'Error 4',
-                        template: 'Upps, Lo sentimos,ocurrrio un error fatal, intentalo mas tarde...'
+                        template: 'Upps, Lo sentimos,ocurrio un error fatal, intentalo mas tarde...'
                     }).then(function() {
                         $scope.hidePanels('inicio', function() {
                             $scope.hideBubble = false;
@@ -911,7 +1002,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     }, 90000);
 
                     solicitudService.sendSolicitud(solicitud).then(function(response) {
-
+                        
+                        
                         clearTimeout($rootScope.timeoutSolicitud);
 
                         if (response.respuesta.respuesta != 'aceptada') {
@@ -934,6 +1026,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                             })
                         } else {
+                            
                             console.log(response.respuesta.respuesta);
                         }
 
@@ -941,10 +1034,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     }, function(err) {
 
                         console.log(err);
+                       
+                        
                         $ionicPopup.alert({
                             title: 'No contamos con choferes disponibles',
                             template: 'es este momento, por favor intentalo mas tarde...'
                         }).then(function() {
+                            
                             $scope.hidePanels('inicio', function() {
                                 $scope.hideBubble = false;
                                 $rootScope.solicitud.destino = {};
@@ -983,7 +1079,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
 //                    $ionicPlatform.registerBackButtonAction(function(event) {
-//                        debugger;
+//                        
 //                        event.preventDefault();
 //                      ionic.Platform.exitApp();
 //                    }, 100);
@@ -1042,7 +1138,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             
 
         })
-        .controller('SideMenuCtrl', function($scope, $ionicHistory) {
+        .controller('SideMenuCtrl', function($scope, 
+                $ionicHistory) {
             $scope.theme = 'ionic-sidemenu-dark';
             $scope.tree1 = [];
             $scope.tree = [{
@@ -1105,7 +1202,15 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
         })
-        .controller('LoginCtrl', function($scope, $rootScope, $localStorage, $ionicSideMenuDelegate, $ionicPlatform, AuthService, $state, $ionicLoading, $ionicPopup) {
+        .controller('LoginCtrl', function($scope, 
+                $rootScope, 
+                $localStorage, 
+                $ionicSideMenuDelegate, 
+                $ionicPlatform, 
+                AuthService, 
+                $state, 
+                $ionicLoading, 
+                $ionicPopup) {
 
             $scope.$storage = $localStorage;
 
@@ -1132,7 +1237,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         $ionicLoading.hide();
                         $state.go('app.map', {});
                     }, function() {
+                        console.log('Error en suscribe linea 1135');
                         $ionicLoading.hide();
+                        $state.go('app.map', {});
                     });
 
 
@@ -1154,7 +1261,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             }
 
         })
-        .controller('DestinoCtrl', function($scope, $rootScope, $ionicSideMenuDelegate, clienteService, $state, $ionicNavBarDelegate, $ionicHistory) {
+        .controller('DestinoCtrl', function($scope, 
+                $rootScope, 
+                $ionicSideMenuDelegate, 
+                clienteService, 
+                $state, 
+                $ionicNavBarDelegate, 
+                $ionicHistory) {
 
 //            $scope.solicitud = $rootScope.solicitud;
 //            $ionicNavBarDelegate.showBackButton(true);
@@ -1199,7 +1312,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 //            }
 
         })
-        .controller('DriverCtrl', function($scope, $ionicHistory, $localStorage, $sails, $state, $cordovaDialogs) {
+        .controller('DriverCtrl', function($scope, 
+                $ionicHistory, 
+                $localStorage, 
+                $sails, 
+                $state, 
+                $cordovaDialogs) {
 
             $scope.updateMarkerServicio = function(choferId) {
 
@@ -1307,7 +1425,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                         });
             }
-            debugger;
+            
             $scope.$storage = $localStorage;
 
 //            if ($localStorage.solicitud.origen.coords) {
@@ -1348,7 +1466,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 //
 //            }
         })
-        .controller('ViajesCtrl', function($scope, $ionicHistory, $sails) {
+        .controller('ViajesCtrl', function($scope, 
+                $ionicHistory, 
+                $sails) {
 
             $scope.init = function() {
 
@@ -1373,7 +1493,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.init();
 
         })
-        .controller('PagosCtrl', function($scope, $ionicHistory, $ionicModal, moment) {
+        .controller('PagosCtrl', function($scope, 
+                $ionicHistory, 
+                $ionicModal, 
+                moment) {
 
             $scope.anio = parseInt(moment().format('YYYY'));
             $scope.card = {};
@@ -1438,40 +1561,55 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             $scope.errorResponseHandler = function(err) {
                 console.log(err);
-                debugger;
+                
             }
 
 
         })
-        .controller('LogoutCtrl', function($scope, $ionicHistory, AuthService, $state) {
+        .controller('LogoutCtrl', function($scope, 
+                $ionicHistory, 
+                AuthService, 
+                $state) {
 
             AuthService.logout().then(function() {
                 $state.go('app.login', {});
             });
 
         })
-        .controller('NotificacionesCtrl', function($scope, $ionicHistory) {
+        .controller('NotificacionesCtrl', function($scope, 
+                $ionicHistory) {
 
 
 
         })
-        .controller('ConfiguracionCtrl', function($scope, $ionicHistory) {
+        .controller('ConfiguracionCtrl', function($scope, 
+                $ionicHistory) {
 
 
 
         })
-        .controller('CancelCtrl', function($scope, $ionicHistory) {
+        .controller('CancelCtrl', function($scope, 
+                $ionicHistory) {
 
             var razones = [{id: 1, title: ""}]
 
 
         })
-        .controller('BuscandoCtrl', function($scope, $ionicHistory) {
+        .controller('BuscandoCtrl', function($scope, 
+                $ionicHistory) {
 
 
 
         })
-        .controller('RegistroCtrl', function($scope, $ionicHistory, $sails, $ionicPopup, AuthService, $rootScope, $ionicSideMenuDelegate, $ionicLoading, $state) {
+        .controller('RegistroCtrl', function($scope, 
+                $ionicHistory, 
+                $sails, 
+                $ionicPopup, 
+                AuthService, 
+                $rootScope, 
+                $ionicSideMenuDelegate, 
+                $ionicLoading, 
+                $state) {
 
             $scope.validate = function() {
                 $ionicLoading.show({
