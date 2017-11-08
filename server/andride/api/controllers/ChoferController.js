@@ -88,10 +88,10 @@ module.exports = {
                 if (!valid) {
                     return res.json(401, {err: 'Usuario o contraseña Invalidos.'});
                 } else {
+                    debugger;
                     console.log('-- Login Chofer | ' + chofer.email);
                     delete chofer.password;
                     req.session.chofer = chofer;
-                    req.session.choferId = chofer.id;
                     req.session.online = true;
                     res.json({
                         chofer: chofer,
@@ -106,7 +106,7 @@ module.exports = {
     },
     logout: function (req, res) {
 
-        var choferId = req.session.choferId;
+        var choferId = req.session.chofer.id;
 
         if (choferId) {
             Chofer.update({id: choferId}, {online: false, status: 'inactivo'}).exec(function (err, chofer) {
@@ -131,7 +131,7 @@ module.exports = {
         
         var socketId = sails.sockets.getId(req);
 
-        var choferId = req.session.choferId;
+        var choferId = req.session.chofer.id;
         
         var status = req.param('status') || 'inactivo';
 
@@ -248,7 +248,7 @@ module.exports = {
 
 
         var solicitud = req.param('solicitud');
-        var chofer = req.session.choferId;
+        var chofer = req.session.chofer.id;
 
         if (!solicitud) {
             console.error('Solicitud es obligatoria');
@@ -411,7 +411,7 @@ module.exports = {
             }
 
 
-            that._addQueueMsg('cliente', req.session.choferId, servicio.cliente, 'servicio.inicioViaje', {servicio: servicio}).then(function (response) {
+            that._addQueueMsg('cliente', req.session.chofer.id, servicio.cliente, 'servicio.inicioViaje', {servicio: servicio}).then(function (response) {
 
                 return res.json({err: false, servicio: result, msg: response});
 
@@ -497,7 +497,7 @@ module.exports = {
                     })
 
 
-                    Chofer.update({id: req.session.choferId}, {status: 'activo'}).exec(function (err, chofer) {
+                    Chofer.update({id: req.session.chofer.id}, {status: 'activo'}).exec(function (err, chofer) {
 
                         if (err) {
                             return res.json({err: err});
@@ -577,7 +577,7 @@ module.exports = {
                 return res.json({err: err});
             }
 
-            Chofer.update({id: req.session.choferId}, {status: 'activo'}).exec(function (err, chofer) {
+            Chofer.update({id: req.session.chofer.id}, {status: 'activo'}).exec(function (err, chofer) {
                 if (err) {
                     return res.json({err: err});
                 }
@@ -597,7 +597,7 @@ module.exports = {
             return res.badRequest();
         }
 
-        var choferId = req.session.choferId;
+        var choferId = req.session.chofer.id;
         var action = req.param('action');
 
         if (action == 'activo') {
@@ -659,7 +659,7 @@ module.exports = {
                     return res.json({err: err});
                 }
 
-                that._addQueueMsg('cliente', req.session.choferId, cliente.id, 'servicio.cancelado', {servicio: serv[0]}).then(function (response) {
+                that._addQueueMsg('cliente', req.session.chofer.id, cliente.id, 'servicio.cancelado', {servicio: serv[0]}).then(function (response) {
 
 
                 }, function (err) {
@@ -669,7 +669,7 @@ module.exports = {
                 });
 //                sails.sockets.broadcast(cliente.socketId, 'servicio.cancelado', {servicio: serv[0]});
 
-                Chofer.update({id: req.session.choferId}, {status: 'activo'}).exec(function (err, chofer) {
+                Chofer.update({id: req.session.chofer.id}, {status: 'activo'}).exec(function (err, chofer) {
                     if (err) {
                         return res.json({err: err});
                     }
@@ -839,7 +839,7 @@ module.exports = {
             return res.badRequest();
         }
 
-        var choferId = req.session.choferId;
+        var choferId = req.session.chofer.id;
 
 
         Chofer.findOne({id: choferId}).exec(function (err, chofer) {
@@ -861,7 +861,7 @@ module.exports = {
             return res.badRequest();
         }
 
-        var choferId = req.session.choferId;
+        var choferId = req.session.chofer.id;
         that = this;
 
         Chofer.findOne({id: choferId}).populate('autoActivo').exec(function (err, chofer) {
@@ -919,7 +919,7 @@ module.exports = {
             return res.badRequest();
         }
 
-        var choferId = req.session.choferId;
+        var choferId = req.session.chofer.id;
         var autoId = req.param('idAuto');
         if (!autoId) {
             return res.badRequest();
