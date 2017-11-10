@@ -214,8 +214,11 @@ module.exports = {
 //                    console.log(updated);
 
                     try {
+                        
                         Chofer.publishUpdate(updated[0].id, {chofer: updated[0]});
+                        
                     } catch (e) {
+                        
                         console.log('ChoferController:152' + e);
                     }
 

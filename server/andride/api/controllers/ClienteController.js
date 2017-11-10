@@ -709,13 +709,12 @@ module.exports = {
                             }
 
                             if (cliente) {
-                               // return res.json({ valido: false });
-
+                                
                                respuesta.emailValido = false;
 
                             } 
                 
-                 Cliente.findOne({ numCel:numCel }).exec(function(err, cliente2) {
+                 Cliente.findOne({ numCel:numCel.toString()}).exec(function(err, cliente2) {
 
                             if (err) {
                                 return res.serverError(err);
