@@ -38,6 +38,7 @@ module.exports.routes = {
         //Cliente
 //    'get /cliente': 'ClienteController.registroCliente',
         'post /clientes/login': 'ClienteController.login',
+        'post /clientes/logout': 'ClienteController.logout',
         'post /clientes/validate': 'ClienteController.validateToken',
         'post /clientes/suscribe': 'ClienteController.suscribe',
         'post /clientes/solicitud': 'ClienteController.solicitud',

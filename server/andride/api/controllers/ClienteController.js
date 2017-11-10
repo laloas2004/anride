@@ -149,14 +149,16 @@ module.exports = {
     logout: function(req, res) {
 
         console.log('se ejecuto logout');
+        
+        debugger;
+        
+        req.session.destroy(function(err) {
+            
+           return res.json({logout:true});
+           
+        });
 
-        if (req.isSocket) {
-
-             
-
-            return res.json(req.socket);
-
-        }
+        
 
     },
     validateToken: function(req, res) {
