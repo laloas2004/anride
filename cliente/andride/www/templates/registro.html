@@ -13,37 +13,49 @@
             <div class="light-bg">
 
                 <div class="list padding">
-                    <h3>Registrarse en An Ride</h3>
-                    <form name="form_registro" novalidate>
+                    <h3>Nuevo Usuario AnRide </h3>
+                    <form name="form_registro" class="form_registro" novalidate ng-submit="validate(form_registro)">
                         
-                        <label class="item item-input">
+                        <label for="txtRegNombre" class="item item-input">
                             <i class="ion-ios-email-outline light icon-label"></i>
-                            <input type="text" placeholder="Nombre" ng-model="r.nombre" ng-required="true" ng-minlength="4">
+                            Nombre:
                         </label>
-                        <label class="item item-input">
+                            <input type="text" ng-model="r.nombre" ng-required="true" ng-minlength="4" id="txtRegNombre" name = "txtRegNombre" class="input_registro">
+                        
+                        <label for="txtRegApellido" class="item item-input">
                             <i class="ion-ios-email-outline light icon-label"></i>
-                            <input type="text" placeholder="Apellido" ng-model="r.apellido" ng-required="true" ng-minlength="4">
+                            Apellido:
                         </label>
-                        <label class="item item-input">
+                            <input type="text" ng-model="r.apellido" ng-required="true" ng-minlength="4" id="txtRegApellido" name="txtRegApellido" class="input_registro">
+                        
+                        <label for="txtRegCelular" class="item item-input">
                             <i class="ion-ios-email-outline light icon-label"></i>
-                            <input type="number" placeholder="Celular" ng-model="r.celular" ng-required="true" ng-minlength="8">
+                            Celular:
+                         </label>
+                            <input type="number" ng-model="r.celular" ng-required="true" ng-minlength="8" id="txtRegCelular" name="txtRegCelular" class="input_registro">
+                        
+                        <label for="txtRegEmail" class="item item-input">
+                            <i class="ion-ios-email-outline light icon-label" ></i>
+                            Email:
                         </label>
-                        <label class="item item-input">
-                            <i class="ion-ios-email-outline light icon-label"></i>
-                            <input type="email" placeholder="Email" ng-model="r.email" ng-required="true">
-                        </label>
-                        <label class="item item-input">
+                            <input type="email"  ng-model="r.email" ng-required="true" id="txtRegEmail" name="txtRegEmail">
+                        
+                        <label for="txtRegPassword" class="item item-input">
                             <i class="ion-ios-locked-outline light icon-label"></i>
-                            <input type="password" placeholder="Password" ng-model="r.password" ng-required="true" ng-minlength="6">
+                            Password: (Minimo 4 caracteres)
                         </label>
+                            <input type="password" ng-model="r.password" ng-required="true" ng-minlength="4" id="txtRegPassword" name ="txtRegPassword">
+                        
+                   <div class="padding">
+                    <input type="submit" class="button button-block button-balanced"  value ="Registrarse">
+                        
+                  
+                </div> 
                     </form>
                 </div> 
 
-                <div class="padding">
-                    <button class="button button-block button-balanced" ng-click="validate()" ng-disabled="form_registro.$invalid">
-                        Registrarse
-                    </button>
-                </div>
+                
+                
             </div>   
 
 

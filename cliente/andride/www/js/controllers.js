@@ -284,7 +284,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
 
-                $sails.post("/cliente/mensaje/confirma", {idQueue: data.id})
+                $sails.post("/cliente/mensaje/confirma", { idQueue: data.id })
                         .success(function(queue, status, headers, jwr) {
                             if ($scope.vistaAlertinicioViaje == 0) {
                                 $cordovaDialogs.alert('El chofer a iniciado su Viaje', 'Servicio Iniciado', 'OK')
@@ -348,7 +348,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             $sails.on('solicitud', function(data) {
 
-
+                console.log('se ejecuto $sails.on "solicitud"');
 
 
             });
@@ -419,17 +419,29 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.MarkerCoordenadas = {
                 tiempoLlegada: null
             };
+            
+            // Se declaran los vistas modales de cuando de busca in origen.
+            
             $ionicModal.fromTemplateUrl('templates/punto_origen.html', {
                 scope: $scope,
                 animation: 'slide-in-up'
             }).then(function(modal) {
                 $scope.modal_punto_origen = modal;
+            },function(err){
+                
+                console.log(err);
             });
+            
+            // Se declaran los vistas modales de cuando de busca in destino.
+            
             $ionicModal.fromTemplateUrl('templates/punto_destino.html', {
                 scope: $scope,
                 animation: 'slide-in-up'
             }).then(function(modal) {
                 $scope.modal_punto_destino = modal;
+            },function(err){
+                
+                console.log(err);
             });
 
 
@@ -437,13 +449,16 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.mapCreated = function(map) {
 
                 $scope.map = map;
+                
                 if (!$localStorage.servicio) {
+                    
                     $scope.loading = $ionicLoading.show({
                         template: 'Obteniendo tu ubicacion...',
                         showBackdrop: false
                     });
                 }
-                var posOptions = {timeout: 100000, enableHighAccuracy: true};
+                
+                var posOptions = { timeout: 100000, enableHighAccuracy: true };
 
                 $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
 
@@ -1610,35 +1625,139 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $ionicSideMenuDelegate, 
                 $ionicLoading, 
                 $state) {
+                    
+            $scope.alertPopup;
 
-            $scope.validate = function() {
-                $ionicLoading.show({
-                    template: 'Enviando Informacion de Registro...',
+            $scope.validate = function(form_registro) {
+                
+              $ionicLoading.show({
+                    template: 'Enviando Informacion ...',
                     showBackdrop: false
                 });
+                
+                
+                
+                if(!form_registro.txtRegNombre.$valid){
+                    
+                   $ionicLoading.hide();
+                   
+                   $scope.alertPopup = $ionicPopup.alert({
+                       title: 'El nombre no es valido.',
+                       template: 'Por favor introduce un nombre valido.'
+                   });
 
+                   return false;   
+                    
+                }
+                
+                if(!form_registro.txtRegApellido.$valid){
+                    
+                   $ionicLoading.hide();
+                   
+                   $scope.alertPopup = $ionicPopup.alert({
+                       title: 'El apellido no es valido.',
+                       template: 'Por favor introduce un apellido valido.'
+                   });
+
+                   return false;   
+                    
+                }
+                
+                if(!form_registro.txtRegCelular.$valid){
+                    
+                   $ionicLoading.hide();
+                   
+                   $scope.alertPopup = $ionicPopup.alert({
+                       title: 'El celular no es valido.',
+                       template: 'Por favor introduce un celular valido. (min 8 caracteres)'
+                   });
+
+                   return false;   
+                    
+                }
+                
+                if(!form_registro.txtRegEmail.$valid){
+                    
+                   $ionicLoading.hide();
+                   
+                   $scope.alertPopup = $ionicPopup.alert({
+                       title: 'El email no es valido.',
+                       template: 'Por favor introduce un email valido.'
+                   });
+
+                   return false;   
+                    
+                }
+                
+                 if(!form_registro.txtRegPassword.$valid){
+                    
+                   $ionicLoading.hide();
+                   
+                   $scope.alertPopup = $ionicPopup.alert({
+                       title: 'El password no es valido.',
+                       template: 'Por favor introduce un password valido. (min 4 caracteres)'
+                   });
+
+                   return false;   
+                    
+                }
+                
 
                 if ($scope.r.email) {
+                    
+                    // Comprobamos que el email no este registrado.
 
-                    $sails.post("/cliente/registro/validar", {email: $scope.r.email})
+                    $sails.post("/cliente/registro/validar", { email: $scope.r.email, numCel:$scope.r.celular})
                             .success(function(val, status, headers, jwr) {
-
-                                if (!val.valido) {
+                                
+                                debugger;
+                                
+                                if (!val.numCelValido) {
+                                    
+                                    //Si no es valido muestra alert y no continua
                                     $ionicLoading.hide();
-                                    var alertPopup = $ionicPopup.alert({
+                                    
+                                    $scope.alertPopup = $ionicPopup.alert({
+                                        title: 'Ya existe una cuenta con ese numero de celular.',
+                                        template: 'Por favor entre con su cuenta.'
+                                    });
+
+                                    return false;
+
+                                } 
+
+                                if (!val.emailValido) {
+                                    
+                                    //Si no es valido muestra alert y no continua
+                                    $ionicLoading.hide();
+                                    
+                                    $scope.alertPopup = $ionicPopup.alert({
                                         title: 'Ya existe una cuenta con ese email.',
                                         template: 'Por favor entre con su cuenta.'
                                     });
 
-                                    return;
+                                    return false;
 
-                                } else {
-                                    $scope.registro();
-                                }
+                                } 
+                                
+                                
+                                
+                                   // Si no esta registrado continua con el registro.
+                                    
+                                    $scope.registro(form_registro);
+                                    
+                                
 
                             })
                             .error(function(err) {
+                                
                                 $ionicLoading.hide();
+                        
+                                $scope.alertPopup = $ionicPopup.alert({
+                                        title: 'Error.',
+                                        template: 'Ups, Ocurrio un error en la validacion de email, intentelo mas tarde.'
+                                    });
+                                    
                                 console.error(err);
 
                             });
@@ -1648,7 +1767,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             }
 
-            $scope.registro = function() {
+            $scope.registro = function(form_registro) {
 
                 AuthService.registro($scope.r)
                         .then(function(response) {
@@ -1665,7 +1784,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
                         }, function(err) {
+                            
                             $ionicLoading.hide();
+                            $scope.alertPopup = $ionicPopup.alert({
+                                        title: 'Error',
+                                        template: 'Ups,ocurrio un error en el registro, intantalo mas tarde.'
+                                    });
                             console.error(err);
 
                         })

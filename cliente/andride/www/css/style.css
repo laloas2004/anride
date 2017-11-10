@@ -9839,3 +9839,14 @@ a {
         position: absolute;
         bottom: -50px;  
     }
+    
+    .form_registro .ng-invalid{
+        
+    }
+
+   .input_registro {
+    border-color: #ccc;
+    border-style: solid;
+    border-width: 1px;
+    width: 100%;
+    }
