@@ -444,7 +444,7 @@ module.exports = {
             console.log('no esxiste la session del cliente');
         }
         
-        debugger;
+       
         
         var tiempo_espera = 30;
 
@@ -696,29 +696,49 @@ module.exports = {
         }
 
         var email = req.param('email');
+        var numCel = req.param('numCel');
 
+        var respuesta = { emailValido:true, numCelValido:true };
 
+        if (email && numCel) {
 
-        if (email) {
+            Cliente.findOne({ email: email }).exec(function(err, cliente) {
 
-            Cliente.findOne({email: email}).exec(function(err, cliente) {
+                            if (err) {
+                                return res.serverError(err);
+                            }
 
-                if (err) {
-                    return res.serverError(err);
-                }
+                            if (cliente) {
+                               // return res.json({ valido: false });
 
-                if (cliente) {
+                               respuesta.emailValido = false;
 
-                    return res.json({valido: false});
+                            } 
+                
+                 Cliente.findOne({ numCel:numCel }).exec(function(err, cliente2) {
 
-                } else {
-                    return res.json({valido: true});
-                }
+                            if (err) {
+                                return res.serverError(err);
+                            }
+
+                            if (cliente2) {
+
+                               respuesta.numCelValido = false;
+
+                            } 
+
+                          
+                     
+                     return res.json(respuesta);
+                            
+
+                 });
 
             });
-
+            
         } else {
-            return res.badRequest();
+            
+            return res.badRequest('Falta parametros requeridos.');
         }
 
     },

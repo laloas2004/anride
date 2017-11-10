@@ -236,7 +236,6 @@ module.exports = {
           return res.json({valid: false});  
         }
     },
-    
     servicio: function (req, res) {
 
         var that = this;
@@ -441,6 +440,7 @@ module.exports = {
 
 
         if (!servicio) {
+            
             console.log('Falta parametro servicio terminaViaje');
         }
 
