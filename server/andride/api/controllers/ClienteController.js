@@ -65,11 +65,13 @@ module.exports = {
         if (!usuario.password) {
             return res.json(401, {err: 'password required'});
         }
+        
+        var email = usuario.email.toLowerCase();
 
         Cliente.create({
             nombre: usuario.nombre,
             apellido: usuario.apellido,
-            email: usuario.email,
+            email:email,
             numCel: usuario.celular,
             password: usuario.password
         }).exec(function(err, cliente) {
@@ -519,8 +521,7 @@ module.exports = {
                 return res.json({err: err});
             }
             
-            
-
+           
 
             try {
 
@@ -701,6 +702,8 @@ module.exports = {
         var respuesta = { emailValido:true, numCelValido:true };
 
         if (email && numCel) {
+            
+            email = email.toLowerCase();
 
             Cliente.findOne({ email: email }).exec(function(err, cliente) {
 
