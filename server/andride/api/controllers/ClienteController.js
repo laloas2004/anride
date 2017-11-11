@@ -149,12 +149,43 @@ module.exports = {
     },
     
     logout: function(req, res) {
-
-        req.session.destroy(function(err) {
+        
+        if(req.session.cliente){
             
-           return res.json({logout:true});
+          Cliente.findOne({id:req.session.cliente.id }).exec(function(err, cliente) {
+              
+              if(err){
+                  console.log(err);
+              }
+              
+             cliente.online = false;
+             
+             cliente.save(function(err){
+                 
+             req.session.destroy(function(err) {
+                 
+                 console.log('LogOut:'+cliente);
+                 
+                    return res.json({logout:true});
            
-        });
+            });  
+                 
+                 
+             })
+             
+
+              
+          });
+
+       
+            
+        }else{
+            
+           return res.json({logout:false}); 
+           
+        }
+        
+        
 
     },
     
