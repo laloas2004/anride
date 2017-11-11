@@ -91,6 +91,7 @@ module.exports = {
 
 
     },
+    
     login: function(req, res) {
 
         var req_email = req.param('email');
@@ -146,21 +147,17 @@ module.exports = {
         })
 
     },
+    
     logout: function(req, res) {
 
-        console.log('se ejecuto logout');
-        
-        debugger;
-        
         req.session.destroy(function(err) {
             
            return res.json({logout:true});
            
         });
 
-        
-
     },
+    
     validateToken: function(req, res) {
         
         if(req.session.cliente){
@@ -175,6 +172,7 @@ module.exports = {
         
        
     },
+    
     suscribe: function(req, res) {
 
         if (!req.isSocket) {
