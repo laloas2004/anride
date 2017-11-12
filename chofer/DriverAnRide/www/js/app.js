@@ -9,14 +9,16 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
     'ngStorage',
     'angularMoment'])
         .run(function($ionicPlatform, $rootScope, $window, $cordovaSQLite) {
-//Validar que este conectado a internet.
-//            $rootScope.serverIp = "http://192.168.1.66:1337";
+              //Validar que este conectado a internet.
+             // $rootScope.serverIp = "http://192.168.1.66:1337";
+             // 192.168.15.98:1337 -- San Nicolas IP.
+            // new server prod = "http://46.101.180.213";
 
-            $rootScope.serverIp = "http://104.131.116.22:1337";
+            $rootScope.serverIp = "http://104.131.116.22";
             
             $rootScope.google_key  = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
             
-            console.log('connectado a internet:'+ $window.navigator.onLine);
+         /* console.log('connectado a internet:'+ $window.navigator.onLine);
             
             $window.addEventListener('offline', function() {
                 console.log('offline');
@@ -26,6 +28,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                 console.log('online');
                 $rootScope.$digest();
             });
+             */
 
             $ionicPlatform.ready(function() {
                     
@@ -221,8 +224,8 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
         .config(['$sailsProvider', function($sailsProvider) {
                 
 //                $sailsProvider.url = "http://192.168.1.66:1337";
-                $sailsProvider.url = "http://104.131.116.22:1337";
-                $sailsProvider.debug = true;                
+                $sailsProvider.url = "http://104.131.116.22";
+                $sailsProvider.debug = false;                
                 //digital ocean.
 //                $sailsProvider.url = 'http://104.131.116.22:1337';
 

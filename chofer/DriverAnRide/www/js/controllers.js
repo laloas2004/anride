@@ -1,16 +1,39 @@
 angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
         .controller('AppCtrl', function($scope,
+                $cordovaNetwork,
+                $cordovaDialogs,
                 $rootScope,
                 $ionicModal,
                 $timeout,
                 AuthService,
                 $state) {
+                    
+                    //Comprobar que tenga conexion a Internet.
+                    
+            document.addEventListener("deviceready", function () {
+
+
+                      // listen for Online event
+                      $rootScope.$on('$cordovaNetwork:online', function(event, networkState){
+                        var onlineState = networkState;
+                        console.log('Se conecto a internet.');
+                      })
+
+                      // listen for Offline event
+                      $rootScope.$on('$cordovaNetwork:offline', function(event, networkState){
+                        $cordovaDialogs.alert('Upss, no nos podemos comunicar con la red, compruebe que tenga conexion a internet.','Sin Conexion', 'Aceptar');
+                        var offlineState = networkState;
+                      })
+              
+
+            },false);
 
             $scope.platform = ionic.Platform.platform();
 
             AuthService.isAuthenticated().then(function(response) {
 
                 AuthService.suscribe().then(function(response) {
+                    
                     $state.go('app.main', {});
 
                 }, function(err) {
@@ -20,6 +43,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
 
             }, function(err) {
+                
                 console.log('AuthService.isAuthenticated()');
                 
                 console.log(err);
@@ -677,6 +701,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
         })
         .controller('LoginCtrl', function($scope,
+                $cordovaNetwork,
                 $ionicHistory,
                 $ionicSideMenuDelegate,
                 $ionicPlatform,
@@ -696,6 +721,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             }, 100);
             
             $scope.validate = function() {
+                
+                
+                if($cordovaNetwork.isOffline()){
+                    
+                   $cordovaDialogs.alert('Upss, no nos podemos comunicar con la red, compruebe que tenga conexion a internet.','Sin Conexion', 'Aceptar');
+
+                }
+                
                 
                 if($scope.email && $scope.password){
                    

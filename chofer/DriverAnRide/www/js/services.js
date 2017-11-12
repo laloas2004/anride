@@ -17,14 +17,19 @@ angular.module('app.services', [])
 
                         $http(config)
                                 .then(function(response) {
+                                    
                                     if (response.data.valid) {
+                                        
                                         q.resolve(response);
+                                
                                     } else {
+                                        
                                         q.reject('Token no Valido');
                                     }
 
 
                                 }).catch(function(err) {
+                                    
                             q.reject(err);
 
                         });
@@ -95,7 +100,8 @@ angular.module('app.services', [])
                 suscribe: function() {
 
                     var q = $q.defer();
-                    $sails.post("/choferes/suscribe", {choferId: $localStorage.chofer.id, chofer:$localStorage.chofer, status:$localStorage.chofer.status})
+                    
+                    $sails.post("/choferes/suscribe", { choferId: $localStorage.chofer.id, chofer:$localStorage.chofer, status:$localStorage.chofer.status})
                             .success(function(data, status, headers, jwr) {
                                
                                 $localStorage.chofer = data.chofer;
