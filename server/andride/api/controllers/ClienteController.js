@@ -160,11 +160,13 @@ module.exports = {
               
              cliente.online = false;
              
+             delete cliente.password;
+             
              cliente.save(function(err){
                  
              req.session.destroy(function(err) {
                  
-                 console.log('LogOut:'+cliente);
+                 console.log(cliente);
                  
                     return res.json({logout:true});
            
