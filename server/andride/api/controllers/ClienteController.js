@@ -728,6 +728,8 @@ module.exports = {
         if (!req.isSocket) {
             return res.badRequest();
         }
+        
+        debugger;
 
         var email = req.param('email');
         var numCel = req.param('numCel');
@@ -772,7 +774,7 @@ module.exports = {
             });
             
         } else {
-            
+            debugger;
             return res.badRequest('Falta parametros requeridos.');
         }
 
