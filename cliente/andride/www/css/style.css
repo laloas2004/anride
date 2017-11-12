@@ -9844,7 +9844,7 @@ a {
         
     }
 
-   .input_registro {
+   .form_registro .input_registro {
     border-color: #ccc;
     border-style: solid;
     border-width: 1px;

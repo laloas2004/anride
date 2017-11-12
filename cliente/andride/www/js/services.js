@@ -377,8 +377,31 @@ angular.module('app.services', [])
 
                     var q = $q.defer();
 
-                    $localStorage.$reset();
-                    q.resolve();
+                    var config = {
+                        url: $rootScope.serverIp + "/clientes/logout",
+                        method: "POST",
+                        params: {
+                           
+                        }
+                    };
+                    
+                     $http(config)
+                            .success(function(data, status, headers, jwr) {
+
+                                console.log(data);
+                        
+                                $localStorage.$reset();
+                                
+                                q.resolve(data);
+                            })
+                            
+                            .error(function(data, status, headers, jwr) {
+                                
+                                q.reject(jwr);
+
+                            });
+                    
+
                     return q.promise;
                 },
                 suscribe: function(cliente) {
@@ -394,6 +417,7 @@ angular.module('app.services', [])
                             .success(function(data, status, headers, jwr) {
 
                                 console.log(data);
+                        
                                 q.resolve(data);
                             })
                             
@@ -415,8 +439,7 @@ angular.module('app.services', [])
                         params: {
                             usuario: data
                         }
-                    })
-                            .then(function(response) {
+                    }).then(function(response) {
 
                             $localStorage.token = response.data.token;
                             $localStorage.cliente = response.data.cliente;

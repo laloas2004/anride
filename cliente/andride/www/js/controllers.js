@@ -1587,7 +1587,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $state) {
 
             AuthService.logout().then(function() {
+                
                 $state.go('app.login', {});
+                
+            },function(err){
+                
+                console.log(err);
             });
 
         })
@@ -1634,7 +1639,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     template: 'Enviando Informacion ...',
                     showBackdrop: false
                 });
-                
                 
                 
                 if(!form_registro.txtRegNombre.$valid){
@@ -1706,11 +1710,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 if ($scope.r.email) {
                     
                     // Comprobamos que el email no este registrado.
-
-                    $sails.post("/cliente/registro/validar", { email: $scope.r.email, numCel:$scope.r.celular})
+                    
+                    var celular = $scope.r.celular;
+                    var email = $scope.r.email;
+                 
+                    $sails.post("/cliente/registro/validar", { email:email, numCel:celular})
                             .success(function(val, status, headers, jwr) {
                                 
-                                debugger;
+           
                                 
                                 if (!val.numCelValido) {
                                     
@@ -1775,10 +1782,15 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             $rootScope.solicitud.cliente = response;
                             $ionicSideMenuDelegate.canDragContent(true);
 
-                            AuthService.suscribe().then(function(response) {
+                            AuthService.suscribe(response).then(function(resp) {
+                                
                                 $ionicLoading.hide();
                                 $state.go('app.map', {});
+                                
                             }, function(err) {
+                                
+                                console.log(err);
+                                
                                 $ionicLoading.hide();
                             });
 

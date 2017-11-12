@@ -18,9 +18,12 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
              
              // 192.168.15.98:1337 -- San Nicolas IP.
              
-             // Servidor prod nuevo "http://46.101.180.213";
+             
+            $rootScope.serverIp = "http://46.101.180.213";
             
-            $rootScope.serverIp = "http://104.131.116.22";
+           //$rootScope.serverIp = "http://104.131.116.22";
+            
+            
 
             $rootScope.google_key = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
 
@@ -202,10 +205,11 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
         })
         .config(['$sailsProvider', function ($sailsProvider) {
 
-                $sailsProvider.url = "http://104.131.116.22";
+          //    $sailsProvider.url = "http://104.131.116.22";
+                $sailsProvider.url = "http://46.101.180.213";
+
                 $sailsProvider.debug = false;
                 //digital ocean.
-//                $sailsProvider.url = 'http://104.131.116.22:1337';
 
             }])
 
