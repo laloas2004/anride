@@ -1789,9 +1789,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                 
                             }, function(err) {
                                 
-                                console.log(err);
+                                console.error(err);
                                 
                                 $ionicLoading.hide();
+                                
+                                $scope.alertPopup = $ionicPopup.alert({
+                                        title: 'Se creo tu cuenta',
+                                        template: 'Por favor ingresa con tus datos.'
+                                    });
+                                
+                                $state.go('app.login', {});
+                                
                             });
 
 
