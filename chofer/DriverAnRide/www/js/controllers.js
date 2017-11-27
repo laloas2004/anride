@@ -184,6 +184,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                     id: 1,
                     title: 'Nuevo Servicio ',
                     text: 'Tenemos un nuevo servicio para ti',
+                    sound: "file://sounds/taxi.mp3",
                     data: {
                         customProperty: 'custom value'
                     }
