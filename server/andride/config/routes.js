@@ -54,6 +54,7 @@ module.exports.routes = {
         'post /cliente/registro/validar': 'ClienteController.validarEmail',
         'post /cliente/registro': 'ClienteController.create',
         'post /cliente/pay/add': 'ClienteController.addPayment',
+        'post /clientes/destino/frecuente': 'ClienteController.saveDestinoFrecuente',
         //Chofer
         'post /chofer': 'ChoferController.create',
         'get /chofer': 'ChoferController.getChofer',

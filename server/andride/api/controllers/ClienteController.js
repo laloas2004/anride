@@ -136,6 +136,8 @@ module.exports = {
 //                            console.log('Se Actualizo el SocketId de ' + chofer.emial);
 //                        })
 //                    }
+
+
                     req.session.cliente = cliente;
                     req.session.cliente.online = true;
                     req.session.clienteId = cliente.id;
@@ -501,7 +503,9 @@ module.exports = {
             if (err) {
                 return res.json({err: err});
             }
-
+            
+            try{
+                debugger;
             sails.sockets.broadcast(cliente.id, 'solicitud.creada', finn);
             
             sails.sockets.blast('solicitud', finn, req);
@@ -509,6 +513,10 @@ module.exports = {
             Solicitud.subscribe(req, finn.id);
             Solicitud.publishCreate(finn, req);
             
+            }catch(err){
+
+            sails.log(err);
+            }
             that._enviaSolicitudaChofer(tiempo_espera, finn).then(function(respuesta) {
 
                 return res.json({respuesta: respuesta, solicitud: finn});
@@ -768,8 +776,6 @@ module.exports = {
 
                             } 
 
-                          
-                     
                      return res.json(respuesta);
                             
 
@@ -808,6 +814,25 @@ module.exports = {
     getPayments:function(req, res){
         
         
+        
+        
+    },
+    saveDestinoFrecuente:function(req, res){
+        
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+        
+        var destino = req.param('destino');
+        
+        if(!destino){
+            
+           return res.badRequest(); 
+        }
+        
+    },
+    
+    getDestinosFrecuentes:function(req, res){
         
         
     }

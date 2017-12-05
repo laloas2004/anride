@@ -74,6 +74,9 @@ module.exports = {
         },
         keyValidationumCel: {
             type: 'string'
+        },
+        destinosFrecuentes:{
+            type:'array'
         }
     },
     comparePassword: function (password, chofer, cb) {

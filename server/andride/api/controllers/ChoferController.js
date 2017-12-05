@@ -86,13 +86,19 @@ module.exports = {
                 }
 
                 if (!valid) {
+                    
                     return res.json(401, {err: 'Usuario o contraseña Invalidos.'});
+                    
                 } else {
-                    debugger;
+                    
                     console.log('-- Login Chofer | ' + chofer.email);
+                    
                     delete chofer.password;
+                    
                     req.session.chofer = chofer;
+                    
                     req.session.online = true;
+                    
                     res.json({
                         chofer: chofer,
                         token: jwToken.issue({id: chofer.id})

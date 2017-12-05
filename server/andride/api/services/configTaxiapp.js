@@ -9,6 +9,7 @@ module.exports = {
         fs.readFile('./config/taxiapp.json', 'utf8', function(err, data) {
 
             if (err) {
+                
                 deferred.reject(new Error(err));
             }
 
@@ -26,6 +27,7 @@ module.exports = {
         var string = JSON.stringify(json);
         var file = fs.writeFileSync('./config/taxiapp.json', string, 'utf-8', function(err) {
             if (err) {
+                
                 deferred.reject(new Error(err));
             }
             
