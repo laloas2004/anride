@@ -112,17 +112,18 @@ module.exports.sockets = {
    ***************************************************************************/
    afterDisconnect: function(session, socket, cb) {
        
-       debugger;
        
-       if(session.choferId){
+       if(session.chofer){
            
-           var choferId = session.choferId;
+           var choferId = session.chofer.id;
            
                 Chofer.update({id: choferId}, { socketId:'', online:false, status:'inactivo' }).exec(function(err,chofer) {
                     
                     if(err){
                         console.log(err);
                     }
+                    
+                session.online = false;
          
                 sails.sockets.blast('chofer:offline', chofer[0]);
                 
