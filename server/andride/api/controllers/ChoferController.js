@@ -139,7 +139,7 @@ module.exports = {
             
            var choferId = req.param('choferId');
            
-           if(choferId){
+           if(!choferId){
                
             return res.badRequest('El Chofer no tiene sesion valida.');
                
