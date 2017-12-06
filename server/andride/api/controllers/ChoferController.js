@@ -136,13 +136,25 @@ module.exports = {
         
         if(!req.session.chofer){
             
+            
+           var choferId = req.param('choferId');
+           
+           if(choferId){
+               
             return res.badRequest('El Chofer no tiene sesion valida.');
+               
+           }
+            
+
+        }else{
+            
+          var choferId = req.session.chofer.id;
         }
         
         
         var socketId = sails.sockets.getId(req);
 
-        var choferId = req.session.chofer.id;
+        
         
         var status = req.param('status') || 'inactivo';
 
