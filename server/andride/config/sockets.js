@@ -128,14 +128,14 @@ module.exports.sockets = {
                 sails.sockets.blast('chofer:offline', chofer[0]);
                 
                 console.log(chofer[0].email + ': Se Desconecto Chofer');
-
+                return cb();
             });
            
        }
        
-       if(session.clienteId){
+       if(session.cliente){
            
-           var clienteId = session.clienteId;
+           var clienteId = session.cliente.id;
            
            Cliente.update({id: clienteId}, { socketId: '', online:false }).exec(function(err,cliente) {
                
@@ -146,14 +146,14 @@ module.exports.sockets = {
                     
                sails.sockets.blast('cliente:offline', cliente[0]);
                console.log(cliente[0].email + ': Se Desconecto Cliente');
+               return cb();
            })
            
        }
        
      
        
-     // By default: do nothing.
-   return cb();
+   
    },
   /***************************************************************************
    *                                                                          *

@@ -42,7 +42,7 @@ module.exports.http = {
        'handleBodyParserError',
        'compress',
        'methodOverride',
-       'poweredBy',
+       //'poweredBy',
        '$custom',
        'router',
        'www',

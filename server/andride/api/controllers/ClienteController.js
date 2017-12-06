@@ -140,7 +140,7 @@ module.exports = {
 
                     req.session.cliente = cliente;
                     req.session.cliente.online = true;
-                    req.session.clienteId = cliente.id;
+                   // req.session.clienteId = cliente.id;
                     
                     res.json({
                         cliente: cliente,

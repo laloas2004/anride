@@ -96,8 +96,8 @@ module.exports = {
                     delete chofer.password;
                     
                     req.session.chofer = chofer;
-                    
                     req.session.online = true;
+                    debugger;
                     
                     res.json({
                         chofer: chofer,
@@ -134,6 +134,13 @@ module.exports = {
             return res.badRequest();
         }
         
+        debugger;
+        
+        if(!req.session.chofer){
+            
+            return res.badRequest('El Chofer no tiene sesion valida.');
+        }
+        
         
         var socketId = sails.sockets.getId(req);
 
@@ -141,14 +148,7 @@ module.exports = {
         
         var status = req.param('status') || 'inactivo';
 
-        if (!choferId) {
-            
-            return res.badRequest('El Chofer no tiene sesion valida.');
-            
-            console.log('ChoferController:92 | Falta parametro choferId');
-
-        }
-
+   
         sails.sockets.join(req, choferId, function (err) {
 
             if (err) {
