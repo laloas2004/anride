@@ -97,7 +97,6 @@ module.exports = {
                     
                     req.session.chofer = chofer;
                     req.session.online = true;
-                    debugger;
                     
                     res.json({
                         chofer: chofer,
@@ -134,7 +133,6 @@ module.exports = {
             return res.badRequest();
         }
         
-        debugger;
         
         if(!req.session.chofer){
             

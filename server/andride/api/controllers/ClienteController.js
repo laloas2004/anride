@@ -505,7 +505,7 @@ module.exports = {
             }
             
             try{
-                debugger;
+                
             sails.sockets.broadcast(cliente.id, 'solicitud.creada', finn);
             
             sails.sockets.blast('solicitud', finn, req);
@@ -741,7 +741,7 @@ module.exports = {
             return res.badRequest();
         }
         
-        debugger;
+       
 
         var email = req.param('email');
         var numCel = req.param('numCel');
@@ -784,7 +784,7 @@ module.exports = {
             });
             
         } else {
-            debugger;
+            
             return res.badRequest('Falta parametros requeridos.');
         }
 
