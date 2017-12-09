@@ -11,6 +11,28 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                     //Comprobar que tenga conexion a Internet.
                     
             document.addEventListener("deviceready", function () {
+                
+                 /*
+                             Plugin para checar que este activado el GPS no funciono.
+                             https://github.com/dpa99c/cordova-diagnostic-plugin
+                             
+                             INSTALL
+                             
+                             cordova plugin add cordova.plugins.diagnostic
+                      
+                            cordova.plugins.diagnostic.isLocationAvailable(function(available){
+                        
+                            console.log("Location is " + (available ? "available" : "not available"));
+                        }, function(error){
+                            console.error("The following error occurred: "+error);
+                        });
+                        
+                        cordova.plugins.diagnostic.isGpsLocationEnabled(function(enabled){
+                            console.log("GPS location is " + (enabled ? "enabled" : "disabled"));
+                        }, function(error){
+                            console.error("The following error occurred: "+error);
+                        });
+                */
 
 
                       // listen for Online event
@@ -26,7 +48,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                       })
               
 
-            },false);
+            },false); 
 
             $scope.platform = ionic.Platform.platform();
 
@@ -111,19 +133,31 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
             $sails.on('connect', function(data) {
                 
-                
+                         
             AuthService.isAuthenticated().then(function(response) {
+                
+                if($localStorage.chofer){
 
                 AuthService.suscribe().then(function(response) {
                    
                         $ionicLoading.hide();
+                       
                         $localStorage.chofer.status = response.chofer.status;
                     
 
                 }, function(err) {
                     
-                    console.error(err);
+                     console.error(err);
+                     $ionicLoading.hide();
+                     
+                    
                 });
+            }else{
+                
+                $ionicLoading.hide();
+                $state.go('app.login', {});
+                
+            }
 
 
             }, function(err) {
@@ -131,10 +165,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                  $ionicLoading.hide();
                  $cordovaDialogs.alert('La session a expirado, favor de volver a logearse','Sesion Expirada' , 'OK')
                             .then(function() {
+                                
                                 $state.go('app.login', {});
                             });
                               
             });
+            
+            
+           
                 
 
             });
@@ -695,9 +733,15 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 AuthService,
                 $state) {
 
-            AuthService.logout().then(function() {
-//                $rootScope.watch.clearWatch();
+            AuthService.logout().then(function(response) {
+//              $rootScope.watch.clearWatch();
                 $state.go('app.login', {});
+                
+            },function(err){
+                
+                console.log(err);
+                $state.go('app.login', {});
+                
             });
 
         })
@@ -1248,13 +1292,17 @@ $scope.abrirNavegacion = function(){
 
         })
         .controller('AutosCtrl', function ($scope,
+                $ionicSideMenuDelegate,
                 $ionicHistory,
                 choferService,
                 $rootScope,
                 $localStorage,
+                AuthService,
                 $sails,
                 $state) {
                     
+           // $ionicSideMenuDelegate.canDragContent(false);
+            
             $scope.autos = [];
             $scope.autoActivo = null;
             $scope.auto_checked = null;
@@ -1295,6 +1343,20 @@ $scope.abrirNavegacion = function(){
 
                         });
 
+            }
+            
+            $scope.regresarLogin = function(){
+                
+           AuthService.logout().then(function(response) {
+//              $rootScope.watch.clearWatch();
+                $state.go('app.login', {});
+                
+            },function(err){
+                
+                console.log(err);
+                $state.go('app.login', {});
+                
+            });
             }
             
 

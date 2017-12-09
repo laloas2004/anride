@@ -9,27 +9,38 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
     'ngStorage',
     'angularMoment'])
         .run(function($ionicPlatform, $rootScope, $window, $cordovaSQLite) {
-              //Validar que este conectado a internet.
-             // $rootScope.serverIp = "http://192.168.1.66:1337";
-             // 192.168.15.98:1337 -- San Nicolas IP.
-            // new server prod = "http://46.101.180.213";
-
-            $rootScope.serverIp = "http://192.168.15.98:1337";
             
+            var entorno = 2;
+    
+            switch(entorno) {
+                    case 1:
+                        // Desarrollo local san nicolas.
+                        console.log('Apuntando entorno num 1');
+                        $rootScope.serverIp = "http://192.168.15.98:1337";
+                        console.log($rootScope.serverIp);
+                        break;
+                    case 2:
+                        // Desarrollo local sabinas Hgo.
+                        console.log('Apuntando entorno num 2');
+                        $rootScope.serverIp = "http://192.168.1.69:1337";
+                        console.log($rootScope.serverIp);
+                        break;
+                    case 3:
+                        // Server Pruebas Publico.
+                        $rootScope.serverIp = "http://104.131.116.22";
+                        break;
+                    case 4:
+                        // Server Produccion Publico.
+                        $rootScope.serverIp = "http://46.101.180.213";
+                        break;
+                    default:
+                        console.log('Apuntando entorno default');
+                        $rootScope.serverIp = "http://192.168.15.98:1337";
+                        console.log($rootScope.serverIp);
+            }
+    
             $rootScope.google_key  = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
             
-         /* console.log('connectado a internet:'+ $window.navigator.onLine);
-            
-            $window.addEventListener('offline', function() {
-                console.log('offline');
-                $rootScope.$digest();
-            });
-            $window.addEventListener('online', function() {
-                console.log('online');
-                $rootScope.$digest();
-            });
-             */
-
             $ionicPlatform.ready(function() {
                     
                 screen.lockOrientation('portrait');
@@ -120,7 +131,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                         url: '/salir',
                         views: {
                             'menuContent': {
-                                templateUrl: 'templates/logout.html',
+                                //templateUrl: 'templates/logout.html',
                                 controller: 'LogOutCtrl',
                                 params:{
                                     
@@ -213,6 +224,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                                 templateUrl: 'templates/seleccionar_auto.html',
                                 controller: 'AutosCtrl',
                                 params: {
+                                    
                                 }
                             }
                         }
@@ -223,11 +235,32 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
         })
         .config(['$sailsProvider', function($sailsProvider) {
                 
-//                $sailsProvider.url = "http://192.168.1.66:1337";
-                $sailsProvider.url = "http://192.168.15.98:1337";
+            var entorno = 2;
+    
+            switch(entorno) {
+                    case 1:
+                        // Desarrollo local san nicolas.
+                        $sailsProvider.url = "http://192.168.15.98:1337";
+                        break;
+                    case 2:
+                        // Desarrollo local sabinas Hgo.
+                        
+                        $sailsProvider.url = "http://192.168.1.69:1337";
+                        break;
+                    case 3:
+                        // Server Pruebas Publico.
+                        $sailsProvider.url = "http://104.131.116.22";
+                        break;
+                    case 4:
+                        // Server Produccion Publico.
+                        $sailsProvider.url = "http://46.101.180.213";
+                        break;
+                    default:
+                        $sailsProvider.url = "http://192.168.15.98:1337";
+            }
+                
                 $sailsProvider.debug = true;                
-                //digital ocean.
-//                $sailsProvider.url = 'http://104.131.116.22:1337';
+
 
             }])
 

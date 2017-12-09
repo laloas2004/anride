@@ -8,6 +8,7 @@ map {
 .scroll {
   height: 100%;
 }
+
 #centerInfoBubble {
   position: absolute;
   /*center the marker*/
@@ -9741,9 +9742,12 @@ a {
   display: flex;
   justify-content: center;
   align-items: center; }
+
   .new-job .remaining span {
-    width: 28px;
-    padding: 3px;
+    width: 100px;
+    padding-top: 30px;
+    padding-left:3px;
+    padding-right:3px; 
     border-radius: 50%;
     border: 1px solid #00B140; }
 
