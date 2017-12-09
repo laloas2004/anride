@@ -438,7 +438,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 scope: $scope,
                 animation: 'slide-in-up'
             }).then(function(modal) {
+                
                 $scope.modal_punto_destino = modal;
+                
             },function(err){
                 
                 console.log(err);
@@ -752,6 +754,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $scope.modal_punto_origen.hide();
             }
             $scope.close_modal_destino = function() {
+                
                 $scope.modal_punto_destino.hide();
             }
             $scope.searchOrigen = function() {
@@ -764,16 +767,27 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $scope.modal_punto_destino.show();
             }
             $scope.SearchQueryOrigen = function() {
+                
                 if ($scope.OrigenBusqueda.query) {
+                    
+                    
+                    
                     clienteService.searchDireccion($scope.OrigenBusqueda.query, $scope.position.coords).then(function(response) {
+                        debugger;
+                        
                         $scope.OrigenResponse = response;
-                    }, function() {
+                        
+                    }, function(err) {
+                        
+                        console.log(err);
 
                     });
                 }
             }
             $scope.onSelectItemOrigen = function(place) {
-
+                
+                debugger;
+                
                 clienteService.getDireccionDetails(place).then(function(place_detalle) {
 
                     $scope.position = {coords: {latitude: place_detalle.geometry.location.lat(), longitude: place_detalle.geometry.location.lng()}};
@@ -812,8 +826,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.SearchQueryDestino = function() {
 
                 if ($scope.DestinoBusqueda.query) {
+                    
                     clienteService.searchDireccion($scope.DestinoBusqueda.query, $scope.solicitud.origen.coords).then(function(response) {
+                        debugger;
                         $scope.DestinoResponse = response;
+                        
                     }, function(err) {
                         console.error(err);
                     });
@@ -866,6 +883,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.onSelectItemDestino = function(place) {
 
                 clienteService.getDireccionDetails(place).then(function(place_detalle) {
+                    
+                    debugger;
 
                     $rootScope.solicitud.destino = {
                         coords: {
@@ -881,6 +900,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     $scope.calcularEstimado().then(function(response) {
 
                         $ionicLoading.hide();
+                        
+                        clienteService.saveDestinoFrecuente(place_detalle).then(function(resp){
+                            
+                            console.log('Se guardo destino frecuente');
+                            console.log(resp);
+                            
+                        },function(err){
+                            
+                            console.log(err);
+                        });
+                        
                         $scope.hidePanels('destino', function() {
 
                             $scope.modal_punto_destino.hide();
@@ -889,7 +919,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                     });
 
-                })
+                },function(err){
+                    
+                    console.log(err);
+                });
 
             };
             $scope.crearsolicitud = function() {

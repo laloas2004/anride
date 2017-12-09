@@ -12,19 +12,36 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
 ])
         .run(function ($ionicPlatform, $rootScope, $window, $cordovaNetwork, $ionicPopup) {
         
-             //http://104.131.116.22:1337 -- server prod
-             
-             //192.168.1.69:1337 -- SH Ip adress.
-             
-             // 192.168.15.98:1337 -- San Nicolas IP.
-             
-             
-            //$rootScope.serverIp = "http://46.101.180.213";
+            var entorno = 2;
+    
+            switch(entorno) {
+                    case 1:
+                        // Desarrollo local san nicolas.
+                        console.log('Apuntando entorno num 1');
+                        $rootScope.serverIp = "http://192.168.15.98:1337";
+                        console.log($rootScope.serverIp);
+                        break;
+                    case 2:
+                        // Desarrollo local sabinas Hgo.
+                        console.log('Apuntando entorno num 2');
+                        $rootScope.serverIp = "http://192.168.1.69:1337";
+                        console.log($rootScope.serverIp);
+                        break;
+                    case 3:
+                        // Server Pruebas Publico.
+                        $rootScope.serverIp = "http://104.131.116.22";
+                        break;
+                    case 4:
+                        // Server Produccion Publico.
+                        $rootScope.serverIp = "http://46.101.180.213";
+                        break;
+                    default:
+                        console.log('Apuntando entorno default');
+                        $rootScope.serverIp = "http://192.168.15.98:1337";
+                        console.log($rootScope.serverIp);
+                        
+            }
             
-            $rootScope.serverIp = "http://104.131.116.22";
-            
-            
-
             $rootScope.google_key = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
 
             $window.addEventListener('offline', function () {
@@ -204,12 +221,32 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
             $urlRouterProvider.otherwise('/app/login');
         })
         .config(['$sailsProvider', function ($sailsProvider) {
+                
+            var entorno = 2;
+    
+            switch(entorno) {
+                    case 1:
+                        // Desarrollo local san nicolas.
+                        $sailsProvider.url = "http://192.168.15.98:1337";
+                        break;
+                    case 2:
+                        // Desarrollo local sabinas Hgo.
+                        $sailsProvider.url = "http://192.168.1.69:1337";
+                        break;
+                    case 3:
+                        // Server Pruebas Publico.
+                        $sailsProvider.url = "http://104.131.116.22";
+                        break;
+                    case 4:
+                        // Server Produccion Publico.
+                        $sailsProvider.url = "http://46.101.180.213";
+                        break;
+                    default:
+                        $sailsProvider.url = "http://192.168.15.98:1337";
+            }
 
-                  $sailsProvider.url = "http://104.131.116.22";
-           //     $sailsProvider.url = "http://46.101.180.213";
-
-                $sailsProvider.debug = false;
-                //digital ocean.
+                $sailsProvider.debug = true;
+           
 
             }])
 

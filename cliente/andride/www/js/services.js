@@ -69,12 +69,13 @@ angular.module('app.services', [])
 
                         if (status == google.maps.places.PlacesServiceStatus.OK) {
 
-//                            console.log(result);
-
                             q.resolve(result);
                         }
-                        else
+                        else{
+                            
                             q.reject(status);
+                        }
+                            
                     });
 
 
@@ -93,6 +94,9 @@ angular.module('app.services', [])
                         if (status === google.maps.places.PlacesServiceStatus.OK) {
                             q.resolve(result);
 
+                        }else{
+                            
+                          q.reject(status);  
                         }
 
 
@@ -203,6 +207,33 @@ angular.module('app.services', [])
 
                     return q.promise;
 
+                },
+                
+                saveDestinoFrecuente:function(destino){
+                    
+                    if(!destino){
+                        
+                        console.log('Falta parametro destino en saveDestinoFrecuente');
+                    }
+                    
+                    var q = $q.defer();
+                    
+                    $sails.post("/clientes/destino/frecuente", { destino: destino })
+                    
+                            .success(function(data, status, headers, jwr) {
+                               
+                                q.resolve(data);
+                            })
+                            .error(function(data, status, headers, jwr) {
+                                
+                                q.reject(jwr);
+
+                            });
+                            
+                            
+                    return q.promise;
+                    
+                   
                 }
 
             }
