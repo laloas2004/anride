@@ -95,7 +95,6 @@ module.exports = {
 
 
     },
-    
     login: function(req, res) {
 
         var req_email = req.param('email');
@@ -153,7 +152,6 @@ module.exports = {
         })
 
     },
-    
     logout: function(req, res) {
         
         if(req.session.cliente){
@@ -196,7 +194,6 @@ module.exports = {
         
 
     },
-    
     validateToken: function(req, res) {
         
         if(req.session.cliente){
@@ -211,8 +208,9 @@ module.exports = {
         
        
     },
-    
     suscribe: function(req, res) {
+        
+    
 
         if (!req.isSocket) {
             
@@ -221,7 +219,7 @@ module.exports = {
         
         var socketId = sails.sockets.getId(req);
 
-        var clienteId = req.session.clienteId;
+        var clienteId = req.session.cliente.id;
 
         if (!socketId) {
 
@@ -242,6 +240,8 @@ module.exports = {
             if (err) {
                 return res.serverError(err);
             }
+            
+           
 
             Cliente.update({id:clienteId}, { socketId: socketId, online: true }).exec(function(err, cliente) {
                 
@@ -435,7 +435,6 @@ module.exports = {
 
         return deferred.promise;
     },
-    
     solicitud: function(req, res) {
         
         
@@ -451,19 +450,20 @@ module.exports = {
         var solicitud = req.param('solicitud');
         
         if(!solicitud){
-          return res.badRequest('solicitud es parametro requerido.');
+            
+          return res.badRequest('Error s001: solicitud es parametro requerido.');
         }  
         
         if(solicitud == null){
             
-            return res.badRequest('solicitud no puede ser null.');
+            return res.badRequest('Error s002: solicitud no puede ser null.');
         }
         
         var origen = req.param('origen');
         
         if(!origen){
             
-          return res.badRequest('origen es parametro requerido.');  
+          return res.badRequest('Error s003: origen es parametro requerido.');  
         }
         
         if(origen == null){
@@ -473,7 +473,7 @@ module.exports = {
         
         if(!origen.coords.latitude || !origen.coords.longitude){
             
-           return res.badRequest('origen no tiene longitud o latitud.');  
+           return res.badRequest('Error s004: origen no tiene longitud o latitud.');  
         }
         
         var socketId = sails.sockets.getId(req);
@@ -482,7 +482,9 @@ module.exports = {
         
         if(!cliente){
             
-            console.log('no esxiste la session del cliente');
+            console.log('Error 005: no existe la sesion del cliente');
+            
+            return res.badRequest('Error 005: no existe la sesion del cliente');  
         }
         
        
@@ -517,6 +519,7 @@ module.exports = {
 
             sails.log(err);
             }
+            
             that._enviaSolicitudaChofer(tiempo_espera, finn).then(function(respuesta) {
 
                 return res.json({respuesta: respuesta, solicitud: finn});
@@ -672,7 +675,7 @@ module.exports = {
             console.log('Falta parametro idMsg')
 
         }
-
+           
         Queue.update({id: idMsg}, {entregado: true}).exec(function(err, queue) {
 
             if (err) {
@@ -831,7 +834,6 @@ module.exports = {
         }
         
     },
-    
     getDestinosFrecuentes:function(req, res){
         
         

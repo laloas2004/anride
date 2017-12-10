@@ -281,6 +281,7 @@ module.exports = {
 
 
         Solicitud.update({id: solicitud.id}, {
+            
             status: 'aceptada'
 
         }).exec(function (err, solicitud) {
@@ -291,7 +292,7 @@ module.exports = {
                 return res.json({err: err});
             }
 
-            Solicitud.publishUpdate(solicitud[0].id, {status: 'aceptada', solicitud: solicitud[0]}, req);
+            Solicitud.publishUpdate(solicitud[0].id, { status: 'aceptada', solicitud: solicitud[0]}, req);
 
 
             Cliente.findOne({id: solicitud[0].cliente}).exec(function (err, cliente) {
@@ -356,6 +357,7 @@ module.exports = {
                                 } catch (e) {
                                     console.error(e);
                                 }
+                                
 //                            sails.sockets.broadcast('cliente_' + cliente.id, 'servicio.iniciada', { solicitud:solicitud,servicio:servicio, chofer:chofer[0]});
 
 
@@ -781,6 +783,7 @@ module.exports = {
         intentos = 0;
 
         if (tipo != 'cliente') {
+            
             console.log('Error debe de ser chofer o cliente');
         }
 
@@ -792,6 +795,8 @@ module.exports = {
 
             console.log('Falta parametro idDestino');
         }
+        
+     
 
         Queue.create({tipo: tipo, event: evento, idOrigen: idOrigen, idDestino: idDestino, data: data}).exec(function (err, msg) {
 
