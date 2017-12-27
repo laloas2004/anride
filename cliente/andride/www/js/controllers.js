@@ -106,6 +106,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 
                 // Esto es lo que hace cuando se reconecta al socket.
                 
+                $ionicLoading.hide();
+                
                 AuthService.isAuthenticated().then(function(response) {
                 
                     $rootScope.solicitud.cliente = response.cliente;
@@ -117,17 +119,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         
                                 .success(function (data, status, headers, jwr) {
 
-                                  $ionicLoading.hide();
+                                 // $ionicLoading.hide();
                                   
                                 },function(err){
                                     console.log(err);
-                                    $ionicLoading.hide();
+                                   // $ionicLoading.hide();
                                 });
 
                     }, function (err) {
                         
                         console.log(err);
-                        $ionicLoading.hide();
+                        
                         
                     });
                 
