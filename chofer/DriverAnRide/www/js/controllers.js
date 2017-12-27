@@ -571,15 +571,21 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
             $scope.$storage = $localStorage;
             $scope.servicioAceptado = false;
+            
             $scope.solicitud = $localStorage.solicitud;
+            
             tiempo = 0;
+            
             $scope.timerSolicitud = $interval(function() {
+                
                 tiempo++;
+                
                 var tiempo_espera = parseInt($localStorage.tiempo_espera);
 
                 $scope.remainingTime = (tiempo_espera - tiempo);
 
                 if ($scope.remainingTime == 0) {
+                    
                     $ionicLoading.hide();
                     delete $localStorage.solicitud;
                     $state.go('app.main', {});
@@ -610,7 +616,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 $scope.timeoutServicio = $timeout(function() {
 
                     $cordovaDialogs.alert('Ocurrio un error de comunicacion, revisa tu conexion a internet e intentalo mas tarde.', 'Sin Comunicacion con nuestro Servidor', 'OK')
+                    
                             .then(function() {
+                                
                                 ionic.Platform.exitApp();
                             });
 
@@ -629,7 +637,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
 
 
-                $sails.post("/choferes/servicio", {solicitud: $localStorage.solicitud, chofer: $localStorage.chofer})
+                $sails.post("/choferes/servicio", { solicitud: $localStorage.solicitud, chofer: $localStorage.chofer })
 
                         .success(function(data, status, headers, jwr) {
 
