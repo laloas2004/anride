@@ -69,6 +69,10 @@ module.exports = {
             type: 'boolean',
             defaultsTo: false
         },
+        bloqueado:{
+            type: 'boolean',
+            defaultsTo: false
+        },
         direccion: {
             type: 'string'
         },
@@ -186,8 +190,9 @@ module.exports = {
 
         Chofer.native(function (err, collection) {
 
-            if (err)
+            if (err){
                 return res.serverError(err);
+            }
 
             collection.find({
                 location: {
@@ -200,6 +205,7 @@ module.exports = {
                     }
                 },
                 online: true,
+                bloqueado:false,
                 status: 'activo'
 
             }, {

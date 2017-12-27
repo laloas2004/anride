@@ -92,9 +92,13 @@
         </div>
         <script>
 
-            var placeSearch, autocomplete;
+            var placeSearch, autocomplete,autocomplete_origen,autocomplete_destino;
 
-            var componentForm_origen = {
+
+
+            function initMap() {
+                
+                            var componentForm_origen = {
                 street_number: 'short_name',
                 route: 'long_name',
                 locality: 'long_name',
@@ -102,8 +106,17 @@
                 country: 'long_name',
                 postal_code: 'short_name'
             };
-
-            function initMap() {
+            
+                        var componentForm_origen = {
+                street_number: 'short_name',
+                route: 'long_name',
+                locality: 'long_name',
+                administrative_area_level_1: 'short_name',
+                country: 'long_name',
+                postal_code: 'short_name'
+            };
+                
+ 
 
                 map = new google.maps.Map(document.getElementById('map'), {
                     center: {lat: 25.747215080976115, lng: -100.29709576508179},
@@ -123,13 +136,37 @@
                 // When the user selects an address from the dropdown, populate the address
                 // fields in the form.
                 autocomplete_origen.addListener('place_changed', fillInAddress_origen);
-                autocomplete_destino.addListener('place_changed', fillInAddress_origen);
+                autocomplete_destino.addListener('place_changed', fillInAddress_destino);
+                
+                
 
+            function fillInAddress_origen() {
+                // Get the place details from the autocomplete object.
+                var place = autocomplete_origen.getPlace();
+                
+                for (var component in componentForm_origen) {
+                    
+                    debugger;
 
+                    document.getElementById(component).value = '';
+                    document.getElementById(component).disabled = false;
+                }
 
+                // Get each component of the address from the place details
+                // and fill the corresponding field on the form.
+                for (var i = 0; i < place.address_components.length; i++) {
+
+                    var addressType = place.address_components[i].types[0];
+
+                    if (componentForm_origen[addressType]) {
+
+                        var val = place.address_components[i][componentForm_origen[addressType]];
+
+                        document.getElementById(addressType).value = val;
+                    }
+                }
             }
-
-
+            
             function fillInAddress_destino() {
                 // Get the place details from the autocomplete object.
                 var place = autocomplete.getPlace();
@@ -153,31 +190,16 @@
                         document.getElementById(addressType).value = val;
                     }
                 }
+                
+                
             }
-            function fillInAddress_origen() {
-                // Get the place details from the autocomplete object.
-                var place = autocomplete.getPlace();
-                debugger;
-                for (var component in componentForm_origen) {
 
-                    document.getElementById(component).value = '';
-                    document.getElementById(component).disabled = false;
-                }
 
-                // Get each component of the address from the place details
-                // and fill the corresponding field on the form.
-                for (var i = 0; i < place.address_components.length; i++) {
 
-                    var addressType = place.address_components[i].types[0];
-
-                    if (componentForm_origen[addressType]) {
-
-                        var val = place.address_components[i][componentForm_origen[addressType]];
-
-                        document.getElementById(addressType).value = val;
-                    }
-                }
             }
+
+
+
 
 
             $(document).ready(function () {

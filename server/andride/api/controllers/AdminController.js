@@ -529,6 +529,53 @@ module.exports = {
         });
 
     },
+    bloquearChofer:function(req, res){
+        
+        var ChoferId = req.param('choferId'); 
+        
+        if(!ChoferId){
+            
+            return res.badRequest('Falta parametro Requerido');
+        }
+        
+      Chofer.findOne({id:ChoferId}).exec(function(err,chofer){
+          
+          if (err) {
+                return res.serverError(err);
+            }
+            
+            console.log(chofer);
+            
+            if(chofer.bloqueado == true){
+                
+                chofer.bloqueado = false;
+                chofer.save(function(err){
+                    
+                    if (err) {
+                         return res.serverError(err);
+                    }
+                    
+                    return res.redirect('/admin/choferes');
+                    
+                });
+            }else{
+                
+                chofer.bloqueado = true;
+                chofer.save(function(err){
+                    
+                    if (err) {
+                         return res.serverError(err);
+                    }
+                    
+                    return res.redirect('/admin/choferes');
+                    
+                });
+            }
+          
+      });
+        
+        
+    },
     editChofer: function (req, res) {
 
         var choferId = req.param('choferId');

@@ -29,7 +29,13 @@
                                 <td><%= chofer.apellido%></td>
                                 <td><%= chofer.email%></td>
                                 <td><%= chofer.numCel%></td>
-                                <td><a href="<%='/admin/choferes/edit/'+chofer.id %>" class="btn btn-primary">Editar</a> <a href="<%='/admin/autos/'+chofer.id %>" class="btn btn-primary">Autos</a> <a href="#" class="btn btn-primary">Servicios</a> <a href="/admin/choferes/delete/<%= chofer.id%>" class="btn btn-danger">Bloquear</a></td>
+                                <td><a href="<%='/admin/choferes/edit/'+chofer.id %>" class="btn btn-primary">Editar</a> <a href="<%='/admin/autos/'+chofer.id %>" class="btn btn-primary">Autos</a> <a href="#" class="btn btn-primary">Servicios</a> 
+                                   
+                                    <% if(chofer.bloqueado){ %>
+                                    <a href="/admin/choferes/bloquear/<%= chofer.id%>" class="btn btn-success">Desbloquear</a></td>
+                                    <%}else{ %>
+                                    <a href="/admin/choferes/bloquear/<%= chofer.id%>" class="btn btn-danger">Bloquear</a></td>
+                                    <%}%>
                             </tr><% })%>
                         </tbody>
                     </table>
