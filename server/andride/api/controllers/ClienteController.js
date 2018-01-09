@@ -9,6 +9,8 @@ var Q = require('q');
 module.exports = {
     
     getChoferes: function(req, res) {
+        
+        
 
         if (!req.isSocket) {
 
@@ -23,6 +25,9 @@ module.exports = {
             lon: req.param('lon'),
             lat: req.param('lat')
         };
+        
+        
+        console.log(ClientCoordinates);
 
         Chofer.getChoferesCercanos(ClientCoordinates, maxDistance, limitChoferes).then(function(result) {
 
@@ -32,13 +37,17 @@ module.exports = {
 
             if (result.length == 0) {
 
-                return res.json({error: "No contamos con servicio en esta area"});
+                return res.ok({ error: "No contamos con servicio en esta area" });
             }
 
             Chofer.subscribe(req, _.pluck(result, '_id'));
 
-            return res.json(choferesRes);
+            return res.ok(choferesRes);
 
+        },function(err){
+            
+                console.log(err);
+             return res.ok({ error:err });
         });
     },
     create: function(req, res) {
@@ -210,8 +219,7 @@ module.exports = {
     },
     suscribe: function(req, res) {
         
-    
-
+   
         if (!req.isSocket) {
             
             return res.badRequest();
@@ -437,6 +445,7 @@ module.exports = {
     },
     solicitud: function(req, res) {
         
+       
         
        var that = this;
 
@@ -445,7 +454,7 @@ module.exports = {
             return res.badRequest();
         }
 
-//        console.log(req.allParams());
+        console.log(req.allParams());
 
         var solicitud = req.param('solicitud');
         

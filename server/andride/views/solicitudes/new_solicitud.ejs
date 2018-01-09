@@ -7,7 +7,7 @@
             <div class="page-header">
                 <h1>Nueva Solicitud</h1>
                 <div>
-                    <form role="form" method="POST">
+                    <form role="form" method="POST" novalidate>
 
 
 
@@ -23,7 +23,7 @@
                                 <div class="form-group">
                                     <label for="origen_ciudad">Ciudad</label>
                                     <input type="text" class="form-control" id="origen_ciudad" readonly="true">
-
+                                   
                                 </div>
                                 <div class="form-group">
                                     <label for="origen_estado">Estado</label>
@@ -35,7 +35,10 @@
                                     <input type="text" class="form-control" id="origen_cp" readonly="true">
 
                                 </div>
-
+                                
+                            <div id="dialog_no_choferes" title="No hay choferes disponibles">
+                              <p>Por el momento no hay choferes diponibles en esta zona, intentalo mas tarde.</p>
+                            </div>
 
                             </div>
                         </div>
@@ -50,17 +53,17 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="origen_ciudad">Ciudad</label>
-                                    <input type="text" class="form-control" id="origen_ciudad" readonly="true">
+                                    <input type="text" class="form-control" id="destino_ciudad" readonly="true">
 
                                 </div>
                                 <div class="form-group">
                                     <label for="origen_estado">Estado</label>
-                                    <input type="text" class="form-control" id="origen_estado" readonly="true">
+                                    <input type="text" class="form-control" id="destino_estado" readonly="true">
 
                                 </div>
                                 <div class="form-group">
                                     <label for="origen_cp">CP</label>
-                                    <input type="text" class="form-control" id="origen_cp" readonly="true">
+                                    <input type="text" class="form-control" id="destino_cp" readonly="true">
 
                                 </div>
                             </div></div>
@@ -81,8 +84,10 @@
                                 </div>
                             </div></div>
 
-                        <button type="submit" class="btn btn-default">Enviar Solicitud</button>
+                        
                     </form>
+                    
+                    <button class="btn btn-primary btn-lg btn-block"> Enviar Solicitud </button>
 
                     <div id="map" style="height:450px;margin-top:10px;" class="col-md-12"></div> 
                 </div>
@@ -92,13 +97,71 @@
         </div>
         <script>
 
-            var placeSearch, autocomplete,autocomplete_origen,autocomplete_destino;
+            var placeSearch, autocomplete, autocomplete_origen, autocomplete_destino;
+            var placeOrigen = null;
+            var placeDestino = null;
+            var choferMarker = [];
+            var solicitud = { 
+                        _solicitudData:{},
+                        _choferes:[],
+                        _matrix:{},
+                        _origen:{},
+                        _destino:{},
+                        getChoferes:function(place, cb){
+                           
+                            that = this;
+                       
+                           var data = { lon:place.geometry.location.lng(), lat:place.geometry.location.lat() };
+                            
+                           io.socket.get("/cliente/choferes", data, function (resData, jwres){
+                               
+                               if(!resData.error){
+                                    that._choferes = resData.choferes;
+                                    cb(resData);
+                               
+                               }else{
+                                    console.log(resData);
+                                    cb(false);  
+                               }
+                            
+                                
+                                });     
+                        },
+                        enviarSolicitud:function(){
+                            
+                            that = this;
+
+                        },
+                        setOrigen(origen){
+                         that = this;
+                         that._origen = origen;
+                        },
+                        setDestino(destino){
+                          that = this;
+                          that._destino = destino;
+                        },
+                        _validarSolicitud:function(next){
+                            
+                            that = this;
+                            
+                            next();
+
+                        },
+                        alert(msg){
+                            
+                            alert(msg);
+                        }
+            
+                     };
 
 
-
-            function initMap() {
+  function initMap() {
+      
+        var directionsService = new google.maps.DirectionsService;
+        var directionsDisplay = new google.maps.DirectionsRenderer;
                 
-                            var componentForm_origen = {
+                
+            var componentForm_origen = {
                 street_number: 'short_name',
                 route: 'long_name',
                 locality: 'long_name',
@@ -107,7 +170,7 @@
                 postal_code: 'short_name'
             };
             
-                        var componentForm_origen = {
+            var componentForm_origen = {
                 street_number: 'short_name',
                 route: 'long_name',
                 locality: 'long_name',
@@ -115,23 +178,46 @@
                 country: 'long_name',
                 postal_code: 'short_name'
             };
-                
- 
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                      var pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
 
-                map = new google.maps.Map(document.getElementById('map'), {
+                      };
+
+                          map = new google.maps.Map(document.getElementById('map'), {
+                              center: {lat:pos.lat, lng:pos.lng},
+                              zoom: 12
+                          }); 
+                      });  
+                }else{
+        
+                 map = new google.maps.Map(document.getElementById('map'), {
                     center: {lat: 25.747215080976115, lng: -100.29709576508179},
                     zoom: 12
                 });
+        
+            }
+ 
+
+                
+                
+                var options = {
+                                //types: ['(cities)'],
+                                types: ['geocode','establishment'],
+                                componentRestrictions: {country: "mx"}
+                               };
 
                 // Create the autocomplete object, restricting the search to geographical
                 // location types.
                 autocomplete_origen = new google.maps.places.Autocomplete(
                         /** @type {!HTMLInputElement} */(document.getElementById('servicio_origen')),
-                        {types: ['geocode']});
+                        options);
 
                 autocomplete_destino = new google.maps.places.Autocomplete(
                         /** @type {!HTMLInputElement} */(document.getElementById('servicio_destino')),
-                        {types: ['geocode']});
+                        options);
 
                 // When the user selects an address from the dropdown, populate the address
                 // fields in the form.
@@ -141,60 +227,256 @@
                 
 
             function fillInAddress_origen() {
-                // Get the place details from the autocomplete object.
-                var place = autocomplete_origen.getPlace();
                 
-                for (var component in componentForm_origen) {
+                 placeOrigen = autocomplete_origen.getPlace();
+                
+                for (var i = 0; i < placeOrigen.address_components.length; i++) {
+
+                    var addressType = placeOrigen.address_components[i].types[0];
                     
-                    debugger;
-
-                    document.getElementById(component).value = '';
-                    document.getElementById(component).disabled = false;
-                }
-
-                // Get each component of the address from the place details
-                // and fill the corresponding field on the form.
-                for (var i = 0; i < place.address_components.length; i++) {
-
-                    var addressType = place.address_components[i].types[0];
-
-                    if (componentForm_origen[addressType]) {
-
-                        var val = place.address_components[i][componentForm_origen[addressType]];
-
-                        document.getElementById(addressType).value = val;
+                    
+                    if(addressType == "locality"){
+                        
+                       setCiudadOrigen(placeOrigen.address_components[i].long_name); 
                     }
+                    if(addressType == "administrative_area_level_1"){
+                        
+                       setEstadoOrigen(placeOrigen.address_components[i].long_name); 
+                    }
+                    
+                    if(addressType == "postal_code"){
+                        
+                       setCPOrigen(placeOrigen.address_components[i].long_name); 
+                    }
+                    
+
+                   
                 }
+                
+                
+               calculateAndDisplayRoute(map, directionsService, directionsDisplay, placeOrigen, placeDestino,function(res){
+                   
+                  solicitud.getChoferes(placeOrigen,function(res){
+                      
+                     if(!res){
+                         
+                        $( "#dialog_no_choferes" ).dialog("open");
+                        
+                         return false;
+                     } 
+                     
+                     addChoferesMarkers(map,function(){
+                         
+                         
+                         
+                         
+                     });
+                     
+                      
+                  });
+                   
+               });
+                   
+               
             }
             
-            function fillInAddress_destino() {
-                // Get the place details from the autocomplete object.
-                var place = autocomplete.getPlace();
-                debugger;
-                for (var component in componentForm_origen) {
-
-                    document.getElementById(component).value = '';
-                    document.getElementById(component).disabled = false;
-                }
-
-                // Get each component of the address from the place details
-                // and fill the corresponding field on the form.
-                for (var i = 0; i < place.address_components.length; i++) {
-
-                    var addressType = place.address_components[i].types[0];
-
-                    if (componentForm_origen[addressType]) {
-
-                        var val = place.address_components[i][componentForm_origen[addressType]];
-
-                        document.getElementById(addressType).value = val;
-                    }
+            function setCiudadOrigen(ciudad){
+                
+                $('#origen_ciudad').val('');
+                
+                if(ciudad){
+                    
+                 console.log(ciudad);
+                
+                $('#origen_ciudad').val(ciudad);
+                    
                 }
                 
                 
             }
+            
+            function setEstadoOrigen(estado){
+                
+                  $('#origen_estado').val('');
+                
+                if(estado){
+                    
+                 console.log(estado);
+                
+                $('#origen_estado').val(estado);
+                    
+                }
+                
+            }
+            
+            function setCPOrigen(cp){
+                
+                $('#origen_cp').val('');
+                
+                if(cp){
+                    
+                 console.log(cp);
+                
+                $('#origen_cp').val(cp);
+                    
+                }
+                
+            }
+            
+            
+            
+            function fillInAddress_destino() {
+                
+                    placeDestino = autocomplete_destino.getPlace();
+               
+                for (var i = 0; i < placeDestino.address_components.length; i++) {
 
+                    var addressType = placeDestino.address_components[i].types[0];
 
+                                       
+                    if(addressType == "locality"){
+                        
+                       setCiudadDestino(placeDestino.address_components[i].long_name); 
+                    }
+                    if(addressType == "administrative_area_level_1"){
+                        
+                       setEstadoDestino(placeDestino.address_components[i].long_name); 
+                    }
+                    
+                    if(addressType == "postal_code"){
+                        
+                       setCPDestino(placeDestino.address_components[i].long_name); 
+                    }
+                }
+                
+                calculateAndDisplayRoute(map, directionsService, directionsDisplay, placeOrigen, placeDestino,function(){
+                    
+                    
+                    
+                });
+                    
+                    
+              
+            }
+            
+            
+            function setCiudadDestino(ciudad){
+                
+                $('#destino_ciudad').val('');
+                
+                if(ciudad){
+                    
+                 console.log(ciudad);
+                
+                $('#destino_ciudad').val(ciudad);
+                    
+                }
+                
+            }
+            
+            function setEstadoDestino(estado){
+                
+                  $('#destino_estado').val('');
+                
+                if(estado){
+                    
+                 console.log(estado);
+                
+                $('#destino_estado').val(estado);
+                    
+                }
+                
+            }
+            
+            function setCPDestino(cp){
+                
+                $('#destino_cp').val('');
+                
+                if(cp){
+                    
+                 console.log(cp);
+                
+                $('#destino_cp').val(cp);
+                    
+                }
+                
+            }
+            
+            
+            function addChoferesMarkers(map,cb){
+                
+               var image = '/images/car-icon.png';
+               
+               clearChoferesMarkers(map,function(){
+                   
+                   solicitud._choferes.forEach(function(item,index){
+                   
+                            choferMarker[index] = new google.maps.Marker({
+                                               position: {lat:item.lat, lng:item.lon},
+                                               map: map,
+                                               icon: image
+                                             });
+                   
+                        }); 
+                   
+                       
+               });
+              
+               
+               cb();
+                
+                
+            }
+            
+            function clearChoferesMarkers(map,cb){
+                
+               choferMarker.forEach(function(item,index){
+                   
+                   item.setMap(null);
+                   
+               }); 
+               
+               choferMarker = [];
+            
+            cb();
+                
+            }
+            
+
+           function calculateAndDisplayRoute(map, directionsService, directionsDisplay, placeOrigen, placeDestino, cb){
+               
+               directionsDisplay.setMap(map);
+               
+
+               if(placeOrigen != null && placeDestino != null){
+                   
+                                   
+                directionsService.route({
+                                            origin:{'placeId': placeOrigen.place_id},
+                                            destination:{'placeId': placeDestino.place_id},
+                                            travelMode: 'DRIVING'
+                                          }, function(response, status) {
+                                            if (status === 'OK') {
+                                           
+                                              directionsDisplay.setDirections(response);
+                                            } else {
+                                              window.alert('Directions request failed due to ' + status);
+                                            }
+                                          });
+                                          
+                                          
+                                          cb();
+                   
+                   
+               }else{
+                cb(); 
+            }
+                
+
+                
+            }
+            
+            
 
             }
 
@@ -203,18 +485,10 @@
 
 
             $(document).ready(function () {
-
-                /*        $('#servicio_origen').on('input', function (e) {
-                 
-                 $('#servicio_origen').autocomplete({
-                 source: ['prueba', 'prueba 2']
-                 });
-                 
-                 });
-                 
-                 $('#servicio_destino').on('input', function (e) {
-                 alert('cambio');
-                 });*/
+                
+                $( "#dialog_no_choferes" ).dialog({
+                             autoOpen: false,
+                         });
 
 
             });

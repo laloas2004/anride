@@ -84,7 +84,7 @@
 
                 io.socket.get("/admin/choferes/mapa", {}, function(resData, jwres) {
 
-
+                        var image = '/images/car-icon.png';
 
                     $.each(resData, function(index, value) {
 
@@ -95,6 +95,7 @@
                             markersChoferes.push(new google.maps.Marker({
                                 position: myLatLng,
                                 map: map,
+                                icon:image,
                                 title: value.nombre
                             }));
 
