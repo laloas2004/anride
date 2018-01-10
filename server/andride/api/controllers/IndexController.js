@@ -79,7 +79,7 @@ module.exports = {
                 monto = tarifa_mini;
             }
 
-            return res.json({montoEstimado: monto});
+            return res.json({ montoEstimado: monto });
         }, function(err) {
 
             return res.badRequest();

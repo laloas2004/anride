@@ -35,7 +35,7 @@ if(servicio.cliente && servicio.chofer){
         <td><%= servicio.chofer.email%></td>
         <td>$<%= monto.toFixed(2) %> MXN</td>
         <td><%= servicio.solicitud.tipodePago%></td>
-        <td><%=servicio.createdAt %></td>
+        <td><%= moment(servicio.createdAt).format('DD-MM-YYYY HH:mm')%></td>
         <td><%=servicio.status%></td>
         <td><a href="./servicios/detalle/<%= servicio.id %>" class="btn btn-primary">Ver Detalle</a></td>
 

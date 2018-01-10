@@ -66,7 +66,16 @@
                                     <input type="text" class="form-control" id="destino_cp" readonly="true">
 
                                 </div>
-                            </div></div>
+                            </div>
+                        
+                        <div id="dialog_no_origen" title="Origen necesario">
+                              <p>Es necesario introducir un origen primero.</p>
+                        </div>
+                        
+                        
+                        
+                        
+                        </div>
 
                         <div class="panel panel-default">
                             <div class="panel-heading">Datos del Cliente</div>
@@ -87,7 +96,7 @@
                         
                     </form>
                     
-                    <button class="btn btn-primary btn-lg btn-block"> Enviar Solicitud </button>
+                    <button class="btn btn-primary btn-lg btn-block" id="btn_enviar"> Enviar Solicitud </button>
 
                     <div id="map" style="height:450px;margin-top:10px;" class="col-md-12"></div> 
                 </div>
@@ -95,6 +104,31 @@
 
 
         </div>
+            
+    </div>
+    
+    <div id="dialog-confirm" title="Enviar solicitud de Viaje.">
+  
+      
+            <div class="form-group" style="padding: 50px;">
+                 <div class="row">
+                    <label for="txt_tiempo">Tiempo estimado:</label>  
+                     <input type="text" class="form_control" id="txt_tiempo" readonly ></div>
+                 <div class="row">
+                     <label for="txt_distancia">Distancia estimada:</label>  
+                     <input type="text" class="form_control" id="txt_distancia" disabled ></div>
+                 <div class="row">
+                      <label for="txt_estimado">Costo estimado:</label>  
+                     <input type="text" class="form_control" id="txt_estimado" disabled ></div>
+
+            </div>
+  
+
+    </div>
+        
+</div>
+       <%- include ../includes/footer %>
+
         <script>
 
             var placeSearch, autocomplete, autocomplete_origen, autocomplete_destino;
@@ -104,9 +138,12 @@
             var solicitud = { 
                         _solicitudData:{},
                         _choferes:[],
-                        _matrix:{},
-                        _origen:{},
-                        _destino:{},
+                        _matrix:null,
+                        _origen:null,
+                        _destino:null,
+                        _direccion_origen:'',
+                        _direccion_destino:'',
+                        _estimado:{},
                         getChoferes:function(place, cb){
                            
                             that = this;
@@ -127,29 +164,115 @@
                                 
                                 });     
                         },
+                        getMatrix:function(placeOrigen, placeDestino,cb){
+                            
+                            cb = cb || function(){};
+                            
+                            var geocoder = new google.maps.Geocoder;
+                            var service = new google.maps.DistanceMatrixService;
+                            
+                            service.getDistanceMatrix({
+                                                        origins: [{lat:placeOrigen.geometry.location.lat(),lng:placeOrigen.geometry.location.lng()}],
+                                                        destinations: [{lat:placeDestino.geometry.location.lat(),lng:placeDestino.geometry.location.lng()}],
+                                                        travelMode: 'DRIVING',
+                                                        unitSystem: google.maps.UnitSystem.METRIC,
+                                                        avoidHighways: false,
+                                                        avoidTolls: false
+                                                      }, function(response, status) {
+                                                        if (status !== 'OK') {
+                                                          alert('Error was: ' + status);
+                                                        } else {
+                                                            
+                                                          that._matrix = response;
+
+                                                            } 
+                                                        });
+                            
+                          cb();  
+                        },
                         enviarSolicitud:function(){
                             
                             that = this;
+                            
+                            that_validarSolicitud(function(){
+                                
+                                
+                                alert('validaciones ok');
+                                
+                            });
 
                         },
-                        setOrigen(origen){
+                        setOrigen:function(origen){
                          that = this;
-                         that._origen = origen;
+                         
+                         that._origen = { coords: {
+                            latitude: origen.geometry.location.lat(),
+                            longitude: origen.geometry.location.lng()
+                        }};
+                        
+                        that._direccion_origen = origen.formatted_address;
+                         
                         },
-                        setDestino(destino){
+                        setDestino:function(destino){
                           that = this;
-                          that._destino = destino;
+
+                          that._destino = { coords: {
+                            latitude: destino.geometry.location.lat(),
+                            longitude: destino.geometry.location.lng()
+                             }};
+                    
+                        that._direccion_destino = destino.formatted_address;
                         },
                         _validarSolicitud:function(next){
                             
                             that = this;
+                            debugger;
+                            if(that._choferes.length > 0 ){
+                                
+                               console.log('No hay choferes disponibles');
+                               return false;
+                                
+                            }
                             
                             next();
 
                         },
-                        alert(msg){
+                        calcularEstimado:function(next){
+                        that = this;    
+                        next = next || function(){};
+                        
+                            if(that._matrix == null){
+                                
+                                console.log('_matrix no esta definido.');
+                                return false;
+                            }
                             
-                            alert(msg);
+                        try {
+
+                                var tiempo = that._matrix.rows[0].elements[0].duration.value || 0;
+                                var distancia = that._matrix.rows[0].elements[0].distance.value || 0;
+
+                        } catch (e) {
+
+                                console.error(e);
+
+                        }
+                        
+                        var data = {
+                            distancia:distancia,
+                            tiempo:tiempo,
+                        };
+                    
+                        io.socket.post("/monto/estimado",data,function(response){
+                            
+                            that._estimado = response;
+                            
+                            next(response);
+                            
+                        });
+                    
+                            
+                            
                         }
             
                      };
@@ -262,6 +385,17 @@
                          
                         $( "#dialog_no_choferes" ).dialog("open");
                         
+                        placeOrigen = null;
+                        placeDestino = null;
+                        
+                        $('#servicio_origen').val('');
+                        $('#servicio_destino').val('');
+                        clearChoferesMarkers(map,function(){
+                            
+                            
+                        });
+                        
+                        
                          return false;
                      } 
                      
@@ -327,6 +461,12 @@
             
             function fillInAddress_destino() {
                 
+                if(placeOrigen == null){
+                    
+                    $( "#dialog_no_origen" ).dialog("open");
+                    return false;
+                }
+                
                     placeDestino = autocomplete_destino.getPlace();
                
                 for (var i = 0; i < placeDestino.address_components.length; i++) {
@@ -358,7 +498,6 @@
                     
               
             }
-            
             
             function setCiudadDestino(ciudad){
                 
@@ -402,7 +541,6 @@
                 
             }
             
-            
             function addChoferesMarkers(map,cb){
                 
                var image = '/images/car-icon.png';
@@ -442,8 +580,7 @@
                 
             }
             
-
-           function calculateAndDisplayRoute(map, directionsService, directionsDisplay, placeOrigen, placeDestino, cb){
+            function calculateAndDisplayRoute(map, directionsService, directionsDisplay, placeOrigen, placeDestino, cb){
                
                directionsDisplay.setMap(map);
                
@@ -459,6 +596,14 @@
                                             if (status === 'OK') {
                                            
                                               directionsDisplay.setDirections(response);
+                                              
+                                              solicitud.getMatrix(placeOrigen, placeDestino,function(){
+                                                  
+                                                  solicitud.setOrigen(placeOrigen);
+                                                  solicitud.setDestino(placeDestino);
+                                                  
+                                              });
+                                              
                                             } else {
                                               window.alert('Directions request failed due to ' + status);
                                             }
@@ -489,6 +634,47 @@
                 $( "#dialog_no_choferes" ).dialog({
                              autoOpen: false,
                          });
+                         
+                $( "#dialog_no_origen" ).dialog({
+                             autoOpen: false,
+                         });
+                         
+                $( "#dialog-confirm" ).dialog({
+                                        resizable: false,
+                                        height: "auto",
+                                        width: "auto",
+                                        modal: true,
+                                        autoOpen: false,
+                                        buttons: {
+                                          "Continuar": function() {
+                                            
+                                            solicitud.enviarSolicitud(function(response){
+                                                
+                                                
+                                                
+                                            });
+                                          },
+                                          "Cancelar" : function() {
+                                            $( this ).dialog( "close" );
+                                          }
+                  }
+            });
+                         
+                $('#btn_enviar').click(function(){
+                    
+                    solicitud.calcularEstimado(function(res){
+                        $('#txt_tiempo').val(solicitud._matrix.rows[0].elements[0].duration.text);
+                        $('#txt_distancia').val(solicitud._matrix.rows[0].elements[0].distance.text);
+                        $('#txt_estimado').val('$ '+ res.montoEstimado.toFixed(2) +' MXN');
+                        
+                        $( "#dialog-confirm" ).dialog("open");
+                        
+                        
+                        
+                        
+                    });
+                });         
+                         
 
 
             });
