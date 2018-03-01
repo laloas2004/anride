@@ -21,7 +21,8 @@ module.exports = {
             required: true
         },
         password: {
-            type: "string"
+            type: "string",
+            required: true
         },
         numCel: {
             type: 'string',

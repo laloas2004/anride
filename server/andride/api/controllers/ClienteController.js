@@ -11,7 +11,6 @@ module.exports = {
     getChoferes: function(req, res) {
         
         
-
         if (!req.isSocket) {
 
             return res.badRequest();
@@ -30,10 +29,13 @@ module.exports = {
         console.log(ClientCoordinates);
 
         Chofer.getChoferesCercanos(ClientCoordinates, maxDistance, limitChoferes).then(function(result) {
+            
+            debugger;
 
             var choferesRes = {};
             choferesRes.choferes = result;
-
+            
+            console.log(result);
 
             if (result.length == 0) {
 
@@ -148,6 +150,7 @@ module.exports = {
 
                     req.session.cliente = cliente;
                     req.session.cliente.online = true;
+                    debugger;
                    // req.session.clienteId = cliente.id;
                     
                     res.json({
@@ -227,7 +230,7 @@ module.exports = {
         
         var socketId = sails.sockets.getId(req);
 
-        var clienteId = req.session.cliente.id;
+        var cliente = req.session.cliente;
 
         if (!socketId) {
 
@@ -235,7 +238,7 @@ module.exports = {
 
         }
 
-        if (!clienteId) {
+        if (!cliente) {
             
             return res.json(403, {err: 'Cliente Id requerido en suscribe.'});
 
@@ -243,7 +246,7 @@ module.exports = {
                 
                
 
-        sails.sockets.join(req, clienteId, function(err) {
+        sails.sockets.join(req, cliente.id, function(err) {
 
             if (err) {
                 return res.serverError(err);
@@ -251,7 +254,7 @@ module.exports = {
             
            
 
-            Cliente.update({id:clienteId}, { socketId: socketId, online: true }).exec(function(err, cliente) {
+            Cliente.update({ id:cliente.id }, { socketId: socketId, online: true }).exec(function(err, cliente) {
                 
                 
                 if (err) {
@@ -262,7 +265,7 @@ module.exports = {
 
                 console.log(cliente[0]);
                 
-                return res.json({suscrito: true, cliente:cliente[0]});
+                return res.json({ suscrito: true, cliente:cliente[0]});
 
             });
         });
@@ -702,7 +705,6 @@ module.exports = {
             return res.badRequest();
         }
         
-
         var idCliente = req.session.clienteId;
 
         if (idCliente) {

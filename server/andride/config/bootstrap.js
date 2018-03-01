@@ -12,7 +12,7 @@ module.exports.bootstrap = function (cb) {
     
     
     
-    sails.moment = require('moment');
+        sails.moment = require('moment');
 	// Ensure we have 2dsphere index on Property so GeoSpatial queries can work!
         
         Chofer.update({},{online:false,status:'inactivo'}).exec(function(err, choferes){
@@ -30,6 +30,7 @@ module.exports.bootstrap = function (cb) {
 		}, function () {
 			// It's very important to trigger this callack method when you are finished 
 			// with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
+                        debugger;
 			cb();
 		});
 	});

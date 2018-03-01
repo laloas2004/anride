@@ -6,6 +6,7 @@
  */
 
 module.exports = {
+    
     attributes: {
         tipo: {
             type: 'string',

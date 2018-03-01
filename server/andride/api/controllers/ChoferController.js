@@ -58,7 +58,6 @@ module.exports = {
     },
     login: function (req, res) {
 
-
         var req_email = req.param('email');
         var req_password = req.param('password');
 
@@ -885,10 +884,15 @@ module.exports = {
             return res.badRequest();
         }
 
-        var choferId = req.session.chofer.id;
+        var chofer = req.session.chofer;
         that = this;
+        
+        if(!chofer){
+             return res.json(403, {err: 'Chofer requerido en suscribe.'});
+        }
+        
 
-        Chofer.findOne({id: choferId}).populate('autoActivo').exec(function (err, chofer) {
+        Chofer.findOne({id: chofer.id}).populate('autoActivo').exec(function (err, chofer) {
 
             if (err) {
                 return res.json(err.status, {err: err});

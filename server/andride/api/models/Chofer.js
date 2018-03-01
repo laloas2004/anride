@@ -205,7 +205,6 @@ module.exports = {
                     }
                 },
                 online: true,
-                bloqueado:false,
                 status: 'activo'
 
             }, {
