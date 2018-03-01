@@ -1,16 +1,15 @@
 
 
-angular.module('app', ['ionic', 'ionic-sidemenu', 
+angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
     'app.controllers', 
     'app.directives', 
     'app.services', 
-    'ngCordova', 
     'ngSails',
     'ngStorage',
     'angularMoment'])
         .run(function($ionicPlatform, $rootScope, $window, $cordovaSQLite) {
             
-            let entorno = 1;
+            var entorno = 1;
     
             switch(entorno) {
                     case 1:
@@ -235,7 +234,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
         })
         .config(['$sailsProvider', function($sailsProvider) {
                 
-            let entorno = 1;
+            var entorno = 1;
     
             switch(entorno) {
                     case 1:
