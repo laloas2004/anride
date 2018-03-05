@@ -608,7 +608,7 @@ module.exports = {
             return res.badRequest();
         }
         
-        var clienteId = req.session.clienteId;
+        var clienteId = req.session.cliente.id;
 
         if (!clienteId) {
             return res.json(403, {err: 'Session required'});
