@@ -6,9 +6,27 @@
  */
 
 module.exports = {
-
+  connection: 'MysqlServer',
   attributes: {
-
+      
+      chofer:{
+          model:'chofer',
+          required: true,
+          unique: true
+      },
+      delegado:{
+         model:'user',
+         required: true
+      },
+      comision:{
+          type: 'integer',
+          required: true
+      },
+      saldo:{
+          type: 'float',
+          required: true
+      }
+      
   }
 };
 

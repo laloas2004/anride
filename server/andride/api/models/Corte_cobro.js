@@ -6,9 +6,38 @@
  */
 
 module.exports = {
-
+    connection: 'MysqlServer',
   attributes: {
-
+      
+      delegado:{
+          model: 'user'
+      },
+      fecha_inicial:{
+          type: 'datetime'
+      },
+      fecha_fin:{
+          type: 'datetime'
+      },
+      monto_total_chofer:{
+          type: 'float'  
+      },
+      monto_total_delegado:{
+          type: 'float'  
+      },
+      monto_total_comision:{
+          type: 'float'    
+      },
+      pagado:{
+      type: 'boolean',
+      defaultsTo: false
+      },
+      fecha_pagado:{
+         type: 'datetime' 
+      }
+      
+      
+      
+      
   }
 };
 

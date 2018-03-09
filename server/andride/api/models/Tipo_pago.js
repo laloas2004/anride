@@ -6,8 +6,19 @@
  */
 
 module.exports = {
-
-  attributes: {
+    connection: 'MysqlServer',
+    attributes: {
+      
+      nombre:{
+          type: 'string',
+          required: true
+          
+      },
+      comision:{
+          type: 'integer',
+          required: true
+      }
+      
 
   }
 };

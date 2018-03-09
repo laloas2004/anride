@@ -6,8 +6,20 @@
  */
 
 module.exports = {
-
+  connection: 'MysqlServer',
   attributes: {
+      
+      delegado:{
+         model:'user' 
+      },
+      comision:{
+          type: 'integer',
+          required: true
+      },
+      saldo:{
+            type: 'float',
+          required: true 
+      }
 
   }
 };

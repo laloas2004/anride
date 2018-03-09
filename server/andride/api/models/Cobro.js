@@ -10,13 +10,15 @@ module.exports = {
   attributes: {
       
    viaje:{
-       type: 'string'
+    model:'Servicio'
    },
    chofer:{
-       type: 'string'
+    model:'chofer'
+
    },
    tipo_pago:{
-       type: 'string'
+    model:'tipo_pago'
+
    },
    fecha:{
        type: 'datetime'
@@ -25,10 +27,11 @@ module.exports = {
        type: 'string'
    },
    cobrado:{
-      type: 'boolean' 
+      type: 'boolean',
+      defaultsTo: false
    },
    corte:{
-     type: 'string'  
+     model:'corte_cobro'
    },
    monto_total:{
      type: 'float'  

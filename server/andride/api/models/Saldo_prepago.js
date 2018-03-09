@@ -6,8 +6,26 @@
  */
 
 module.exports = {
-
+  connection: 'MysqlServer',
   attributes: {
+      
+      chofer:{
+          model:'chofer'
+      },
+      tipo_prepago:{
+         type: 'string' 
+      },
+      monto:{
+        type: 'float'
+        
+      },
+      fecha:{
+         type: 'datetime' 
+      },
+      referencia:{
+         type: 'string'  
+      }
+      
 
   }
 };
