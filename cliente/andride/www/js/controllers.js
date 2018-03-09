@@ -1,4 +1,5 @@
 angular.module('app.controllers', ['ngSails', 'ngCordova'])
+
         .controller('AppCtrl', function($scope,
                 $rootScope,
                 $ionicModal,
@@ -8,8 +9,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 AuthService,
                 $localStorage,
                 $cordovaNetwork) {
-
-            $rootScope.seleccionoDestino = false;
+                    
+                    
 
             $rootScope.solicitud = {
                 origen: {},
@@ -23,8 +24,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 status: 'iniciada',
             };
             
-            $rootScope.alertActivo = null;
-
             $scope.platform = ionic.Platform.platform();
             
             // Revisa que se este Authenticado en el servidor.
@@ -35,7 +34,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 
                 $rootScope.solicitud.cliente = response.cliente;
                 
-                // Se suscribe al usuaerio logeado.
+                // Se suscribe al usuario logeado.
                 
                   AuthService.suscribe(response.cliente).then(function (response) {
 
@@ -92,15 +91,15 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $ionicModal,
                 $ionicHistory,
                 $localStorage,
+                $sessionStorage,
                 AuthService,
                 $cordovaLocalNotification,
                 $cordovaDialogs) {
 
 
-            $scope.intervalReconnect = {};
             $scope.vistaAlertinicioViaje = 0;
-            $scope.vistaAlertFinViaje = 0;
             
+          
             
             $sails.on('connect', function (data) {
                 
@@ -205,7 +204,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     
                     // Actualizo el status del servicio.
                     
-                    $sails.get("/cliente/servicio/status", {idServicio: idServicio})
+                    $sails.get("/cliente/servicio/status", { idServicio: idServicio})
                             .success(function(dataStatus, status, headers, jwr) {
 
                                 // Si el servicio esta cancelado o finzalizado.
@@ -285,9 +284,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $sails.on('servicio.inicioViaje', function(data) {
 
 
-
                 $sails.post("/cliente/mensaje/confirma", { idQueue: data.id })
                         .success(function(queue, status, headers, jwr) {
+                            
                             if ($scope.vistaAlertinicioViaje == 0) {
                                 $cordovaDialogs.alert('El chofer a iniciado su Viaje', 'Servicio Iniciado', 'OK')
                                         .then(function() {
@@ -297,7 +296,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             }
 
                             $scope.vistaAlertinicioViaje = 1;
-//                            alert('servicio.inicioViaje');
 
                         })
                         .error(function(data, status, headers, jwr) {
@@ -408,7 +406,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     $scope.hBtnPedir = true;
                     $scope.hCostoEstimado = true;
                     $scope.hCostoEstimado = true;
-
                     $scope.status = d;
                 }
 
@@ -430,7 +427,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             }).then(function(modal) {
                 $scope.modal_punto_origen = modal;
             },function(err){
-                
+
                 console.log(err);
             });
             
@@ -453,6 +450,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.mapCreated = function(map) {
 
                 $scope.map = map;
+                $rootScope.map = map;
                 
                 if (!$localStorage.servicio) {
                     
@@ -462,20 +460,22 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     });
                 }
                 
-                var posOptions = { timeout: 100000, enableHighAccuracy: true };
 
-                $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
+                $cordovaGeolocation.getCurrentPosition({ timeout: 100000, enableHighAccuracy: true })
+                        .then(function(position) {
 
                     $scope.position = position;
 
-                    $scope.map.setCenter(new google.maps.LatLng($scope.position.coords.latitude, $scope.position.coords.longitude));
+                    $scope.map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
 
                     $scope.setDireccionOrigen(position).then(function() {
 
                         $scope.getChoferes().then(function() {
 
                             $scope.renderChoferesMap().then(function() {
+                                
                                 $scope.hideBubble = false;
+                                
                                 $ionicLoading.hide();
                                 
                                 /// Actualiza choferes en el mapa cada 60 segundos.
@@ -497,12 +497,21 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                                 }, 60000);
 
-                            })
+                            },function(err){
+                                
+                                console.log(err);
+                            });
 
 
-                        })
+                        },function(err){
+                            
+                            console.log(err);
+                        });
 
 
+                    },function(err){
+                        
+                        console.log(err);
                     });
 
 
@@ -510,8 +519,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     google.maps.event.addListener($scope.map, "dragend", function() {
 
                         if ($scope.status == 'inicio' || $scope.status == 'origen' || $scope.status == 'origen_places') {
-
-                            console.log('se ejecuto dragend');
 
                             $scope.hideBubble = true;
 
@@ -557,14 +564,18 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 }, function(err) {
 
                     console.log(err);
+                    
                     $ionicLoading.hide();
+                    
                     var alertPopup = $ionicPopup.alert({
                         title: 'No tenemos acceso al GPS',
                         template: 'Por favor activa tu GPS!'
                     });
 
                     alertPopup.then(function(res) {
+                        
                         ionic.Platform.exitApp();
+                        
                     });
                 });
 
@@ -580,6 +591,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 choferService.getChoferes($scope.position).then(function(response) {
 
                     if (response.error) {
+                        
                         $scope.clearChoferesMap().then(function() {
 
                             $ionicLoading.hide();
@@ -603,6 +615,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     }
 
 
+                },function(err){
+                    
+                    console.log(err);
                 });
 
                 return q.promise;
@@ -617,6 +632,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     var colonia = response.data.results[0].address_components[2].long_name;
                     $rootScope.solicitud.direccion_origen = calle + ' ' + numero + ' ' + colonia;
                     q.resolve(response);
+                    
+                },function(err){
+                    
+                    console.log(err);
                 });
 
                 return q.promise;
@@ -658,12 +677,16 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             }
             $scope.clearChoferesMap = function() {
+                
                 var q = $q.defer();
 
                 angular.forEach($scope.markers, function(marker, index) {
+                    
                     marker.setMap(null);
-
-                })
+                    
+                });
+                
+                $scope.markers = [];
 
                 q.resolve();
 
@@ -787,12 +810,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 }
             }
             $scope.onSelectItemOrigen = function(place) {
-                
-                debugger;
-                
+                 
                 clienteService.getDireccionDetails(place).then(function(place_detalle) {
 
-                    $scope.position = {coords: {latitude: place_detalle.geometry.location.lat(), longitude: place_detalle.geometry.location.lng()}};
+                    $scope.position = { coords: { latitude: place_detalle.geometry.location.lat(), longitude: place_detalle.geometry.location.lng()}};
 
                     $rootScope.solicitud.origen = {coords: {latitude: place_detalle.geometry.location.lat(), longitude: place_detalle.geometry.location.lng()}};
                   
@@ -830,7 +851,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 if ($scope.DestinoBusqueda.query) {
                     
                     clienteService.searchDireccion($scope.DestinoBusqueda.query, $scope.solicitud.origen.coords).then(function(response) {
-                        debugger;
+                        
                         $scope.DestinoResponse = response;
                         
                     }, function(err) {
@@ -864,7 +885,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     }
 
 
-                    clienteService.getEstimacionMonto($rootScope.solicitud, matrix_distancia, matrix_tiempo).then(function(response) {
+                    clienteService.getEstimacionMonto(matrix_distancia, matrix_tiempo).then(function(response) {
                         $scope.montoEstimado = response.data.montoEstimado;
 
                         q.resolve(response);
@@ -885,8 +906,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.onSelectItemDestino = function(place) {
 
                 clienteService.getDireccionDetails(place).then(function(place_detalle) {
-                    
-                    debugger;
+                   
 
                     $rootScope.solicitud.destino = {
                         coords: {
@@ -1108,7 +1128,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             $scope.$on('$ionicView.beforeEnter', function(event, data) {
 
-                if ($localStorage.cliente.id) {
+              /*  if ($localStorage.cliente.id) {
 
                     AuthService.suscribe().then(function(response) {
 
@@ -1125,7 +1145,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                     });
 
-                }
+                }*/
 
 
 //                    $ionicPlatform.registerBackButtonAction(function(event) {

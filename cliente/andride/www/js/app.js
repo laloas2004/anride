@@ -1,6 +1,6 @@
 
 
-angular.module('app', ['ionic', 'ionic-sidemenu',
+angular.module('app', ['ionic', 'ionic-sidemenu','ionic.native',
     'app.controllers',
     'app.directives',
     'app.services',
@@ -248,7 +248,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu',
                 $sailsProvider.debug = true;
            
 
-            }])
+            }]);
 
 
       

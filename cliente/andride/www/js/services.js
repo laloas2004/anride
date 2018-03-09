@@ -208,7 +208,6 @@ angular.module('app.services', [])
                     return q.promise;
 
                 },
-                
                 saveDestinoFrecuente:function(destino){
                     
                     if(!destino){
@@ -243,8 +242,40 @@ angular.module('app.services', [])
 
         })
         .factory('solicitudService', function($http, $q, $sails, $rootScope, $localStorage) {
+            
+            var q = $q.defer();
 
             return {
+                
+                solicitud:function(){
+                    
+                  return {
+                            origen: {},
+                            destino: {},
+                            direccion_origen: 'IR AL MARCADOR',
+                            direccion_destino: 'SE REQUIERE UN DESTINO',
+                            matrix: {},
+                            choferesDisponibles: {},
+                            tipodePago: 'efectivo',
+                            cliente: {},
+                            status: 'iniciada',
+                            viajeEnProceso:false,
+                            setOrigen:function(origen){
+
+                                this.origen;
+                            },
+                            getOrigen:function(){
+
+                                return this.origen;
+                            },
+                            setDestino:function(destino){
+                                
+                                this.destino = destino;
+                            }
+ 
+                  };
+                      
+                },
                 
                 sendSolicitud: function(solicitud) {
 
@@ -275,15 +306,19 @@ angular.module('app.services', [])
 
 
         })
-        .factory('servicioService', function($http, $q, $sails, $rootScope,$localStorage) {
+        .factory('servicioService', function($http, $q, $sails, $rootScope, $localStorage,$sessionStorage) {
 
             return {
              
                 getSolicitudPendiente: function() {
 
                     var q = $q.defer();
-
-                    var cliente = $localStorage.cliente.id;
+                    
+                    try{
+                        
+                       
+                        
+                    var cliente = $sessionStorage.session.id;
 
                     $sails.get("/cliente/servicio/pendiente", {clienteId:cliente})
                             .success(function(servicio, status, headers, jwr) {
@@ -292,6 +327,16 @@ angular.module('app.services', [])
                             .error(function(err) {
                                 q.reject(err);
                             });
+                            
+                    }catch(e){
+                        
+                       
+                        debugger;
+                        q.reject(e);
+                    
+                    }
+
+
 
                     return q.promise;
                 }
@@ -335,7 +380,7 @@ angular.module('app.services', [])
                     
                     var q = $q.defer();
 
-                   
+       
                         var config = {
                             url: $rootScope.serverIp + "/clientes/validate",
                             method: "POST",
@@ -346,6 +391,7 @@ angular.module('app.services', [])
 
                         $http(config)
                                 .then(function(response) {
+                                    
                                     
                                     if (response.data.valid) {
                                         
@@ -371,10 +417,6 @@ angular.module('app.services', [])
 
                     var q = $q.defer();
                     $localStorage.$reset();
-//                    $localStorage = $localStorage.$default({
-//                        token: '',
-//                        chofer:{}
-//                    });
 
                     var config = {
                         url: $rootScope.serverIp + "/clientes/login",
@@ -387,9 +429,11 @@ angular.module('app.services', [])
 
                     $http(config)
                             .then(function(response) {
+                                
+                                $sessionStorage.session = response.data.cliente;
 
-                                $localStorage.token = response.data.token;
-                                $localStorage.cliente = response.data.cliente;
+                               // $localStorage.token = response.data.token;
+                               // $localStorage.cliente = response.data.cliente;
 
                                 q.resolve(response.data.cliente);
 
@@ -473,7 +517,7 @@ angular.module('app.services', [])
                     }).then(function(response) {
 
                             $localStorage.token = response.data.token;
-                            $localStorage.cliente = response.data.cliente;
+                            $sessionStorage.session = response.data.cliente;
                             q.resolve(response.data.cliente);
 
                             })

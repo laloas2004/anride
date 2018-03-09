@@ -1,6 +1,7 @@
 angular.module('app.directives', [])
 
 .directive('map', function() {
+    
   return {
     restrict: 'E',
     scope: {
@@ -23,7 +24,7 @@ angular.module('app.directives', [])
         
             map.setClickableIcons(false);
             
-        $scope.onCreate({map: map});
+        $scope.onCreate({ map: map });
 
         // Stop the side bar from dragging when mousedown/tapdown on the map
         google.maps.event.addDomListener($element[0], 'mousedown', function (e) {
