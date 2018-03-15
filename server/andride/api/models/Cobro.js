@@ -10,7 +10,9 @@ module.exports = {
   attributes: {
       
    viaje:{
-    model:'Servicio'
+    model:'Servicio',
+    required: true,
+    unique: true
    },
    chofer:{
     model:'chofer'

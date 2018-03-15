@@ -616,8 +616,14 @@ module.exports = {
         if (!req.isSocket) {
             return res.badRequest();
         }
+        
+        if(!req.session.chofer){
+            
+            return res.forbidden();
+        }
 
         var choferId = req.session.chofer.id;
+        
         var action = req.param('action');
 
         if (action == 'activo') {

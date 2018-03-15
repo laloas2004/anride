@@ -18,7 +18,7 @@ module.exports = {
       fecha_fin:{
           type: 'datetime'
       },
-      monto_total_chofer:{
+      monto_total_choferes:{
           type: 'float'  
       },
       monto_total_delegado:{

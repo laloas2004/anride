@@ -25,6 +25,10 @@ module.exports = {
       saldo:{
           type: 'float',
           required: true
+      },
+      saldo_prepago:{
+          type: 'float',
+          required: true
       }
       
   }
