@@ -93,4 +93,5 @@
     <plugin name="cordova-plugin-mauron85-background-geolocation" spec="~2.3.2" />
     <plugin name="cordova-plugin-google-analytics" spec="https://github.com/danwilson/google-analytics-plugin.git" />
     <engine name="android" spec="~5.2.2" />
+    <plugin name="cordova.plugins.diagnostic" spec="~2.3.0" />
 </widget>

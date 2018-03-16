@@ -428,12 +428,12 @@ angular.module('app.services', [])
         })
         .factory('dbService', function($http, $q, $sails, $rootScope, $cordovaSQLite, $localStorage) {
 
-            db = $cordovaSQLite.openDB({name: "anride.db", iosDatabaseLocation: 'default'});
+            var db = $cordovaSQLite.openDB({name: "anride.db", iosDatabaseLocation: 'default'});
 
             return {
                 setInicioViaje: function(inicio_viaje) {
 
-//  $cordovaSQLite.execute(db, 'DROP TABLE inicioViajes;');
+//                   $cordovaSQLite.execute(db, 'DROP TABLE inicioViajes;');
 
 
                     $cordovaSQLite.execute(db, 'CREATE TABLE IF NOT EXISTS inicioViajes (id INTEGER PRIMARY KEY AUTOINCREMENT,idServicio TEXT, inicio_viaje TEXT, entregado NUMERIC)');
@@ -444,7 +444,7 @@ angular.module('app.services', [])
 
                     var viaje = JSON.stringify(inicio_viaje);
 
-                    var query = "INSERT INTO inicioViajes (idServicio,inicio_viaje, entregado) VALUES (?,?,?)";
+                    var query = "INSERT INTO inicioViajes (idServicio, inicio_viaje, entregado) VALUES (?,?,?)";
 
                     $cordovaSQLite.execute(db, query, [idServicio, viaje, false]).then(function(res) {
 

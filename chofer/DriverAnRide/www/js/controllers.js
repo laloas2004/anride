@@ -128,113 +128,121 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 $scope.map.setDebuggable(false);
 
 
-            })
-
-
-            $sails.on('connect', function(data) {
+            });
+            
+            $scope.subscribeServerEvents = function(){
                 
-                         
-            AuthService.isAuthenticated().then(function(response) {
-                
-                if($localStorage.chofer){
+                    $sails.removeAllListeners();
+                    
+                    $sails.on('connect', function(data) {
 
-                AuthService.suscribe().then(function(response) {
-                   
+
+                    AuthService.isAuthenticated().then(function(response) {
+
+                        if($localStorage.chofer){
+
+                        AuthService.suscribe().then(function(response) {
+
+                                $ionicLoading.hide();
+
+                                $localStorage.chofer.status = response.chofer.status;
+
+
+                        }, function(err) {
+
+                             console.error(err);
+                             $ionicLoading.hide();
+
+
+                        });
+                    }else{
+
                         $ionicLoading.hide();
-                       
-                        $localStorage.chofer.status = response.chofer.status;
-                    
+                        $state.go('app.login', {});
 
-                }, function(err) {
-                    
-                     console.error(err);
-                     $ionicLoading.hide();
-                     
-                    
-                });
-            }else{
-                
-                $ionicLoading.hide();
-                $state.go('app.login', {});
-                
-            }
-
-
-            }, function(err) {
-                 console.error(err);
-                 $ionicLoading.hide();
-                 $cordovaDialogs.alert('La session a expirado, favor de volver a logearse','Sesion Expirada' , 'OK')
-                            .then(function() {
-                                
-                                $state.go('app.login', {});
-                            });
-                              
-            });
-            
-            
-           
-                
-
-            });
-            
-            $sails.on('disconnect', function(data) {
-
-                $scope.disconnect = $ionicLoading.show({
-                    template: 'UPS!, Hay problemas para comunicarnos con la red, revisa la conexion...',
-                    showBackdrop: false
-                });
-
-//                alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
-            });
-            
-            $sails.on('servicio', function(data) {
-
-                if (data.data.servicio.cancelo == "cliente") {
-
-                    $cordovaDialogs.alert('El Usuario Cancelo el Servicio', 'Servicio Cancelado', 'OK')
-                            .then(function() {
-
-                                var fin_viaje = {fechaHora: new Date(), posicion: $localStorage.position};
-
-                                $sails.post("/choferes/servicio/cancelo/cliente", { servicioId: data.data.servicio.id, fin_viaje: fin_viaje})
-
-                                        .success(function(data, status, headers, jwr) {
-
-                                            $localStorage.solicitud = {};
-                                            $localStorage.servicio = {};
-                                            $state.go('app.main', {});
-
-                                        })
-                                        .error(function(data, status, headers, jwr) {
-                                            
-                                            console.log(jwr);
-
-                                        });
-                            });
-
-                }
-
-            });
-            
-            $sails.on('solicitud.enbusqueda', function(data) {
-
-                $cordovaLocalNotification.schedule({
-                    id: 1,
-                    title: 'Nuevo Servicio ',
-                    text: 'Tenemos un nuevo servicio para ti',
-                    sound: "file://sounds/taxi.mp3",
-                    data: {
-                        customProperty: 'custom value'
                     }
-                }).then(function(result) {
-                    console.log(result);
-                });
 
-                $localStorage.solicitud = data.solicitud;
-                $localStorage.tiempo_espera = data.tiempo_espera;
-                $state.go('app.solicitud', {});
 
-            });
+                    }, function(err) {
+                         console.error(err);
+                         $ionicLoading.hide();
+                         $cordovaDialogs.alert('La session a expirado, favor de volver a logearse','Sesion Expirada' , 'OK')
+                                    .then(function() {
+
+                                        $state.go('app.login', {});
+                                    });
+
+                    });
+
+
+
+
+
+                    });
+
+                    $sails.on('disconnect', function(data) {
+
+                        $scope.disconnect = $ionicLoading.show({
+                            template: 'UPS!, Hay problemas para comunicarnos con la red, revisa la conexion...',
+                            showBackdrop: false
+                        });
+
+        //                alert('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
+                    });
+
+                    $sails.on('servicio', function(data) {
+
+                        if (data.data.servicio.cancelo == "cliente") {
+
+                            $cordovaDialogs.alert('El Usuario Cancelo el Servicio', 'Servicio Cancelado', 'OK')
+                                    .then(function() {
+
+                                        var fin_viaje = {fechaHora: new Date(), posicion: $localStorage.position};
+
+                                        $sails.post("/choferes/servicio/cancelo/cliente", { servicioId: data.data.servicio.id, fin_viaje: fin_viaje})
+
+                                                .success(function(data, status, headers, jwr) {
+
+                                                    $localStorage.solicitud = {};
+                                                    $localStorage.servicio = {};
+                                                    $state.go('app.main', {});
+
+                                                })
+                                                .error(function(data, status, headers, jwr) {
+
+                                                    console.log(jwr);
+
+                                                });
+                                    });
+
+                        }
+
+                    });
+
+                    $sails.on('solicitud.enbusqueda', function(data) {
+
+                        $cordovaLocalNotification.schedule({
+                            id: 1,
+                            title: 'Nuevo Servicio ',
+                            text: 'Tenemos un nuevo servicio para ti',
+                            sound: "file://sounds/taxi.mp3",
+                            data: {
+                                customProperty: 'custom value'
+                            }
+                        }).then(function(result) {
+                            console.log(result);
+                        });
+
+                        $localStorage.solicitud = data.solicitud;
+                        $localStorage.tiempo_espera = data.tiempo_espera;
+                        $state.go('app.solicitud', {});
+
+                    });
+                
+                
+            };
+
+            $scope.subscribeServerEvents();
 
             $ionicNavBarDelegate.showBackButton(false);
 
@@ -349,7 +357,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             $scope.$watch('coords.longitude', function(newVal, oldVal) {
 
                 if (newVal === oldVal) {
-                    return;
+                    return false;
                 }
                 $scope.updatePositionServer();
 
@@ -357,7 +365,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             $scope.$watch('coords.latitude', function(newVal, oldVal) {
 
                 if (newVal === oldVal) {
-                    return;
+                    return false;
                 }
                 $scope.updatePositionServer();
 
@@ -410,6 +418,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                                 .error(function(data, status, headers, jwr) {
                                     
                                     console.log(jwr);
+                                    $ionicLoading.hide();
+                                    debugger;
+                                    if(status == 403 ){
+                                        
+                                      $state.go('app.login', {}); 
+                                      
+                                    }
+                                    
 
                                 });
 
