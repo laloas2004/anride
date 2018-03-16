@@ -42,6 +42,8 @@ angular.module('app', ['ionic', 'ionic-sidemenu','ionic.native',
                         
             }
             
+            $rootScope.isGpsEnabled = false;
+            
             $rootScope.google_key = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
 
             $window.addEventListener('offline', function () {
@@ -59,21 +61,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu','ionic.native',
 
             $ionicPlatform.ready(function () {
 
-             //  var isOnline = $cordovaNetwork.isOnline();
-
-              /*  if (!isOnline) {
-
-                    var alertPopup = $ionicPopup.alert({
-                        title: 'Sin Acceso a Internet',
-                        template: 'Ups, no pudimos comunicarnos con nuestro servidor, Revisa tu conexion a internet y vuelvelo a intentar...'
-                    });
-
-                    alertPopup.then(function(res) {
-                       // ionic.Platform.exitApp();
-                    });
-
-
-                }*/
+                    
 
                 screen.lockOrientation('portrait');
 
@@ -85,7 +73,92 @@ angular.module('app', ['ionic', 'ionic-sidemenu','ionic.native',
                 if (window.StatusBar) {
                     StatusBar.styleDefault();
                 }
-            })
+                
+                            function checkAvailability(){
+                
+                                cordova.plugins.diagnostic.isGpsLocationEnabled(function(available){
+                                    console.log("GPS location is " + (available ? "available" : "not available"));
+                                    if(!available){
+                                        
+                                        var alertPopup = $ionicPopup.alert({
+                                                            title: 'No tenemos acceso al GPS',
+                                                            template: 'Es necesario usar el GPS, Por favor activa tu GPS y vuelve a entrar.'
+                                                        });
+
+                                                        alertPopup.then(function(res) {
+
+                                                            ionic.Platform.exitApp();
+
+                                                        });
+                                        
+                                       checkAuthorization();
+                                    }else{
+                                        $rootScope.isGpsEnabled = true;
+                                        console.log("GPS location is ready to use");
+                                    }
+                                }, function(error){
+                                    console.error("The following error occurred: "+error);
+                                });
+                            }
+
+                            function checkAuthorization(){
+                                        cordova.plugins.diagnostic.isLocationAuthorized(function(authorized){
+                                            console.log("Location is " + (authorized ? "authorized" : "unauthorized"));
+                                            if(authorized){
+                                                checkDeviceSetting();
+                                            }else{
+                                                cordova.plugins.diagnostic.requestLocationAuthorization(function(status){
+                                                    switch(status){
+                                                        case cordova.plugins.diagnostic.permissionStatus.GRANTED:
+                                                            console.log("Permission granted");
+                                                            checkDeviceSetting();
+                                                            break;
+                                                        case cordova.plugins.diagnostic.permissionStatus.DENIED:
+                                                            console.log("Permission denied");
+                                                            // User denied permission
+                                                            break;
+                                                        case cordova.plugins.diagnostic.permissionStatus.DENIED_ALWAYS:
+                                                            console.log("Permission permanently denied");
+                                                            // User denied permission permanently
+                                                            break;
+                                                    }
+                                                }, function(error){
+                                                    console.error(error);
+                                                });
+                                            }
+                                        }, function(error){
+                                            console.error("The following error occurred: "+error);
+                                        });
+                            }
+
+                            function checkDeviceSetting(){
+                                        cordova.plugins.diagnostic.isGpsLocationEnabled(function(enabled){
+                                            console.log("GPS location setting is " + (enabled ? "enabled" : "disabled"));
+                                            if(!enabled){
+                                                cordova.plugins.locationAccuracy.request(function (success){
+                                                    console.log("Successfully requested high accuracy location mode: "+success.message);
+                                                }, function onRequestFailure(error){
+                                                    console.error("Accuracy request failed: error code="+error.code+"; error message="+error.message);
+                                                    if(error.code !== cordova.plugins.locationAccuracy.ERROR_USER_DISAGREED){
+                                                        if(confirm("Failed to automatically set Location Mode to 'High Accuracy'. Would you like to switch to the Location Settings page and do this manually?")){
+                                                            cordova.plugins.diagnostic.switchToLocationSettings();
+                                                        }
+                                                    }
+                                                }, cordova.plugins.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY);
+                                            }
+                                        }, function(error){
+                                            console.error("The following error occurred: "+error);
+                                        });
+                                    }
+
+
+                            checkAvailability();
+                
+            });
+            
+           
+            
+            
         })
         .config(function ($stateProvider, $urlRouterProvider) {
 

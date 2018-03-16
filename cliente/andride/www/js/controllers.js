@@ -8,9 +8,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $sails,
                 AuthService,
                 $localStorage,
+                $ionicPlatform,
+                $ionicPopup,
                 $cordovaNetwork) {
                     
-                    
+            $ionicPlatform.ready(function () {});
+                
 
             $rootScope.solicitud = {
                 origen: {},
@@ -27,6 +30,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.platform = ionic.Platform.platform();
             
             // Revisa que se este Authenticado en el servidor.
+            
+            console.log('AKIIII');
+            console.log($rootScope.isGpsEnabled);
 
             AuthService.isAuthenticated().then(function(response) {
                 
@@ -43,8 +49,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         $sails.get('/cliente/mensajes', {})
                         
                                 .success(function (data, status, headers, jwr) {
+                                    
+                                    if($rootScope.isGpsEnabled){
+                                        
+                                         $state.go('app.map', {});  
+               
+                                        }
 
-                                  $state.go('app.map', {});  
+                                 
 
                                 },function(err){
                                     
@@ -55,7 +67,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     }, function (err) {
                         
                         console.log(err);
-                        $state.go('app.map', {});  
+                                    
+                         if($rootScope.isGpsEnabled){
+                                        
+                                         $state.go('app.map', {});  
+               
+                                        }
                         
                     });
                 
@@ -68,6 +85,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $state.go('app.login', {});
 
             });
+            
+            
         })
         .controller('MapCtrl', function($scope,
                 $rootScope,
@@ -95,7 +114,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 AuthService,
                 $cordovaLocalNotification,
                 $cordovaDialogs) {
-
+            
+            
 
             $scope.vistaAlertinicioViaje = 0;
             
