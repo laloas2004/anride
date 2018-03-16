@@ -93,9 +93,9 @@ module.exports = {
 
             delete cliente.password;
             
+            console.log(cliente);
+            
             req.session.cliente = cliente;
-            req.session.cliente.online = true;
-            req.session.clienteId = cliente.id;
 
             res.json({
                 cliente: cliente,
@@ -182,9 +182,9 @@ module.exports = {
                  
              req.session.destroy(function(err) {
                  
-                 console.log(cliente);
+                    console.log(cliente);
                  
-                    return res.json({logout:true});
+                    return res.json({ logout:true });
            
             });  
                  
@@ -496,7 +496,7 @@ module.exports = {
             
             console.log('Error 005: no existe la sesion del cliente');
             
-            return res.badRequest('Error 005: no existe la sesion del cliente');  
+            return res.forbidden('Error 005: no existe la sesion del cliente');  
         }
         
        
@@ -705,7 +705,7 @@ module.exports = {
             return res.badRequest();
         }
         
-        var idCliente = req.session.clienteId;
+        var idCliente = req.session.cliente.id;
 
         if (idCliente) {
 
@@ -809,7 +809,8 @@ module.exports = {
             return res.badRequest();
         }
         var pago = req.param('data');
-        var clienteId = req.session.clienteId;
+        
+        var clienteId = req.session.cliente.id;
 
         Cliente.findOne({id: clienteId}).exec(function(err, cliente) {
 
