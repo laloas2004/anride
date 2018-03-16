@@ -250,7 +250,9 @@ module.exports = {
           return res.json({valid: true, chofer:req.session.chofer});
           
         }else{
+            
             console.log('sesion chofer invalida');
+            
           return res.json({valid: false});  
         }
     },
