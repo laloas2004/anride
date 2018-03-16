@@ -670,7 +670,7 @@ module.exports = {
         var servicioId = req.param('servicioId');
         var that = this;
 
-        Servicio.update({id: servicioId}, {status: 'cancelada', cancelo: 'chofer'}).exec(function (err, serv) {
+        Servicio.update({id: servicioId}, { status: 'cancelada', cancelo: 'chofer' }).exec(function (err, serv) {
 
             if (err) {
 

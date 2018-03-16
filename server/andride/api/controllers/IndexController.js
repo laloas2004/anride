@@ -55,10 +55,16 @@ module.exports = {
         if (!tiempo) {
 
             console.log('falta parametro tiempo');
+            
+            return res.badRequest('falta parametro tiempo');
+            
         }
 
         if (!distancia) {
+            
             console.log('falta parametro distancia');
+            
+            return res.badRequest('falta parametro distancia');
         }
 
         configTaxiapp.get().then(function(config) {
