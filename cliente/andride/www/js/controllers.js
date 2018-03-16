@@ -32,7 +32,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 
                 // Si si esta authenticado setea cliente en la solicitud.
                 
-                $rootScope.solicitud.cliente = response.cliente;
+                //$rootScope.solicitud.cliente = response.cliente;
                 
                 // Se suscribe al usuario logeado.
                 
@@ -99,172 +99,237 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             $scope.vistaAlertinicioViaje = 0;
             
-          
+            $scope.suscribedEvents = false;
             
-            $sails.on('connect', function (data) {
+            $scope.suscribeServerEvents = function(){
                 
-                // Esto es lo que hace cuando se reconecta al socket.
-                
-                $ionicLoading.hide();
-                
-                AuthService.isAuthenticated().then(function(response) {
-                
-                    $rootScope.solicitud.cliente = response.cliente;
-                
-                        AuthService.suscribe(response.cliente).then(function (response) {
+                $sails.removeAllListeners();
+                                   
+                $sails.on('connect', function (data) {
+
+                    // Esto es lo que hace cuando se reconecta al socket.
+
+                    $ionicLoading.hide();
+
+                    AuthService.isAuthenticated().then(function(response) {
+
+                        //$rootScope.solicitud.cliente = response.cliente;
+
+                            AuthService.suscribe(response.cliente).then(function (response) {
 
 
-                            $sails.get('/cliente/mensajes', {})
-                        
-                                .success(function (data, status, headers, jwr) {
+                                $sails.get('/cliente/mensajes', {})
 
-                                 // $ionicLoading.hide();
-                                  
-                                },function(err){
-                                    console.log(err);
-                                   // $ionicLoading.hide();
+                                    .success(function (data, status, headers, jwr) {
+
+                                     // $ionicLoading.hide();
+
+                                    },function(err){
+                                        console.log(err);
+                                       // $ionicLoading.hide();
+                                    });
+
+                        }, function (err) {
+
+                            console.log(err);
+
+
+                        });
+
+
+
+                }, function(err) {
+
+                    // Si se reconecta el socket y no esta auth, te abre la vista de login.
+
+                    $ionicLoading.hide();
+
+                    $state.go('app.login', {});
+
+                });
+
+
+                });
+
+                $sails.on('disconnect', function(data) {
+
+                    // Esto es lo que hace cuando se pierde la conexion al socket.
+
+                    $scope.disconnect = $ionicLoading.show({
+                        template: 'UPS!, Hay problemas para comunicarnos con la red, revisa la conexion...',
+                        showBackdrop: false
+                    });
+
+                    //// Si se desconecta del socket, se detiene la actualizacion de choferes por intevalos.
+
+                    $interval.cancel($scope.intervalUpdateChoferes);
+
+                    console.log('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
+
+                });
+
+                $sails.on('servicio.onplace', function(data) {
+
+                    // Esto es lo que se hace cuando el chofer esta en el lugar de origen.
+
+                    // Valido que el servicio sea el mismo.
+
+                    if (data.servicio.id == $localStorage.servicio.id) {
+
+                        $cordovaLocalNotification.schedule({
+                            id: 1,
+                            title: 'Tu Auto ha Llegado',
+                            text: 'El An Ride ha Llegado al punto',
+                            data: {
+                                customProperty: 'custom value'
+                            }
+                        }).then(function(result) {
+
+                            console.log(result);
+
+                        },function(err){
+
+                            console.log(err);
+
+                        });
+
+                    }
+                });
+
+                $sails.on('servicio.iniciada', function(data) {
+
+                    // Si llega un evento de la cola de mensajes se valida que el servicio no este cancelado o finalizado.
+                    var idServicio = data.data.servicio.id || 0;
+
+
+                    // Valido que el id de servicio sea valido.
+
+                    if (idServicio != 0) {
+
+                        // Actualizo el status del servicio.
+
+                        $sails.get("/cliente/servicio/status", { idServicio: idServicio})
+                                .success(function(dataStatus, status, headers, jwr) {
+
+                                    // Si el servicio esta cancelado o finzalizado.
+
+                                    if (dataStatus.status == 'cancelada' || dataStatus.status == 'finalizado') {
+
+                                        // Se detiene la actualizacion de choferes por intevalos.
+
+                                        clearTimeout($rootScope.timeoutSolicitud);
+
+                                        // Se confirma al servidor que el mensaje nos llego.
+
+                                        $sails.post("/cliente/mensaje/confirma", {idQueue: data.id})
+                                                .success(function(queue, status, headers, jwr) {
+
+
+                                                    console.log('El servicio esta cancelado o finalizado');
+
+
+                                                })
+                                                .error(function(data, status, headers, jwr) {
+
+                                                    console.log(data);
+
+                                                });
+
+                                    } else {
+
+                                        // Si el servicio NO esta cancelado o finzalizado.
+
+                                        // Se detiene la actualizacion de choferes por intevalos.
+
+                                        clearTimeout($rootScope.timeoutSolicitud);
+
+                                        // Se confirma al servidor que el mensaje nos llego.
+
+                                        $sails.post("/cliente/mensaje/confirma", {idQueue: data.id})
+                                                .success(function(queue, status, headers, jwr) {
+
+
+                                                    // Se actualizan los datos del storage.
+
+                                                    $localStorage.chofer = data.data.chofer;
+                                                    $localStorage.servicio = data.data.servicio;
+                                                    $localStorage.solicitud = data.data.solicitud;
+                                                    $scope.$storage = $localStorage;
+
+
+                                                    $state.go('app.servicio_aprovado', {});
+
+
+                                                })
+                                                .error(function(data, status, headers, jwr) {
+
+                                                    console.log(data);
+
+                                                });
+
+
+                                    }
+
+
+                                })
+                                .error(function(data, status, headers, jwr) {
+
+                                    console.log(data);
+
                                 });
 
-                    }, function (err) {
-                        
-                        console.log(err);
-                        
-                        
-                    });
-                
-                
+                    }
 
-            }, function(err) {
-                
-                // Si se reconecta el socket y no esta auth, te abre la vista de login.
-                
-                $ionicLoading.hide();
-                
-                $state.go('app.login', {});
 
-            });
-                
-              
-            });
 
-            $sails.on('disconnect', function(data) {
-                
-                // Esto es lo que hace cuando se pierde la conexion al socket.
 
-                $scope.disconnect = $ionicLoading.show({
-                    template: 'UPS!, Hay problemas para comunicarnos con la red, revisa la conexion...',
-                    showBackdrop: false
                 });
-                
-                //// Si se desconecta del socket, se detiene la actualizacion de choferes por intevalos.
-                
-                $interval.cancel($scope.intervalUpdateChoferes);
 
-                console.log('Upps, no nos podemos comunicar con nuestro servidor, revisa la conexion a internet e intentalo nuevamente.');
-
-            });
-
-            $sails.on('servicio.onplace', function(data) {
-                
-                // Esto es lo que se hace cuando el chofer esta en el lugar de origen.
-                
-                // Valido que el servicio sea el mismo.
-
-                if (data.servicio.id == $localStorage.servicio.id) {
-
-                    $cordovaLocalNotification.schedule({
-                        id: 1,
-                        title: 'Tu Auto ha Llegado',
-                        text: 'El An Ride ha Llegado al punto',
-                        data: {
-                            customProperty: 'custom value'
-                        }
-                    }).then(function(result) {
-
-                        console.log(result);
-                        
-                    },function(err){
-                        
-                        console.log(err);
-                        
-                    });
-
-                }
-            });
-
-            $sails.on('servicio.iniciada', function(data) {
-
-                // Si llega un evento de la cola de mensajes se valida que el servicio no este cancelado o finalizado.
-                var idServicio = data.data.servicio.id || 0;
-                
-                
-                // Valido que el id de servicio sea valido.
-
-                if (idServicio != 0) {
-                    
-                    // Actualizo el status del servicio.
-                    
-                    $sails.get("/cliente/servicio/status", { idServicio: idServicio})
-                            .success(function(dataStatus, status, headers, jwr) {
-
-                                // Si el servicio esta cancelado o finzalizado.
-                        
-                                if (dataStatus.status == 'cancelada' || dataStatus.status == 'finalizado') {
-                                    
-                                    // Se detiene la actualizacion de choferes por intevalos.
-
-                                    clearTimeout($rootScope.timeoutSolicitud);
-                                    
-                                    // Se confirma al servidor que el mensaje nos llego.
-
-                                    $sails.post("/cliente/mensaje/confirma", {idQueue: data.id})
-                                            .success(function(queue, status, headers, jwr) {
-
-                                          
-                                                console.log('El servicio esta cancelado o finalizado');
+                $sails.on('servicio.inicioViaje', function(data) {
 
 
-                                            })
-                                            .error(function(data, status, headers, jwr) {
+                    $sails.post("/cliente/mensaje/confirma", { idQueue: data.id })
+                            .success(function(queue, status, headers, jwr) {
 
-                                                console.log(data);
-
+                                if ($scope.vistaAlertinicioViaje == 0) {
+                                    $cordovaDialogs.alert('El chofer a iniciado su Viaje', 'Servicio Iniciado', 'OK')
+                                            .then(function() {
+                                                // callback success
+                                                $scope.vistaAlertinicioViaje = 1;
                                             });
-
-                                } else {
-                                    
-                                    // Si el servicio NO esta cancelado o finzalizado.
-                                    
-                                    // Se detiene la actualizacion de choferes por intevalos.
-
-                                    clearTimeout($rootScope.timeoutSolicitud);
-                                    
-                                    // Se confirma al servidor que el mensaje nos llego.
-
-                                    $sails.post("/cliente/mensaje/confirma", {idQueue: data.id})
-                                            .success(function(queue, status, headers, jwr) {
-                                                
-                                                
-                                                // Se actualizan los datos del storage.
-
-                                                $localStorage.chofer = data.data.chofer;
-                                                $localStorage.servicio = data.data.servicio;
-                                                $localStorage.solicitud = data.data.solicitud;
-                                                $scope.$storage = $localStorage;
-                                                
-                                                
-                                                $state.go('app.servicio_aprovado', {});
-
-
-                                            })
-                                            .error(function(data, status, headers, jwr) {
-
-                                                console.log(data);
-
-                                            });
-
-
                                 }
+
+                                $scope.vistaAlertinicioViaje = 1;
+
+                            })
+                            .error(function(data, status, headers, jwr) {
+
+                                console.error(data);
+
+                            });
+
+
+                });
+
+                $sails.on('servicio.finalizado', function(data) {
+
+                    $cordovaDialogs.alert('Hemos llegado al destino de su servicio, el total es de: $' + data.totales[0].monto.toFixed(2) + ' MXN', 'Servicio Terminado', 'OK');
+                    delete $localStorage.servicio;
+    //                delete $localStorage.solicitud;
+    //                delete $localStorage.chofer;
+
+                    $state.go('app.map', {});
+
+                });
+
+                $sails.on('servicio.cancelado', function(data) {
+
+                    $sails.post("/cliente/mensaje/confirma", {idQueue: data.id})
+                            .success(function(queue, status, headers, jwr) {
+
+                                $cordovaDialogs.alert('El servicio ha sido cancelado por el Chofer, por favor vuelva a pedir otro servicio.', 'Servicio Cancelado', 'OK');
+                                delete $localStorage.servicio;
+                                $state.go('app.map', {});
 
 
                             })
@@ -274,84 +339,30 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                             });
 
-                }
 
 
+                });
+
+                $sails.on('solicitud.creada', function(data) {
+
+                    $ionicLoading.hide();
+                    $state.go('app.buscando_chofer', {});
+
+                });
+
+                $sails.on('solicitud', function(data) {
+
+                    console.log('se ejecuto $sails.on "solicitud"');
 
 
-            });
-
-            $sails.on('servicio.inicioViaje', function(data) {
-
-
-                $sails.post("/cliente/mensaje/confirma", { idQueue: data.id })
-                        .success(function(queue, status, headers, jwr) {
-                            
-                            if ($scope.vistaAlertinicioViaje == 0) {
-                                $cordovaDialogs.alert('El chofer a iniciado su Viaje', 'Servicio Iniciado', 'OK')
-                                        .then(function() {
-                                            // callback success
-                                            $scope.vistaAlertinicioViaje = 1;
-                                        });
-                            }
-
-                            $scope.vistaAlertinicioViaje = 1;
-
-                        })
-                        .error(function(data, status, headers, jwr) {
-
-                            console.error(data);
-
-                        });
-
-
-            });
-
-            $sails.on('servicio.finalizado', function(data) {
-
-                $cordovaDialogs.alert('Hemos llegado al destino de su servicio, el total es de: $' + data.totales[0].monto.toFixed(2) + ' MXN', 'Servicio Terminado', 'OK');
-                delete $localStorage.servicio;
-//                delete $localStorage.solicitud;
-//                delete $localStorage.chofer;
-
-                $state.go('app.map', {});
-
-            });
-
-            $sails.on('servicio.cancelado', function(data) {
-
-                $sails.post("/cliente/mensaje/confirma", {idQueue: data.id})
-                        .success(function(queue, status, headers, jwr) {
-
-                            $cordovaDialogs.alert('El servicio ha sido cancelado por el Chofer, por favor vuelva a pedir otro servicio.', 'Servicio Cancelado', 'OK');
-                            delete $localStorage.servicio;
-                            $state.go('app.map', {});
-
-
-                        })
-                        .error(function(data, status, headers, jwr) {
-
-                            console.log(data);
-
-                        });
-
-
-
-            });
-
-            $sails.on('solicitud.creada', function(data) {
+                });
+                                    
+            } 
+            
+           
+            $scope.suscribeServerEvents();
                 
-                $ionicLoading.hide();
-                $state.go('app.buscando_chofer', {});
-
-            });
-
-            $sails.on('solicitud', function(data) {
-
-                console.log('se ejecuto $sails.on "solicitud"');
-
-
-            });
+           
 
             $ionicNavBarDelegate.showBackButton(false);
 
@@ -798,7 +809,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     
                     
                     clienteService.searchDireccion($scope.OrigenBusqueda.query, $scope.position.coords).then(function(response) {
-                        debugger;
                         
                         $scope.OrigenResponse = response;
                         
@@ -863,19 +873,24 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             }
             $scope.calcularEstimado = function() {
+                
                 var q = $q.defer();
 
                 $scope.loading = $ionicLoading.show({
                     template: 'Recuperando Precios...',
                     showBackdrop: false
                 });
+                
+                
 
                 clienteService.getDistancia($scope.solicitud).then(function(response) {
 
                     $rootScope.solicitud.matrix = response;
+                   
                     try {
 
                         var matrix_tiempo = response.data.rows[0].elements[0].duration.value || 0;
+                        
                         var matrix_distancia = response.data.rows[0].elements[0].distance.value || 0;
 
                     } catch (e) {
@@ -886,17 +901,22 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
                     clienteService.getEstimacionMonto(matrix_distancia, matrix_tiempo).then(function(response) {
+                        
                         $scope.montoEstimado = response.data.montoEstimado;
 
                         q.resolve(response);
+                        
                     }, function(err) {
+                        
                         q.reject(err);
+                        
                         console.error(err);
                     });
 
                 }, function(err) {
 
                     console.error(err);
+                    
                     q.reject(err);
 
                 });
@@ -939,6 +959,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             $scope.solicitud.choferesDisponibles = $scope.choferesDisponibles;
                         });
 
+                    },function(err){
+                        
+                        $ionicLoading.hide();
+                        alert('Upss , ocurrio un error al calcular estimacion.');
                     });
 
                 },function(err){
@@ -950,11 +974,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.crearsolicitud = function() {
                 
              $interval.cancel($scope.intervalUpdateChoferes);
+             
                 // valido informacion para crear la solicitud.
 
                 var solicitud = $rootScope.solicitud;
-
-
+                    
+                    solicitud.cliente = $sessionStorage.session;
+                
                 if (!solicitud.origen.coords) {
                     
                     
@@ -1290,24 +1316,33 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 event.preventDefault();
                 ionic.Platform.exitApp();
             }, 100);
+            
             $scope.validate = function() {
+                
                 $scope.login();
             };
             $scope.login = function() {
+                
                 $scope.loading = $ionicLoading.show({
                     template: 'Validando...',
                     showBackdrop: false
                 });
+                
                 AuthService.login($scope.email, $scope.password).then(function(response) {
 
-                    $rootScope.solicitud.cliente = response;
+                    //$rootScope.solicitud.cliente = response;
+                    
                     $ionicSideMenuDelegate.canDragContent(true);
 
-                    AuthService.suscribe().then(function(response) {
+                    AuthService.suscribe(response).then(function(response) {
+                        
                         $ionicLoading.hide();
                         $state.go('app.map', {});
-                    }, function() {
+                        
+                    }, function(err) {
+                        
                         console.log('Error en suscribe linea 1135');
+                        console.log(err);
                         $ionicLoading.hide();
                         $state.go('app.map', {});
                     });
@@ -1684,7 +1719,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $rootScope, 
                 $ionicSideMenuDelegate, 
                 $ionicLoading, 
-                $state) {
+                $state,
+                $cordovaToast) {
                     
             $scope.alertPopup;
 
@@ -1781,7 +1817,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                     
                                     $scope.alertPopup = $ionicPopup.alert({
                                         title: 'Ya existe una cuenta con ese numero de celular.',
-                                        template: 'Por favor entre con su cuenta.'
+                                        template: 'Por favor, capture otro numero.'
                                     });
 
                                     return false;
@@ -1795,15 +1831,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                     
                                     $scope.alertPopup = $ionicPopup.alert({
                                         title: 'Ya existe una cuenta con ese email.',
-                                        template: 'Por favor entre con su cuenta.'
+                                        template: 'Por favor , capture otro email.'
                                     });
 
                                     return false;
 
                                 } 
                                 
-                                
-                                
+
                                    // Si no esta registrado continua con el registro.
                                     
                                     $scope.registro(form_registro);
@@ -1834,13 +1869,21 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 AuthService.registro($scope.r)
                         .then(function(response) {
 
-                            $rootScope.solicitud.cliente = response;
+                            //$rootScope.solicitud.cliente = response;
+                    
                             $ionicSideMenuDelegate.canDragContent(true);
 
                             AuthService.suscribe(response).then(function(resp) {
                                 
                                 $ionicLoading.hide();
-                                $state.go('app.map', {});
+                                
+                                $cordovaToast.show('Se creo su cuenta con exito.','short','center').then(function(){
+                                    
+                                    $state.go('app.map', {});
+                                    
+                                });
+                                
+                                
                                 
                             }, function(err) {
                                 
@@ -1867,7 +1910,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                     });
                             console.error(err);
 
-                        })
+                        });
 
             }
 

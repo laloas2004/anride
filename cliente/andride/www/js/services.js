@@ -139,6 +139,8 @@ angular.module('app.services', [])
 
                     var origen = solicitud.origen.coords.latitude + ',' + solicitud.origen.coords.longitude;
                     var destino = solicitud.destino.coords.latitude + ',' + solicitud.destino.coords.longitude;
+                    
+                    debugger;
 
                     var config = {
                         url: "https://maps.googleapis.com/maps/api/distancematrix/json?",
@@ -185,7 +187,8 @@ angular.module('app.services', [])
 
                     return q.promise;
                 },
-                getEstimacionMonto: function(solicitud, distancia, tiempo) {
+                getEstimacionMonto: function(distancia, tiempo) {
+                    
                     var q = $q.defer();
 
                     var config = {
@@ -397,9 +400,14 @@ angular.module('app.services', [])
                                         
                                         q.resolve(response.data);
                                 
+                                        $sessionStorage.session = response.data.cliente;
+                                        
+                                
                                     } else {
                                         
                                         q.reject('Token no Valido');
+                                        
+                                        
                                     }
 
 

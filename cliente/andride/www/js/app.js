@@ -45,13 +45,15 @@ angular.module('app', ['ionic', 'ionic-sidemenu','ionic.native',
             $rootScope.google_key = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
 
             $window.addEventListener('offline', function () {
+                
+                console.log('se ejecuti el evento offline');
 
                 $rootScope.$digest();
             });
             $window.addEventListener('online', function () {
 //              
 
-
+                console.log('se ejecuti el evento online');
 
             });
 
