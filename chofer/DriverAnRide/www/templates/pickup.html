@@ -32,14 +32,15 @@
         </div>
       </div>
 
-
-      <div class="item item-icon-left rounded balanced-bg margin-top light">
-        <i class="icon ion-android-call"></i>
-        <div>
-          <h4 class="light">{{pickup.cliente.nombre}} {{pickup.cliente.apellido}}</h4>
-          <span>{{pickup.cliente.numCel}}</span>
-        </div>
-      </div>
+        <a href="tel:{{pickup.cliente.numCel}}">
+            <div class="item item-icon-left rounded balanced-bg margin-top light">
+              <i class="icon ion-android-call"></i>
+              <div>
+                <h4 class="light">{{pickup.cliente.nombre}} {{pickup.cliente.apellido}}</h4>
+                <span>LLAMAR A CLIENTE</span>
+              </div>
+            </div>
+        </a>
 
     </div>
 

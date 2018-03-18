@@ -58,8 +58,8 @@ angular.module('app.services', [])
                     $http(config)
                             .then(function(response) {
 
-                                $localStorage.token = response.data.token;
-                                $localStorage.chofer = response.data.chofer;
+                                // $localStorage.token = response.data.token;
+                                $sessionStorage.chofer = response.data.chofer;
 
                                 q.resolve(response);
 
@@ -97,15 +97,15 @@ angular.module('app.services', [])
 
                     return q.promise;
                 },
-                suscribe: function() {
+                suscribe: function(chofer) {
 
                     var q = $q.defer();
                     
-                    $sails.post("/choferes/suscribe", { choferId: $localStorage.chofer.id, chofer:$localStorage.chofer, status:$localStorage.chofer.status})
+                    $sails.post("/choferes/suscribe", { choferId:chofer.id, chofer:chofer, status:chofer.status})
                             .success(function(data, status, headers, jwr) {
                                
-                                $localStorage.chofer = data.chofer;
-                                $localStorage.socketId = data.socketId;
+                               // $localStorage.chofer = data.chofer;
+                               // $localStorage.socketId = data.socketId;
                                 q.resolve(data);
                             })
                             .error(function(data, status, headers, jwr) {
@@ -127,8 +127,8 @@ angular.module('app.services', [])
                     })
                             .then(function(response) {
 
-                            $localStorage.token = response.data.token;
-                            $localStorage.chofer = response.data.chofer;
+                            //$localStorage.token = response.data.token;
+                            $sessionStorage.chofer = response.data.chofer;
                             q.resolve(response.data.chofer);
 
                             })
@@ -147,7 +147,7 @@ angular.module('app.services', [])
 
 
         })
-        .factory('choferService', function($http, $q, $sails, $rootScope, $localStorage) {
+        .factory('choferService', function($http, $q, $sails, $rootScope, $localStorage,$sessionStorage) {
 
             return {
                 updatePosition: function(location) {
@@ -157,7 +157,7 @@ angular.module('app.services', [])
                     var data = {
                         lat: location.latitude,
                         lon: location.longitude,
-                        email: $localStorage.chofer.email
+                        email: $sessionStorage.chofer.email
                     };
 
                     $sails.post("/choferes/posicion", data)
@@ -276,7 +276,7 @@ angular.module('app.services', [])
 
 
         })
-        .factory('solicitudService', function($http, $q, $sails, $rootScope, $localStorage) {
+        .factory('solicitudService', function($http, $q, $sails, $rootScope, $localStorage, $sessionStorage) {
 
             return {
                 getDireccion: function(location) {
@@ -304,7 +304,7 @@ angular.module('app.services', [])
 
                     var q = $q.defer();
 
-                    var chofer = $localStorage.chofer.id;
+                    var chofer = $sessionStorage.chofer.id;
 
                     $sails.get("/choferes/solicitud/pendiente", {ChoferId: chofer})
                             .success(function(servicio, status, headers, jwr) {

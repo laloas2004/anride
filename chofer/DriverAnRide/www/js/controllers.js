@@ -5,75 +5,65 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 $rootScope,
                 $ionicModal,
                 $timeout,
+                $sessionStorage,
                 AuthService,
+                $ionicPlatform,
                 $state) {
                     
-                    //Comprobar que tenga conexion a Internet.
                     
-            document.addEventListener("deviceready", function () {
-                
-                 /*
-                             Plugin para checar que este activado el GPS no funciono.
-                             https://github.com/dpa99c/cordova-diagnostic-plugin
-                             
-                             INSTALL
-                             
-                             cordova plugin add cordova.plugins.diagnostic
-                      
-                            cordova.plugins.diagnostic.isLocationAvailable(function(available){
-                        
-                            console.log("Location is " + (available ? "available" : "not available"));
-                        }, function(error){
-                            console.error("The following error occurred: "+error);
-                        });
-                        
-                        cordova.plugins.diagnostic.isGpsLocationEnabled(function(enabled){
-                            console.log("GPS location is " + (enabled ? "enabled" : "disabled"));
-                        }, function(error){
-                            console.error("The following error occurred: "+error);
-                        });
-                */
+                 $ionicPlatform.ready(function () {
+                     
+
+                                    $scope.platform = ionic.Platform.platform();
+
+                                    // listen for Online event
+                                    $rootScope.$on('$cordovaNetwork:online', function(event, networkState){
+                                      var onlineState = networkState;
+                                      console.log('Se conecto a internet.');
+                                    })
+
+                                    // listen for Offline event
+                                    $rootScope.$on('$cordovaNetwork:offline', function(event, networkState){
+                                      $cordovaDialogs.alert('Upss, no nos podemos comunicar con la red, compruebe que tenga conexion a internet.','Sin Conexion', 'Aceptar');
+                                      var offlineState = networkState;
+                                    });
 
 
-                      // listen for Online event
-                      $rootScope.$on('$cordovaNetwork:online', function(event, networkState){
-                        var onlineState = networkState;
-                        console.log('Se conecto a internet.');
-                      })
 
-                      // listen for Offline event
-                      $rootScope.$on('$cordovaNetwork:offline', function(event, networkState){
-                        $cordovaDialogs.alert('Upss, no nos podemos comunicar con la red, compruebe que tenga conexion a internet.','Sin Conexion', 'Aceptar');
-                        var offlineState = networkState;
-                      })
-              
+                          AuthService.isAuthenticated().then(function(response) {
 
-            },false); 
+                                        $sessionStorage.chofer = response.data.chofer;
 
-            $scope.platform = ionic.Platform.platform();
+                              AuthService.suscribe(response.data.chofer).then(function(response) {
 
-            AuthService.isAuthenticated().then(function(response) {
+                                  if( $rootScope.isGpsEnabled){
 
-                AuthService.suscribe().then(function(response) {
+                                    $state.go('app.main', {});  
+
+                                  }
+
+
+                              }, function(err) {
+
+                                  console.error(err);
+                              });
+
+
+                          }, function(err) {
+
+                              console.log('AuthService.isAuthenticated()');
+
+                              console.log(err);
+
+                              $state.go('app.login', {});
+
+                          });
+
+ 
+                     
+                 });   
                     
-                    $state.go('app.main', {});
-
-                }, function(err) {
-                    
-                    console.error(err);
-                });
-
-
-            }, function(err) {
-                
-                console.log('AuthService.isAuthenticated()');
-                
-                console.log(err);
-                
-                $state.go('app.login', {});
-
-            });
-
+            
         })
         .controller('MainCtrl', function($scope,
                 $rootScope,
@@ -109,8 +99,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             
             $scope.$storage = $localStorage;
             $rootScope.servicioRecuperado = false;
+            
+            debugger;
 
-            if ($localStorage.chofer.status == "activo") {
+            if ($sessionStorage.chofer.status == "activo") {
                 $scope.estadoBtnClass = "button-assertive";
                 $scope.estadoBtn = "Desactivarse";
             } else {
@@ -139,13 +131,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
                     AuthService.isAuthenticated().then(function(response) {
 
-                        if($localStorage.chofer){
+                        if($sessionStorage.chofer){
 
                         AuthService.suscribe().then(function(response) {
 
                                 $ionicLoading.hide();
 
-                                $localStorage.chofer.status = response.chofer.status;
+                                $sessionStorage.chofer.status = response.chofer.status;
 
 
                         }, function(err) {
@@ -268,92 +260,111 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
             $scope.watchposition = function() {
 
-                var actualizo = false;
-                
-               
-                var watchOptions = {
-                    timeout: 30000000,
-                    maximumAge: 30000,
-                    enableHighAccuracy: true // may cause errors if true
-                };
+                        var actualizo = false;
+                        var markerChofer = {};
 
-                var watch = $cordovaGeolocation.watchPosition(watchOptions);
-                var markerChofer = {};
-                $scope.$storage.position = {};
-                $scope.coords = {};
-                watch.then(
-                        null,
-                        function(err) {
-                            console.log(err);
-                        },
-                        function(position) {
-                            
-//                            console.log(position.coords);
+                        $scope.$storage.position = {};
 
-                            $scope.coords = position.coords;
+                        $scope.coords = {};
 
-//                            console.log('Se ejecuto watchPosition:');
-//                            console.log('Lat: ' + position.coords.latitude + ' Lon:' + position.coords.longitude);
+                        function succesWatchPosition(position) {
 
-                            try {
-                                if ($scope.$storage.position) {
-                                    $scope.$storage.position.lon = position.coords.longitude;
-                                    $scope.$storage.position.lat = position.coords.latitude;
-                                } else {
-                                    $scope.$storage.position = {};
-                                    $scope.$storage.position.lon = position.coords.longitude;
-                                    $scope.$storage.position.lat = position.coords.latitude;
-                                }
+                                        console.log('Latitude: '          + position.coords.latitude          + '\n' +
+                                                   'Longitude: '         + position.coords.longitude         + '\n' +
+                                                   'Altitude: '          + position.coords.altitude          + '\n' +
+                                                   'Accuracy: '          + position.coords.accuracy          + '\n' +
+                                                   'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
+                                                   'Heading: '           + position.coords.heading           + '\n' +
+                                                   'Speed: '             + position.coords.speed             + '\n' +
+                                                   'Timestamp: '         + position.timestamp                + '\n');
 
-                            } catch (e) {
-                                console.log(e);
-                            }
+                                        $scope.coords = position.coords;
 
-                            var myPosition = new plugin.google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                                        $scope.position = position;
+
+                                        try {
+                                            if ($scope.$storage.position) {
+                                                $scope.$storage.position.lon = position.coords.longitude;
+                                                $scope.$storage.position.lat = position.coords.latitude;
+                                            } else {
+                                                $scope.$storage.position = {};
+                                                $scope.$storage.position.lon = position.coords.longitude;
+                                                $scope.$storage.position.lat = position.coords.latitude;
+                                            }
+
+                                        } catch (e) {
+                                            console.log(e);
+                                        }
+
+                                        var myPosition = new plugin.google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
 
-                            if (angular.isFunction(markerChofer.remove)) {
+                                        if (angular.isFunction(markerChofer.remove)) {
 
-                                markerChofer.remove();
-                            }
-                            
-                           
+                                            markerChofer.remove();
+                                        }
 
-                            $scope.map.addMarker({
-                                'position': myPosition,
-                                'icon': {url: '.img/car-icon.png',
-                                'size': {
-                                        width: 32,
-                                        height: 32
-                                    }}
-                            }, function (marker) {
 
-                                markerChofer = marker;
 
-                                marker.setIcon({
-                                    'url': 'img/car-icon.png',
-                                    'size': {
-                                        width: 32,
-                                        height: 32
+                                        $scope.map.addMarker({
+                                            'position': myPosition,
+                                            'icon': {url: '.img/car-icon.png',
+                                            'size': {
+                                                    width: 32,
+                                                    height: 32
+                                                }}
+                                        }, function (marker) {
+
+                                            markerChofer = marker;
+
+                                            marker.setIcon({
+                                                'url': 'img/car-icon.png',
+                                                'size': {
+                                                    width: 32,
+                                                    height: 32
+                                                }
+                                            });
+
+                                        });
+
+
+
+                                        $scope.map.moveCamera({
+                                            'target': myPosition,
+                                            'zoom': 17,
+                                            'tilt': 30
+                                        }, function() {
+
+
+                                        });
+
                                     }
+
+                        function errorWatchPosition(err) {
+                                            alert('code: '    + error.code    + '\n' +
+                                                  'message: ' + error.message + '\n');
+                                        console.error(err);
+                                    }
+
+
+                        var watch = cordova.plugins.locationServices.geolocation.watchPosition(succesWatchPosition, errorWatchPosition,{
+                                    maximumAge: 5000,
+                                    timeout: 30000,
+                                    enableHighAccuracy: true,
+                                    priority: 100,
+                                    interval: 10000,
+                                    fastInterval: 2000
                                 });
 
-                            });
 
-
-
-                            $scope.map.moveCamera({
-                                'target': myPosition,
-                                'zoom': 17,
-                                'tilt': 30
-                            }, function() {
-
-
-                            });
-
-                        });
             };
-            $scope.watchposition();
+            
+            document.addEventListener("deviceready", function() {
+                
+                $scope.watchposition();
+                
+             });
+            
             $scope.$watch('coords.longitude', function(newVal, oldVal) {
 
                 if (newVal === oldVal) {
@@ -373,14 +384,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             $scope.updatePositionServer = function() {
 
                 var position = $scope.coords;
-
+                if($scope.position.coords.speed > 0){
+                    
                 choferService.updatePosition(position).then(function(response) {
 
                     console.log("Se actualizo posicion" + response);
                     actualizo = true;
 
                 });
+             }
             },
+            
             $scope.cambiarEstadoChofer = function() {
                 
                         $ionicLoading.show({
@@ -390,9 +404,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                         
                         var action = '';
 
-                        if ($localStorage.chofer.status == 'activo') {
+                        if ($sessionStorage.chofer.status == 'activo') {
                             action = "inactivo";
-                        } else if ($localStorage.chofer.status == 'inactivo') {
+                        } else if ($sessionStorage.chofer.status == 'inactivo') {
                             action = "activo";
                         } else {
                             action = "activo";
@@ -402,7 +416,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                         $sails.post("/choferes/estatus", {action: action})
                                 .success(function(data, status, headers, jwr) {
 
-                                    $localStorage.chofer.status = data.status;
+                                    $sessionStorage.chofer.status = data.status;
 
                                     if (data.status == "activo") {
 
@@ -583,6 +597,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 $cordovaDialogs,
                 $interval,
                 $timeout,
+                $sessionStorage,
                 $cordovaLocalNotification) {
 
             $scope.$storage = $localStorage;
@@ -641,7 +656,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
                 }, 120000);
 
-                if (!$localStorage.chofer) {
+                if (!$sessionStorage.chofer) {
 
                     console.error('Error: Falta parametro Chofer.');
                 }
@@ -653,7 +668,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
 
 
-                $sails.post("/choferes/servicio", { solicitud: $localStorage.solicitud, chofer: $localStorage.chofer })
+                $sails.post("/choferes/servicio", { solicitud: $localStorage.solicitud, chofer: $sessionStorage.chofer })
 
                         .success(function(data, status, headers, jwr) {
 
@@ -1061,6 +1076,7 @@ $scope.abrirNavegacion = function(){
             $scope.tiempo.min = 0;
             $scope.tiempo.segundos = 0;
             $scope.distancia = 0;
+            $scope.velocidad = 0;
 
             $scope.servicio = $localStorage.servicio;
             $scope.solicitud = $localStorage.solicitud;
@@ -1148,10 +1164,20 @@ $scope.abrirNavegacion = function(){
                     
                     $scope.watchservicio = cordova.plugins.locationServices.geolocation.watchPosition(function(position) {
                         
+                            console.log('Latitude: '          + position.coords.latitude          + '\n' +
+                                        'Longitude: '         + position.coords.longitude         + '\n' +
+                                        'Altitude: '          + position.coords.altitude          + '\n' +
+                                        'Accuracy: '          + position.coords.accuracy          + '\n' +
+                                        'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
+                                        'Heading: '           + position.coords.heading           + '\n' +
+                                        'Speed: '             + position.coords.speed             + '\n' +
+                                        'Timestamp: '         + position.timestamp                + '\n');
+                        
                         $scope.positions.push(position);
                         $scope.speed = position.coords.speed;
                         $scope.accurancy = position.coords.accuracy;
-                        console.log(position);
+                        $scope.velocidad = position.coords.speed * 3.6;
+                       
 
                         if ($scope.positions.length >= 2) {
 
@@ -1186,7 +1212,7 @@ $scope.abrirNavegacion = function(){
                         $localStorage.distancia =  sum_distancia;   
                         $localStorage.posiciones = $scope.positions;
 
-                            })
+                            });
 
 
 
@@ -1195,7 +1221,7 @@ $scope.abrirNavegacion = function(){
                         }
 
                     }, function(err) {
-                        
+                        alert('Error en el GPS!');
                         console.log(err);
                         
                     }, watchOptions);
