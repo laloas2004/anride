@@ -2,7 +2,7 @@
 <widget id="com.websiete.anride.conductor" version="0.0.8" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name> Driver Anride</name>
     <description>
-        App para Driver An Ride.
+        App para Driver An ride.
     </description>
     <author email="abelardo@websiete.com" href="http://websiete.com/" />
     <content src="index.html" />

@@ -9,7 +9,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
     'angularMoment'])
         .run(function($ionicPlatform, $rootScope, $window, $cordovaSQLite, $ionicPopup) {
             
-            var entorno = 1;
+            var entorno = 4;
     
             switch(entorno) {
                     case 1:
@@ -30,7 +30,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                         break;
                     case 4:
                         // Server Produccion Publico.
-                        $rootScope.serverIp = "http://46.101.180.213";
+                        $rootScope.serverIp = "http://35.227.102.88";
                         break;
                     default:
                         console.log('Apuntando entorno default');
@@ -319,7 +319,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
         })
         .config(['$sailsProvider', function($sailsProvider) {
                 
-            var entorno = 1;
+            var entorno = 4;
     
             switch(entorno) {
                     case 1:
@@ -337,7 +337,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                         break;
                     case 4:
                         // Server Produccion Publico.
-                        $sailsProvider.url = "http://46.101.180.213";
+                        $sailsProvider.url = "http://35.227.102.88";
                         break;
                     default:
                         $sailsProvider.url = "http://192.168.15.98:1337";

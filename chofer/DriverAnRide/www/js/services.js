@@ -100,7 +100,7 @@ angular.module('app.services', [])
                 suscribe: function(chofer) {
 
                     var q = $q.defer();
-                    
+                    debugger;
                     $sails.post("/choferes/suscribe", { choferId:chofer.id, chofer:chofer, status:chofer.status})
                             .success(function(data, status, headers, jwr) {
                                
@@ -114,34 +114,34 @@ angular.module('app.services', [])
                             });
                     return q.promise;
                 },
-            registro:function(data){
-                
-                  var q = $q.defer();
+                registro:function(data){
 
-                    $http({
-                        url: $rootScope.serverIp + "/chofer/registro",
-                        method: "POST",
-                        params: {
-                            chofer: data
-                        }
-                    })
-                            .then(function(response) {
+                      var q = $q.defer();
 
-                            //$localStorage.token = response.data.token;
-                            $sessionStorage.chofer = response.data.chofer;
-                            q.resolve(response.data.chofer);
+                        $http({
+                            url: $rootScope.serverIp + "/chofer/registro",
+                            method: "POST",
+                            params: {
+                                chofer: data
+                            }
+                        })
+                                .then(function(response) {
 
-                            })
-                            .catch(function(err) {
-                               
-                               q.reject(err);
+                                //$localStorage.token = response.data.token;
+                                $sessionStorage.chofer = response.data.chofer;
+                                q.resolve(response.data.chofer);
 
-                            })
+                                })
+                                .catch(function(err) {
 
-                    return q.promise;
-                
+                                   q.reject(err);
 
-            }
+                                })
+
+                        return q.promise;
+
+
+                }
 
             }
 

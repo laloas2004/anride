@@ -133,7 +133,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
                         if($sessionStorage.chofer){
 
-                        AuthService.suscribe().then(function(response) {
+                        AuthService.suscribe($sessionStorage.chofer).then(function(response) {
 
                                 $ionicLoading.hide();
 
@@ -793,6 +793,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 $localStorage,
                 $ionicLoading,
                 $state,
+                $sessionStorage,
                 $cordovaDialogs) {
 
             $scope.$storage = $localStorage;
@@ -840,7 +841,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
                     $ionicSideMenuDelegate.canDragContent(true);
 
-                    AuthService.suscribe().then(function(response) {
+                    AuthService.suscribe($sessionStorage.chofer).then(function(response) {
 
                         $ionicLoading.hide();
                         $state.go('app.main', {});
@@ -1317,12 +1318,12 @@ $scope.abrirNavegacion = function(){
             $scope.registro = function () {
 
                 AuthService.registro($scope.r)
-                        .then(function (response) {
+                        .then(function (chofer) {
 
 //                            $rootScope.solicitud.chofer = response;
                             $ionicSideMenuDelegate.canDragContent(true);
 
-                            AuthService.suscribe().then(function (response) {
+                            AuthService.suscribe(chofer).then(function (response) {
                                 $ionicLoading.hide();
                                 $state.go('app.main', {});
                             }, function (err) {
