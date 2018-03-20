@@ -55,7 +55,7 @@ module.exports.session = {
   *                                                                          *
   ***************************************************************************/
 
-   host: 'localhost',
+   host: '127.0.0.1',
    port: 6379,
    //ttl: <redis session TTL in seconds>,
    db: 1,
