@@ -621,7 +621,11 @@ module.exports = {
         
         if(!req.session.chofer){
             
-            return res.forbidden();
+           debugger;
+           
+           console.log(req.session.chofer);
+            
+            //return res.forbidden();
         }
 
         var choferId = req.session.chofer.id;
