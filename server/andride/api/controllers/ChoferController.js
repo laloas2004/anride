@@ -897,9 +897,11 @@ module.exports = {
         }
 
         var chofer = req.session.chofer;
+        
         that = this;
         
         if(!chofer){
+            
              return res.json(403, {err: 'Chofer requerido en suscribe.'});
         }
         

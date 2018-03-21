@@ -42,7 +42,7 @@ module.exports.routes = {
         'post /clientes/validate': 'ClienteController.validateToken',
         'post /clientes/suscribe': 'ClienteController.suscribe',
         'post /clientes/solicitud': 'ClienteController.solicitud',
-        'post /clientes/suscribe/chofer': 'ClienteController.suscribeChofer',
+        'post /clientes/chofer': 'ClienteController.getChoferPosition',
         'post /clientes/servicio/cancel': 'ClienteController.cancelarServicio',
         'get /cliente/choferes': 'ClienteController.getChoferes',
         'get /cliente/viajes': 'ClienteController.getViajes',

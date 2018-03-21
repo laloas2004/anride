@@ -544,7 +544,7 @@ module.exports = {
         });
 
     },
-    suscribeChofer: function(req, res) {
+    getChoferPosition: function(req, res) {
         
 
         if (!req.isSocket) {
@@ -553,16 +553,22 @@ module.exports = {
         }
 
         var choferId = req.param('choferId');
+        
+        if(!choferId){
+            
+            return res.badRequest('Falta parametro choferId');
+        }
 
         Chofer.subscribe(req, choferId);
 
-        Chofer.findOne({id: choferId}).exec(function(err, chofer) {
+        Chofer.findOne({id:choferId}).exec(function(err, chofer) {
             if (err) {
+                
                 return res.json({err: err});
             }
             return res.ok(chofer);
 
-        })
+        });
 
     },
     cancelarServicio: function(req, res) {
