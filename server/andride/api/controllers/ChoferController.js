@@ -213,7 +213,6 @@ module.exports = {
         var socketId = sails.sockets.getId(req);
         var lat = req.param('lat');
         var lon = req.param('lon');
-        var email = req.param('email');
         
         var id_chofer = req.session.chofer.id;
         
@@ -223,11 +222,11 @@ module.exports = {
         }
 
         Chofer.update({id:id_chofer},
-        {lat: lat, lon: lon, location: {type: "Point", coordinates: [parseFloat(lon), parseFloat(lat)]}, socketId: socketId, online: true})
+        {lat: lat, lon: lon, location: {type: "Point", coordinates: [parseFloat(lon), parseFloat(lat)]}, socketId: socketId})
                 .exec(function (err, updated) {
                     if (err) {
                         console.log('ChoferController:142' + err);
-                        return res.json({updated: false});
+                        return res.json({ updated: false });
                     }
 
 
