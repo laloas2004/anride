@@ -386,8 +386,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
            
             $scope.suscribeServerEvents();
                 
-           
-
             $ionicNavBarDelegate.showBackButton(false);
 
             $scope.choferesDisponibles = {};
@@ -1471,8 +1469,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             
             try{
                 debugger;
-            $scope.latLng_origen = new google.maps.LatLng( $scope.solicitud.origen.coords.latitude, $scope.solicitud.origen.coords.longitude);
-            $scope.latLng_destino = new google.maps.LatLng( $scope.solicitud.destino.coords.latitude, $scope.solicitud.destino.coords.longitude);
+                $scope.latLng_origen = new google.maps.LatLng( $scope.solicitud.origen.coords.latitude, $scope.solicitud.origen.coords.longitude);
+                $scope.latLng_destino = new google.maps.LatLng( $scope.solicitud.destino.coords.latitude, $scope.solicitud.destino.coords.longitude);
                 
                 }catch(e){
 
@@ -1576,6 +1574,18 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                        $scope.marker_chofer.setPosition($scope.latLng_chofer); 
                                        $scope.marker_chofer.setMap($scope.map);
                                        $scope.map.panTo($scope.latLng_chofer);
+                                       
+                                         $scope.getMyLocation().then(function(position){
+                                
+                                                    $scope.latLng_me = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+                                                    $scope.marker_my_loc.setPosition($scope.latLng_me);
+                                                    $scope.marker_my_loc.setMap($scope.map);
+
+                                                },function(err){
+                                                    console.log(err);
+                                                    alert('Err en GPS');
+                                                });
+                                       
 
                                       });        
 
@@ -1599,7 +1609,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.clearMapMarkers = function(cb){
                 
               $scope.marker_chofer.setMap(null);
-              
+              $scope.marker_my_loc.setMap(null);
               cb();
  
             }
