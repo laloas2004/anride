@@ -5,11 +5,12 @@
         App de transporte privado.
     </description>
     <author email="abelardo@websiete.com" href="http://anride.mx/">
-      An Ride
+      Anride
     </author>
     <content src="index.html" />
     <access origin="*" />
     <allow-navigation href="*" />
+    <access launch-external="yes" origin="tel:*" />
     <preference name="webviewbounce" value="false" />
     <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />

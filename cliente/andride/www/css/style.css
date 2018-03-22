@@ -9784,8 +9784,8 @@ a {
         font-size: 1.2em; }
 
     .driver-info {
-        padding-top: 80px;
-        height: 80%; }
+
+    }
     .driver-picture {
         position: absolute;
         top: 5px;
@@ -9837,7 +9837,7 @@ a {
 
     .bottom-buttons{
         position: absolute;
-        bottom: -50px;  
+        bottom: 10px;  
     }
     
     .form_registro .ng-invalid{

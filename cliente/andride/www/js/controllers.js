@@ -109,6 +109,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $ionicPopup,
                 $ionicModal,
                 $ionicHistory,
+                $cordovaToast,
                 $localStorage,
                 $sessionStorage,
                 AuthService,
@@ -270,6 +271,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
                                                     // Se actualizan los datos del storage.
+                                            
 
                                                     $localStorage.chofer = data.data.chofer;
                                                     $localStorage.servicio = data.data.servicio;
@@ -312,11 +314,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             .success(function(queue, status, headers, jwr) {
 
                                 if ($scope.vistaAlertinicioViaje == 0) {
-                                    $cordovaDialogs.alert('El chofer a iniciado su Viaje', 'Servicio Iniciado', 'OK')
-                                            .then(function() {
-                                                // callback success
-                                                $scope.vistaAlertinicioViaje = 1;
-                                            });
+                                    
+                                    $cordovaToast.show('El chofer a iniciado su Viaje.','short', 'center').then(function(){
+                                    
+                                        $scope.vistaAlertinicioViaje = 1;
+                                    
+                                    });
+                                    
                                 }
 
                                 $scope.vistaAlertinicioViaje = 1;
@@ -1208,7 +1212,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 //              Si el usuario tiene un servicio en proceso.
 
                 servicioService.getSolicitudPendiente().then(function(response) {
-
+                    
+                    
 
                     if (response.length > 0) {
 
@@ -1219,13 +1224,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         $sails.get("/cliente/solicitud", {SolId: response[0].solicitud})
                                 .success(function(response, status, headers, jwr) {
 
-
-
                                     $localStorage.solicitud = response;
 
                                     $state.go('app.servicio_aprovado', {});
-
-
 
                                 })
                                 .error(function(err) {
@@ -1440,83 +1441,167 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
         .controller('DriverCtrl', function($scope, 
                 $ionicHistory, 
                 $localStorage, 
-                $sails, 
-                $state, 
+                $sails,
+                $cordovaGeolocation,
+                $state,
+                $interval,
+                $q,
                 $cordovaDialogs) {
+                    
+            $scope.map = {};        
+            $scope.imageChofer = {
+                url: 'img/car-icon.png',
+                size: new google.maps.Size(32, 32),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(0, 32)};
+            
+            $scope.imageMyLoc = new google.maps.MarkerImage('https://maps.gstatic.com/mapfiles/mobile/mobileimgs2.png',
+                                                    new google.maps.Size(22,22),
+                                                    new google.maps.Point(0,18),
+                                                    new google.maps.Point(11,11));
+            
+            $scope.solicitud = $localStorage.solicitud;
+            
+            $scope.latLng_chofer = null;
 
-            $scope.updateMarkerServicio = function(choferId) {
+            $scope.latLng_me = null;
+            
+            $scope.marker_chofer = null;
+            $scope.marker_my_loc = null;
+            
+            try{
+                debugger;
+            $scope.latLng_origen = new google.maps.LatLng( $scope.solicitud.origen.coords.latitude, $scope.solicitud.origen.coords.longitude);
+            $scope.latLng_destino = new google.maps.LatLng( $scope.solicitud.destino.coords.latitude, $scope.solicitud.destino.coords.longitude);
+                
+                }catch(e){
 
-                var markerChoferServicio = {};
+                    console.log(e);
 
-                markerChoferServicio.setMap = function() {
-
-                };
-
-                $sails.post("/clientes/suscribe/chofer", {choferId: choferId})
+                }
+            
+            var intervalChofer;
+            $scope.directionsService = new google.maps.DirectionsService;
+            $scope.directionsDisplay = new google.maps.DirectionsRenderer;
+            
+            $scope.createMap = function(choferId){
+                
+            $sails.post("/clientes/chofer", { choferId: choferId })
                         .success(function(data, status, headers, jwr) {
-
-                            var imageChofer = {
-                                url: 'img/car-icon.png',
-                                size: new google.maps.Size(32, 32),
-                                origin: new google.maps.Point(0, 0),
-                                anchor: new google.maps.Point(0, 32)
-                            };
-
-                            markerChoferServicio.setMap(null);
-
-                            try {
-
-                                var lat = data.lat || 0;
-                                var lon = data.lon || 0;
-
-                            } catch (e) {
-
-                                console.log(e);
-                            }
-
-
-                            var latLngChofer = new google.maps.LatLng(lat, lon);
-
-                            markerChoferServicio = new google.maps.Marker({
-                                position: latLngChofer,
-                                title: '',
-                                map: $scope.mapa_chofer,
-                                icon: imageChofer
+                                                
+                            $scope.latLng_chofer = new google.maps.LatLng(data.location.coordinates[1], data.location.coordinates[0]);
+                            
+                            $scope.map = new google.maps.Map(document.getElementById("map_driver"), {
+                                                                                                    center:$scope.latLng_chofer,
+                                                                                                    zoom: 15,
+                                                                                                    disableDefaultUI: true,
+                                                                                                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                                                                                                     });         
+                            
+                            $scope.map.setClickableIcons(false);
+                            
+                            $scope.marker_chofer = new google.maps.Marker({
+                                                           map: $scope.map,
+                                                           animation: google.maps.Animation.DROP,
+                                                           icon:$scope.imageChofer,
+                                                           position: $scope.latLng_chofer
+                                                       });
+                                                       
+                            $scope.marker_my_loc = new google.maps.Marker({
+                                                            map: $scope.map,
+                                                            clickable: false,
+                                                            icon:$scope.imageMyLoc,
+                                                            shadow: null,
+                                                            zIndex: 999});
+                                                        
+                            $scope.getMyLocation().then(function(position){
+                                
+                                $scope.latLng_me = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+                                
+                                $scope.marker_my_loc.setPosition($scope.latLng_me);
+                                
+                            },function(err){
+                                console.log(err);
+                                alert('Err en GPS');
                             });
 
-                            $sails.on('chofer', function(data) {
-
-                                try {
-
-                                    markerChoferServicio.setMap(null);
-
-                                    var lat = data.data.chofer.lat || 0;
-                                    var lon = data.data.chofer.lon || 0;
-                                    var latLngChofer = new google.maps.LatLng(lat, lon);
-
-                                    markerChoferServicio = new google.maps.Marker({
-                                        position: latLngChofer,
-                                        title: '',
-                                        map: $scope.mapa_chofer,
-                                        icon: imageChofer
-                                    });
-
-                                } catch (e) {
-                                    console.log(e);
-                                }
-
-
-                            })
+                                $scope.intervalUpdateMarker();
+                                
 
                         })
                         .error(function(data, status, headers, jwr) {
 
-                            console.log(data);
+                            console.error(data);
 
                         });
+                
+             
+               
+                
+            };
+            $scope.calculateAndDisplayRoute = function () {
+                
+                        $scope.directionsDisplay.setMap($scope.map);    
+                
+                        $scope.directionsService.route({
+                           origin: $scope.latLng_origen,
+                           destination: $scope.latLng_destino,
+                           travelMode: 'DRIVING'
+                         }, function(response, status) {
+                             
+                           if (status === 'OK') {
+                               
+                             $scope.directionsDisplay.setDirections(response);
+                             
+                           } else {
+                               
+                             alert('Directions request failed due to ' + status);
+                           }
+                         });
+                
+                
+                
+            }
+            $scope.intervalUpdateMarker = function(){ 
+                
+                intervalChofer = $interval(function() {
+
+                        $sails.post("/clientes/chofer", { choferId:$scope.choferId })
+                                  .success(function(data, status, headers, jwr) {
+
+                                      $scope.latLng_chofer = new google.maps.LatLng(data.location.coordinates[1], data.location.coordinates[0]);
+
+                                      $scope.clearMapMarkers(function(){
+
+                                       $scope.marker_chofer.setPosition($scope.latLng_chofer); 
+                                       $scope.marker_chofer.setMap($scope.map);
+                                       $scope.map.panTo($scope.latLng_chofer);
+
+                                      });        
+
+
+                                  })
+                                  .error(function(data, status, headers, jwr) {
+
+                                      console.error(data);
+
+                                  });
 
 
 
+            },10000);
+            
+            }
+            $scope.stopintervalUpdateMarker = function(){
+                
+               $interval.cancel(intervalChofer); 
+            }
+            $scope.clearMapMarkers = function(cb){
+                
+              $scope.marker_chofer.setMap(null);
+              
+              cb();
+ 
             }
             $scope.cancelarServicio = function() {
 
@@ -1549,47 +1634,40 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             }
 
                         });
+            };
+            $scope.getMyLocation = function(){
+                
+                var deferred = $q.defer();
+                
+              $cordovaGeolocation.getCurrentPosition({timeout: 100000, enableHighAccuracy: true}).then(function(position) {
+                   
+                        deferred.resolve(position); 
+
+                       },function(err){
+
+                        deferred.reject(err);   
+
+                       });
+                       
+                return deferred.promise;
             }
             
             $scope.$storage = $localStorage;
+            $scope.choferId = $localStorage.chofer.id;  
+            $scope.createMap($scope.choferId);
+            
+            $scope.$on('$destroy',function(){
+                console.log('SE DESTRUYO EL SCOPE');
+                $scope.stopintervalUpdateMarker();
+                
+                
+            });
+            $sails.on('servicio.inicioViaje', function(data) {
+                
+               $scope.calculateAndDisplayRoute(); 
+                
+            });
 
-//            if ($localStorage.solicitud.origen.coords) {
-//
-//                var latLngChofer = new google.maps.LatLng($localStorage.solicitud.origen.coords.latitude, $localStorage.solicitud.origen.coords.longitude);
-//
-//                var mapOptions = {
-//                    center: latLngChofer,
-//                    zoom: 16,
-//                    mapTypeId: google.maps.MapTypeId.ROADMAP,
-//                    mapTypeControl: false,
-//                    streetViewControl: false,
-//                    draggable: false
-//                };
-//
-//                $scope.mapa_chofer = new google.maps.Map(document.getElementById("mapa_chofer"), mapOptions);
-//
-//                $scope.mapa_chofer.setClickableIcons(false);
-//
-//                var imageUser = {
-//                    url: 'img/user.png',
-//                    size: new google.maps.Size(32, 32),
-//                    origin: new google.maps.Point(0, 0),
-//                    anchor: new google.maps.Point(0, 32)
-//                };
-//                new google.maps.Marker({
-//                    position: latLngChofer,
-//                    title: '',
-//                    map: $scope.mapa_chofer,
-//                    icon: imageUser
-//                });
-//                try {
-//
-//                    $scope.updateMarkerServicio($localStorage.chofer.id);
-//                } catch (e) {
-//                    console.log(e);
-//                }
-//
-//            }
         })
         .controller('ViajesCtrl', function($scope, 
                 $ionicHistory, 
