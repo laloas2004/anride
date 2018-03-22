@@ -214,10 +214,16 @@ module.exports = {
         var lat = req.param('lat');
         var lon = req.param('lon');
         var email = req.param('email');
+        
+        var id_chofer = req.session.chofer.id;
+        
+        if(!id_chofer){
+            
+            return res.forbidden('El chofer no tiene session valida');
+        }
 
-        Chofer.update({email: email},
+        Chofer.update({id:id_chofer},
         {lat: lat, lon: lon, location: {type: "Point", coordinates: [parseFloat(lon), parseFloat(lat)]}, socketId: socketId, online: true})
-
                 .exec(function (err, updated) {
                     if (err) {
                         console.log('ChoferController:142' + err);
@@ -237,7 +243,7 @@ module.exports = {
                         console.log('ChoferController:152' + e);
                     }
 
-                    return res.json({updated: true});
+                    return res.json({ updated: true, chofer:updated[0] });
                 })
 
     },
