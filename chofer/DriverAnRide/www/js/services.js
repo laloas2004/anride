@@ -306,7 +306,7 @@ angular.module('app.services', [])
 
                     var chofer = $sessionStorage.chofer.id;
 
-                    $sails.get("/choferes/solicitud/pendiente", {ChoferId: chofer})
+                    $sails.get("/choferes/solicitud/pendiente", { ChoferId:chofer})
                             .success(function(servicio, status, headers, jwr) {
                                 q.resolve(servicio);
                             })
