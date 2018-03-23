@@ -899,28 +899,28 @@ module.exports = {
     },
     getDestinosFrecuentes:function(req, res){
         
-        
-    if (!req.isSocket) {
-            return res.badRequest();
-    }
-    
-    var cliente = req.session.cliente;
-        
-        if(!cliente){
-            
-            return res.forbidden('No existe session valida');
-        }
-        
-     Cliente.findOne({id:cliente.id}).exec(function(err,cliente){
-         
-            if(err){
-                return res.serverError(err);
+
+            if (!req.isSocket) {
+                    return res.badRequest();
             }
-            
-            
-         res.ok({ destinos:cliente.destinosFrecuentes }); 
-         
-     });   
+
+            var cliente = req.session.cliente;
+
+                if(!cliente){
+
+                    return res.forbidden('No existe session valida');
+                }
+
+             Cliente.findOne({id:cliente.id}).exec(function(err,cliente){
+
+                    if(err){
+                        return res.serverError(err);
+                    }
+
+
+                 res.ok({ destinos:cliente.destinosFrecuentes }); 
+
+             });   
         
     }
 
