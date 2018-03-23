@@ -1316,13 +1316,13 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 //                    icon: '',
 //                    state: 'app.destinos'
 //                },
-//                {
-//                    id: 6,
-//                    name: 'Configuracion',
-//                    level: 0,
-//                    icon: '',
-//                    state: 'app.configuracion'
-//                },
+                {
+                    id: 6,
+                    name: 'Configuracion',
+                    level: 0,
+                    icon: '',
+                    state: 'app.configuracion'
+                },
                 {
                     id: 7,
                     name: 'Ayuda',
@@ -1826,6 +1826,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
         })
         .controller('ConfiguracionCtrl', function($scope, 
                 $ionicHistory) {
+                    
+                    
+                    
+                    
 
 
 
