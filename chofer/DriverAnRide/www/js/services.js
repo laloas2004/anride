@@ -156,15 +156,18 @@ angular.module('app.services', [])
 
                     var data = {
                         lat: location.latitude,
-                        lon: location.longitude,
-                        email: $sessionStorage.chofer.email
+                        lon: location.longitude
                     };
 
                     $sails.post("/choferes/posicion", data)
                             .success(function(data, status, headers, jwr) {
+                                
+                                
                                 q.resolve(data);
                             })
                             .error(function(data, status, headers, jwr) {
+                                
+                                
                                 q.reject(jwr);
 
                             });
