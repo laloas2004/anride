@@ -1,0 +1,25 @@
+
+
+<p>Se cancelo el viaje numero:  <b><%= viajeDetalle.viaje %></b>.</p><br>
+<p>Motivo de Cancelacion: </p><b><%= motivoCancela.motivoCancela %></b><br><br>
+<p> --------------------------------------------------------------------<br><br>
+
+<p>Folio:  <b><%= viajeDetalle.folio %></b>.</p><br>
+<p>Origen:  <b><%= origen.nombreCiudad %></b>.</p><br>
+<p>Destino:  <b><%= destino.nombreCiudad %></b>.</p><br>
+<p>Fecha:  <b><%= moment(viaje.solicitud.fecha).format('DD-MM-YYYY') %></b>.</p><br>
+<p>Hora:  <b><%= moment(viaje.solicitud.hora).format('HH:mm') %></b>.</p><br>
+
+
+<h3>---- Datos Industria ----</h3><br>
+
+<p> Nombre: </p><b><%= user.nombre %>  <%= user.apellido %></b><br><br>
+<p> Tel: </p><b><%= user.numCel %></b><br><br>
+<p> Email: </p><b><%= user.email %></b><br><br>
+
+
+<h3>---- Datos Transportista -----</h3>
+
+<p> Nombre: </p><b><%= viaje.userTransportista.nombre %> <%= viaje.userTransportista.apellido %></b><br><br>
+<p> Tel: </p><b><%= viaje.userTransportista.numCel %></b><br><br>
+<p> Email: </p><b><%= viaje.userTransportista.email %></b><br><br>
