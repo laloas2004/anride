@@ -12,7 +12,21 @@
                 <input type="text" ng-model="DestinoBusqueda.query" placeholder="Destino..." ng-change="SearchQueryDestino()" >
             </label>
 
-            <ion-list>
+            <ion-list ng-if="mostrarDestinosFrecuentes">
+               
+                        <div class="item item-divider">Ultimos destinos</div>
+                        
+                        <ion-item ng-repeat="destino in destinosFrecuentes" ng-click="onSelectItemDestino(destino)">
+                            
+                             <div class="bold">{{ destino.name}}</div>
+                             
+                             <div>{{ destino.formatted_address}}</div> 
+                             
+                        </ion-item>   
+            </ion-list>   
+            <ion-list ng-if="!mostrarDestinosFrecuentes">
+                    
+                <div class="item item-divider">Busqueda</div>
                 <ion-item ng-repeat="res in DestinoResponse" ng-click="onSelectItemDestino(res)">
 
                     <div class="bold">{{ res.structured_formatting.main_text}}</div>

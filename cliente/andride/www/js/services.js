@@ -236,6 +236,25 @@ angular.module('app.services', [])
                     return q.promise;
                     
                    
+                },
+         
+                getDestinoFrecuentes:function(){
+                   
+                    var q = $q.defer();
+                    
+                    $sails.get("/clientes/destino/frecuente", { })
+                    
+                            .success(function(data, status, headers, jwr) {
+                               
+                                q.resolve(data);
+                            })
+                            .error(function(data, status, headers, jwr) {
+                                
+                                q.reject(jwr);
+
+                            }); 
+                    
+                return q.promise;    
                 }
 
             }

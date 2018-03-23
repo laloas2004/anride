@@ -391,6 +391,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.choferesDisponibles = {};
             $scope.DestinoBusqueda = {};
             $scope.OrigenBusqueda = {};
+            $scope.mostrarDestinosFrecuentes = true;
+            $scope.destinosFrecuentes = [];
             $scope.markers = [];
             $scope.choferConfirma = {};
             $scope.intervalUpdateChoferes = {};
@@ -821,7 +823,25 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             }
             $scope.searchDestino = function() {
-
+                
+                    $ionicLoading.show({
+                    template: 'Buscando Destinos...',
+                    showBackdrop: false
+                    });
+                clienteService.getDestinoFrecuentes().then(
+                        function(data){
+                            console.log(data);
+                         $scope.destinosFrecuentes = data.destinos;
+                         $ionicLoading.hide();
+                        },
+                        function(err){
+                            
+                            console.log(err);
+                        }
+                        
+                        );
+                
+                
                 $scope.modal_punto_destino.show();
             }
             $scope.SearchQueryOrigen = function() {
@@ -879,17 +899,22 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 })
             }
             $scope.SearchQueryDestino = function() {
-
+                 
                 if ($scope.DestinoBusqueda.query) {
                     
                     clienteService.searchDireccion($scope.DestinoBusqueda.query, $scope.solicitud.origen.coords).then(function(response) {
                         
                         $scope.DestinoResponse = response;
+                        $scope.mostrarDestinosFrecuentes = false;
                         
                     }, function(err) {
-                        console.error(err);
+                        
+                        console.log(err);
                     });
 
+                }else{
+                  $scope.DestinoResponse = [];
+                  $scope.mostrarDestinosFrecuentes = true;  
                 }
 
 
@@ -1468,7 +1493,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.marker_my_loc = null;
             
             try{
-                debugger;
                 $scope.latLng_origen = new google.maps.LatLng( $scope.solicitud.origen.coords.latitude, $scope.solicitud.origen.coords.longitude);
                 $scope.latLng_destino = new google.maps.LatLng( $scope.solicitud.destino.coords.latitude, $scope.solicitud.destino.coords.longitude);
                 
@@ -1599,7 +1623,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
 
 
-            },10000);
+            },30000);
             
             }
             $scope.stopintervalUpdateMarker = function(){
