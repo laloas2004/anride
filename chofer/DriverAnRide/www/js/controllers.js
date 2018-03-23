@@ -91,13 +91,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 $ionicGesture) {
                     
 
-            if (!$localStorage.autoActivo) {
 
-                $state.go('app.selAuto', {});
-
-            }
             
             $scope.autoActivo = $localStorage.autoActivo;
+            
+            // no mover $storage, es para la vista muestre nombre, auto, etc.
+            
+            $scope.$storage = $localStorage;
+            
             $scope.choferStatus = $sessionStorage.chofer.status;
             $scope.myLatLng = null;
             $scope.watchPostion = null;
@@ -405,6 +406,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             $scope.$on('$ionicView.beforeEnter', function(event, data) {
 
                 console.log('Before Enter');
+                
+               if (!$localStorage.autoActivo) {
+
+                $state.go('app.selAuto', {});
+
+            }
 
 
             });
@@ -467,7 +474,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 
              });
               
-            
+            $scope.goSeleccionarAuto = function(){
+             $state.go('app.selAuto', {});  
+            }   
         })
         .controller('SideMenuCtrl', function($scope,
                 $ionicHistory,
@@ -982,7 +991,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
 
             }
-
             $scope.cancelarViaje = function() {
 
                 $cordovaDialogs.confirm('Esta Seguro de Cancelar el Servicio', 'Cancelar Viaje', ['SI', 'NO'])
@@ -1254,7 +1262,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             $scope.inicioContador();
             $scope.iniciaTrackViaje();
 
-
         })
         .controller('RegistroCtrl', function ($scope,
                 $ionicHistory,
@@ -1348,9 +1355,10 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             $scope.auto_checked = null;
 
             $scope.getAutos = function () {
-
+                
                 choferService.getAutos().then(function (response) {
-
+                    
+                    $scope.autos = [];
                     $scope.autos = response.autos;
                     $scope.autoActivo = response.chofer.autoActivo || null;
                     $localStorage.autoActivo = $scope.autoActivo;
@@ -1364,7 +1372,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
             }();
             
-
             $scope.checkAutoActivo = function (idAuto) {
 
                 $scope.auto_checked = idAuto;
@@ -1399,6 +1406,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             });
             }
             
+            $scope.$on('$destroy', function(){
+                
+                console.log('Se destruyo scope de AutosCtrl');
+                
+            });
 
         })
         

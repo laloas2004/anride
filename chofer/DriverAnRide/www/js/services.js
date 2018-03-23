@@ -100,7 +100,6 @@ angular.module('app.services', [])
                 suscribe: function(chofer) {
 
                     var q = $q.defer();
-                    debugger;
                     $sails.post("/choferes/suscribe", { choferId:chofer.id, chofer:chofer, status:chofer.status})
                             .success(function(data, status, headers, jwr) {
                                
