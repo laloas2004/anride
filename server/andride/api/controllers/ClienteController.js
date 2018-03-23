@@ -845,15 +845,82 @@ module.exports = {
         }
         
         var destino = req.param('destino');
+        var cliente = req.session.cliente;
+        
+        if(!cliente){
+            
+            return res.forbidden('No existe session valida');
+        }
         
         if(!destino){
             
-           return res.badRequest(); 
+           return res.badRequest('Se necesita un destino');
         }
+        
+        Cliente.findOne({id:cliente.id}).exec(function(err, cliente){
+            
+            if(err){
+               return res.serverError(err);
+            }
+                        
+                var destinos = cliente.destinosFrecuentes ? cliente.destinosFrecuentes : [];
+            
+           
+                var destinoExiste = destinos.find(function(d){
+                    
+                    return d.id == destino.id;
+                    
+                });
+                
+              if(!destinoExiste){
+                
+                destinos.push(destino);
+                
+                Cliente.update({id:cliente.id},{destinosFrecuentes:destinos}).exec(function(err, clientes){
+                    
+                            if(err){
+                               return res.serverError(err);
+                            }
+                            
+                    res.ok({ destinos:clientes[0].destinosFrecuentes });             
+                    
+                });
+                  
+              }else{
+                  
+                    res.ok({ destinos:cliente.destinosFrecuentes });      
+                  
+              }
+                
+            
+        });
+        
         
     },
     getDestinosFrecuentes:function(req, res){
         
+        
+    if (!req.isSocket) {
+            return res.badRequest();
+    }
+    
+    var cliente = req.session.cliente;
+        
+        if(!cliente){
+            
+            return res.forbidden('No existe session valida');
+        }
+        
+     Cliente.findOne({id:cliente.id}).exec(function(err,cliente){
+         
+            if(err){
+                return res.serverError(err);
+            }
+            
+            
+         res.ok({ destinos:cliente.destinosFrecuentes }); 
+         
+     });   
         
     }
 
