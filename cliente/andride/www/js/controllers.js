@@ -31,7 +31,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             
             // Revisa que se este Authenticado en el servidor.
             
-            console.log('AKIIII');
             console.log($rootScope.isGpsEnabled);
 
             AuthService.isAuthenticated().then(function(response) {
@@ -836,7 +835,9 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         },
                         function(err){
                             
-                            console.log(err);
+                         $ionicLoading.hide();   
+                            
+                         console.log(err);
                         }
                         
                         );
@@ -1197,7 +1198,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 }
 
             }
-
 
             $scope.$on('$ionicView.beforeEnter', function(event, data) {
 

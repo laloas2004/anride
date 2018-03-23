@@ -12,7 +12,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu','ionic.native',
 ])
         .run(function ($ionicPlatform, $rootScope, $window, $cordovaNetwork, $ionicPopup) {
         
-            var entorno = 1;
+            var entorno = 4;
     
             switch(entorno) {
                     case 1:
@@ -297,7 +297,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu','ionic.native',
         })
         .config(['$sailsProvider', function ($sailsProvider) {
                 
-            var entorno = 1;
+            var entorno = 4;
     
             switch(entorno) {
                     case 1:

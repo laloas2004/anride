@@ -140,7 +140,6 @@ angular.module('app.services', [])
                     var origen = solicitud.origen.coords.latitude + ',' + solicitud.origen.coords.longitude;
                     var destino = solicitud.destino.coords.latitude + ',' + solicitud.destino.coords.longitude;
                     
-                    debugger;
 
                     var config = {
                         url: "https://maps.googleapis.com/maps/api/distancematrix/json?",
@@ -353,7 +352,6 @@ angular.module('app.services', [])
                     }catch(e){
                         
                        
-                        debugger;
                         q.reject(e);
                     
                     }
