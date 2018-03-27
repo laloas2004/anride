@@ -2,47 +2,15 @@
   This template loads for the 'setting' state (app.js)
   Show settings
 -->
-<ion-view view-title="Setting">
+<ion-view view-title="Configuracion">
   <ion-content class="">
     <ion-list>
-      <ion-item class="item-divider">General</ion-item>
+      <ion-item class="item-divider">Formas de Pago</ion-item>
 
-      <ion-item class="item-toggle">
-        <p>Vibrate on touch</p>
-        <label class="toggle toggle-assertive">
-          <input type="checkbox">
-          <div class="track">
-            <div class="handle"></div>
-          </div>
-        </label>
-      </ion-item>
-
-      <ion-item class="item-toggle">
-        <p>Vibrate on icoming jobs</p>
-        <label class="toggle toggle-assertive">
-          <input type="checkbox">
-          <div class="track">
-            <div class="handle"></div>
-          </div>
-        </label>
-      </ion-item>
-
-      <ion-item class="item-toggle">
-        <p>Stay awake</p>
-        <label class="toggle toggle-assertive">
-          <input type="checkbox">
-          <div class="track">
-            <div class="handle"></div>
-          </div>
-        </label>
-      </ion-item>
-
-      <ion-item class="item-icon-right">
-        <p>Choose a custom ringtone</p>
-        <i class="icon ion-chevron-right icon-accessory"></i>
-      </ion-item>
-
-      <ion-item class="item-divider">Storage</ion-item>
+            <ion-radio ng-model="forma_pago" ng-value="'1'">Efectivo</ion-radio>
+            <ion-radio ng-model="forma_pago" ng-value="'2'">Tarjeta de credito/debito</ion-radio>
+      
+      <ion-item class="item-divider">Tarjetas</ion-item>
 
       <ion-item class="item-icon-right">
         <p>Clean job history data</p>

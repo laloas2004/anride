@@ -1828,7 +1828,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $ionicHistory) {
                     
                     
-                    
+                $scope.forma_pago = '1';    
                     
 
 
