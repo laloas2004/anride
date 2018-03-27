@@ -45,6 +45,8 @@ module.exports.connections = {
      host: 'localhost',
      user: 'root', //optional
      password: 'anride2018', //optional
+
+     //password: 'anride2018', //optional
      database: 'anride' //optional
    },
 
