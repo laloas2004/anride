@@ -121,7 +121,6 @@ module.exports = {
          }
       
     },
-    
     autos:function(req,res){
         
         res.locals.layout = 'panel_delegado/layout';
@@ -171,7 +170,6 @@ module.exports = {
         
     // return res.view('panel_delegado/autos/home', {});      
     },
-    
     bloquearChofer:function(req,res){
         
       var eliminado = req.param('eliminado');
@@ -193,7 +191,6 @@ module.exports = {
       
         
     },
-    
     getChoferesMap:function(req,res){
         
                if (!req.isSocket) {
@@ -209,8 +206,54 @@ module.exports = {
         });
  
         
+    },
+    pagos: function(req,res){
+        
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+         
+         var delegado = req.session.passport.user;
+         
+         var limit = req.param('limit') || 20;
+         
+         var sql = "SELECT cobro.id,cobro.viaje,cobro.chofer,cobro.tipo_pago,cobro.referencia_bancaria,cobro.corte,cobro.monto_total,cobro.monto_comision,cobro.monto_chofer,cobro.createdAt,saldo_chofer.saldo FROM `cobro` INNER JOIN saldo_chofer ON saldo_chofer.chofer = cobro.chofer"+
+                    "WHERE cobro.corte IS NULL AND saldo_chofer.delegado ='"+delegado+"'";
+            
+            console.log(sql);
+       
+                Cobros.query(sql,[],function(err,cobros){
+                    
+                    if (err) { return res.serverError(err); }
+
+                        console.log(cobros);
+
+                });   
+        
+        
+    },
+    cortes:function(req,res){
+        
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+         
+        var delegado = req.session.passport.user;  
+        
+        
+        
+    },
+    createCorte:function(req,res){
+        
+        if (!req.isSocket) {
+            return res.badRequest();
+        }
+         
+        var delegado = req.session.passport.user;    
+        
+        
+        
     }
-    
 	
 };
 
