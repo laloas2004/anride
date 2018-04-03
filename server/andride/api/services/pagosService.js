@@ -5,60 +5,125 @@
  */
 
 
+var Q = require('q');
+
 module.exports = {
     
     pagos:{
         
-      createPago:function(id_chofer,id_delegado,monto_total,id_viaje,referencia,tipo_pago){
+      createPago:function( id_chofer, monto_total, id_servicio, referencia){
+          
+          var deferred = Q.defer();
           
           if(!id_chofer){
               
-              return false;
-          }
-          
-          if(!id_delegado){
-              
-              return false;
+              deferred.reject(new Error('Falta parametro id_chofer'));
           }
           
           if(!monto_total){
               
-              return false;
+              deferred.reject(new Error('Falta parametro monto_total'));
           }
           
-          if(!id_viaje){
+          if(!id_servicio){
               
-              return false;
+              deferred.reject(new Error('Falta parametro id_servicio'));
           }
           
           if(!referencia){
               
-              return false;
+              deferred.reject(new Error('Falta parametro referencia'));
           }
           
-          if(!tipo_pago){
+          
+          Chofer.findOne({id:id_chofer}).exec(function(err,chofer){
               
-              return false;
+              if(err){
+                  deferred.reject(new Error(err));
+              }
+              
+              
+              Servicio.findOne({id:id_servicio})
+                      .populate('solicitud')
+                      .exec(function(err, servicio){
+                  
+               if(err){
+                   deferred.reject(new Error(err));
+              }
+              
+              
+          var id_delegado = chofer.delegado;
+          
+          if(servicio.solicitud.tipodePago == 'efectivo'){
+              
+                var id_pago = 1;
+              
+          }else if(servicio.solicitud.tipodePago == 'tarjeta'){
+              
+                var id_pago = 2;
+                
+          }else{
+              
+              
+                var id_pago = 3; 
           }
           
-          
-          var sql = "CALL `anride`.`createCobro`( "+ id_chofer + "," +
-                                                  id_delegado+ ","+
-                                                  monto_total+"," +
-                                                  id_viaje+","+
-                                                  referencia+","+
-                                                  tipo_pago+")";
+          var sql = "CALL `anride`.`createCobro`( '"+ id_chofer + "','" +
+                                                  id_delegado+ "','"+
+                                                  monto_total+"','" +
+                                                  id_servicio+"','"+
+                                                  referencia+"','"+
+                                                  servicio.solicitud.tipodePago+"')";
                                           
                                           console.log(sql);
+                                          
+                                  
+           
 
-         /* Cobro.query(sql,[],function(err,result){
+                    Cobro.query(sql,[],function(err,result){
+
+                        if(err){
+                            
+                             deferred.reject(new Error(err));
+                            
+                        }
+
+                      deferred.resolve(result);
+
+                    });
+              
+                  
+              });
               
               
-              
-          });*/
+          });
+          
+          return deferred.promise;
           
       },
-      createCorte:function(){
+      createCorte:function(id_delegado){
+          
+        var deferred = Q.defer();
+          
+        if(!id_delegado){
+              
+              deferred.reject(new Error('Falta parametro id_delegado'));
+          }
+          
+          
+        var sql = "CALL `anride`.`createCorte`( '"+id_delegado+"')";
+          
+        Cobro.query(sql,[],function(err,result){
+
+                if(err){
+
+                     deferred.reject(new Error(err));
+
+                }
+
+              deferred.resolve(result);
+
+            });  
           
           
           

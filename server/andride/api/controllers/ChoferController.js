@@ -186,8 +186,16 @@ module.exports = {
                     }
 
                     if (msg) {
+                        
+                        console.log(msg);
+                        
+                        if(msg.idDestino != null){
+                            
+                           sails.sockets.broadcast(msg.idDestino[0], msg.event, msg);
+                            
+                        }
 
-                        sails.sockets.broadcast(msg.idDestino[0], msg.event, msg);
+
 
                     }
 
@@ -464,6 +472,8 @@ module.exports = {
         var recorrido = req.param('recorrido');
 
         var distancia = req.param('distancia');
+        
+        var referencia = "n/a";
 
 
         if (!servicio) {
@@ -481,8 +491,10 @@ module.exports = {
 
             console.log('Falta parametro recorrido terminaViaje');
         }
-        console.log(distancia);
-        if (!distancia) {
+        
+        
+        if (typeof distancia === "undefined") {
+            
             console.log('Falta parametro distancia terminaViaje');
         }
 
@@ -512,6 +524,18 @@ module.exports = {
                     if (err) {
                         return res.json({err: err});
                     }
+                    
+                    
+                    
+                    pagosService.pagos.createPago( result[0].chofer, respuesta.monto, servicio.id, referencia).then(function(result){
+                        
+                        console.log(result);
+                        
+                    },function(err){
+                        
+                        console.log(err);
+                        
+                    });
 
                     Cliente.findOne({id: servicio.cliente}).exec(function (err, cliente) {
 
@@ -529,6 +553,9 @@ module.exports = {
                         if (err) {
                             return res.json({err: err});
                         }
+                        
+                        
+                        
 
 
                         return res.json(respuesta);
@@ -536,7 +563,7 @@ module.exports = {
                     })
 
 
-                })
+                });
 
             });
 
@@ -1025,6 +1052,5 @@ module.exports = {
         }
 
     }
-
 
 };  
