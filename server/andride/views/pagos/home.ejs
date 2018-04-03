@@ -7,32 +7,64 @@
 <div class="page-header">
 <h1>Pagos</h1>
 <div>
-<div class=""><a href="#" class="btn btn-default">Nuevo Chofer</a></div>
+<div class=""><a href="#" class="btn btn-default" id='btnExport'><span class="glyphicon glyphicon-save-file"></span> Exportar </a></div>
+<div id="dvData">
 <table class="table table-striped">
     <thead>
       <tr>
         <th>ID</th>
-        <th>Nombre</th>
-        <th>Apellidos</th>
-        <th>Email</th>
-        <th>Telefono</th>
-        <th>Operaciones</th>
+        <th>Servicio</th>
+        <th>Chofer</th>
+        <th>Tipo de Pago</th>
+        <th>Monto Chofer</th>
+        <th>Monto Comision</th>
+        <th>Monto Total</th>
+        <th>Referencia</th>
+        <th>Fecha/Hora</th>
       </tr>
     </thead>
 <tbody>
+    
+    <%  
+
+  _.each(cobros,function(cobro){ %>
       <tr>
-        <td>10</td>
-        <td>Jesus</td>
-        <td>Acevedo</td>
-        <td>laloas_2004@yahoo.com.mx</td>
-        <td>8110162454</td>
-        <td><a href="#" class="btn btn-primary">Editar</a><a href="#" class="btn btn-danger">Bloquear</a></td>
+        <td><%= cobro.id %></td>
+        <td><%= cobro.viaje %></td>
+        <td><%= cobro.chofer %></td>
+        <td><% if(cobro.tipo_pago == 0 ||cobro.tipo_pago == 1){ %>
+            EFECTIVO
+            <% }else{ %>
+            TARJETA
+            <% } %>        
+        </td>
+        <td>$<%= cobro.monto_chofer.toFixed(2) %></td>
+        <td>$<%= cobro.monto_comision.toFixed(2) %></td>
+        <td>$<%= cobro.monto_total.toFixed(2) %></td>
+        <td><%= cobro.referencia_bancaria %></td>
+        <td><%= moment(cobro.createdAt).format('DD-MM-YYYY HH:mm') %></td>
       </tr>
+     <% })%>
 </tbody>
     </table>
-
 </div>
 </div>
+</div>
 
 
 </div>
+    
+   <script type="application/javascript">
+        
+        $( document ).ready(function() {
+            
+      $("#btnExport").click(function(e) {
+
+            window.open('data:application/vnd.ms-excel,' + $('#dvData').html());
+
+            e.preventDefault();
+
+            });
+    });
+        
+    </script>

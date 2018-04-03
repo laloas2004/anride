@@ -175,6 +175,7 @@ module.exports = {
 
     },
     indexSolicitudes: function (req, res) {
+        
         var limit = req.param('limit') || 20;
         var moment = require('moment');
 
@@ -333,8 +334,24 @@ module.exports = {
 
     },
     indexPagos: function (req, res) {
+        
+        var moment = require('moment');
+        
+        Cobro.find({corte:null})
+                .sort('createdAt DESC')
+                .exec(function(err, cobros){
+            
+            if(err){
+                
+                console.log(err);
+            }
+            
+            res.view('pagos/home', { cobros:cobros,moment:moment });
+            
+            
+        });
 
-        res.view('pagos/home', {saludos: 'saludos!!'});
+        
     },
     indexConfiguracion: function (req, res) {
 
