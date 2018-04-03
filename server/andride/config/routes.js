@@ -140,6 +140,11 @@ module.exports.routes = {
         
         'get /admin/delegados/panel': 'DelegadoController.index',
         'get /admin/delegados/servicios/:id?': 'DelegadoController.servicios',
+        'get /admin/delegados/pagos/:id?': 'DelegadoController.pagos',
+        'get /admin/delegados/cortes/:id?': 'DelegadoController.cortes',
+        
+        
+        
         'get /admin/delegados/autos': 'DelegadoController.autos',
         'get /admin/delegados/autos/:chofer': 'DelegadoController.autos',
         'get /admin/delegados/choferes/mapa': 'DelegadoController.getChoferesMap',
