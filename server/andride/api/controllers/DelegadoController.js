@@ -231,7 +231,7 @@ module.exports = {
                         
                 res.locals.layout = 'panel_delegado/layout';
                        
-                return res.view('panel_delegado/home/', { cobros:cobros});
+                return res.view('panel_delegado/pagos/home', { cobros:cobros});
                         
                      
                 });   
