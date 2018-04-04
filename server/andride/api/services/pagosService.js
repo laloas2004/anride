@@ -127,6 +127,33 @@ module.exports = {
           
           
           
+      },
+      getCortes:function(id_delegado){
+          
+        var deferred = Q.defer();
+         
+        if(!id_delegado){
+              
+              deferred.reject(new Error('Falta parametro id_delegado'));
+          }
+          
+        var sql = "CALL `anride`.`getCortebyDelegado`( '"+id_delegado+"')";
+  
+ 
+        Cobro.query(sql,[],function(err,result){
+
+                if(err){
+
+                     deferred.reject(new Error(err));
+
+                }
+
+              deferred.resolve(result);
+
+            });  
+          
+          return deferred.promise; 
+          
       }
         
         

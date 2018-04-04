@@ -240,13 +240,21 @@ module.exports = {
     },
     cortes:function(req,res){
         
-        if (!req.isSocket) {
-            return res.badRequest();
-        }
-         
         var delegado = req.session.passport.user;  
         
-        
+       pagosService.pagos.getCortes(delegado).then(function(result){
+           
+                res.locals.layout = 'panel_delegado/layout';
+                       
+                return res.view('panel_delegado/cortes/home', { cortes:result[0]});
+           
+       },function(err){
+           
+                console.log(err);
+
+                return res.serverError(err);
+           
+       }); 
         
     },
     createCorte:function(req,res){

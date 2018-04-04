@@ -708,7 +708,6 @@ module.exports = {
       });  
         
     },
-    
     updateDelegado:function(req, res){
        
         var delegado = req.param('delegado'); 
