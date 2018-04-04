@@ -140,7 +140,7 @@ module.exports.routes = {
         
         'get /admin/delegados/panel': 'DelegadoController.index',
         'get /admin/delegados/servicios/:id?': 'DelegadoController.servicios',
-        'get /admin/delegados/pagos/:id?': 'DelegadoController.pagos',
+        'get /admin/delegados/pagos': 'DelegadoController.listadoPagos',
         'get /admin/delegados/cortes/:id?': 'DelegadoController.cortes',
         
         
