@@ -9,7 +9,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
     'angularMoment'])
         .run(function($ionicPlatform, $rootScope, $window, $cordovaSQLite, $ionicPopup) {
             
-            var entorno = 1;
+            var entorno = 2;
     
             switch(entorno) {
                     case 1:
@@ -21,7 +21,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                     case 2:
                         // Desarrollo local sabinas Hgo.
                         console.log('Apuntando entorno num 2');
-                        $rootScope.serverIp = "http://192.168.1.69:1337";
+                        $rootScope.serverIp = "http://192.168.1.74:1337";
                         console.log($rootScope.serverIp);
                         break;
                     case 3:
@@ -320,7 +320,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
         })
         .config(['$sailsProvider', function($sailsProvider) {
                 
-            var entorno = 1;
+            var entorno = 2;
     
             switch(entorno) {
                     case 1:
@@ -330,7 +330,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                     case 2:
                         // Desarrollo local sabinas Hgo.
                         
-                        $sailsProvider.url = "http://192.168.1.69:1337";
+                        $sailsProvider.url = "http://192.168.1.74:1337";
                         break;
                     case 3:
                         // Server Pruebas Publico.
