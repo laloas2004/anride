@@ -289,7 +289,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                                            
                                                     $scope.map.clear();
 
-                                                                                           $scope.map.addMarker({
+                                                    $scope.map.addMarker({
                                                     position: $scope.myLatLng,
                                                     icon: './img/car-icon.png',
                                                 }, function (marker) {
@@ -329,7 +329,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                             showBackdrop: false
                         });
 
-                        $scope.watchPostion = cordova.plugins.locationServices.geolocation.watchPosition(succesWatchPosition, errorWatchPosition,{
+                        $scope.watchPosition = cordova.plugins.locationServices.geolocation.watchPosition(succesWatchPosition, errorWatchPosition,{
                                     maximumAge: 30000,
                                     timeout: 60000,
                                     enableHighAccuracy: true,
@@ -342,7 +342,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             };
             $scope.stopWatchposition = function(){
                 
-                cordova.plugins.locationServices.geolocation.clearWatch($scope.watchPostion);
+                cordova.plugins.locationServices.geolocation.clearWatch($scope.watchPosition);
                 
             }
             $scope.updatePositionServer = function() {
@@ -913,15 +913,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 $scope.servicio = $localStorage.servicio;
                 $scope.solicitud = $localStorage.solicitud;
                 $scope.cliente = $localStorage.cliente;
-
-
-                $cordovaGeolocation
-
-                        .getCurrentPosition({timeout: 100000, enableHighAccuracy: true})
-
-                        .then(function(position) {
-
-                            $scope.timeoutInicioViaje = $timeout(function() {
+                
+                
+                $scope.watchPosition = cordova.plugins.locationServices.geolocation.getCurrentPosition(function success(position){
+                        
+                                $scope.timeoutInicioViaje = $timeout(function() {
 
                                 $cordovaDialogs.confirm('La conexion no responde', 'La conexion no responde, desea volver a intentar o salir.', ['ENVIAR', 'SALIR'])
 
@@ -944,7 +940,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
                             }, 90000);
 
-                            $scope.inicio_viaje = {fechaHora: new Date(), posicion: {lat: position.coords.latitude, lon: position.coords.longitude}};
+                            $scope.inicio_viaje = { fechaHora: new Date(), posicion: {lat: position.coords.latitude, lon: position.coords.longitude }};
 
                             console.log('Inicio de Viaje:');
                             console.log($scope.inicio_viaje);
@@ -981,13 +977,24 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                                         })
 
                             })
-
-                        }, function(err) {
+                    
+                    
+                }, function error(err){
+                                     
                             console.log(err);
                             $ionicLoading.hide();
                             alert('Error:' + err);
-                            $scope.empiezaViaje();
-                        });
+                                     
+                                            
+                                        },{
+                                    maximumAge: 30000,
+                                    timeout: 60000,
+                                    enableHighAccuracy: true,
+                                    priority: 100,
+                                    interval: 20000,
+                                    fastInterval: 15000
+                                });
+
 
 
             }
