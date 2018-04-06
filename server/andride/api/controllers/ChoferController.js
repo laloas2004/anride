@@ -222,7 +222,7 @@ module.exports = {
         var lat = req.param('lat');
         var lon = req.param('lon');
         
-        var id_chofer = req.session.chofer;
+        var chofer = req.session.chofer;
         
         if(!chofer){
             
