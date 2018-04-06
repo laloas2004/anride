@@ -263,7 +263,7 @@ module.exports = {
                     
                 } else {
 
-                    for (n = 0; n < relations.length; n++) {
+                    for (var n = 0; n <= relations.length; n++) {
 
                         Auto.findOne({id: relations[n].auto}).exec(function (err, auto) {
 
