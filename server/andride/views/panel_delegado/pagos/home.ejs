@@ -141,7 +141,7 @@
            io.socket.post('/admin/delegados/corte/create',{},function(resData, jwres){
                
                
-              if(resData){
+              if(resData[0]){
                   
                 if(resData[0][0].err = "sin_cobros"){
                     
