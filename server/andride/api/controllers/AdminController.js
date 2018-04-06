@@ -258,7 +258,9 @@ module.exports = {
                 that.autos = [];
 
                 if (relations.length == 0) {
-                    res.view('autos/home', {chofer: chofer, autos: that.autos});
+                    
+                   return res.view('autos/home', {chofer: chofer, autos: that.autos});
+                    
                 } else {
 
                     for (n = 0; n < relations.length; n++) {
@@ -269,7 +271,7 @@ module.exports = {
 
                             if (n == relations.length) {
 
-                                res.view('autos/home', {chofer: chofer, autos: that.autos});
+                              return  res.view('autos/home', { chofer: chofer, autos: that.autos });
 
 
                             }
