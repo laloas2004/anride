@@ -222,14 +222,14 @@ module.exports = {
         var lat = req.param('lat');
         var lon = req.param('lon');
         
-        var id_chofer = req.session.chofer.id;
+        var id_chofer = req.session.chofer;
         
-        if(!id_chofer){
+        if(!chofer){
             
             return res.forbidden('El chofer no tiene session valida');
         }
 
-        Chofer.update({id:id_chofer},
+        Chofer.update({id:chofer.id},
         {lat: lat, lon: lon, location: {type: "Point", coordinates: [parseFloat(lon), parseFloat(lat)]}, socketId: socketId})
                 .exec(function (err, updated) {
                     if (err) {
