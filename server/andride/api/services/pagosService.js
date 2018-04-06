@@ -73,7 +73,7 @@ module.exports = {
                                                   monto_total+"','" +
                                                   id_servicio+"','"+
                                                   referencia+"','"+
-                                                  servicio.solicitud.tipodePago+"')";
+                                                  id_pago+"')";
                                           
                                           console.log(sql);
                                           
