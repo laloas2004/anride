@@ -68,7 +68,7 @@ module.exports = {
                 var id_pago = 3; 
           }
           
-          var sql = "CALL `anride`.`createCobro`( '"+ id_chofer + "','" +
+          var sql = "CALL createCobro( '"+ id_chofer + "','" +
                                                   id_delegado+ "','"+
                                                   monto_total+"','" +
                                                   id_servicio+"','"+
