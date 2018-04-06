@@ -631,6 +631,11 @@ module.exports = {
             delete chofer.password;
 
             Chofer.update({id: chofer.id}, chofer).exec(function () {
+                
+                Saldo_chofer.update({chofer:chofer.id},{ delegado:chofer.delegado}).exec(function(err){
+                    
+                    console.log(err);
+                });
 
                 return res.redirect('/admin/choferes');
 
@@ -640,6 +645,11 @@ module.exports = {
         } else {
 
             Chofer.update({id: chofer.id}, chofer).exec(function () {
+                
+                Saldo_chofer.update({chofer:chofer.id},{ delegado:chofer.delegado}).exec(function(err){
+                    
+                    console.log(err);
+                });
 
                 return res.redirect('/admin/choferes');
 

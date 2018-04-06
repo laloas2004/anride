@@ -149,5 +149,6 @@ module.exports.routes = {
         'get /admin/delegados/autos/:chofer': 'DelegadoController.autos',
         'get /admin/delegados/choferes/mapa': 'DelegadoController.getChoferesMap',
         'get /admin/delegados/choferes/bloquear/:id/:eliminado?': 'DelegadoController.bloquearChofer',
+        'post /admin/delegados/corte/create': 'DelegadoController.crearCortePago',
 
 };

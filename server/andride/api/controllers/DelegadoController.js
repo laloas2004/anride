@@ -257,7 +257,7 @@ module.exports = {
        }); 
         
     },
-    createCorte:function(req,res){
+    crearCortePago:function(req,res){
         
         if (!req.isSocket) {
             return res.badRequest();
@@ -265,7 +265,15 @@ module.exports = {
          
         var delegado = req.session.passport.user;    
         
-        
+      pagosService.pagos.createCorte(delegado).then(function(result){
+          
+                return res.ok(result);
+          
+      },function(err){
+          
+                console.log(err);
+                return res.serverError(err);
+      }); 
         
     }
     

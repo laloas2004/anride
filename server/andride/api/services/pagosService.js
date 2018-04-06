@@ -124,8 +124,9 @@ module.exports = {
               deferred.resolve(result);
 
             });  
+            
           
-          
+        return deferred.promise;  
           
       },
       getCortes:function(id_delegado){
