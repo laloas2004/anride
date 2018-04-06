@@ -262,30 +262,38 @@ module.exports = {
                    return res.view('autos/home', {chofer: chofer, autos: that.autos});
                     
                 } else {
+                    
+                    async.forEachOf(relations, function (value, key, callback) {
+                        
+                        console.log(value);
+                        
+                        Auto.findOne({id:value.auto}).exec(function (err, auto) {
 
-                    for (var n = 0; n <= relations.length; n++) {
+                                   that.autos.push(auto);
+                                   
+                                   callback();
 
-                        Auto.findOne({id: relations[n].auto}).exec(function (err, auto) {
+                               });
 
-                            that.autos.push(auto);
+                       
+                    },function(err){
+                        
+                        
+                        if(err){
+                            
+                          return res.json(err.status, {err: err});  
+                        }
+                        
+                      return  res.view('autos/home', { chofer: chofer, autos: that.autos });  
+                        
+                    });
 
-                            if (n == relations.length) {
 
-                              return  res.view('autos/home', { chofer: chofer, autos: that.autos });
-
-
-                            }
-
-                        })
-
-                    }
                 }
 
             });
 
-
-
-        })
+        });
 
     },
     newAuto: function (req, res) {
