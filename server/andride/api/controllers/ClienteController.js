@@ -922,6 +922,48 @@ module.exports = {
 
              });   
         
-    }
+    },
+    
+    suscribeToChofer:function(req, res){
+        
+        if (!req.isSocket) {
+                    return res.badRequest();
+            } 
+            
+            
+         var chofer_id =  req.param('chofer');
+         
+         if(!chofer_id){
+            
+            return res.badRequest('Se requiere parametro chofer');
+             
+         }
+         
+         Chofer.subscribe(req, chofer_id);
+         
+         return res.ok();
+      
+    },
+    
+    unsuscribeToChofer:function(req, res){
+
+    if (!req.isSocket) {
+                return res.badRequest();
+        } 
+
+
+     var chofer_id =  req.param('chofer');
+
+     if(!chofer_id){
+
+        return res.badRequest('Se requiere parametro chofer');
+
+     }
+
+     Chofer.unsubscribe(req, chofer_id);
+
+     return res.ok();
+
+}
 
 };
