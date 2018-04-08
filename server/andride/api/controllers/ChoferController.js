@@ -953,6 +953,46 @@ module.exports = {
 
 
                 } else {
+                    
+                    
+                    async.forEachOf(relations, function (value, key, callback) {
+                                                
+                        Auto.findOne({id:value.auto}).exec(function (err, auto) {
+                            
+                            if(err){
+                              return res.serverError(err);    
+                            }
+                            
+                            auto.checked = false;
+                                   
+                            if (chofer.autoActivo) {
+
+                                if (chofer.autoActivo == auto.id) {
+                                    auto.checked = true;
+                                }
+
+                            }
+
+                                   that.autos.push(auto);
+                                   
+                                   callback();
+
+                               });
+
+                       
+                    },function(err){
+                        
+                        if(err){
+                            
+                          return res.serverError(err);  
+                        }
+                        
+                      return  res.json({chofer: chofer, autos: that.autos});
+                        
+                    });
+                    
+                    
+                    /*
 
                     for (n = 0; n < relations.length; n++) {
 
@@ -978,13 +1018,16 @@ module.exports = {
                         })
 
                     }
+                    
+                    */
+                    
                 }
 
             });
 
 
 
-        })
+        });
 
     },
     setAutoActivo: function (req, res) {
