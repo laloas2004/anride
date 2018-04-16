@@ -845,7 +845,7 @@ module.exports = {
                   'phone': cliente.numCel,
                   'payment_sources': [{
                     'type': 'card',
-                    'token_id': token
+                    'token_id': token.id
                   }]
                 }, function(err, res) {
                     if(err){
