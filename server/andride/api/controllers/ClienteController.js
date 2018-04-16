@@ -867,7 +867,7 @@ module.exports = {
                 });
 
           }else{
-            Conekta.Customer.find({_customer.id},function(err,res){
+            Conekta.Customer.find({id:_customer.id},function(err,res){
 
               if(err){
                 console.log(err);
