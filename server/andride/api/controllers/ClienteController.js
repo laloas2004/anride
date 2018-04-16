@@ -862,26 +862,36 @@ module.exports = {
                         console.log(err);
                       }
 
+                      return res.ok(customer:cliente.customer_conekta);
+
                     })
                 });
 
           }else{
-            Conekta.Customer.find({id:_customer.id},function(err,res){
+
+            Conekta.Customer.find(_customer.id,function(err,customer){
 
               if(err){
                 console.log(err);
+                return res.serverError(err);
               }
 
-              console.log(res);
+              customer.update('payment_sources': [{
+                'type': 'card',
+                'token_id': token.id
+              }],function(err,res){
+                console.log(res);
+                cliente.customer_conekta = res.toObject();
+
+                cliente.save(function(err){
+
+                  return res.ok(customer:customer);
+
+                });
+
+              });
 
             });
-
-            cliente.customer_conekta = res.toObject();
-
-            cliente.save(function(err){
-
-            })
-
 
           }
 
