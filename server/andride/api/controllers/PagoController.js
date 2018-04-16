@@ -88,7 +88,7 @@ module.exports = {
         }
 
 
-  }
+  },
   getTarjetasDisponibles:function(req, res){
 
     if (!req.isSocket) {
