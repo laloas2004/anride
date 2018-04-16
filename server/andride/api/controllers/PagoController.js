@@ -23,7 +23,7 @@ module.exports = {
         }
 
 
-        return res.ok({formasPago:formasPago,formaPagoSel:formaPagoSel});
+        return res.ok({ formasPago:formasPago,formaPagoSel:formaPagoSel });
 
   },
   setFormasPago:function(req, res){
@@ -89,6 +89,37 @@ module.exports = {
 
 
   }
+  getTarjetasDisponibles:function(req, res){
 
+    if (!req.isSocket) {
+
+        return res.badRequest();
+    }
+
+    var cliente = req.session.cliente;
+    var customer = {};
+
+    if(!cliente){
+      return res.badRequest('No existe session cliente');
+    }
+
+    Cliente.findOne({id:cliente.id}).exec(function(err, cliente) {
+
+      if (err) {
+          return res.serverError(err);
+      }
+
+      var _customer = cliente.customer_conekta;
+
+      if(_customer){
+        return res.ok({ tarjetas:_customer.payment_sources.data });
+      }
+
+      return res.ok({ tarjetas:[]});
+
+    });
+
+
+  }
 
 };

@@ -86,6 +86,7 @@ module.exports.routes = {
         'post /chofer/registro': 'ChoferController.create',
 
         'get /cliente/pago': 'PagoController.getFormasPago',
+        'get /cliente/tarjetas': 'PagoController.getTarjetasDisponibles',
         'post /cliente/pago': 'PagoController.setFormasPago',
 
 
