@@ -810,21 +810,83 @@ module.exports = {
     },
     addPayment: function(req, res) {
 
+        var conekta = require('conekta');
+        conekta.api_key = 'key_yFTwMZtTDNqmGZJML3mrEg';
+        conekta.api_version = '2.0.0';
+
         if (!req.isSocket) {
+
             return res.badRequest();
         }
         var pago = req.param('data');
 
-        var clienteId = req.session.cliente.id;
+        var token = req.param('token');
 
-        Cliente.findOne({id: clienteId}).exec(function(err, cliente) {
+        var cliente = req.session.cliente;
+        var customer = {};
+
+        if(!cliente){
+          return res.badRequest();
+        }
+
+        Cliente.findOne({id:cliente.id}).exec(function(err, cliente) {
 
             if (err) {
-                return res.json({err: err});
+                return res.serverError(err);
             }
-          var id = cliente.formasPago.length+1;
 
-          cliente.formasPago.push({id:id,data:pago});
+          var _customer = cliente.customer_conekta;
+
+          if(!_customer){
+
+              customer = conekta.Customer.create({
+                  'name': cliente.nombre+' '+cliente.apellido,
+                  'email': '<a href="mailto:'+ cliente.email+ '">'+cliente.email+'</a>',
+                  'phone': cliente.numCel,
+                  'payment_sources': [{
+                    'type': 'card',
+                    'token_id': token
+                  }]
+                }, function(err, res) {
+                    if(err){
+                      console.log(err);
+                      return;
+                    }
+
+                    console.log(res.toObject());
+
+                    cliente.customer_conekta = res.toObject();
+
+                    cliente.save(function(err){
+
+                      if(err){
+                        console.log(err);
+                      }
+
+                    })
+                });
+
+          }else{
+            Conekta.Customer.find({_customer.id},function(err,res){
+
+              if(err){
+                console.log(err);
+              }
+
+              console.log(res);
+
+            });
+
+            cliente.customer_conekta = res.toObject();
+
+            cliente.save(function(err){
+
+            })
+
+
+          }
+
+          //cliente.formasPago.push({id:id,data:pago});
 
 
         });
