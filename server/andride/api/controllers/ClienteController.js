@@ -876,10 +876,10 @@ module.exports = {
                 return res.serverError(err);
               }
 
-              customer.update('payment_sources': [{
+              customer.update({'payment_sources': [{
                 'type': 'card',
                 'token_id': token.id
-              }],function(err,res){
+              }]},function(err,res){
                 console.log(res);
                 cliente.customer_conekta = res.toObject();
 
