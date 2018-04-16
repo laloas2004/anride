@@ -44,6 +44,8 @@ module.exports = {
           return res.badRequest('No existe forma_pago');
         }
 
+        console.log(forma_pago);
+
         Cliente.update({id:cliente.id},{formaPagoSel:forma_pago}).exec(function(err, clientes_updated){
 
           if(err){
