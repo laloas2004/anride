@@ -818,7 +818,6 @@ module.exports = {
 
             return res.badRequest();
         }
-        var pago = req.param('data');
 
         var token = req.param('token');
 
@@ -826,7 +825,7 @@ module.exports = {
         var customer = {};
 
         if(!cliente){
-          return res.badRequest();
+          return res.badRequest('No existe session cliente');
         }
 
         Cliente.findOne({id:cliente.id}).exec(function(err, cliente) {
@@ -841,7 +840,7 @@ module.exports = {
 
               customer = conekta.Customer.create({
                   'name': cliente.nombre+' '+cliente.apellido,
-                  'email': '<a href="mailto:'+ cliente.email+ '">'+cliente.email+'</a>',
+                  'email': cliente.email,
                   'phone': cliente.numCel,
                   'payment_sources': [{
                     'type': 'card',
