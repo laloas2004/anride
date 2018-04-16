@@ -862,9 +862,9 @@ module.exports = {
                         console.log(err);
                       }
 
-                      return res.ok(customer:cliente.customer_conekta);
+                      return res.ok({customer:cliente.customer_conekta});
 
-                    })
+                    });
                 });
 
           }else{
@@ -885,7 +885,7 @@ module.exports = {
 
                 cliente.save(function(err){
 
-                  return res.ok(customer:customer);
+                  return res.ok(customer:cliente.customer_conekta);
 
                 });
 
