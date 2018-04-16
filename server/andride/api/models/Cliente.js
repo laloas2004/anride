@@ -78,6 +78,9 @@ module.exports = {
         },
         destinosFrecuentes:{
             type:'array'
+        },
+        customer_conekta:{
+          type: 'json'
         }
     },
     comparePassword: function (password, chofer, cb) {
@@ -118,7 +121,7 @@ module.exports = {
         });
     },
     beforeUpdate: function (attrs, cb) {
-        
+
         console.log(attrs);
 
         if (attrs.password) {

@@ -62,11 +62,11 @@ module.exports.routes = {
         'post /choferes/login': 'ChoferController.login',
         'post /choferes/logout': 'ChoferController.logout',
         'post /choferes/suscribe': 'ChoferController.suscribe',
-        
+
         'get /suscribe/chofer': 'ChoferController.suscribeToChofer',
         'get /unsuscribe/chofer': 'ChoferController.unsuscribeToChofer',
-        
-        
+
+
         'post /choferes/posicion': 'ChoferController.trackChofer',
         'post /choferes/validate': 'ChoferController.validateToken',
         'post /choferes/servicio': 'ChoferController.servicio',
@@ -85,7 +85,10 @@ module.exports.routes = {
         'post /chofer/registro/validar': 'ChoferController.validarEmail',
         'post /chofer/registro': 'ChoferController.create',
 
-        
+        'get /cliente/pago': 'PagoController.getFormasPago',
+        'post /cliente/pago': 'PagoController.setFormasPago',
+
+
 //    'get /choferes/solicitud_prueba': 'ChoferController.solicitud',
         /***************************************************************************
          *                                                                          *
@@ -108,17 +111,17 @@ module.exports.routes = {
         'get /admin/clientes/servicios/:clienteId': 'AdminController.getClienteServicios',
         'post /admin/clientes/new': 'AdminController.saveCliente',
         'post /admin/clientes/edit/:clienteId': 'AdminController.updateCliente',
-        
-        
-        
+
+
+
         'get /admin/solicitudes': 'AdminController.indexSolicitudes',
         'get /admin/solicitudes/new': 'AdminController.newSolicitud',
-        
-        
-        
+
+
+
         'get /admin/servicios': 'AdminController.indexServicios',
         'get /admin/servicios/detalle/:serv_id': 'AdminController.detalleServicios',
-        
+
         'get /admin/choferes': 'AdminController.indexChoferes',
         'get /admin/choferes/new': 'AdminController.newChofer',
         'post /admin/choferes/new': 'AdminController.saveChofer',
@@ -134,22 +137,22 @@ module.exports.routes = {
         'get /admin/configuracion': 'AdminController.indexConfiguracion',
         'post /admin/configuracion': 'AdminController.saveConfiguracion',
         'post /admin/servicio': 'AdminController.suscribe',
-        
-        
+
+
         'get /admin/delegados': 'AdminController.indexDelegados',
         'get /admin/delegados/new': 'AdminController.newDelegado',
         'get /admin/delegados/edit/:id': 'AdminController.editDelegado',
         'post /admin/delegados/update': 'AdminController.updateDelegado',
         'post /admin/delegados': 'AdminController.saveDelegado',
-        
-        
+
+
         'get /admin/delegados/panel': 'DelegadoController.index',
         'get /admin/delegados/servicios/:id?': 'DelegadoController.servicios',
         'get /admin/delegados/pagos': 'DelegadoController.listadoPagos',
         'get /admin/delegados/cortes/:id?': 'DelegadoController.cortes',
-        
-        
-        
+
+
+
         'get /admin/delegados/autos': 'DelegadoController.autos',
         'get /admin/delegados/autos/:chofer': 'DelegadoController.autos',
         'get /admin/delegados/choferes/mapa': 'DelegadoController.getChoferesMap',

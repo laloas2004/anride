@@ -7,10 +7,10 @@
 var Q = require('q');
 
 module.exports = {
-    
+
     getChoferes: function(req, res) {
-        
-        
+
+
         if (!req.isSocket) {
 
             return res.badRequest();
@@ -24,17 +24,17 @@ module.exports = {
             lon: req.param('lon'),
             lat: req.param('lat')
         };
-        
-        
+
+
         console.log(ClientCoordinates);
 
         Chofer.getChoferesCercanos(ClientCoordinates, maxDistance, limitChoferes).then(function(result) {
-            
+
             debugger;
 
             var choferesRes = {};
             choferesRes.choferes = result;
-            
+
             console.log(result);
 
             if (result.length == 0) {
@@ -47,18 +47,18 @@ module.exports = {
             return res.ok(choferesRes);
 
         },function(err){
-            
+
                 console.log(err);
              return res.ok({ error:err });
         });
     },
     create: function(req, res) {
-        
+
         console.log(req.allParams());
-        
+
         var usuario = JSON.parse(req.param('usuario'));
-        
-       
+
+
         if (!usuario.nombre) {
             return res.json(401, {err: 'nombre required'});
         }
@@ -76,7 +76,7 @@ module.exports = {
         if (!usuario.password) {
             return res.json(401, {err: 'password required'});
         }
-        
+
         var email = usuario.email.toLowerCase();
 
         Cliente.create({
@@ -92,9 +92,9 @@ module.exports = {
             }
 
             delete cliente.password;
-            
+
             console.log(cliente);
-            
+
             req.session.cliente = cliente;
 
             res.json({
@@ -150,9 +150,8 @@ module.exports = {
 
                     req.session.cliente = cliente;
                     req.session.cliente.online = true;
-                    debugger;
                    // req.session.clienteId = cliente.id;
-                    
+
                     res.json({
                         cliente: cliente,
                         token: jwToken.issue({id: cliente.id})
@@ -165,69 +164,69 @@ module.exports = {
 
     },
     logout: function(req, res) {
-        
+
         if(req.session.cliente){
-            
+
           Cliente.findOne({id:req.session.cliente.id }).exec(function(err, cliente) {
-              
+
               if(err){
                   console.log(err);
               }
-              
-             cliente.online = false;
-             
-             delete cliente.password;
-             
-             cliente.save(function(err){
-                 
-             req.session.destroy(function(err) {
-                 
-                    console.log(cliente);
-                 
-                    return res.json({ logout:true });
-           
-            });  
-                 
-                 
-             })
-             
 
-              
+             cliente.online = false;
+
+             delete cliente.password;
+
+             cliente.save(function(err){
+
+             req.session.destroy(function(err) {
+
+                    console.log(cliente);
+
+                    return res.json({ logout:true });
+
+            });
+
+
+             })
+
+
+
           });
 
-       
-            
+
+
         }else{
-            
-           return res.json({logout:false}); 
-           
+
+           return res.json({logout:false});
+
         }
-        
-        
+
+
 
     },
     validateToken: function(req, res) {
-        
+
         if(req.session.cliente){
-            
+
              return res.json({ valid: true, cliente:req.session.cliente });
-             
+
         }else{
-            
+
              return res.json({ valid: false });
-            
+
         }
-        
-       
+
+
     },
     suscribe: function(req, res) {
-        
-   
+
+
         if (!req.isSocket) {
-            
+
             return res.badRequest();
         }
-        
+
         var socketId = sails.sockets.getId(req);
 
         var cliente = req.session.cliente;
@@ -239,32 +238,32 @@ module.exports = {
         }
 
         if (!cliente) {
-            
+
             return res.json(403, {err: 'Cliente Id requerido en suscribe.'});
 
         }
-                
-               
+
+
 
         sails.sockets.join(req, cliente.id, function(err) {
 
             if (err) {
                 return res.serverError(err);
             }
-            
-           
+
+
 
             Cliente.update({ id:cliente.id }, { socketId: socketId, online: true }).exec(function(err, cliente) {
-                
-                
+
+
                 if (err) {
-                    
+
                     console.log(err);
                     return res.json({ suscrito: false });
                 }
 
                 console.log(cliente[0]);
-                
+
                 return res.json({ suscrito: true, cliente:cliente[0]});
 
             });
@@ -279,15 +278,15 @@ module.exports = {
         var deferred = Q.defer();
 
         var num_chofer = 0;
-        
+
         if (finn.choferesDisponibles.choferes) {
-            
+
             try {
-                
+
                 var cant_chofer = finn.choferesDisponibles.choferes.length || 0;
-                
+
             } catch (e) {
-                
+
                 console.log(e);
             }
         } else {
@@ -298,9 +297,9 @@ module.exports = {
             var tiempo = 0;
 
             try {
-                
+
                 var solicitud_chofer = finn.choferesDisponibles.choferes[num_chofer];
-                
+
             } catch (e) {
 
                 console.log(e);
@@ -315,7 +314,7 @@ module.exports = {
                     var interval = setInterval(function(tiempo_espera, finn) {
 
                         if (tiempo == 0) {
-                           
+
                             sails.sockets.broadcast(chofer.id, 'solicitud.enbusqueda', { solicitud: finn, tiempo_espera: tiempo_espera});
                         }
 
@@ -324,7 +323,7 @@ module.exports = {
                         tiempo++;
 
                         if (tiempo == tiempo_espera) {
-                           
+
                             sails.sockets.broadcast(chofer.id, 'solicitud.enbusqueda.vencio');
 
                             num_chofer++;
@@ -338,11 +337,11 @@ module.exports = {
                                     if (record.status) {
 
                                         if (record.status == 'creada') {
-                                            
+
                                             loop(tiempo_espera, finn);
 
                                         } else {
-                                            
+
                                             deferred.resolve({respuesta: 'aceptada'});
                                         }
 
@@ -364,11 +363,11 @@ module.exports = {
                                             deferred.resolve({respuesta: 'sin_disponibilidad'});
 
                                         } else {
-                                            
+
                                             deferred.resolve({respuesta: 'aceptada'});
                                         }
                                     } else {
-                                        
+
                                         deferred.resolve({respuesta: 'sin_status'});
                                     }
                                 })
@@ -382,7 +381,7 @@ module.exports = {
                             if (record.status) {
 
                                 if (record.status == 'aceptada') {
-                                   
+
                                     sails.sockets.broadcast(chofer.id, 'solicitud.enbusqueda.aceptada');
                                     clearInterval(interval);
                                     deferred.resolve({respuesta: 'aceptada'});
@@ -447,9 +446,9 @@ module.exports = {
         return deferred.promise;
     },
     solicitud: function(req, res) {
-        
-       
-        
+
+
+
        var that = this;
 
         if (!req.isSocket) {
@@ -460,50 +459,50 @@ module.exports = {
         console.log(req.allParams());
 
         var solicitud = req.param('solicitud');
-        
+
         if(!solicitud){
-            
+
           return res.badRequest('Error s001: solicitud es parametro requerido.');
-        }  
-        
+        }
+
         if(solicitud == null){
-            
+
             return res.badRequest('Error s002: solicitud no puede ser null.');
         }
-        
+
         var origen = req.param('origen');
-        
+
         if(!origen){
-            
-          return res.badRequest('Error s003: origen es parametro requerido.');  
+
+          return res.badRequest('Error s003: origen es parametro requerido.');
         }
-        
+
         if(origen == null){
-            
-           return res.badRequest('origen no puede ser null.');   
+
+           return res.badRequest('origen no puede ser null.');
         }
-        
+
         if(!origen.coords.latitude || !origen.coords.longitude){
-            
-           return res.badRequest('Error s004: origen no tiene longitud o latitud.');  
+
+           return res.badRequest('Error s004: origen no tiene longitud o latitud.');
         }
-        
+
         var socketId = sails.sockets.getId(req);
-        
+
         var cliente = req.session.cliente;
-        
+
         if(!cliente){
-            
+
             console.log('Error 005: no existe la sesion del cliente');
-            
-            return res.forbidden('Error 005: no existe la sesion del cliente');  
+
+            return res.forbidden('Error 005: no existe la sesion del cliente');
         }
-        
-       
-        
+
+
+
         var tiempo_espera = 30;
 
-            
+
         Solicitud.create({
             origen: origen,
             destino: solicitud.destino,
@@ -517,21 +516,21 @@ module.exports = {
             if (err) {
                 return res.json({err: err});
             }
-            
+
             try{
-                
+
             sails.sockets.broadcast(cliente.id, 'solicitud.creada', finn);
-            
+
             sails.sockets.blast('solicitud', finn, req);
 
             Solicitud.subscribe(req, finn.id);
             Solicitud.publishCreate(finn, req);
-            
+
             }catch(err){
 
             sails.log(err);
             }
-            
+
             that._enviaSolicitudaChofer(tiempo_espera, finn).then(function(respuesta) {
 
                 return res.json({respuesta: respuesta, solicitud: finn});
@@ -545,7 +544,7 @@ module.exports = {
 
     },
     getChoferPosition: function(req, res) {
-        
+
 
         if (!req.isSocket) {
 
@@ -553,9 +552,9 @@ module.exports = {
         }
 
         var choferId = req.param('choferId');
-        
+
         if(!choferId){
-            
+
             return res.badRequest('Falta parametro choferId');
         }
 
@@ -563,7 +562,7 @@ module.exports = {
 
         Chofer.findOne({id:choferId}).exec(function(err, chofer) {
             if (err) {
-                
+
                 return res.json({err: err});
             }
             return res.ok(chofer);
@@ -583,11 +582,11 @@ module.exports = {
         Servicio.update({id: servicioId}, { status: 'cancelada', cancelo: 'cliente'}).exec(function(err, serv) {
 
             if (err) {
-                
+
                 return res.json({err: err});
             }
-            
-           
+
+
 
             try {
 
@@ -613,7 +612,7 @@ module.exports = {
 
             return res.badRequest();
         }
-        
+
         var clienteId = req.session.cliente.id;
 
         if (!clienteId) {
@@ -624,7 +623,7 @@ module.exports = {
 
             if (err) {
                 return res.json({err: err});
-            }      
+            }
 
             res.json(servi);
 
@@ -684,16 +683,16 @@ module.exports = {
         }
 
         var idMsg = req.param('idQueue');
-        
+
         if(!idMsg){
-           return res.json(403, {err: 'Id de Mensaje required'});  
+           return res.json(403, {err: 'Id de Mensaje required'});
         }
 
         if (!idMsg) {
             console.log('Falta parametro idMsg')
 
         }
-           
+
         Queue.update({id: idMsg}, {entregado: true}).exec(function(err, queue) {
 
             if (err) {
@@ -707,10 +706,10 @@ module.exports = {
     getQueueMsg: function(req, res) {
 
         if (!req.isSocket) {
-            
+
             return res.badRequest();
         }
-        
+
         var idCliente = req.session.cliente.id;
 
         if (idCliente) {
@@ -760,8 +759,8 @@ module.exports = {
         if (!req.isSocket) {
             return res.badRequest();
         }
-        
-       
+
+
 
         var email = req.param('email');
         var numCel = req.param('numCel');
@@ -769,7 +768,7 @@ module.exports = {
         var respuesta = { emailValido:true, numCelValido:true };
 
         if (email && numCel) {
-            
+
             email = email.toLowerCase();
 
             Cliente.findOne({ email: email }).exec(function(err, cliente) {
@@ -779,11 +778,11 @@ module.exports = {
                             }
 
                             if (cliente) {
-                                
+
                                respuesta.emailValido = false;
 
-                            } 
-                
+                            }
+
                  Cliente.findOne({ numCel:numCel.toString()}).exec(function(err, cliente2) {
 
                             if (err) {
@@ -794,17 +793,17 @@ module.exports = {
 
                                respuesta.numCelValido = false;
 
-                            } 
+                            }
 
                      return res.json(respuesta);
-                            
+
 
                  });
 
             });
-            
+
         } else {
-            
+
             return res.badRequest('Falta parametros requeridos.');
         }
 
@@ -815,7 +814,7 @@ module.exports = {
             return res.badRequest();
         }
         var pago = req.param('data');
-        
+
         var clienteId = req.session.cliente.id;
 
         Cliente.findOne({id: clienteId}).exec(function(err, cliente) {
@@ -823,82 +822,82 @@ module.exports = {
             if (err) {
                 return res.json({err: err});
             }
-          var id = cliente.formasPago.length+1; 
+          var id = cliente.formasPago.length+1;
 
-          cliente.formasPago.push({id:id,data:pago});  
-            
+          cliente.formasPago.push({id:id,data:pago});
+
 
         });
 
 
     },
     getPayments:function(req, res){
-        
-        
-        
-        
+
+
+
+
     },
     saveDestinoFrecuente:function(req, res){
-        
+
         if (!req.isSocket) {
             return res.badRequest();
         }
-        
+
         var destino = req.param('destino');
         var cliente = req.session.cliente;
-        
+
         if(!cliente){
-            
+
             return res.forbidden('No existe session valida');
         }
-        
+
         if(!destino){
-            
+
            return res.badRequest('Se necesita un destino');
         }
-        
+
         Cliente.findOne({id:cliente.id}).exec(function(err, cliente){
-            
+
             if(err){
                return res.serverError(err);
             }
-                        
+
                 var destinos = cliente.destinosFrecuentes ? cliente.destinosFrecuentes : [];
-            
-           
+
+
                 var destinoExiste = destinos.find(function(d){
-                    
+
                     return d.id == destino.id;
-                    
+
                 });
-                
+
               if(!destinoExiste){
-                
+
                 destinos.push(destino);
-                
+
                 Cliente.update({id:cliente.id},{destinosFrecuentes:destinos}).exec(function(err, clientes){
-                    
+
                             if(err){
                                return res.serverError(err);
                             }
-                            
-                    res.ok({ destinos:clientes[0].destinosFrecuentes });             
-                    
+
+                    res.ok({ destinos:clientes[0].destinosFrecuentes });
+
                 });
-                  
+
               }else{
-                  
-                    res.ok({ destinos:cliente.destinosFrecuentes });      
-                  
+
+                    res.ok({ destinos:cliente.destinosFrecuentes });
+
               }
-                
-            
+
+
         });
-        
-        
+
+
     },
     getDestinosFrecuentes:function(req, res){
-        
+
 
             if (!req.isSocket) {
                     return res.badRequest();
@@ -918,38 +917,38 @@ module.exports = {
                     }
 
 
-                 res.ok({ destinos:cliente.destinosFrecuentes }); 
+                 res.ok({ destinos:cliente.destinosFrecuentes });
 
-             });   
-        
+             });
+
     },
-    
+
     suscribeToChofer:function(req, res){
-        
+
         if (!req.isSocket) {
                     return res.badRequest();
-            } 
-            
-            
+            }
+
+
          var chofer_id =  req.param('chofer');
-         
+
          if(!chofer_id){
-            
+
             return res.badRequest('Se requiere parametro chofer');
-             
+
          }
-         
+
          Chofer.subscribe(req, chofer_id);
-         
+
          return res.ok();
-      
+
     },
-    
+
     unsuscribeToChofer:function(req, res){
 
     if (!req.isSocket) {
                 return res.badRequest();
-        } 
+        }
 
 
      var chofer_id =  req.param('chofer');
