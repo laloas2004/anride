@@ -885,7 +885,7 @@ module.exports = {
 
                 cliente.save(function(err){
 
-                  return res.ok(customer:cliente.customer_conekta);
+                  return res.ok({customer:cliente.customer_conekta});
 
                 });
 
