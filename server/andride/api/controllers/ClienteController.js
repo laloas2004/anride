@@ -846,15 +846,15 @@ module.exports = {
                     'type': 'card',
                     'token_id': token.id
                   }]
-                }, function(err, res) {
+                }, function(err, result) {
                     if(err){
                       console.log(err);
                       return;
                     }
 
-                    console.log(res.toObject());
+                    console.log(result.toObject());
 
-                    cliente.customer_conekta = res.toObject();
+                    cliente.customer_conekta = result.toObject();
 
                     cliente.save(function(err){
 
@@ -879,9 +879,9 @@ module.exports = {
               customer.update({'payment_sources': [{
                 'type': 'card',
                 'token_id': token.id
-              }]},function(err,res){
-                console.log(res);
-                cliente.customer_conekta = res.toObject();
+              }]},function(err,result){
+                console.log(result);
+                cliente.customer_conekta = result.toObject();
 
                 cliente.save(function(err){
 
