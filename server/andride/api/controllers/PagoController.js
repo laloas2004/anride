@@ -52,7 +52,7 @@ module.exports = {
             return res.serverError(err);
           }
 
-          return res.ok({formasPago:formasPago,formaPagoSel:formaPagoSel});
+          return res.ok({ formasPago:clientes_updated[0].formasPago,formaPagoSel:clientes_updated[0].formaPagoSel});
 
         });
 
