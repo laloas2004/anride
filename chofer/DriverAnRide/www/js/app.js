@@ -1,16 +1,16 @@
 
 
 angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
-    'app.controllers', 
-    'app.directives', 
-    'app.services', 
+    'app.controllers',
+    'app.directives',
+    'app.services',
     'ngSails',
     'ngStorage',
     'angularMoment'])
         .run(function($ionicPlatform, $rootScope, $window, $cordovaSQLite, $ionicPopup) {
-            
-            var entorno = 2;
-    
+
+            var entorno = 1;
+
             switch(entorno) {
                     case 1:
                         // Desarrollo local san nicolas.
@@ -37,13 +37,13 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                         $rootScope.serverIp = "http://192.168.15.98:1337";
                         console.log($rootScope.serverIp);
             }
-            
+
             $rootScope.isGpsEnabled = false;
-    
+
             $rootScope.google_key  = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
-            
+
             $ionicPlatform.ready(function() {
-                    
+
                 screen.lockOrientation('portrait');
 
                 if (window.cordova && window.cordova.plugins.Keyboard) {
@@ -54,15 +54,15 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                 if (window.StatusBar) {
                     StatusBar.styleDefault();
                 }
-                
-                
-                                
+
+
+
                             function checkAvailability(){
-                
+
                                 cordova.plugins.diagnostic.isGpsLocationEnabled(function(available){
                                     console.log("GPS location is " + (available ? "available" : "not available"));
                                     if(!available){
-                                        
+
                                         var alertPopup = $ionicPopup.alert({
                                                             title: 'No tenemos acceso al GPS',
                                                             template: 'Es necesario usar el GPS, Por favor activa tu GPS y vuelve a entrar.'
@@ -70,10 +70,10 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
 
                                                         alertPopup.then(function(res) {
 
-                                                            ionic.Platform.exitApp();
+                                                          // ionic.Platform.exitApp();
 
                                                         });
-                                        
+
                                        checkAuthorization();
                                     }else{
                                         $rootScope.isGpsEnabled = true;
@@ -136,10 +136,10 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
 
 
                             checkAvailability();
-                
+
             });
-            
-      
+
+
         })
         .config(function($stateProvider, $urlRouterProvider) {
 
@@ -207,7 +207,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                                 templateUrl: 'templates/ayuda.html',
                                 controller: 'AyudaCtrl',
                                 params:{
-                                    
+
                                 }
                             }
                         }
@@ -219,7 +219,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                                 //templateUrl: 'templates/logout.html',
                                 controller: 'LogOutCtrl',
                                 params:{
-                                    
+
                                 }
                             }
                         }
@@ -231,7 +231,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                                 templateUrl: 'templates/login.html',
                                 controller: 'LoginCtrl',
                                 params:{
-                                    
+
                                 }
                             }
                         }
@@ -244,7 +244,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                                 templateUrl: 'templates/pickup.html',
                                 controller: 'PickupCtrl',
                                 params:{
-                                    
+
                                 }
                             }
                         }
@@ -258,12 +258,12 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                                 templateUrl: 'templates/pickoff.html',
                                 controller: 'ServicioCtrl',
                                 params:{
-                                    
+
                                 }
                             }
                         }
                     })
-                    
+
                       .state('app.cancelacion', {
                         url: '/cancelacion',
                         views: {
@@ -271,7 +271,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                                 templateUrl: 'templates/cancelacion.html',
                                 controller: 'CancelCtrl',
                                 params:{
-                                    
+
                                 }
                             }
                         }
@@ -284,7 +284,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                                 templateUrl: 'templates/solicitud_servicio.html',
                                 controller: 'SolicitudCtrl',
                                 params:{
-                                    
+
                                 }
                             }
                         }
@@ -309,19 +309,19 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                                 templateUrl: 'templates/seleccionar_auto.html',
                                 controller: 'AutosCtrl',
                                 params: {
-                                    
+
                                 }
                             }
                         }
                     })
-                  
+
 
             $urlRouterProvider.otherwise('/app/login');
         })
         .config(['$sailsProvider', function($sailsProvider) {
-                
-            var entorno = 2;
-    
+
+            var entorno = 1;
+
             switch(entorno) {
                     case 1:
                         // Desarrollo local san nicolas.
@@ -329,7 +329,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                         break;
                     case 2:
                         // Desarrollo local sabinas Hgo.
-                        
+
                         $sailsProvider.url = "http://192.168.1.74:1337";
                         break;
                     case 3:
@@ -343,11 +343,8 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                     default:
                         $sailsProvider.url = "http://192.168.15.98:1337";
             }
-                
-                $sailsProvider.debug = true;                
+
+                $sailsProvider.debug = false;
 
 
             }])
-
-
-      

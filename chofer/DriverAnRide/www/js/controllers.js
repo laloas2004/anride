@@ -106,6 +106,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             $scope.map = null;
             $rootScope.servicioRecuperado = false;
             
+            $scope.watchTimeout = 60000;
+            
 
             $ionicPlatform.ready(function() {
                 
@@ -139,7 +141,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
 
             });
-            
             $scope.setBtnEstado = function(status){
                
              if (status == "activo") {
@@ -288,7 +289,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                                         if($scope.map != null){
                                            
                                                     $scope.map.clear();
-
+                                                    
                                                     $scope.map.addMarker({
                                                     position: $scope.myLatLng,
                                                     icon: './img/car-icon.png',
@@ -317,8 +318,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                                     }
 
                         function errorWatchPosition(error) {
-                                            alert('code: '    + error.code    + '\n' +
-                                                  'message: ' + error.message + '\n');
+                                        console.log('code: '    + error.code    + '\n' +
+                                              'message: ' + error.message + '\n');
                                         console.error(error);
                                         
                                       $ionicLoading.hide();
@@ -331,7 +332,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
 
                         $scope.watchPosition = cordova.plugins.locationServices.geolocation.watchPosition(succesWatchPosition, errorWatchPosition,{
                                     maximumAge: 30000,
-                                    timeout: 60000,
+                                    timeout: $scope.watchTimeout,
                                     enableHighAccuracy: true,
                                     priority: 100,
                                     interval: 20000,

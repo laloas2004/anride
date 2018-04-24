@@ -2,34 +2,34 @@ angular.module('app.services', [])
         .factory('AuthService', function($http, $q, $sails, $rootScope, $localStorage, $sessionStorage) {
             return {
                 isAuthenticated: function() {
-                    
+
                     var q = $q.defer();
 
-                 
+
 
                         var config = {
                             url: $rootScope.serverIp + "/choferes/validate",
                             method: "POST",
                             params: {
-                               
+
                             }
                         };
 
                         $http(config)
                                 .then(function(response) {
-                                    
+
                                     if (response.data.valid) {
-                                        
+
                                         q.resolve(response);
-                                
+
                                     } else {
-                                        
+
                                         q.reject('Token no Valido');
                                     }
 
 
                                 }).catch(function(err) {
-                                    
+
                             q.reject(err);
 
                         });
@@ -41,10 +41,6 @@ angular.module('app.services', [])
 
                     var q = $q.defer();
                     $localStorage.$reset();
-//                    $localStorage = $localStorage.$default({
-//                        token: '',
-//                        chofer:{}
-//                    });
 
                     var config = {
                         url: $rootScope.serverIp + "/choferes/login",
@@ -102,7 +98,7 @@ angular.module('app.services', [])
                     var q = $q.defer();
                     $sails.post("/choferes/suscribe", { choferId:chofer.id, chofer:chofer, status:chofer.status})
                             .success(function(data, status, headers, jwr) {
-                               
+
                                // $localStorage.chofer = data.chofer;
                                // $localStorage.socketId = data.socketId;
                                 q.resolve(data);
@@ -160,13 +156,13 @@ angular.module('app.services', [])
 
                     $sails.post("/choferes/posicion", data)
                             .success(function(data, status, headers, jwr) {
-                                
-                                
+
+
                                 q.resolve(data);
                             })
                             .error(function(data, status, headers, jwr) {
-                                
-                                
+
+
                                 q.reject(jwr);
 
                             });
@@ -255,7 +251,6 @@ angular.module('app.services', [])
 
                     return q.promise;
                 },
-                
                 getAutos: function () {
 
                     var q = $q.defer();
@@ -334,13 +329,13 @@ angular.module('app.services', [])
 
                             .success(function(data, status, headers, jwr) {
 
-                               
+
                                 q.resolve(data);
 
 
                             })
                             .error(function(data, status, headers, jwr) {
-                             
+
                                 q.reject(data);
                                 console.error('Error:' + data);
                             });
@@ -349,12 +344,10 @@ angular.module('app.services', [])
                     return q.promise;
                 },
                 distancia2points: function(lat1, lon1, lat2, lon2) {
-
-                    
                         Number.prototype.toRad = function() {
                             return this * Math.PI / 180;
                         }
-                   
+
 
                     var q = $q.defer();
 
@@ -366,21 +359,16 @@ angular.module('app.services', [])
 
                         q.reject('Faltan parametros.');
                     }
-                    
-//                    console.log(lat1);
-//                    console.log(lon1);
-//                    console.log(lat2);
-//                    console.log(lon2);
-                    
-                    lat1 = Number(lat1); 
+
+                    lat1 = Number(lat1);
                     lon1 = Number(lon1);
                     lat2 = Number(lat2);
                     lon2 = Number(lon2);
-                    
+
                     var R = 6371; // km
                     var dLat = (lat2 - lat1).toRad();
                     var dLon = (lon2 - lon1).toRad();
-                    
+
                     var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
                             Math.cos(lat1.toRad()) * Math.cos(lat2.toRad()) *
                             Math.sin(dLon / 2) * Math.sin(dLon / 2);
@@ -388,12 +376,10 @@ angular.module('app.services', [])
                     var d = R * c;
 
                     q.resolve(d);
-                    
-//                    console.log('Service Distancia: '+ d);
-                    
-                    return q.promise;
 
-                }
+                    return q.promise;
+                },
+
 
             }
 
@@ -451,7 +437,7 @@ angular.module('app.services', [])
                     $cordovaSQLite.execute(db, query, [idServicio, viaje, false]).then(function(res) {
 
                         q.resolve(res);
-                      
+
                         console.log("INSERT ID -> " + res.insertId);
 
                     }, function(err) {
@@ -467,10 +453,10 @@ angular.module('app.services', [])
 
                     var q = $q.defer();
 
-                    var query = "SELECT * FROM inicioViajes WHERE id=" + idInicioViaje;
+                    var query = "SELECT * FROM inicioViajes WHERE id="+idInicioViaje;
 
                     $cordovaSQLite.execute(db, query).then(function(res) {
-                       
+
                         q.resolve(res);
 
 
@@ -490,7 +476,7 @@ angular.module('app.services', [])
                     var query = "UPDATE inicioViajes SET entregado = 1 WHERE id=" + idInicioViaje;
 
                     $cordovaSQLite.execute(db, query).then(function(res) {
-                        
+
                         q.resolve(res);
 
 
@@ -511,7 +497,7 @@ angular.module('app.services', [])
                     var query = "INSERT INTO  pointsServicio (idServicio,lat,lon,fecha) VALUES ()";
 
                     $cordovaSQLite.execute(db, query, [idServicio,position.lat,position.lon,fecha]).then(function(res) {
-                       
+
                         q.resolve(res);
 
 
@@ -527,11 +513,11 @@ angular.module('app.services', [])
                 },
                 getServicioGeoTrack: function(idServicio) {
 
-                
+
 
                 },
-                
-                
+
+
 
 
 
