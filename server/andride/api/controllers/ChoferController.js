@@ -73,7 +73,7 @@ module.exports = {
             }
 
             if (chofer.online) {
-                
+
                 console.log('El Usuario esta en Uso.');
               //  return res.json(401, {err: 'Usuario ya cuenta con una session activa.'});
             }
@@ -85,18 +85,18 @@ module.exports = {
                 }
 
                 if (!valid) {
-                    
+
                     return res.json(401, {err: 'Usuario o contraseña Invalidos.'});
-                    
+
                 } else {
-                    
+
                     console.log('-- Login Chofer | ' + chofer.email);
-                    
+
                     delete chofer.password;
-                    
+
                     req.session.chofer = chofer;
                     req.session.online = true;
-                    
+
                     res.json({
                         chofer: chofer,
                         token: jwToken.issue({id: chofer.id})
@@ -128,36 +128,36 @@ module.exports = {
     suscribe: function (req, res) {
 
         if (!req.isSocket) {
-            
+
             return res.badRequest();
         }
-        
-        
+
+
         if(!req.session.chofer){
-            
-            
+
+
            var choferId = req.param('choferId');
-           
+
            if(!choferId){
-               
+
             return res.badRequest('El Chofer no tiene sesion valida.');
-               
+
            }
-            
+
 
         }else{
-            
+
           var choferId = req.session.chofer.id;
         }
-        
-        
+
+
         var socketId = sails.sockets.getId(req);
 
-        
-        
+
+
         var status = req.param('status') || 'inactivo';
 
-   
+
         sails.sockets.join(req, choferId, function (err) {
 
             if (err) {
@@ -186,13 +186,13 @@ module.exports = {
                     }
 
                     if (msg) {
-                        
+
                         console.log(msg);
-                        
+
                         if(msg.idDestino != null){
-                            
+
                            sails.sockets.broadcast(msg.idDestino[0], msg.event, msg);
-                            
+
                         }
 
 
@@ -221,11 +221,11 @@ module.exports = {
         var socketId = sails.sockets.getId(req);
         var lat = req.param('lat');
         var lon = req.param('lon');
-        
+
         var chofer = req.session.chofer;
-        
+
         if(!chofer){
-            
+
             return res.forbidden('El chofer no tiene session valida');
         }
 
@@ -242,11 +242,11 @@ module.exports = {
 //                    console.log(updated);
 
                     try {
-                        
+
                         Chofer.publishUpdate(updated[0].id, {chofer: updated[0]});
-                        
+
                     } catch (e) {
-                        
+
                         console.log('ChoferController:152' + e);
                     }
 
@@ -255,18 +255,18 @@ module.exports = {
 
     },
     validateToken: function (req, res) {
-        
+
         if(req.session.chofer){
-            
+
                 console.log('sesion valida:'+ req.session.chofer);
-                
+
           return res.json({valid: true, chofer:req.session.chofer});
-          
+
         }else{
-            
+
             console.log('sesion chofer invalida');
-            
-          return res.json({valid: false});  
+
+          return res.json({valid: false});
         }
     },
     servicio: function (req, res) {
@@ -295,7 +295,7 @@ module.exports = {
 
 
         Solicitud.update({id: solicitud.id}, {
-            
+
             status: 'aceptada'
 
         }).exec(function (err, solicitud) {
@@ -371,7 +371,7 @@ module.exports = {
                                 } catch (e) {
                                     console.error(e);
                                 }
-                                
+
 //                            sails.sockets.broadcast('cliente_' + cliente.id, 'servicio.iniciada', { solicitud:solicitud,servicio:servicio, chofer:chofer[0]});
 
 
@@ -472,12 +472,12 @@ module.exports = {
         var recorrido = req.param('recorrido');
 
         var distancia = req.param('distancia');
-        
+
         var referencia = "n/a";
 
 
         if (!servicio) {
-            
+
             console.log('Falta parametro servicio terminaViaje');
         }
 
@@ -491,10 +491,10 @@ module.exports = {
 
             console.log('Falta parametro recorrido terminaViaje');
         }
-        
-        
+
+
         if (typeof distancia === "undefined") {
-            
+
             console.log('Falta parametro distancia terminaViaje');
         }
 
@@ -524,17 +524,17 @@ module.exports = {
                     if (err) {
                         return res.json({err: err});
                     }
-                    
-                    
-                    
+
+
+
                     pagosService.pagos.createPago( result[0].chofer, respuesta.monto, servicio.id, referencia).then(function(result){
-                        
+
                         console.log(result);
-                        
+
                     },function(err){
-                        
+
                         console.log(err);
-                        
+
                     });
 
                     Cliente.findOne({id: servicio.cliente}).exec(function (err, cliente) {
@@ -553,9 +553,9 @@ module.exports = {
                         if (err) {
                             return res.json({err: err});
                         }
-                        
-                        
-                        
+
+
+
 
 
                         return res.json(respuesta);
@@ -650,18 +650,18 @@ module.exports = {
         if (!req.isSocket) {
             return res.badRequest();
         }
-        
+
         if(!req.session.chofer){
-            
+
            debugger;
-           
+
            console.log(req.session.chofer);
-            
+
             //return res.forbidden();
         }
 
         var choferId = req.session.chofer.id;
-        
+
         var action = req.param('action');
 
         if (action == 'activo') {
@@ -826,7 +826,7 @@ module.exports = {
         intentos = 0;
 
         if (tipo != 'cliente') {
-            
+
             console.log('Error debe de ser chofer o cliente');
         }
 
@@ -838,8 +838,8 @@ module.exports = {
 
             console.log('Falta parametro idDestino');
         }
-        
-     
+
+
 
         Queue.create({tipo: tipo, event: evento, idOrigen: idOrigen, idDestino: idDestino, data: data}).exec(function (err, msg) {
 
@@ -929,14 +929,14 @@ module.exports = {
         }
 
         var chofer = req.session.chofer;
-        
+
         that = this;
-        
+
         if(!chofer){
-            
+
              return res.json(403, {err: 'Chofer requerido en suscribe.'});
         }
-        
+
 
         Chofer.findOne({id: chofer.id}).populate('autoActivo').exec(function (err, chofer) {
 
@@ -949,49 +949,49 @@ module.exports = {
                 that.autos = [];
 
                 if (relations.length == 0) {
+
                     res.json({chofer: chofer, autos: that.autos});
 
 
                 } else {
-                    
-                    
+
                     async.forEachOf(relations, function (value, key, callback) {
-                                                
+
                         Auto.findOne({id:value.auto}).exec(function (err, auto) {
-                            
+
                             if(err){
-                              return res.serverError(err);    
+                              return res.serverError(err);
                             }
-                            
+
                             auto.checked = false;
-                                   
+
                             if (chofer.autoActivo) {
 
                                 if (chofer.autoActivo == auto.id) {
+                                  
                                     auto.checked = true;
                                 }
 
                             }
-
                                    that.autos.push(auto);
-                                   
+
                                    callback();
 
                                });
 
-                       
+
                     },function(err){
-                        
+
                         if(err){
-                            
-                          return res.serverError(err);  
+
+                          return res.serverError(err);
                         }
-                        
+
                       return  res.json({chofer: chofer, autos: that.autos});
-                        
+
                     });
-                    
-                    
+
+
                     /*
 
                     for (n = 0; n < relations.length; n++) {
@@ -1018,9 +1018,9 @@ module.exports = {
                         })
 
                     }
-                    
+
                     */
-                    
+
                 }
 
             });
@@ -1096,4 +1096,4 @@ module.exports = {
 
     }
 
-};  
+};
