@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.websiete.andride" version="0.3.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.websiete.andride" version="0.3.4" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>An Ride</name>
     <description>
         App de transporte privado.
@@ -10,6 +10,7 @@
     <content src="index.html" />
     <access origin="*" />
     <allow-navigation href="*" />
+    <allow-navigation href="https://cdn.conekta.io/*" />
     <access launch-external="yes" origin="tel:*" />
     <preference name="webviewbounce" value="false" />
     <preference name="UIWebViewBounce" value="false" />
@@ -75,4 +76,5 @@
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <plugin name="cordova.plugins.diagnostic" spec="~2.3.0" />
     <engine name="android" spec="~5.2.2" />
+    <plugin name="cordova-plugin-geolocation" spec="~2.4.3" />
 </widget>

@@ -11,9 +11,9 @@ angular.module('app', ['ionic', 'ionic-sidemenu','ionic.native',
 
 ])
         .run(function ($ionicPlatform, $rootScope, $window, $cordovaNetwork, $ionicPopup) {
-        
-            var entorno = 2;
-    
+
+            var entorno = 1;
+
             switch(entorno) {
                     case 1:
                         // Desarrollo local san nicolas.
@@ -39,21 +39,21 @@ angular.module('app', ['ionic', 'ionic-sidemenu','ionic.native',
                         console.log('Apuntando entorno default');
                         $rootScope.serverIp = "http://192.168.15.98:1337";
                         console.log($rootScope.serverIp);
-                        
+
             }
-            
+
             $rootScope.isGpsEnabled = false;
-            
+
             $rootScope.google_key = "AIzaSyAirbsMhJwXqxtFjWQXUMg_jZXDrQn76O8";
 
             $window.addEventListener('offline', function () {
-                
+
                 console.log('se ejecuti el evento offline');
 
                 $rootScope.$digest();
             });
             $window.addEventListener('online', function () {
-//              
+//
 
                 console.log('se ejecuti el evento online');
 
@@ -61,7 +61,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu','ionic.native',
 
             $ionicPlatform.ready(function () {
 
-                    
+
 
                 screen.lockOrientation('portrait');
 
@@ -73,13 +73,13 @@ angular.module('app', ['ionic', 'ionic-sidemenu','ionic.native',
                 if (window.StatusBar) {
                     StatusBar.styleDefault();
                 }
-                
+
                             function checkAvailability(){
-                
+
                                 cordova.plugins.diagnostic.isGpsLocationEnabled(function(available){
                                     console.log("GPS location is " + (available ? "available" : "not available"));
                                     if(!available){
-                                        
+
                                         var alertPopup = $ionicPopup.alert({
                                                             title: 'No tenemos acceso al GPS',
                                                             template: 'Es necesario usar el GPS, Por favor activa tu GPS y vuelve a entrar.'
@@ -87,10 +87,10 @@ angular.module('app', ['ionic', 'ionic-sidemenu','ionic.native',
 
                                                         alertPopup.then(function(res) {
 
-                                                            ionic.Platform.exitApp();
+                                                           // ionic.Platform.exitApp();
 
                                                         });
-                                        
+
                                        checkAuthorization();
                                     }else{
                                         $rootScope.isGpsEnabled = true;
@@ -153,12 +153,12 @@ angular.module('app', ['ionic', 'ionic-sidemenu','ionic.native',
 
 
                             checkAvailability();
-                
+
             });
-            
-           
-            
-            
+
+
+
+
         })
         .config(function ($stateProvider, $urlRouterProvider) {
 
@@ -292,13 +292,22 @@ angular.module('app', ['ionic', 'ionic-sidemenu','ionic.native',
                             }
                         }
                     })
+                  /*  .state('app.registro', {
+                        url: '/registro',
+                        views: {
+                            'menuContent': {
+                                templateUrl: 'templates/registro.html',
+                                controller: 'RegistroCtrl'
+                            }
+                        }
+                    })*/
 
             $urlRouterProvider.otherwise('/app/login');
         })
         .config(['$sailsProvider', function ($sailsProvider) {
-                
-            var entorno = 2;
-    
+
+            var entorno = 1;
+
             switch(entorno) {
                     case 1:
                         // Desarrollo local san nicolas.
@@ -320,10 +329,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu','ionic.native',
                         $sailsProvider.url = "http://192.168.15.98:1337";
             }
 
-                $sailsProvider.debug = true;
-           
+                $sailsProvider.debug = false;
+
 
             }]);
-
-
-      

@@ -1,6 +1,9 @@
-<ion-modal-view> 
+<ion-modal-view>
     <ion-header-bar align-title="center" class="bar-dark">
         <h1 class="title">Agregar Forma de Pago</h1>
+        <button class = "button button-clear" ng-click="closeViewAddTarjeta()">
+           Cerrar
+        </button>
     </ion-header-bar>
     <ion-content class="padding" class="has-header">
 
@@ -20,7 +23,7 @@
                     <span class="input-label">Mes Expira:</span>
                     <i class="ion-ios-email-outline light icon-label"></i>
                     <select id="exp_month" data-conekta=”card[exp_month]” name="card[exp_month]" ng-model="card.exp_month">
-                        <option value='1' >01</option>
+                        <option value='1' selected >01</option>
                         <option value='2' >02</option>
                         <option value='3'>03</option>
                         <option value='4'>04</option>
@@ -32,13 +35,13 @@
                         <option value='10'>10</option>
                         <option value='11'>11</option>
                         <option value='12'>12</option>
-                    </select>            
+                    </select>
                 </label>
                 <label class="item item-input item-stacked-label">
                     <span class="input-label">Año Expira:</span>
                     <i class="ion-ios-email-outline light icon-label"></i>
                     <select id="exp_month" data-conekta=”card[exp_year]” name="card[exp_year]" ng-model="card.exp_year">
-                        <option value="{{anio}}">{{anio}}</option>
+                        <option value="{{anio}}" selected >{{anio}}</option>
                         <option value="{{anio + 1}}" >{{anio + 1}}</option>
                         <option value="{{anio + 2}}" >{{anio + 2}}</option>
                         <option value="{{anio + 3}}" >{{anio + 3}}</option>
@@ -50,7 +53,7 @@
                         <option value="{{anio + 9}}" >{{anio + 9}}</option>
                         <option value="{{anio + 10}}" >{{anio + 10}}</option>
 
-                    </select>            
+                    </select>
                 </label>
                 <label class="item item-input item-stacked-label">
                     <span class="input-label">Codigo Seguridad:</span>
@@ -62,5 +65,5 @@
                 Agregar
             </button>
         </form>
-    </ion-content> 
+    </ion-content>
 </ion-modal-view>

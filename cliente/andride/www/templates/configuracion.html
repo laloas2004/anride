@@ -3,25 +3,33 @@
   Show settings
 -->
 <ion-view view-title="Configuracion">
-  <ion-content class="">
-    <ion-list>
+  <ion-content class = "">
+
       <ion-item class="item-divider">Formas de Pago</ion-item>
 
-            <ion-radio ng-model="forma_pago" ng-value="'1'">Efectivo</ion-radio>
-            <ion-radio ng-model="forma_pago" ng-value="'2'">Tarjeta de credito/debito</ion-radio>
-      
+    <ion-list radio-group >
+
+            <ion-radio name="forma_pago" ng-model="pago.forma" value="efectivo" ng-change="seleccionarFormaPago($event)"> <i class="icon ion-cash"></i> Efectivo </ion-radio>
+
+            <ion-radio name="forma_pago" ng-model="pago.forma" value="tarjeta" ng-change="seleccionarFormaPago($event)"> <i class="icon ion-card"></i> Tarjeta de Credito/Debito</ion-radio>
+
+    </ion-list>
+
+    <ion-list radio-group ng-click="seleccionarTarjetaDefault($event)" >
+
       <ion-item class="item-divider">Tarjetas</ion-item>
 
-      <ion-item class="item-icon-right">
-        <p>Clean job history data</p>
-        <i class="icon ion-chevron-right icon-accessory"></i>
+      <ion-item class="item-icon-right" ng-repeat="tarjeta in tarjetas">
+
+      <ion-radio name="tarjeta_default" ng-model="pago.card_default" ng-value="'1'" ><p>**** **** **** {{tarjeta.last4}}</p></ion-radio>
+
       </ion-item>
 
-      <ion-item class="item-icon-right">
-        <p>Clean cash history data</p>
+      <ion-list>
+      <ion-item class="item-icon-right" ng-click="agregarTarjeta($event)">
+        <p> Agregar Tarjeta </p>
         <i class="icon ion-chevron-right icon-accessory"></i>
       </ion-item>
-
     </ion-list>
   </ion-content>
 </ion-view>
