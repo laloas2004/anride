@@ -501,7 +501,7 @@ module.exports = {
         var that = this;
 
         Servicio.update({
-            id: servicio.id}, {status: 'finalizado',
+            id: servicio.id}, { status: 'finalizado',
             fin_viaje: fin_viaje.posicion,
             fin_fecha: fin_viaje.fechaHora,
             distance: distancia,
@@ -516,58 +516,155 @@ module.exports = {
 
             that._calcularCobro(result[0]).then(function (respuesta) {
 
-                Servicio.update({
-                    id: servicio.id}, {
-                    tiempo: respuesta.tiempo,
-                    monto: respuesta.monto
-                }).exec(function (err, result) {
-                    if (err) {
-                        return res.json({err: err});
-                    }
+
+                Solicitud.findOne({id:servicio.solicitud}).exec(function(err,_solicitud){
+
+                  if (err) {
+                      return res.json({err: err});
+                  }
+
+                  if(_solicitud.tipodePago === 'tarjeta'){
+
+                    // si la forma de pago seleccionada fue con tajeta.
+
+                              Cliente.findOne({id: servicio.cliente}).exec(function (err, cliente) {
+
+                                  if (err) {
+                                      return res.json({ err: err });
+                                  }
+
+                                  var customer_conekta = cliente.customer_conekta;
+
+                                  console.log(customer_conekta);
+
+                                  conektaService.createOrder(customer_conekta.id, respuesta.monto).then(function(res){
+
+                                        console.log(res);
+
+                                        return res.json({cobro_conekta:true, res:res, totales:respuesta, tipodePago:_solicitud.tipodePago});
+
+
+                                    },function(err){
+
+                                                      console.log(err);
+
+
+                                                      Servicio.update({
+                                                          id: servicio.id}, {
+                                                          tiempo: respuesta.tiempo,
+                                                          monto: respuesta.monto
+                                                      }).exec(function (err, result) {
+                                                          if (err) {
+                                                              return res.json({err: err});
+                                                          }
+
+
+                                                          pagosService.pagos.createPago( result[0].chofer, respuesta.monto, servicio.id, referencia).then(function(result){
+
+                                                              console.log(result);
+
+                                                          },function(err){
+
+                                                              console.log(err);
+
+                                                          });
+
+                                                          Cliente.findOne({id: servicio.cliente}).exec(function (err, cliente) {
+
+                                                              if (err) {
+
+                                                                  return res.json({err: err, cobro_conekta:false});
+                                                              }
+
+                                                              sails.sockets.broadcast(cliente.id, 'servicio.finalizado', {servicio: servicio, totales: result});
+
+                                                          })
+
+
+                                                          Chofer.update({id: req.session.chofer.id}, {status: 'activo'}).exec(function (err, chofer) {
+
+                                                              if (err) {
+                                                                  return res.json({err: err, cobro_conekta:false});
+                                                              }
+
+                                                              return res.json({ cobro_conekta:false, error_msg:err, totales:respuesta, tipodePago:_solicitud.tipodePago});
+
+                                                          })
+
+
+                                                      });
 
 
 
-                    pagosService.pagos.createPago( result[0].chofer, respuesta.monto, servicio.id, referencia).then(function(result){
-
-                        console.log(result);
-
-                    },function(err){
-
-                        console.log(err);
-
-                    });
-
-                    Cliente.findOne({id: servicio.cliente}).exec(function (err, cliente) {
-
-                        if (err) {
-                            return res.json({err: err});
-                        }
-
-                        sails.sockets.broadcast(cliente.id, 'servicio.finalizado', {servicio: servicio, totales: result});
-
-                    })
+                                    });
 
 
-                    Chofer.update({id: req.session.chofer.id}, {status: 'activo'}).exec(function (err, chofer) {
-
-                        if (err) {
-                            return res.json({err: err});
-                        }
+                              })
 
 
 
+                  }else{
+
+                    // si la forma de pago seleccionada fue con efectivo o hay algun error.
+
+                                    Servicio.update({
+                                        id: servicio.id}, {
+                                        tiempo: respuesta.tiempo,
+                                        monto: respuesta.monto
+                                    }).exec(function (err, result) {
+
+                                        if (err) {
+
+                                            return res.json({err: err});
+                                        }
 
 
-                        return res.json(respuesta);
+                                        pagosService.pagos.createPago( result[0].chofer, respuesta.monto, servicio.id, referencia).then(function(result){
 
-                    })
+                                            console.log(result);
+
+                                        },function(err){
+
+                                            console.log(err);
+
+                                        });
+
+                                        Cliente.findOne({id: servicio.cliente}).exec(function (err, cliente) {
+
+                                            if (err) {
+                                                return res.json({err: err});
+                                            }
+
+                                            sails.sockets.broadcast(cliente.id, 'servicio.finalizado', {servicio: servicio, totales: result});
+
+                                        })
+
+
+                                        Chofer.update({id: req.session.chofer.id}, {status: 'activo'}).exec(function (err, chofer) {
+
+                                            if (err) {
+                                                return res.json({err: err});
+                                            }
+
+
+                                            return res.json({totales:respuesta,tipodePago:_solicitud.tipodePago});
+
+                                        })
+
+
+                                    });
+
+
+                                  }
 
 
                 });
 
+
+
             });
 
-        })
+        });
 
 
     },
@@ -731,7 +828,7 @@ module.exports = {
                     console.log(err);
 
                 });
-//                sails.sockets.broadcast(cliente.socketId, 'servicio.cancelado', {servicio: serv[0]});
+//             sails.sockets.broadcast(cliente.socketId, 'servicio.cancelado', {servicio: serv[0]});
 
                 Chofer.update({id: req.session.chofer.id}, {status: 'activo'}).exec(function (err, chofer) {
                     if (err) {
@@ -968,7 +1065,7 @@ module.exports = {
                             if (chofer.autoActivo) {
 
                                 if (chofer.autoActivo == auto.id) {
-                                  
+
                                     auto.checked = true;
                                 }
 

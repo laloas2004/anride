@@ -4,7 +4,8 @@
  * @description :: Server-side logic for managing pagoes
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
-          var conekta = require('conekta');
+
+var conekta = require('conekta');
 
 
 module.exports = {
@@ -100,6 +101,7 @@ module.exports = {
     var customer = {};
 
     if(!cliente){
+
       return res.badRequest('No existe session cliente');
     }
 
@@ -112,10 +114,10 @@ module.exports = {
       var _customer = cliente.customer_conekta;
 
       if(_customer){
-        return res.ok({ tarjetas:_customer.payment_sources.data });
+        return res.ok({ tarjetas:_customer.payment_sources.data,formaPagoSel:cliente.formaPagoSel});
       }
 
-      return res.ok({ tarjetas:[]});
+      return res.ok({ tarjetas:[],formaPagoSel:cliente.formaPagoSel});
 
     });
 
