@@ -543,9 +543,9 @@ module.exports = {
                                     servicio.chofer,
                                     servicio.inicio_viaje,
                                     servicio.fin_viaje,
-                                    cliente).then(function(res){
+                                    cliente).then(function(resp_conekta){
 
-                                        console.log(res);
+                                        console.log(resp_conekta);
 
 
                                           Servicio.update({
@@ -586,7 +586,7 @@ module.exports = {
                                                       return res.json({err: err, cobro_conekta:true});
                                                   }
 
-                                                  return res.json({cobro_conekta:true, res:res, totales:respuesta, tipodePago:_solicitud.tipodePago});
+                                                  return res.json({cobro_conekta:true, resp_conekta:resp_conekta, totales:respuesta, tipodePago:_solicitud.tipodePago});
 
                                               })
 
@@ -649,8 +649,6 @@ module.exports = {
 
 
                               })
-
-
 
                   }else{
 
