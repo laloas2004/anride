@@ -12,30 +12,30 @@ var gcm = require('node-gcm');
 
 module.exports = {
     home: function (req, res) {
-        
-        
+
+
         User.findOne({id:req.session.passport.user}).exec(function(err,response){
-                      
+
                       if(err){
                           console.log(err);
                       }
-                      
+
                      req.session.user = response;
-                     
+
               if(req.session.user.rol == 'delegado'){
-            
+
                 console.log('es delegado');
-                
-                
-            
+
+
+
                 return res.redirect('/admin/delegados/panel');
-            
+
                  }else{
-                     
-                        
-        
-        
-    
+
+
+
+
+
         var start_today = moment().startOf('day').format(); // set to 12:00 am today
         var end_today = moment().endOf('day').format(); // set to 23:59 pm today
         var clientes_conectados = "";
@@ -114,15 +114,15 @@ module.exports = {
 
             }
             req.logIn(user, function (err) {
-                
+
                 if (err){
-                    
+
                      res.send(err);
                 }
-                
-               
-                  
-                  
+
+
+
+
                 return res.redirect('/');
 
 //                return res.send({
@@ -159,8 +159,8 @@ module.exports = {
 
     },
     index: function (req, res) {
-        
-        
+
+
 
     },
     indexCliente: function (req, res) {
@@ -175,7 +175,7 @@ module.exports = {
 
     },
     indexSolicitudes: function (req, res) {
-        
+
         var limit = req.param('limit') || 20;
         var moment = require('moment');
 
@@ -195,9 +195,9 @@ module.exports = {
         res.view('solicitudes/new_solicitud', {moment: moment});
     },
     indexServicios: function (req, res) {
-        
+
         var limit = req.param('limit') || 20;
-        
+
         Servicio.find().sort('createdAt desc').limit(limit).populate('solicitud').populate('cliente').populate('chofer').exec(function (err, servicios) {
 
             if (err) {
@@ -209,22 +209,22 @@ module.exports = {
 
     },
     detalleServicios:function(req, res){
-        
+
       var servi_id = req.param('serv_id');
-      
+
       Servicio.find({id:servi_id}).populate('solicitud').exec(function(err,servicio){
-          
+
          if (err) {
                 return res.json(err.status, {err: err});
-            } 
-          
+            }
+
           console.log(servicio);
-          
+
           res.view('servicios/detalle', {servicio: servicio[0]});
-          
+
       });
-        
-        
+
+
     },
     indexChoferes: function (req, res) {
 
@@ -258,34 +258,34 @@ module.exports = {
                 that.autos = [];
 
                 if (relations.length == 0) {
-                    
+
                    return res.view('autos/home', {chofer: chofer, autos: that.autos});
-                    
+
                 } else {
-                    
+
                     async.forEachOf(relations, function (value, key, callback) {
-                        
+
                         console.log(value);
-                        
+
                         Auto.findOne({id:value.auto}).exec(function (err, auto) {
 
                                    that.autos.push(auto);
-                                   
+
                                    callback();
 
                                });
 
-                       
+
                     },function(err){
-                        
-                        
+
+
                         if(err){
-                            
-                          return res.json(err.status, {err: err});  
+
+                          return res.json(err.status, {err: err});
                         }
-                        
-                      return  res.view('autos/home', { chofer: chofer, autos: that.autos });  
-                        
+
+                      return  res.view('autos/home', { chofer: chofer, autos: that.autos });
+
                     });
 
 
@@ -344,30 +344,30 @@ module.exports = {
 
     },
     indexPagos: function (req, res) {
-        
+
         var moment = require('moment');
-        
+
         Cobro.find({corte:null})
                 .sort('createdAt DESC')
                 .exec(function(err, cobros){
-            
+
             if(err){
-                
+
                 console.log(err);
             }
-            
+
             res.view('pagos/home', { cobros:cobros,moment:moment });
-            
-            
+
+
         });
 
-        
+
     },
     indexConfiguracion: function (req, res) {
 
         configTaxiapp.get().then(function (config) {
 
-            res.view('configuracion/home', {config: config});
+            res.view('configuracion/home', { config: config });
 
         });
 
@@ -557,51 +557,51 @@ module.exports = {
 
     },
     bloquearChofer:function(req, res){
-        
-        var ChoferId = req.param('choferId'); 
-        
+
+        var ChoferId = req.param('choferId');
+
         if(!ChoferId){
-            
+
             return res.badRequest('Falta parametro Requerido');
         }
-        
+
       Chofer.findOne({id:ChoferId}).exec(function(err,chofer){
-          
+
           if (err) {
                 return res.serverError(err);
             }
-            
+
             console.log(chofer);
-            
+
             if(chofer.bloqueado == true){
-                
+
                 chofer.bloqueado = false;
                 chofer.save(function(err){
-                    
+
                     if (err) {
                          return res.serverError(err);
                     }
-                    
+
                     return res.redirect('/admin/choferes');
-                    
+
                 });
             }else{
-                
+
                 chofer.bloqueado = true;
                 chofer.save(function(err){
-                    
+
                     if (err) {
                          return res.serverError(err);
                     }
-                    
+
                     return res.redirect('/admin/choferes');
-                    
+
                 });
             }
-          
+
       });
-        
-        
+
+
     },
     editChofer: function (req, res) {
 
@@ -641,9 +641,9 @@ module.exports = {
             delete chofer.password;
 
             Chofer.update({id: chofer.id}, chofer).exec(function () {
-                
+
                 Saldo_chofer.update({chofer:chofer.id},{ delegado:chofer.delegado}).exec(function(err){
-                    
+
                     console.log(err);
                 });
 
@@ -655,9 +655,9 @@ module.exports = {
         } else {
 
             Chofer.update({id: chofer.id}, chofer).exec(function () {
-                
+
                 Saldo_chofer.update({chofer:chofer.id},{ delegado:chofer.delegado}).exec(function(err){
-                    
+
                     console.log(err);
                 });
 
@@ -693,10 +693,10 @@ module.exports = {
     saveDelegado: function (req, res) {
 
         var delegado = req.param('delegado');
-        
+
         if(!delegado){
-            
-           return res.badRequest('Falta parametro requerido'); 
+
+           return res.badRequest('Falta parametro requerido');
         }
 
         User.create(delegado).exec(function (err, user) {
@@ -712,69 +712,69 @@ module.exports = {
     },
     editDelegado:function(req, res){
         var id = req.param('id');
-        
+
         if(!id){
             return res.badRequest('Falta parametro requerido.');
         }
-        
+
       User.findOne({id:id}).exec(function(err,delegado){
-         
+
           if(err){
-              return res.serverError(err); 
+              return res.serverError(err);
           }
-          
-         res.view('delegados/edit_delegado', {delegado:delegado});  
-          
-      });  
-        
+
+         res.view('delegados/edit_delegado', {delegado:delegado});
+
+      });
+
     },
     updateDelegado:function(req, res){
-       
-        var delegado = req.param('delegado'); 
-        
+
+        var delegado = req.param('delegado');
+
         if(!delegado){
-            
-           return res.badRequest('Falta parametro requerido'); 
+
+           return res.badRequest('Falta parametro requerido');
         }
-        
+
         var id = delegado.id;
-        
+
         console.log(delegado);
-        
+
         delete delegado.id;
-       
+
        if(delegado.password == ''){
-           
+
            delete delegado.password;
         }
-        
+
         delegado.email = delegado.email.toLowerCase();
-     
+
       User.update({ id:id },delegado).exec(function (err, user) {
 
             if (err) {
-                 return res.serverError(err); 
+                 return res.serverError(err);
             }
 
             return res.redirect('/admin/delegados');
 
-        }); 
-        
-        
+        });
+
+
     },
     _sendPushNotification: function (msg) {
 
         var sender = new gcm.Sender('YOUR_API_KEY_HERE');
 
-        // Prepare a message to be sent 
+        // Prepare a message to be sent
         var message = new gcm.Message({
             data: {key1: 'msg1'}
         });
 
-// Specify which registration IDs to deliver the message to 
+// Specify which registration IDs to deliver the message to
         var regTokens = ['YOUR_REG_TOKEN_HERE'];
 
-// Actually send the message 
+// Actually send the message
         sender.send(message, {registrationTokens: regTokens}, function (err, response) {
             if (err)
                 console.error(err);
@@ -785,4 +785,3 @@ module.exports = {
 
     }
 };
-

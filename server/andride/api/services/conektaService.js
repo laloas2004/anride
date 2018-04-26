@@ -10,70 +10,94 @@ module.exports = {
 
     var deferred = Q.defer();
 
+    configTaxiapp.get().then(function (config) {
 
+      conekta.locale = 'es';
+      conekta.api_key = config.conekta_key;
+      conekta.api_version = '2.0.0';
+
+
+    });
 
     return deferred.promise;
     },
-    createOrder: function( customer_id, price ) {
-
-      console.log('customer_id');
-      console.log(customer_id);
-      console.log('price');
-      console.log(price);
+    createOrder: function( customer_id, price, servicio_id, chofer_id, pickup_latlon, dropoff_latlon, cliente) {
 
                   var deferred = Q.defer();
 
-                  conekta.locale = 'es';
-                  conekta.api_key = 'key_yFTwMZtTDNqmGZJML3mrEg';
-                  conekta.api_version = '2.0.0';
+                  configTaxiapp.get().then(function (config) {
 
-                  conekta.Order.create({
-                      "currency": "MXN",
-                      "customer_info": {
-                        "customer_id":customer_id
-                      },
-                      "line_items": [{
-                        "name": "Viaje en Anride",
-                        "unit_price": price,
-                        "quantity": 1,
-                        "antifraud_info": {
-                                            "trip_id": "12345",
-                                            "driver_id": "driv_1231",
-                                            "ticket_class": "economic",
-                                            "pickup_latlon": "23.4323456,-123.1234567",
-                                            "dropoff_latlon": "23.4323456,-123.1234567"
-                                          }
-                      }],
-                      "amount":price,
-                      "shipping_lines":[{
-                         "amount": 0
-                      }],
-                      "shipping_contact":{
-                        "phone":'8110162454',
-                        "reciver":'Jesus Abelardo',
-                        "address":{
-                          "street1":"Gonzalitos",
-                          "postal_code":"66450",
-                          "country":"Mexico",
+                    conekta.locale = 'es';
+                    conekta.api_key = config.conekta_key;
+                    conekta.api_version = '2.0.0';
+                    var pickup_latlon_str = " ";
+                    var dropoff_latlon_str = " ";
 
-                        }
-                      },
-                      "charges": [{
-                        "amount":price,
-                        "payment_method": {
-                          "type": "default"
-                        }
-                      }]
-              }, function(err, order) {
+                    var amount_centavos = price * 100;
+                    var currency = "MXN";
+                    var ticket_class = "estandar";
 
-                    if(err){
+                    var street1 = "Gonzalitos";
+                    var postal_code = "66450";
+                    var country = "Mexico";
 
-                      deferred.reject(err);
+                    if(pickup_latlon){
+
+                      pickup_latlon_str = pickup_latlon.lat+','+ pickup_latlon.lon;
                     }
 
-                deferred.resolve(order);
+                    if(dropoff_latlon){
 
-              });
+                      var dropoff_latlon_str = dropoff_latlon.lat+','+dropoff_latlon.lon;
+                    }
+
+                    conekta.Order.create({
+                        "currency":currency ,
+                        "customer_info": {
+                          "customer_id":customer_id
+                        },
+                        "line_items": [{
+                          "name": "Viaje en Anride",
+                          "unit_price": amount_centavos,
+                          "quantity": 1,
+                          "antifraud_info": {
+                                        "trip_id": servicio_id,
+                                        "driver_id": chofer_id,
+                                        "ticket_class": ticket_class,
+                                        "pickup_latlon": pickup_latlon_str,
+                                        "dropoff_latlon": dropoff_latlon_str
+                                            }
+                        }],
+                        "shipping_lines":[{
+                           "amount": 0
+                        }],
+                        "shipping_contact":{
+                          "phone": cliente.celNum,
+                          "reciver":cliente.nombre+' '+ cliente.apellido,
+                          "address":{
+                            "street1":street1,
+                            "postal_code":postal_code,
+                            "country":country,
+
+                          }
+                        },
+                        "charges": [{
+                          "payment_method": {
+                            "type": "default"
+                          }
+                        }]
+                }, function(err, order) {
+
+                      if(err){
+
+                        deferred.reject(err);
+                      }
+
+                  deferred.resolve(order);
+
+                });
+
+                  });
 
                   return deferred.promise;
 

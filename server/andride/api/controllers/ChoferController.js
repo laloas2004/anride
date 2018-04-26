@@ -537,7 +537,7 @@ module.exports = {
 
                                   console.log(customer_conekta);
 
-                                  conektaService.createOrder(customer_conekta.id, respuesta.monto).then(function(res){
+                                  conektaService.createOrder(customer_conekta.id, respuesta.monto, servicio.id, servicio.chofer, servicio.inicio_viaje, servicio.fin_viaje, cliente).then(function(res){
 
                                         console.log(res);
 
