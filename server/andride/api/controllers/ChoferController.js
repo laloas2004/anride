@@ -537,17 +537,66 @@ module.exports = {
 
                                   console.log(customer_conekta);
 
-                                  conektaService.createOrder(customer_conekta.id, respuesta.monto, servicio.id, servicio.chofer, servicio.inicio_viaje, servicio.fin_viaje, cliente).then(function(res){
+                                  conektaService.createOrder(customer_conekta.id,
+                                    respuesta.monto,
+                                    servicio.id,
+                                    servicio.chofer,
+                                    servicio.inicio_viaje,
+                                    servicio.fin_viaje,
+                                    cliente).then(function(res){
 
                                         console.log(res);
 
-                                        return res.json({cobro_conekta:true, res:res, totales:respuesta, tipodePago:_solicitud.tipodePago});
+
+                                          Servicio.update({
+                                              id: servicio.id}, {
+                                              tiempo: respuesta.tiempo,
+                                              monto: respuesta.monto
+                                          }).exec(function (err, result) {
+                                              if (err) {
+                                                  return res.json({err: err});
+                                              }
+
+
+                                              pagosService.pagos.createPago( result[0].chofer, respuesta.monto, servicio.id, referencia).then(function(result){
+
+                                                  console.log(result);
+
+                                              },function(err){
+
+                                                  console.log(err);
+
+                                              });
+
+                                              Cliente.findOne({id: servicio.cliente}).exec(function (err, cliente) {
+
+                                                  if (err) {
+
+                                                      return res.json({err: err, cobro_conekta:true});
+                                                  }
+
+                                                  sails.sockets.broadcast(cliente.id, 'servicio.finalizado', {servicio: servicio, totales: result});
+
+                                              })
+
+
+                                              Chofer.update({id: req.session.chofer.id}, {status: 'activo'}).exec(function (err, chofer) {
+
+                                                  if (err) {
+                                                      return res.json({err: err, cobro_conekta:true});
+                                                  }
+
+                                                  return res.json({cobro_conekta:true, res:res, totales:respuesta, tipodePago:_solicitud.tipodePago});
+
+                                              })
+
+
+                                          });
 
 
                                     },function(err){
 
                                                       console.log(err);
-
 
                                                       Servicio.update({
                                                           id: servicio.id}, {
