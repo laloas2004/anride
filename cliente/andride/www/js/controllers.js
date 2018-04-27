@@ -115,7 +115,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $cordovaLocalNotification,
                 $cordovaDialogs) {
 
-
+            $scope.icon_forma = "icon ion-cash";
+            $scope.forma_pago_string = " ";
 
             $scope.vistaAlertinicioViaje = 0;
 
@@ -1042,7 +1043,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                     $ionicPopup.alert({
                         title: 'Error 1',
-                        template: 'Upps, Lo sentimos,ocurrrio un error fatal, intentalo mas tarde...'
+                        template: 'Upps, Lo sentimos, ocurrrio un error fatal, intentalo mas tarde...'
                     }).then(function() {
                         $scope.hidePanels('inicio', function() {
                             $scope.hideBubble = false;
@@ -1134,8 +1135,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     $rootScope.timeoutSolicitud = setTimeout(function() {
 
 
-
-
                         $ionicPopup.alert({
                             title: 'No contamos con choferes disponibles',
                             template: 'es este momento, por favor intentalo mas tarde...'
@@ -1150,6 +1149,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         })
 
                     }, 90000);
+
 
                     solicitudService.sendSolicitud(solicitud).then(function(response) {
 
@@ -1207,6 +1207,25 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
             $scope.$on('$ionicView.beforeEnter', function(event, data) {
 
+
+              $rootScope.solicitud.tipodePago = $sessionStorage.session.formaPagoSel;
+
+              debugger;
+
+              if($rootScope.solicitud.tipodePago == "efectivo"){
+
+                $scope.icon_forma = "icon ion-cash";
+                $scope.forma_pago_string = "En Efectivo";
+
+              }else if($rootScope.solicitud.tipodePago == "tarjeta"){
+
+                $scope.icon_forma = "icon ion-card";
+                $scope.forma_pago_string = "Tarjeta Bancaria";
+
+              }
+
+
+
               /*  if ($localStorage.cliente.id) {
 
                     AuthService.suscribe().then(function(response) {
@@ -1225,7 +1244,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     });
 
                 }*/
-
 
 //                    $ionicPlatform.registerBackButtonAction(function(event) {
 //
@@ -1558,8 +1576,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                                                             shadow: null,
                                                             zIndex: 999});
 
-                    $cordovaGeolocation
-                            .getCurrentPosition({timeout: 100000, enableHighAccuracy: true}).then(function(position){
+                    $cordovaGeolocation.getCurrentPosition({timeout: 100000, enableHighAccuracy: true}).then(function(position){
 
                                 $scope.latLng_me = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
 
@@ -1716,7 +1733,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.$on('$destroy',function(){
 
                 console.log('SE DESTRUYO EL SCOPE');
-                debugger;
                 $sails.off('chofer',function(){
 
                 });
@@ -1734,8 +1750,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                         console.log('Successfully unsubscribed to chofer');
 
             });
-
-
 
             $sails.on('servicio.inicioViaje', function(data) {
 
@@ -1828,7 +1842,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
               $sails.post("/cliente/pay/add",{token:token}).then(function(res){
 
-                debugger;
 
               }).error(function(err){
 
@@ -1867,14 +1880,25 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
         })
         .controller('ConfiguracionCtrl', function($scope,
-                $ionicHistory,$rootScope,$ionicModal,servicioService,$sails) {
+                $ionicHistory,
+                $rootScope,
+                $ionicModal,
+                servicioService,
+                $ionicPopup,
+                $sessionStorage,
+                $sails) {
 
                 var solicitud = $rootScope.solicitud;
                 $scope.modal_add_tarjeta = {};
-                $scope.card = {};
-                $scope.anio = parseInt(moment().format('YYYY'));
 
-                $scope.card.exp_year = $scope.anio;
+                $scope.anio = parseInt(moment().format('YYYY'));
+                $scope.card = {exp_year:String($scope.anio), exp_month:'1'};
+                $scope.alertNoCards = function() {
+                                               var NoCards = $ionicPopup.alert({
+                                                 title: 'Debe de haber una tarjeta activa!',
+                                                 template: 'Para seleccionar tarjeta como forma de pago debes de tener alguna tarjeta dada de alta. Por favor agrega una tarjeta.'
+                                               });
+                                             }
 
               //$scope.tarjetas = [{id:'', object:'payment_source', type:'card', last4:'2222', parent_id:1234}];
 
@@ -1882,12 +1906,12 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 $scope.pago = { forma:'efectivo', card_default: '1' };
 
+
                 $ionicModal.fromTemplateUrl('templates/add_tarjeta.html', {
                     scope: $scope,
                     animation: 'slide-in-up'
                 }).then(function(modal) {
                     $scope.modal_add_tarjeta = modal;
-
                 });
 
                 $scope.openViewAddTarjeta = function(){
@@ -1899,11 +1923,26 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 }
                 $scope.seleccionarFormaPago = function(event){
 
+                  $rootScope.solicitud.tipodePago = $scope.pago.forma;
+                  $sessionStorage.session.formaPagoSel = $scope.pago.forma;
+
                   console.log(JSON.stringify($scope.pago.forma));
+
+                  if($scope.tarjetas.length == 0 && $scope.pago.forma === "tarjeta"){
+
+
+                    $scope.alertNoCards();
+
+                    $scope.updateTarjetas();
+
+                    return;
+
+                  }
 
                   servicioService.setFormaPago($scope.pago.forma).then(function(data){
 
                     console.log(data);
+
 
                   },function(err){
                     console.log(err);
@@ -1956,7 +1995,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                    console.log(res);
 
-                   debugger;
                  });
 
                 }
@@ -1964,12 +2002,11 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                     console.log(token);
 
-                  $sails.post("/cliente/pay/add",{token:token}).then(function(res){
+                  $sails.post("/cliente/pay/add",{ token:token }).then(function(res){
 
                     console.log(res);
                     $scope.tarjetas = res.data.customer.payment_sources.data;
                     $scope.closeViewAddTarjeta();
-                    debugger;
 
                   },function(err){
 
@@ -1990,11 +2027,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                     console.log(res);
                     $scope.tarjetas = res.data.tarjetas;
+                    if(res.data.formaPagoSel){
+
+                      $scope.pago.forma = res.data.formaPagoSel;
+                      $rootScope.solicitud.tipodePago = res.data.formaPagoSel;
+                      $sessionStorage.session.formaPagoSel = res.data.formaPagoSel;
+
+                    }
 
                   },function(err){
                     console.log(err);
                     alert('Error al recuperar tarjetas');
-                    debugger;
 
                   });
 

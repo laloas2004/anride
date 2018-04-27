@@ -35,19 +35,17 @@
             <div class="item item-text-wrap">
                 ${{montoEstimado|number:2}}MXN
             </div>
-            <!--<div class="item item-divider">
-
+           <div class="item item-divider">
                 Forma de Pago
-
             </div>
             <div class="item item-text-wrap">
-                <i class="icon ion-cash"></i> En Efectivo  <i class="icon ion-arrow-right-b gray"></i>
-            </div>-->
+                <i ng-class="icon_forma"></i> {{forma_pago_string}}  <i class="icon ion-arrow-right-b gray"></i>
+            </div>
         </div>
         <div class="">
-        <button class="button button-block button-dark " 
-                style="position: absolute;bottom:0px;z-index: 20;" 
-                ng-hide="hBtnPedir" 
+        <button class="button button-block button-dark "
+                style="position: absolute;bottom:0px;z-index: 20;"
+                ng-hide="hBtnPedir"
                 ng-click="crearsolicitud()"
                 class="fadable">Pedir un AnRide</button></div>
         <map on-create="mapCreated(map)" data-tap-disabled="true"></map>

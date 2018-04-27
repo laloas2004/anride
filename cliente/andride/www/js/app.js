@@ -157,8 +157,6 @@ angular.module('app', ['ionic', 'ionic-sidemenu','ionic.native',
             });
 
 
-
-
         })
         .config(function ($stateProvider, $urlRouterProvider) {
 

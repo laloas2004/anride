@@ -123,7 +123,6 @@ angular.module('app.services', [])
                         if (status === google.maps.DirectionsStatus.OK) {
 
                             q.resolve(response);
-//                            directionsDisplay.setDirections(response);
                         } else {
                             q.reject(status);
                         }
@@ -528,7 +527,6 @@ angular.module('app.services', [])
                             .then(function(response) {
 
                                 $sessionStorage.session = response.data.cliente;
-
                                // $localStorage.token = response.data.token;
                                // $localStorage.cliente = response.data.cliente;
 
