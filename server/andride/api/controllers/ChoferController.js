@@ -545,9 +545,6 @@ module.exports = {
                                     servicio.fin_viaje,
                                     cliente).then(function(resp_conekta){
 
-                                        console.log(resp_conekta);
-
-
                                           Servicio.update({
                                               id: servicio.id}, {
                                               tiempo: respuesta.tiempo,
@@ -558,7 +555,7 @@ module.exports = {
                                               }
 
 
-                                              pagosService.pagos.createPago( result[0].chofer, respuesta.monto, servicio.id, referencia).then(function(result){
+                                              pagosService.pagos.createPago( result[0].chofer, respuesta.monto, servicio.id, resp_conekta._id).then(function(result){
 
                                                   console.log(result);
 
@@ -595,7 +592,7 @@ module.exports = {
 
 
                                     },function(err){
-
+                                            //Error en el cobro de tarjeta con conekta.
                                                       console.log(err);
 
                                                       Servicio.update({
@@ -796,8 +793,6 @@ module.exports = {
         }
 
         if(!req.session.chofer){
-
-           debugger;
 
            console.log(req.session.chofer);
 

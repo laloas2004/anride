@@ -30,8 +30,6 @@ module.exports = {
 
         Chofer.getChoferesCercanos(ClientCoordinates, maxDistance, limitChoferes).then(function(result) {
 
-            debugger;
-
             var choferesRes = {};
             choferesRes.choferes = result;
 
@@ -189,8 +187,6 @@ module.exports = {
 
 
              })
-
-
 
           });
 
@@ -811,16 +807,12 @@ module.exports = {
     addPayment: function(req, res) {
 
         var conekta = require('conekta');
-        conekta.api_key = 'key_yFTwMZtTDNqmGZJML3mrEg';
-        conekta.api_version = '2.0.0';
-
         if (!req.isSocket) {
 
             return res.badRequest();
         }
 
         var token = req.param('token');
-
         var cliente = req.session.cliente;
         var customer = {};
 
@@ -828,74 +820,82 @@ module.exports = {
           return res.badRequest('No existe session cliente');
         }
 
-        Cliente.findOne({id:cliente.id}).exec(function(err, cliente) {
+        configTaxiapp.get().then(function (config) {
 
-            if (err) {
-                return res.serverError(err);
-            }
+          conekta.api_key = config.conekta_key;
+          conekta.api_version = '2.0.0';
 
-          var _customer = cliente.customer_conekta;
+          Cliente.findOne({id:cliente.id}).exec(function(err, cliente) {
 
-          if(!_customer){
-
-              customer = conekta.Customer.create({
-                  'name': cliente.nombre+' '+cliente.apellido,
-                  'email': cliente.email,
-                  'phone': cliente.numCel,
-                  'payment_sources': [{
-                    'type': 'card',
-                    'token_id': token.id
-                  }]
-                }, function(err, result) {
-                    if(err){
-                      console.log(err);
-                      return;
-                    }
-
-                    console.log(result.toObject());
-
-                    cliente.customer_conekta = result.toObject();
-
-                    cliente.save(function(err){
-
-                      if(err){
-                        console.log(err);
-                      }
-
-                      return res.ok({customer:cliente.customer_conekta});
-
-                    });
-                });
-
-          }else{
-
-            conekta.Customer.find(_customer.id,function(err,customer){
-
-              if(err){
-                console.log(err);
-                return res.serverError(err);
+              if (err) {
+                  return res.serverError(err);
               }
 
-              customer.update({'payment_sources': [{
-                'type': 'card',
-                'token_id': token.id
-              }]},function(err,result){
-                console.log(result);
-                cliente.customer_conekta = result.toObject();
+            var _customer = cliente.customer_conekta;
 
-                cliente.save(function(err){
+            if(!_customer){
 
-                  return res.ok({customer:cliente.customer_conekta});
+                customer = conekta.Customer.create({
+                    'name': cliente.nombre+' '+cliente.apellido,
+                    'email': cliente.email,
+                    'phone': cliente.numCel,
+                    'payment_sources': [{
+                      'type': 'card',
+                      'token_id': token.id
+                    }]
+                  }, function(err, result) {
+                      if(err){
+                        console.log(err);
+                        return;
+                      }
+
+                      console.log(result.toObject());
+
+                      cliente.customer_conekta = result.toObject();
+
+                      cliente.save(function(err){
+
+                        if(err){
+                          console.log(err);
+                        }
+
+                        return res.ok({customer:cliente.customer_conekta});
+
+                      });
+                  });
+
+            }else{
+
+              conekta.Customer.find(_customer.id,function(err,customer){
+
+                if(err){
+                  console.log(err);
+                  return res.serverError(err);
+                }
+
+                customer.update({'payment_sources': [{
+                  'type': 'card',
+                  'token_id': token.id
+                }]},function(err,result){
+                  console.log(result);
+                  cliente.customer_conekta = result.toObject();
+
+                  cliente.save(function(err){
+
+                    return res.ok({customer:cliente.customer_conekta});
+
+                  });
 
                 });
 
               });
 
-            });
+            }
 
-          }
+            //cliente.formasPago.push({id:id,data:pago});
 
-          //cliente.formasPago.push({id:id,data:pago});
+
+          });
 
 
         });
@@ -993,7 +993,6 @@ module.exports = {
              });
 
     },
-
     suscribeToChofer:function(req, res){
 
         if (!req.isSocket) {
@@ -1014,7 +1013,6 @@ module.exports = {
          return res.ok();
 
     },
-
     unsuscribeToChofer:function(req, res){
 
     if (!req.isSocket) {
