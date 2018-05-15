@@ -14,15 +14,17 @@ module.exports = {
     home: function (req, res) {
 
 
-        User.findOne({id:req.session.passport.user}).exec(function(err,response){
+        User.findOne({
+            id: req.session.passport.user
+        }).exec(function (err, response) {
 
-                      if(err){
-                          console.log(err);
-                      }
+            if (err) {
+                console.log(err);
+            }
 
-                     req.session.user = response;
+            req.session.user = response;
 
-              if(req.session.user.rol == 'delegado'){
+            if (req.session.user.rol == 'delegado') {
 
                 console.log('es delegado');
 
@@ -30,74 +32,97 @@ module.exports = {
 
                 return res.redirect('/admin/delegados/panel');
 
-                 }else{
+            } else {
 
 
 
 
 
-        var start_today = moment().startOf('day').format(); // set to 12:00 am today
-        var end_today = moment().endOf('day').format(); // set to 23:59 pm today
-        var clientes_conectados = "";
-        var choferes_conectados = "";
-        var servicios_hoy = "";
-        var solicitudes_hoy = "";
+                var start_today = moment().startOf('day').format(); // set to 12:00 am today
+                var end_today = moment().endOf('day').format(); // set to 23:59 pm today
+                var clientes_conectados = "";
+                var choferes_conectados = "";
+                var servicios_hoy = "";
+                var solicitudes_hoy = "";
 
 
-        Solicitud.find().where({'createdAt': {$gte: start_today, $lt: end_today}}).exec(function (err, solictudes) {
-
-            if (err) {
-
-                return res.json(err.status, {err: err});
-
-            }
-
-            solicitudes_hoy = solictudes.length;
-
-            Servicio.find({createdAt: {$gte: start_today, $lt: end_today}}).exec(function (err, servicios) {
-
-                if (err) {
-
-                    return res.json(err.status, {err: err});
-                }
-
-                servicios_hoy = servicios.length;
-
-
-
-
-                Cliente.find({online: true}).exec(function (err, clientes) {
-
+                Solicitud.find().where({
+                    'createdAt': {
+                        $gte: start_today,
+                        $lt: end_today
+                    }
+                }).exec(function (err, solictudes) {
 
                     if (err) {
-                        return res.json(err.status, {err: err});
+
+                        return res.json(err.status, {
+                            err: err
+                        });
+
                     }
 
+                    solicitudes_hoy = solictudes.length;
 
-                    clientes_conectados = clientes.length;
-
-                    Chofer.find({online: true}).exec(function (err, choferes) {
+                    Servicio.find({
+                        createdAt: {
+                            $gte: start_today,
+                            $lt: end_today
+                        }
+                    }).exec(function (err, servicios) {
 
                         if (err) {
-                            return res.json(err.status, {err: err});
+
+                            return res.json(err.status, {
+                                err: err
+                            });
                         }
 
+                        servicios_hoy = servicios.length;
 
-                        choferes_conectados = choferes.length;
 
-                        res.view('homepage', {
-                            clientes_conectados: clientes_conectados,
-                            choferes_conectados: choferes_conectados,
-                            servicios_hoy: servicios_hoy,
-                            solicitudes_hoy: solicitudes_hoy});
+
+
+                        Cliente.find({
+                            online: true
+                        }).exec(function (err, clientes) {
+
+
+                            if (err) {
+                                return res.json(err.status, {
+                                    err: err
+                                });
+                            }
+
+
+                            clientes_conectados = clientes.length;
+
+                            Chofer.find({
+                                online: true
+                            }).exec(function (err, choferes) {
+
+                                if (err) {
+                                    return res.json(err.status, {
+                                        err: err
+                                    });
+                                }
+
+
+                                choferes_conectados = choferes.length;
+
+                                res.view('homepage', {
+                                    clientes_conectados: clientes_conectados,
+                                    choferes_conectados: choferes_conectados,
+                                    servicios_hoy: servicios_hoy,
+                                    solicitudes_hoy: solicitudes_hoy
+                                });
+                            });
+
+                        });
+
                     });
-
                 });
-
-            });
-            });
             }
-         });
+        });
     },
     login: function (req, res) {
 
@@ -115,9 +140,9 @@ module.exports = {
             }
             req.logIn(user, function (err) {
 
-                if (err){
+                if (err) {
 
-                     res.send(err);
+                    res.send(err);
                 }
 
 
@@ -125,10 +150,10 @@ module.exports = {
 
                 return res.redirect('/');
 
-//                return res.send({
-//                    message: info.message,
-//                    user: user
-//                });
+                //                return res.send({
+                //                    message: info.message,
+                //                    user: user
+                //                });
             });
 
         })(req, res);
@@ -143,13 +168,18 @@ module.exports = {
 
         var password = req.param('password');
 
-        User.create({email: email, password: password}).exec(function (err, user) {
+        User.create({
+            email: email,
+            password: password
+        }).exec(function (err, user) {
 
 
 
             if (err) {
 
-                return res.json(err.status, {err: err});
+                return res.json(err.status, {
+                    err: err
+                });
             }
 
 
@@ -167,7 +197,9 @@ module.exports = {
 
         Cliente.find().exec(function (err, clientes) {
 
-            res.view('clientes/home', {clientes: clientes});
+            res.view('clientes/home', {
+                clientes: clientes
+            });
 
         })
 
@@ -181,10 +213,15 @@ module.exports = {
 
         Solicitud.find().sort('createdAt desc').limit(limit).populate('cliente').exec(function (err, solicitudes) {
             if (err) {
-                return res.json(err.status, {err: err});
+                return res.json(err.status, {
+                    err: err
+                });
             }
 
-            res.view('solicitudes/home', {solicitudes: solicitudes, moment: moment});
+            res.view('solicitudes/home', {
+                solicitudes: solicitudes,
+                moment: moment
+            });
         });
 
 
@@ -192,7 +229,9 @@ module.exports = {
     newSolicitud: function (req, res) {
 
 
-        res.view('solicitudes/new_solicitud', {moment: moment});
+        res.view('solicitudes/new_solicitud', {
+            moment: moment
+        });
     },
     indexServicios: function (req, res) {
 
@@ -201,40 +240,55 @@ module.exports = {
         Servicio.find().sort('createdAt desc').limit(limit).populate('solicitud').populate('cliente').populate('chofer').exec(function (err, servicios) {
 
             if (err) {
-                return res.json(err.status, {err: err});
+                return res.json(err.status, {
+                    err: err
+                });
             }
 
-            res.view('servicios/home', {servicios: servicios});
+            res.view('servicios/home', {
+                servicios: servicios
+            });
         })
 
     },
-    detalleServicios:function(req, res){
+    detalleServicios: function (req, res) {
 
-      var servi_id = req.param('serv_id');
+        var servi_id = req.param('serv_id');
 
-      Servicio.find({id:servi_id}).populate('solicitud').exec(function(err,servicio){
+        Servicio.find({
+            id: servi_id
+        }).populate('solicitud').exec(function (err, servicio) {
 
-         if (err) {
-                return res.json(err.status, {err: err});
+            if (err) {
+                return res.json(err.status, {
+                    err: err
+                });
             }
 
-          console.log(servicio);
+            console.log(servicio);
 
-          res.view('servicios/detalle', {servicio: servicio[0]});
+            res.view('servicios/detalle', {
+                servicio: servicio[0]
+            });
 
-      });
+        });
 
 
     },
     indexChoferes: function (req, res) {
 
         Chofer.find().populate('delegado').exec(function (err, choferes) {
-//            console.log(choferes);
+            //            console.log(choferes);
 
-            User.find({rol: 'delegado'}).exec(function (err, delegados) {
+            User.find({
+                rol: 'delegado'
+            }).exec(function (err, delegados) {
 
 
-                return res.view('choferes/home', {choferes: choferes, delegados: delegados});
+                return res.view('choferes/home', {
+                    choferes: choferes,
+                    delegados: delegados
+                });
 
             });
 
@@ -247,19 +301,28 @@ module.exports = {
         var choferId = req.param('chofer');
         that = this;
 
-        Chofer.findOne({id: choferId}).populate('autos').exec(function (err, chofer) {
+        Chofer.findOne({
+            id: choferId
+        }).populate('autos').exec(function (err, chofer) {
 
             if (err) {
-                return res.json(err.status, {err: err});
+                return res.json(err.status, {
+                    err: err
+                });
             }
 
-            ChoferAuto.find({chofer: chofer.id}).exec(function (err, relations) {
+            ChoferAuto.find({
+                chofer: chofer.id
+            }).exec(function (err, relations) {
 
                 that.autos = [];
 
                 if (relations.length == 0) {
 
-                   return res.view('autos/home', {chofer: chofer, autos: that.autos});
+                    return res.view('autos/home', {
+                        chofer: chofer,
+                        autos: that.autos
+                    });
 
                 } else {
 
@@ -267,24 +330,31 @@ module.exports = {
 
                         console.log(value);
 
-                        Auto.findOne({id:value.auto}).exec(function (err, auto) {
+                        Auto.findOne({
+                            id: value.auto
+                        }).exec(function (err, auto) {
 
-                                   that.autos.push(auto);
+                            that.autos.push(auto);
 
-                                   callback();
+                            callback();
 
-                               });
-
-
-                    },function(err){
+                        });
 
 
-                        if(err){
+                    }, function (err) {
 
-                          return res.json(err.status, {err: err});
+
+                        if (err) {
+
+                            return res.json(err.status, {
+                                err: err
+                            });
                         }
 
-                      return  res.view('autos/home', { chofer: chofer, autos: that.autos });
+                        return res.view('autos/home', {
+                            chofer: chofer,
+                            autos: that.autos
+                        });
 
                     });
 
@@ -300,14 +370,20 @@ module.exports = {
 
         var choferId = req.param('chofer');
 
-        Chofer.findOne({id: choferId}).exec(function (err, chofer) {
+        Chofer.findOne({
+            id: choferId
+        }).exec(function (err, chofer) {
 
             if (err) {
-                return res.json(err.status, {err: err});
+                return res.json(err.status, {
+                    err: err
+                });
             }
 
 
-            res.view('autos/new_auto', {chofer: chofer});
+            res.view('autos/new_auto', {
+                chofer: chofer
+            });
 
         })
 
@@ -324,7 +400,9 @@ module.exports = {
         Auto.create(auto).exec(function (err, auto) {
 
             if (err) {
-                return res.json(err.status, {err: err});
+                return res.json(err.status, {
+                    err: err
+                });
             }
 
 
@@ -347,19 +425,24 @@ module.exports = {
 
         var moment = require('moment');
 
-        Cobro.find({corte:null})
-                .sort('createdAt DESC')
-                .exec(function(err, cobros){
+        Cobro.find({
+            corte: null
+        })
+            .sort('createdAt DESC')
+            .exec(function (err, cobros) {
 
-            if(err){
+                if (err) {
 
-                console.log(err);
-            }
+                    console.log(err);
+                }
 
-            res.view('pagos/home', { cobros:cobros,moment:moment });
+                res.view('pagos/home', {
+                    cobros: cobros,
+                    moment: moment
+                });
 
 
-        });
+            });
 
 
     },
@@ -367,7 +450,9 @@ module.exports = {
 
         configTaxiapp.get().then(function (config) {
 
-            res.view('configuracion/home', { config: config });
+            res.view('configuracion/home', {
+                config: config
+            });
 
         });
 
@@ -400,7 +485,9 @@ module.exports = {
         Cliente.create(cliente).exec(function (err, cliente) {
 
             if (err) {
-                return res.json(err.status, {err: err});
+                return res.json(err.status, {
+                    err: err
+                });
             }
 
             console.log(cliente);
@@ -418,18 +505,26 @@ module.exports = {
 
 
         if (!clienteId) {
-            return res.json(403, {err: 'Id de Cliente es Oblgatorio.'});
+            return res.json(403, {
+                err: 'Id de Cliente es Oblgatorio.'
+            });
         }
 
-        Cliente.findOne({id: clienteId}).exec(function (err, cliente) {
+        Cliente.findOne({
+            id: clienteId
+        }).exec(function (err, cliente) {
 
             if (err) {
-                return res.json(err.status, {err: err});
+                return res.json(err.status, {
+                    err: err
+                });
             }
 
-//            console.log(cliente);
+            //            console.log(cliente);
 
-            return res.view('clientes/edit_cliente', {cliente: cliente});
+            return res.view('clientes/edit_cliente', {
+                cliente: cliente
+            });
 
         })
 
@@ -446,32 +541,51 @@ module.exports = {
         console.log(cliente);
 
         if (!cliente) {
-            return res.json(403, {err: 'Cliente es Oblgatorio.'});
+            return res.json(403, {
+                err: 'Cliente es Oblgatorio.'
+            });
         }
 
         if (cliente.password == '') {
 
-            Cliente.update({id: cliente.id}, {nombre: cliente.nombre, apellido: cliente.apellido, numCel: cliente.numCel}).exec(function (err, cliente) {
+            Cliente.update({
+                id: cliente.id
+            }, {
+                    nombre: cliente.nombre,
+                    apellido: cliente.apellido,
+                    numCel: cliente.numCel
+                }).exec(function (err, cliente) {
 
-                if (err) {
-                    return res.json(err.status, {err: err});
-                }
+                    if (err) {
+                        return res.json(err.status, {
+                            err: err
+                        });
+                    }
 
-                return res.redirect('/admin/clientes');
+                    return res.redirect('/admin/clientes');
 
 
-            });
+                });
         } else {
 
-            Cliente.update({id: cliente.id}, {nombre: cliente.nombre, apellido: cliente.apellido, numCel: cliente.numCel, password: cliente.password}).exec(function (err, cliente) {
+            Cliente.update({
+                id: cliente.id
+            }, {
+                    nombre: cliente.nombre,
+                    apellido: cliente.apellido,
+                    numCel: cliente.numCel,
+                    password: cliente.password
+                }).exec(function (err, cliente) {
 
-                if (err) {
-                    return res.json(err.status, {err: err});
-                }
+                    if (err) {
+                        return res.json(err.status, {
+                            err: err
+                        });
+                    }
 
-                return res.redirect('/admin/clientes');
+                    return res.redirect('/admin/clientes');
 
-            });
+                });
 
 
         }
@@ -485,18 +599,27 @@ module.exports = {
         var clienteId = req.param('clienteId');
 
         if (!clienteId) {
-            return res.json(403, {err: 'Cliente es Oblgatorio.'});
+            return res.json(403, {
+                err: 'Cliente es Oblgatorio.'
+            });
         }
 
-        Servicio.find({cliente: clienteId, status: 'finalizado'}).sort('updatedAt DESC').populate('cliente').populate('solicitud').exec(function (err, servicios) {
+        Servicio.find({
+            cliente: clienteId,
+            status: 'finalizado'
+        }).sort('updatedAt DESC').populate('cliente').populate('solicitud').exec(function (err, servicios) {
 
             if (err) {
-                return res.json(err.status, {err: err});
+                return res.json(err.status, {
+                    err: err
+                });
             }
 
-//            console.log(servicios);
+            //            console.log(servicios);
 
-            return res.view('clientes/servicios_cliente', {servicios: servicios});
+            return res.view('clientes/servicios_cliente', {
+                servicios: servicios
+            });
 
         })
 
@@ -506,7 +629,9 @@ module.exports = {
             return res.badRequest();
         }
 
-        Chofer.find({online: true}).exec(function (err, choferes) {
+        Chofer.find({
+            online: true
+        }).exec(function (err, choferes) {
 
 
             return res.json(choferes);
@@ -517,8 +642,12 @@ module.exports = {
     newChofer: function (req, res) {
 
 
-        User.find({rol: 'delegado'}).exec(function (err, delegados) {
-            return res.view('choferes/new_chofer', {delegados: delegados});
+        User.find({
+            rol: 'delegado'
+        }).exec(function (err, delegados) {
+            return res.view('choferes/new_chofer', {
+                delegados: delegados
+            });
 
         });
 
@@ -531,11 +660,13 @@ module.exports = {
         Chofer.create(chofer).exec(function (err, chofer) {
 
             if (err) {
-                return res.json(err.status, {err: err});
+                return res.json(err.status, {
+                    err: err
+                });
             }
 
 
-//            console.log(chofer);
+            //            console.log(chofer);
 
             return res.redirect('/admin/choferes');
 
@@ -546,7 +677,9 @@ module.exports = {
 
         var ChoferId = req.param('choferId');
 
-        Chofer.destroy({id: ChoferId}).exec(function (err) {
+        Chofer.destroy({
+            id: ChoferId
+        }).exec(function (err) {
 
             if (err) {
                 return res.negotiate(err);
@@ -556,42 +689,44 @@ module.exports = {
         });
 
     },
-    bloquearChofer:function(req, res){
+    bloquearChofer: function (req, res) {
 
         var ChoferId = req.param('choferId');
 
-        if(!ChoferId){
+        if (!ChoferId) {
 
             return res.badRequest('Falta parametro Requerido');
         }
 
-      Chofer.findOne({id:ChoferId}).exec(function(err,chofer){
+        Chofer.findOne({
+            id: ChoferId
+        }).exec(function (err, chofer) {
 
-          if (err) {
+            if (err) {
                 return res.serverError(err);
             }
 
             console.log(chofer);
 
-            if(chofer.bloqueado == true){
+            if (chofer.bloqueado == true) {
 
                 chofer.bloqueado = false;
-                chofer.save(function(err){
+                chofer.save(function (err) {
 
                     if (err) {
-                         return res.serverError(err);
+                        return res.serverError(err);
                     }
 
                     return res.redirect('/admin/choferes');
 
                 });
-            }else{
+            } else {
 
                 chofer.bloqueado = true;
-                chofer.save(function(err){
+                chofer.save(function (err) {
 
                     if (err) {
-                         return res.serverError(err);
+                        return res.serverError(err);
                     }
 
                     return res.redirect('/admin/choferes');
@@ -599,7 +734,7 @@ module.exports = {
                 });
             }
 
-      });
+        });
 
 
     },
@@ -608,19 +743,30 @@ module.exports = {
         var choferId = req.param('choferId');
 
         if (!choferId) {
-            return res.json(403, {err: 'Id de Chofer es Oblgatorio.'});
+            return res.json(403, {
+                err: 'Id de Chofer es Oblgatorio.'
+            });
         }
 
-        Chofer.findOne({id: choferId}).populate('delegado').exec(function (err, chofer) {
+        Chofer.findOne({
+            id: choferId
+        }).populate('delegado').exec(function (err, chofer) {
 
             if (err) {
-                return res.json(err.status, {err: err});
+                return res.json(err.status, {
+                    err: err
+                });
             }
 
 
-            User.find({rol: 'delegado'}).exec(function (err, delegados) {
+            User.find({
+                rol: 'delegado'
+            }).exec(function (err, delegados) {
 
-                return res.view('choferes/edit_chofer', {chofer: chofer, delegados: delegados});
+                return res.view('choferes/edit_chofer', {
+                    chofer: chofer,
+                    delegados: delegados
+                });
 
             });
         });
@@ -631,21 +777,29 @@ module.exports = {
         var chofer = req.param('chofer');
 
         if (!chofer) {
-            return res.json(403, {err: 'Chofer es Oblgatorio.'});
+            return res.json(403, {
+                err: 'Chofer es Oblgatorio.'
+            });
         }
 
-//        console.log(chofer);
+        //        console.log(chofer);
 
         if (chofer.password == "") {
 
             delete chofer.password;
 
-            Chofer.update({id: chofer.id}, chofer).exec(function () {
+            Chofer.update({
+                id: chofer.id
+            }, chofer).exec(function () {
 
-                Saldo_chofer.update({chofer:chofer.id},{ delegado:chofer.delegado}).exec(function(err){
+                Saldo_chofer.update({
+                    chofer: chofer.id
+                }, {
+                        delegado: chofer.delegado
+                    }).exec(function (err) {
 
-                    console.log(err);
-                });
+                        console.log(err);
+                    });
 
                 return res.redirect('/admin/choferes');
 
@@ -654,12 +808,18 @@ module.exports = {
 
         } else {
 
-            Chofer.update({id: chofer.id}, chofer).exec(function () {
+            Chofer.update({
+                id: chofer.id
+            }, chofer).exec(function () {
 
-                Saldo_chofer.update({chofer:chofer.id},{ delegado:chofer.delegado}).exec(function(err){
+                Saldo_chofer.update({
+                    chofer: chofer.id
+                }, {
+                        delegado: chofer.delegado
+                    }).exec(function (err) {
 
-                    console.log(err);
-                });
+                        console.log(err);
+                    });
 
                 return res.redirect('/admin/choferes');
 
@@ -670,7 +830,7 @@ module.exports = {
     },
     suscribe: function (req, res) {
 
-//     Solicitud.find()
+        //     Solicitud.find()
 
 
 
@@ -678,9 +838,13 @@ module.exports = {
     },
     indexDelegados: function (req, res) {
 
-        User.find({rol: 'delegado'}).exec(function (err, delegados) {
+        User.find({
+            rol: 'delegado'
+        }).exec(function (err, delegados) {
 
-            res.view('delegados/home', {delegados: delegados});
+            res.view('delegados/home', {
+                delegados: delegados
+            });
 
         });
 
@@ -694,15 +858,17 @@ module.exports = {
 
         var delegado = req.param('delegado');
 
-        if(!delegado){
+        if (!delegado) {
 
-           return res.badRequest('Falta parametro requerido');
+            return res.badRequest('Falta parametro requerido');
         }
 
         User.create(delegado).exec(function (err, user) {
 
             if (err) {
-                return res.json(err.status, {err: err});
+                return res.json(err.status, {
+                    err: err
+                });
             }
 
             return res.redirect('/admin/delegados');
@@ -710,31 +876,35 @@ module.exports = {
         });
 
     },
-    editDelegado:function(req, res){
+    editDelegado: function (req, res) {
         var id = req.param('id');
 
-        if(!id){
+        if (!id) {
             return res.badRequest('Falta parametro requerido.');
         }
 
-      User.findOne({id:id}).exec(function(err,delegado){
+        User.findOne({
+            id: id
+        }).exec(function (err, delegado) {
 
-          if(err){
-              return res.serverError(err);
-          }
+            if (err) {
+                return res.serverError(err);
+            }
 
-         res.view('delegados/edit_delegado', {delegado:delegado});
+            res.view('delegados/edit_delegado', {
+                delegado: delegado
+            });
 
-      });
+        });
 
     },
-    updateDelegado:function(req, res){
+    updateDelegado: function (req, res) {
 
         var delegado = req.param('delegado');
 
-        if(!delegado){
+        if (!delegado) {
 
-           return res.badRequest('Falta parametro requerido');
+            return res.badRequest('Falta parametro requerido');
         }
 
         var id = delegado.id;
@@ -743,17 +913,19 @@ module.exports = {
 
         delete delegado.id;
 
-       if(delegado.password == ''){
+        if (delegado.password == '') {
 
-           delete delegado.password;
+            delete delegado.password;
         }
 
         delegado.email = delegado.email.toLowerCase();
 
-      User.update({ id:id },delegado).exec(function (err, user) {
+        User.update({
+            id: id
+        }, delegado).exec(function (err, user) {
 
             if (err) {
-                 return res.serverError(err);
+                return res.serverError(err);
             }
 
             return res.redirect('/admin/delegados');
@@ -768,14 +940,18 @@ module.exports = {
 
         // Prepare a message to be sent
         var message = new gcm.Message({
-            data: {key1: 'msg1'}
+            data: {
+                key1: 'msg1'
+            }
         });
 
-// Specify which registration IDs to deliver the message to
+        // Specify which registration IDs to deliver the message to
         var regTokens = ['YOUR_REG_TOKEN_HERE'];
 
-// Actually send the message
-        sender.send(message, {registrationTokens: regTokens}, function (err, response) {
+        // Actually send the message
+        sender.send(message, {
+            registrationTokens: regTokens
+        }, function (err, response) {
             if (err)
                 console.error(err);
             else
