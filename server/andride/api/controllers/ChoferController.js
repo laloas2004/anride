@@ -1239,6 +1239,14 @@ module.exports = {
             return res.badRequest();
         }
 
+    },
+    suscribeToChofer:function(req, res){
+        
+    },
+    
+    unsuscribetochofer:function(req, res){
+        
     }
+
 
 };
