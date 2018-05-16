@@ -609,11 +609,13 @@ module.exports = {
             return res.badRequest();
         }
 
-        var clienteId = req.session.cliente.id;
+        
 
-        if (!clienteId) {
+        if (!req.session.cliente.id) {
             return res.json(403, {err: 'Session required'});
         }
+        
+        var clienteId = req.session.cliente.id;
 
         Servicio.find({where:{cliente: clienteId,status:'finalizado' },limit:30, sort:'createdAt DESC'}).populate('solicitud').exec(function(err, servi) {
 
