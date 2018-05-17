@@ -879,7 +879,7 @@ module.exports = {
                 
                // si el cliente existe en la base de datos, se intenta utilizar, si da error se crea uno nuevo.
 
-              conekta.Customer.find(_customer.id,function(err,customer){
+              conekta.Customer.find(_customer.id,function(err, customer){
 
                 if(err){
                     
@@ -894,29 +894,34 @@ module.exports = {
                      } 
                      
                      
-                  return res.ok({ customer:data.customer });   
+                     return res.ok({ customer:data.customer });   
                       
                       
                       
                   });
                   
                   
+                }else{
+                    
+                    
+                            customer.update({'payment_sources': [{
+                              'type': 'card',
+                              'token_id': token.id
+                            }]},function(err,result){
+                              console.log(result);
+                              cliente.customer_conekta = result.toObject();
+
+                              cliente.save(function(err){
+
+                                return res.ok({customer:cliente.customer_conekta});
+
+                              });
+
+                            });
+
+                    
+                    
                 }
-
-                customer.update({'payment_sources': [{
-                  'type': 'card',
-                  'token_id': token.id
-                }]},function(err,result){
-                  console.log(result);
-                  cliente.customer_conekta = result.toObject();
-
-                  cliente.save(function(err){
-
-                    return res.ok({customer:cliente.customer_conekta});
-
-                  });
-
-                });
 
               });
 
