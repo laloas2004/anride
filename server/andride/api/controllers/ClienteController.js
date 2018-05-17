@@ -881,7 +881,7 @@ module.exports = {
                     
                   console.log(err);
                   
-                 _crearClienteConekta(cliente,token,function(data){
+                this._crearClienteConekta(cliente,token,function(data){
                       
                      if(data.err){
                       
