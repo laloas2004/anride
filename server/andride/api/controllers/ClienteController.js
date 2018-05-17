@@ -5,6 +5,9 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 var Q = require('q');
+var conekta = require('conekta');
+
+
 
 module.exports = {
 
@@ -810,7 +813,6 @@ module.exports = {
         
         that = this;
 
-        var conekta = require('conekta');
         if (!req.isSocket) {
 
             return res.badRequest();
