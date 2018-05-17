@@ -807,6 +807,8 @@ module.exports = {
 
     },
     addPayment: function(req, res) {
+        
+        that = this;
 
         var conekta = require('conekta');
         if (!req.isSocket) {
@@ -881,7 +883,7 @@ module.exports = {
                     
                   console.log(err);
                   
-                this._crearClienteConekta(cliente,token,function(data){
+                that._crearClienteConekta(cliente,token,function(data){
                       
                      if(data.err){
                       
