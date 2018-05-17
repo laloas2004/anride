@@ -836,6 +836,8 @@ module.exports = {
             var _customer = cliente.customer_conekta;
 
             if(!_customer){
+                
+                // Si no existe el cliente en la base datos, crea uno en conekta.
 
                 customer = conekta.Customer.create({
                     'name': cliente.nombre+' '+cliente.apellido,
@@ -847,8 +849,10 @@ module.exports = {
                     }]
                   }, function(err, result) {
                       if(err){
+                          
                         console.log(err);
-                        return;
+ 
+                        return res.serverError(err);
                       }
 
                       console.log(result.toObject());
@@ -867,12 +871,32 @@ module.exports = {
                   });
 
             }else{
+                
+                
+               // si el cliente existe en la base de datos, se intenta utilizar, si da error se crea uno nuevo.
 
               conekta.Customer.find(_customer.id,function(err,customer){
 
                 if(err){
+                    
                   console.log(err);
-                  return res.serverError(err);
+                  
+                 _crearClienteConekta(cliente,token,function(data){
+                      
+                     if(data.err){
+                      
+                       return res.serverError(err);
+                         
+                     } 
+                     
+                     
+                  return res.ok({ customer:data.customer });   
+                      
+                      
+                      
+                  });
+                  
+                  
                 }
 
                 customer.update({'payment_sources': [{
@@ -1034,6 +1058,44 @@ module.exports = {
 
      return res.ok();
 
-}
+},
+    _crearClienteConekta:function(cliente,token,cb){
+
+                    conekta.Customer.create({
+                        'name': cliente.nombre+' '+cliente.apellido,
+                        'email': cliente.email,
+                        'phone': cliente.numCel,
+                        'payment_sources': [{
+                          'type': 'card',
+                          'token_id': token.id
+                        }]
+                      }, function(err, result) {
+
+                          if(err){
+
+                            console.log(err);
+                            cb({err:true, err_msg:err, customer:{}});
+
+                          }
+
+                          cliente.customer_conekta = result.toObject();
+
+                          cliente.save(function(err){
+
+                            if(err){
+
+                              console.log(err);
+
+                              cb({err:true, err_msg:err, customer:{}});
+                            }
+
+                            cb({ err:false, err_msg:'', customer:result.toObject() });
+
+                          });
+                      });
+
+
+
+    }
 
 };
