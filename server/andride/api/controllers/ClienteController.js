@@ -903,7 +903,6 @@ module.exports = {
                   
                 }else{
                     
-                    
                             customer.update({'payment_sources': [{
                               'type': 'card',
                               'token_id': token.id
@@ -1105,6 +1104,23 @@ module.exports = {
 
 
 
+    },
+    getConektaKey:function(req, res){
+        
+            if (!req.isSocket) {
+                return res.badRequest();
+        }
+        
+        
+        configTaxiapp.get().then(function (config) {
+
+
+            res.ok(config.conekta_public_key);
+
+        });
+
+        
+        
     }
 
 };

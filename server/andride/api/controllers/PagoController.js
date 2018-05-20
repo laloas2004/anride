@@ -61,18 +61,6 @@ module.exports = {
 
 
   },
-  crearClienteConekta:function(req, res){
-
-         if (!req.isSocket) {
-
-            return res.badRequest();
-        }
-
-        conekta.locale = 'es';
-        conekta.api_version = '2.0.0';
-        conekta.api_key = "key_eYvWV7gSDkNYXsmr";
-
-  },
   addFormaPagoConekta:function(req, res){
 
          if (!req.isSocket) {
