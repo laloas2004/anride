@@ -1,4 +1,5 @@
 
+var entorno = 2;
 
 angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
     'app.controllers',
@@ -12,8 +13,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
 ])
     .run(function ($ionicPlatform, $rootScope, $window, $cordovaNetwork, $ionicPopup) {
 
-        var entorno = 2;
-
+        
         switch (entorno) {
             case 1:
                 // Desarrollo local san nicolas.
@@ -304,7 +304,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
     })
     .config(['$sailsProvider', function ($sailsProvider) {
 
-        var entorno = 2;
+       // var entorno = 2;
 
         switch (entorno) {
             case 1:

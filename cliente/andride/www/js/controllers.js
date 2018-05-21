@@ -1889,6 +1889,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
         servicioService,
         $ionicPopup,
         $sessionStorage,
+        choferService,
         $sails) {
 
         var solicitud = $rootScope.solicitud;
@@ -1965,9 +1966,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
         }
         $scope.create_token = function () {
-
-            Conekta.setPublicKey('key_Ep48WqLism1etqhT7gqG3VQ');
-
+            
+            
+           
+            choferService.getKeyConekta().then(function(key){
+                
+               Conekta.setPublicKey(key);
+               
+               
             $scope.card.address = {};
 
             if (!Conekta.card.validateNumber($scope.card.number)) {
@@ -1989,6 +1995,16 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             var tokenParams = { card: $scope.card };
 
             Conekta.token.create(tokenParams, $scope.successResponseHandler, $scope.errorResponseHandler);
+               
+                
+            },function(err){
+                
+                console.log(err);
+                alert('Error get conekta key');
+            });
+            
+            
+
 
 
         }
@@ -2014,6 +2030,8 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             }, function (err) {
 
                 console.log(err);
+                
+                alert(err.error);
             });
 
 
