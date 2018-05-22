@@ -152,11 +152,18 @@ module.exports = {
                     req.session.cliente = cliente;
                     req.session.cliente.online = true;
                    // req.session.clienteId = cliente.id;
-
+                   
+                   
+                   req.session.save(function(){
+                       
                     res.json({
                         cliente: cliente,
                         token: jwToken.issue({id: cliente.id})
                     });
+                       
+                  });
+
+
 
                 }
 
@@ -179,10 +186,10 @@ module.exports = {
              delete cliente.password;
 
              cliente.save(function(err){
+                 
+             delete req.session.cliente;
 
-             req.session.destroy(function(err) {
-
-                    console.log(cliente);
+             req.session.save(function(err) {
 
                     return res.json({ logout:true });
 

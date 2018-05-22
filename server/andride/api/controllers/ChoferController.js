@@ -96,11 +96,18 @@ module.exports = {
 
                     req.session.chofer = chofer;
                     req.session.online = true;
-
+                    
+                    req.session.save(function(){
+                        
                     res.json({
                         chofer: chofer,
                         token: jwToken.issue({ id: chofer.id })
                     });
+                        
+                        
+                    });
+
+
 
                 }
 
@@ -113,10 +120,18 @@ module.exports = {
         var choferId = req.session.chofer.id;
 
         if (choferId) {
+            
             Chofer.update({ id: choferId }, { online: false, status: 'inactivo' }).exec(function (err, chofer) {
-                //                req.session.destroy();
-                //                req.session = null;
-                res.json({ chofer: chofer[0], logout: true });
+                
+                                
+                               delete req.session.chofer;
+                               
+                               req.session.save(function(){
+                                   
+                               res.json({ chofer: chofer[0], logout: true });
+
+                               });
+                         
 
             });
 
