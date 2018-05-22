@@ -559,7 +559,7 @@ module.exports = {
                                                 }
 
 
-                                                pagosService.pagos.createPago(result[0].chofer, respuesta.monto, servicio.id, resp_conekta._id).then(function (result) {
+                                                pagosService.pagos.createPagoTarjeta(result[0].chofer, respuesta.monto, servicio.id, resp_conekta._id).then(function (result) {
 
                                                     console.log(result);
 

@@ -424,6 +424,8 @@ module.exports = {
     indexPagos: function (req, res) {
 
         var moment = require('moment');
+        
+        var choferes = [];
 
         Cobro.find({
             corte: null
@@ -435,11 +437,47 @@ module.exports = {
 
                     console.log(err);
                 }
+                
+                
+                
+                
+                async.forEachOf(cobros, function (value, key, callback) {
+                    
+                 Chofer.findOne({id:value.chofer}).exec(function(err,_chofer){
+                     
+                     if(err){
+                         console.log(err);
+                     }
+                     
+                  choferes.push(_chofer);
+                  
+                  cobros[key].choferObj = _chofer;
+                  
+                  callback();
+                     
+                 });   
+                    
+                        },function(err){
+                    
+                    if (err) {
 
+                            return res.json(err.status, {
+                                err: err
+                            });
+                        }
+                        
+                //console.log(cobros);
                 res.view('pagos/home', {
                     cobros: cobros,
+                    choferes:choferes,
                     moment: moment
                 });
+  
+                     
+                });
+
+                
+                
 
 
             });

@@ -31,7 +31,7 @@
       <tr>
         <td><%= cobro.id %></td>
         <td><%= cobro.viaje %></td>
-        <td><%= cobro.chofer %></td>
+        <td><%= cobro.choferObj.email %></td>
         <td><% if(cobro.tipo_pago == 0 ||cobro.tipo_pago == 1){ %>
             EFECTIVO
             <% }else{ %>
