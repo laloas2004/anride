@@ -498,9 +498,31 @@ module.exports = {
     saveConfiguracion: function (req, res) {
 
         var params = req.allParams();
+        
+        
+        console.log(params);
+        
+        Saldo_chofer.update({}).set({comision:params.comision_chofer}).exec(function(err,_updated){
+            
+            if(err){
+                console.log(err);
+            }
+            
+            
+            
+        });
+        
+        Saldo_delegado.update({}).set({comision:params.comision_delegado}).exec(function(err,_updated){
+            
+            if(err){
+                console.log(err);
+            }
+            
+            
+            
+        });
 
         configTaxiapp.save(params).then(function (config) {
-
 
             return res.redirect('/admin/configuracion');
 
