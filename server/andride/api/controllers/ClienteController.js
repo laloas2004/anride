@@ -851,7 +851,7 @@ module.exports = {
                 // Si no existe el cliente en la base datos, crea uno en conekta.
 
                 customer = conekta.Customer.create({
-                    'name': cliente.nombre+' '+cliente.apellido,
+                    'name': cliente.nombre+' '+ cliente.apellido,
                     'email': cliente.email,
                     'phone': cliente.numCel,
                     'payment_sources': [{
@@ -889,35 +889,36 @@ module.exports = {
               conekta.Customer.find(_customer.id,function(err, customer){
 
                 if(err){
-                    
-                  console.log(err);
-                  
-                that._crearClienteConekta(cliente,token,function(data){
-                      
-                     if(data.err){
-                      
-                       return res.serverError(err);
-                         
-                     } 
-                     
-                     
-                     return res.ok({ customer:data.customer });   
-                      
-                      
-                      
-                  });
+                                      
+                            that._crearClienteConekta(cliente,token,function(data){
+
+                                 if(data.err){
+
+                                   return res.serverError(err);
+
+                                 } 
+
+
+                                 return res.ok({ customer:data.customer });   
+
+
+
+                              });
                   
                   
                 }else{
                     
-                            customer.update({'payment_sources': [{
-                              'type': 'card',
-                              'token_id': token.id
-                            }]},function(err,result){
-                              console.log(result);
-                              cliente.customer_conekta = result.toObject();
-
-                              cliente.save(function(err){
+                            customer.update({
+                                'name':  cliente.nombre+' '+ cliente.apellido,
+                                'email': cliente.email,
+                                'phone': cliente.numCel,
+                                'payment_sources': [{
+                                                'type': 'card',
+                                                'token_id': token.id
+                                 }]},function(err,result){
+                                        console.log(result);
+                                        cliente.customer_conekta = result.toObject();
+                                        cliente.save(function(err){
 
                                 return res.ok({customer:cliente.customer_conekta});
 
