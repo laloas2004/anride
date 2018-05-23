@@ -515,12 +515,19 @@ module.exports = {
         }
 
         var that = this;
-
-        Servicio.update({
-            id: servicio.id
-        }, {
-            status: 'finalizado',
-                fin_viaje: fin_viaje.posicion,
+        
+        
+        Chofer.findOne({id:req.session.chofer.id}).exec(function(err,_chofer){
+            
+            if(err){
+                
+                console.log(err);
+            }
+            
+            
+           Servicio.update({id: servicio.id},{
+                status: 'finalizado',
+                fin_viaje: { lat:_chofer.location.coordinates[1],lon:_chofer.location.coordinates[0] },
                 fin_fecha: fin_viaje.fechaHora,
                 distance: distancia,
                 recorridoChofer: recorrido
@@ -560,7 +567,7 @@ module.exports = {
                                     servicio.id,
                                     servicio.chofer,
                                     servicio.inicio_viaje,
-                                    servicio.fin_viaje,
+                                    result.fin_viaje,
                                     cliente).then(function (resp_conekta) {
 
                                         Servicio.update({
@@ -729,7 +736,12 @@ module.exports = {
 
                 });
 
-            });
+            });  
+            
+            
+        });
+
+       
 
 
     },

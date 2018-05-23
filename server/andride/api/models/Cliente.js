@@ -81,6 +81,9 @@ module.exports = {
         },
         customer_conekta:{
           type: 'json'
+        },
+        customer_conekta_pruebas:{
+          type: 'json'
         }
     },
     comparePassword: function (password, chofer, cb) {
