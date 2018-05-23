@@ -536,7 +536,8 @@ module.exports = {
                 if (err) {
                     return res.json({ err: err });
                 }
-
+                
+                that._servicio = result;
 
 
                 that._calcularCobro(result[0]).then(function (respuesta) {
@@ -561,13 +562,15 @@ module.exports = {
                                 var customer_conekta = cliente.customer_conekta;
 
                                 console.log(customer_conekta);
+                                
+                                console.log(that._servicio.fin_viaje);
 
                                 conektaService.createOrder(customer_conekta.id,
                                     respuesta.monto,
                                     servicio.id,
                                     servicio.chofer,
                                     servicio.inicio_viaje,
-                                    result.fin_viaje,
+                                    that._servicio.fin_viaje,
                                     cliente).then(function (resp_conekta) {
 
                                         Servicio.update({
@@ -581,7 +584,8 @@ module.exports = {
                                                 }
 
 
-                                                pagosService.pagos.createPagoTarjeta(result[0].chofer, respuesta.monto, servicio.id, resp_conekta._id).then(function (result) {
+                                                pagosService.pagos.createPagoTarjeta(result[0].chofer, respuesta.monto, servicio.id, resp_conekta._id)
+                                                        .then(function (result) {
 
                                                     console.log(result);
 
