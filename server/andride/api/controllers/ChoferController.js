@@ -537,10 +537,11 @@ module.exports = {
                     return res.json({ err: err });
                 }
                 
-                that._servicio = result;
-
-
+            
                 that._calcularCobro(result[0]).then(function (respuesta) {
+                    
+                    
+                    var _servicio = respuesta.servicio;
 
 
                     Solicitud.findOne({ id: servicio.solicitud }).exec(function (err, _solicitud) {
@@ -563,14 +564,13 @@ module.exports = {
 
                                 console.log(customer_conekta);
                                 
-                                console.log(that._servicio.fin_viaje);
-
-                                conektaService.createOrder(customer_conekta.id,
+                                conektaService.createOrder(
+                                    customer_conekta.id,
                                     respuesta.monto,
                                     servicio.id,
                                     servicio.chofer,
                                     servicio.inicio_viaje,
-                                    that._servicio.fin_viaje,
+                                    _servicio.fin_viaje,
                                     cliente).then(function (resp_conekta) {
 
                                         Servicio.update({
@@ -755,8 +755,6 @@ module.exports = {
 
         configTaxiapp.get().then(function (config) {
 
-            console.log(config);
-
             var distancia_km = 0;
             var monto = 0;
             var tarifa_base = parseFloat(config.tarifa_base);
@@ -787,10 +785,15 @@ module.exports = {
                 monto = monto_minimo;
             }
 
-            deferred.resolve({ tiempo: minutos, monto: monto });
+            deferred.resolve({ tiempo: minutos, monto: monto, servicio:servicio});
+            
         }, function (err) {
+            
             deferred.reject(err);
+            
         });
+        
+        
         return deferred.promise;
     },
     canceloCliente: function (req, res) {
@@ -1274,7 +1277,6 @@ module.exports = {
     suscribeToChofer:function(req, res){
         
     },
-    
     unsuscribetochofer:function(req, res){
         
     }

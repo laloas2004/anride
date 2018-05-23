@@ -48,10 +48,13 @@ module.exports = {
 
                     if(dropoff_latlon){
 
-                      var dropoff_latlon_str = dropoff_latlon.lat+','+dropoff_latlon.lon;
-                      console.log('----------dropoff_latlon_str----------------');
-                      console.log(dropoff_latlon_str);
+                      dropoff_latlon_str = dropoff_latlon.lat+','+dropoff_latlon.lon;
+
                     }
+                    
+                    
+                      console.log('----------dropoff_latlon_str----------------');
+                      console.log(dropoff_latlon);
 
                     conekta.Order.create({
                         "currency":currency ,
