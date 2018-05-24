@@ -30,6 +30,7 @@ module.exports = {
                     conekta.locale = 'es';
                     conekta.api_key = config.conekta_key;
                     conekta.api_version = '2.0.0';
+                    
                     var pickup_latlon_str = " ";
                     var dropoff_latlon_str = " ";
 
@@ -73,7 +74,7 @@ module.exports = {
                                         "dropoff_latlon": dropoff_latlon_str
                                             }
                         }],
-                        "shipping_lines":[{
+                       /* "shipping_lines":[{
                            "amount": 0
                         }],
                         "shipping_contact":{
@@ -85,7 +86,7 @@ module.exports = {
                             "country":country,
 
                           }
-                        },
+                        },*/
                         "charges": [{
                           "payment_method": {
                             "type": "default"
