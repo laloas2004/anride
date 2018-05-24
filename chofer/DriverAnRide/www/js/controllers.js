@@ -1070,6 +1070,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
             $scope.servicio = $localStorage.servicio;
             $scope.solicitud = $localStorage.solicitud;
             $scope.cliente = $localStorage.cliente;
+            $scope.position = $localStorage.position;
 
             $scope.terminarViaje = function() {
 
@@ -1081,11 +1082,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 clearInterval($scope.contadorServicio);
                 clearInterval($scope.intervalViaje);
 
-                $scope.fin_viaje = {fechaHora: new Date(), posicion: $localStorage.position};
+                $scope.fin_viaje = { fechaHora: new Date(), posicion:$scope.position };
 
 //              $localStorage.distancia = 1000;
 
-                $sails.post("/choferes/servicio/final", { servicio: $localStorage.servicio, fin_viaje: $scope.fin_viaje,recorrido:$localStorage.posiciones,distancia:$localStorage.distancia})
+
+                            debugger;
+
+                $sails.post("/choferes/servicio/final", { servicio: $localStorage.servicio, fin_viaje:$scope.fin_viaje, recorrido:$localStorage.posiciones, distancia:$localStorage.distancia})
 
                         .success(function(data, status, headers, jwr) {
 
@@ -1232,6 +1236,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                                         'Timestamp: '         + position.timestamp                + '\n');
 
                         $scope.positions.push(position);
+                        $scope.position = position;
                         $scope.speed = position.coords.speed;
                         $scope.accurancy = position.coords.accuracy;
                         $scope.velocidad = position.coords.speed * 3.6;
@@ -1319,7 +1324,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova', 'angularMoment'])
                 }, 1000);
 
             }
-
             $scope.abrirNavegacion = function(){
 
 

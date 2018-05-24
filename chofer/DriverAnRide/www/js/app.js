@@ -1,5 +1,8 @@
 
 
+         var entorno = 2;
+
+
 angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
     'app.controllers',
     'app.directives',
@@ -9,7 +12,6 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
     'angularMoment'])
         .run(function($ionicPlatform, $rootScope, $window, $cordovaSQLite, $ionicPopup) {
 
-            var entorno = 2;
 
             switch(entorno) {
                     case 1:
@@ -320,7 +322,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
         })
         .config(['$sailsProvider', function($sailsProvider) {
 
-            var entorno = 2;
+        
 
             switch(entorno) {
                     case 1:
