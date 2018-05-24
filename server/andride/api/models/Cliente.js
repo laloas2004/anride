@@ -8,6 +8,7 @@ var Q = require('q');
 var bcrypt = require('bcrypt');
 
 module.exports = {
+    
     attributes: {
         nombre: {
             type: "string"
