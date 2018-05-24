@@ -70,9 +70,12 @@ angular.module('app.services', [])
                 searchDireccion: function(texto, position) {
 
                     var q = $q.defer();
-
+                    
 
                     var autocompleteService = new google.maps.places.AutocompleteService();
+                    
+                    
+                    debugger;
 
                     var paisCode = 'MX';
 
@@ -80,7 +83,7 @@ angular.module('app.services', [])
 
                     autocompleteService.getPlacePredictions({
                         input: texto,
-                        componentRestrictions: paisCode ? {country: paisCode} : undefined,
+                        componentRestrictions: paisCode ? {country: paisCode } : undefined,
                         location: location,
                         radius: '10000',
                     }, function(result, status) {
