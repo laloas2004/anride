@@ -1,8 +1,7 @@
 {
   "name": "andride",
-  "app_id": "",
-  "type": "ionic1",
   "integrations": {
     "cordova": {}
-  }
+  },
+  "type": "ionic1"
 }

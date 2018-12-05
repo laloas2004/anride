@@ -1,52 +1,52 @@
 angular.module('app.services', [])
-        .factory('choferService', function($http, $q, $sails, $rootScope) {
+        .factory('choferService', function ($http, $q, $sails, $rootScope) {
 
             return {
-                getChoferes: function(location) {
+                getChoferes: function (location) {
 
                     var q = $q.defer();
 
                     var data = {lat: location.coords.latitude, lon: location.coords.longitude};
 
                     $sails.get("/cliente/choferes", data)
-                            .success(function(data, status, headers, jwr) {
+                            .success(function (data, status, headers, jwr) {
 
                                 q.resolve(data);
                             })
-                            .error(function(data, status, headers, jwr) {
+                            .error(function (data, status, headers, jwr) {
                                 q.reject(jwr);
 
                             });
                     return q.promise;
 
                 },
-                getKeyConekta:function(){
-                    
+                getKeyConekta: function () {
+
                     var q = $q.defer();
-                    
+
 
                     $sails.get("/cliente/key", {})
-                            .success(function(data, status, headers, jwr) {
+                            .success(function (data, status, headers, jwr) {
 
                                 q.resolve(data);
                             })
-                            .error(function(data, status, headers, jwr) {
+                            .error(function (data, status, headers, jwr) {
                                 q.reject(jwr);
 
                             });
                     return q.promise;
-                    
-                    
+
+
                 }
 
             }
 
 
         })
-        .factory('clienteService', function($http, $q, $sails, $rootScope) {
+        .factory('clienteService', function ($http, $q, $sails, $rootScope) {
 
             return {
-                getDireccion: function(location) {
+                getDireccion: function (location) {
                     var q = $q.defer();
 
                     var config = {
@@ -58,23 +58,23 @@ angular.module('app.services', [])
                         }
                     };
                     $http(config)
-                            .then(function(response) {
+                            .then(function (response) {
                                 q.resolve(response);
-                            }).catch(function(err) {
+                            }).catch(function (err) {
                         q.reject(err);
 
                     });
 
                     return q.promise;
                 },
-                searchDireccion: function(texto, position) {
+                searchDireccion: function (texto, position) {
 
                     var q = $q.defer();
-                    
+
 
                     var autocompleteService = new google.maps.places.AutocompleteService();
-                    
-                    
+
+
                     debugger;
 
                     var paisCode = 'MX';
@@ -83,16 +83,16 @@ angular.module('app.services', [])
 
                     autocompleteService.getPlacePredictions({
                         input: texto,
-                        componentRestrictions: paisCode ? {country: paisCode } : undefined,
+                        componentRestrictions: paisCode ? {country: paisCode} : undefined,
                         location: location,
                         radius: '10000',
-                    }, function(result, status) {
+                    }, function (result, status) {
 
                         if (status == google.maps.places.PlacesServiceStatus.OK) {
 
                             q.resolve(result);
                         }
-                        else{
+                        else {
 
                             q.reject(status);
                         }
@@ -102,7 +102,7 @@ angular.module('app.services', [])
 
                     return q.promise;
                 },
-                getDireccionDetails: function(place) {
+                getDireccionDetails: function (place) {
 
 
                     var detailsService = new google.maps.places.PlacesService(document.createElement("input"));
@@ -110,14 +110,14 @@ angular.module('app.services', [])
                     var q = $q.defer();
 
                     detailsService.getDetails({placeId: place.place_id},
-                    function(result, status) {
+                    function (result, status) {
 
                         if (status === google.maps.places.PlacesServiceStatus.OK) {
                             q.resolve(result);
 
-                        }else{
+                        } else {
 
-                          q.reject(status);
+                            q.reject(status);
                         }
 
 
@@ -127,7 +127,7 @@ angular.module('app.services', [])
                     return q.promise;
 
                 },
-                getRouteViaje: function(solicitud) {
+                getRouteViaje: function (solicitud) {
                     var q = $q.defer();
                     var directionsService = new google.maps.DirectionsService();
 
@@ -140,7 +140,7 @@ angular.module('app.services', [])
                         provideRouteAlternatives: true
                     };
 
-                    directionsService.route(request, function(response, status) {
+                    directionsService.route(request, function (response, status) {
                         if (status === google.maps.DirectionsStatus.OK) {
 
                             q.resolve(response);
@@ -152,7 +152,7 @@ angular.module('app.services', [])
                     return q.promise;
 
                 },
-                getDistancia: function(solicitud) {
+                getDistancia: function (solicitud) {
 
                     var q = $q.defer();
 
@@ -177,17 +177,19 @@ angular.module('app.services', [])
 
                     };
                     $http(config)
-                            .then(function(response) {
+                            .then(function (response) {
 
                                 q.resolve(response);
-                            }).catch(function(err) {
+
+                            }).catch(function (err) {
+
                         q.reject(err);
 
                     });
 
                     return q.promise;
                 },
-                getConfiguracion: function() {
+                getConfiguracion: function () {
 
                     var q = $q.defer();
 
@@ -197,16 +199,16 @@ angular.module('app.services', [])
                         params: {coords1: {}, coords2: {}}
                     };
                     $http(config)
-                            .then(function(response) {
+                            .then(function (response) {
                                 q.resolve(response);
-                            }).catch(function(err) {
+                            }).catch(function (err) {
                         q.reject(err);
 
                     });
 
                     return q.promise;
                 },
-                getEstimacionMonto: function(distancia, tiempo) {
+                getEstimacionMonto: function (distancia, tiempo) {
 
                     var q = $q.defer();
 
@@ -220,9 +222,9 @@ angular.module('app.services', [])
                         }
                     };
                     $http(config)
-                            .then(function(response) {
+                            .then(function (response) {
                                 q.resolve(response);
-                            }).catch(function(err) {
+                            }).catch(function (err) {
                         q.reject(err);
 
                     });
@@ -230,24 +232,24 @@ angular.module('app.services', [])
                     return q.promise;
 
                 },
-                saveDestinoFrecuente:function(destino){
+                saveDestinoFrecuente: function (destino) {
 
-                  var q = $q.defer();
+                    var q = $q.defer();
 
-                    if(!destino){
+                    if (!destino) {
 
                         console.log('Falta parametro destino en saveDestinoFrecuente');
                     }
 
                     var q = $q.defer();
 
-                    $sails.post("/clientes/destino/frecuente", { destino: destino })
+                    $sails.post("/clientes/destino/frecuente", {destino: destino})
 
-                            .success(function(data, status, headers, jwr) {
+                            .success(function (data, status, headers, jwr) {
 
                                 q.resolve(data);
                             })
-                            .error(function(data, status, headers, jwr) {
+                            .error(function (data, status, headers, jwr) {
 
                                 q.reject(jwr);
 
@@ -258,81 +260,78 @@ angular.module('app.services', [])
 
 
                 },
-
-                getDestinoFrecuentes:function(){
+                getDestinoFrecuentes: function () {
 
                     var q = $q.defer();
 
-                    $sails.get("/clientes/destino/frecuente", { })
+                    $sails.get("/clientes/destino/frecuente", {})
 
-                            .success(function(data, status, headers, jwr) {
+                            .success(function (data, status, headers, jwr) {
 
                                 q.resolve(data);
                             })
-                            .error(function(data, status, headers, jwr) {
+                            .error(function (data, status, headers, jwr) {
 
                                 q.reject(jwr);
 
                             });
 
-                return q.promise;
+                    return q.promise;
                 }
 
             }
 
         })
-        .factory('solicitudService', function($http, $q, $sails, $rootScope, $localStorage) {
+        .factory('solicitudService', function ($http, $q, $sails, $rootScope, $localStorage) {
 
             var q = $q.defer();
 
             return {
+                solicitud: function () {
 
-                solicitud:function(){
+                    return {
+                        origen: {},
+                        destino: {},
+                        direccion_origen: 'IR AL MARCADOR',
+                        direccion_destino: 'SE REQUIERE UN DESTINO',
+                        matrix: {},
+                        choferesDisponibles: {},
+                        tipodePago: 'efectivo',
+                        cliente: {},
+                        status: 'iniciada',
+                        viajeEnProceso: false,
+                        setOrigen: function (origen) {
 
-                  return {
-                            origen: {},
-                            destino: {},
-                            direccion_origen: 'IR AL MARCADOR',
-                            direccion_destino: 'SE REQUIERE UN DESTINO',
-                            matrix: {},
-                            choferesDisponibles: {},
-                            tipodePago: 'efectivo',
-                            cliente: {},
-                            status: 'iniciada',
-                            viajeEnProceso:false,
-                            setOrigen:function(origen){
+                            this.origen;
+                        },
+                        getOrigen: function () {
 
-                                this.origen;
-                            },
-                            getOrigen:function(){
+                            return this.origen;
+                        },
+                        setDestino: function (destino) {
 
-                                return this.origen;
-                            },
-                            setDestino:function(destino){
+                            this.destino = destino;
+                        }
 
-                                this.destino = destino;
-                            }
-
-                  };
+                    };
 
                 },
-
-                sendSolicitud: function(solicitud) {
+                sendSolicitud: function (solicitud) {
 
                     var q = $q.defer();
 
                     var origen = {};
-                    origen.coords= {};
+                    origen.coords = {};
                     origen.coords.latitude = solicitud.origen.coords.latitude;
                     origen.coords.longitude = solicitud.origen.coords.longitude;
 
-                    $sails.post("/clientes/solicitud", {solicitud: solicitud, origen:origen})
+                    $sails.post("/clientes/solicitud", {solicitud: solicitud, origen: origen})
 
-                            .success(function(data, status, headers, jwr) {
+                            .success(function (data, status, headers, jwr) {
 
                                 q.resolve(data);
                             })
-                            .error(function(data, status, headers, jwr) {
+                            .error(function (data, status, headers, jwr) {
 
                                 q.reject(jwr);
 
@@ -346,29 +345,28 @@ angular.module('app.services', [])
 
 
         })
-        .factory('servicioService', function($http, $q, $sails, $rootScope, $localStorage,$sessionStorage) {
+        .factory('servicioService', function ($http, $q, $sails, $rootScope, $localStorage, $sessionStorage) {
 
             return {
-
-                getSolicitudPendiente: function() {
+                getSolicitudPendiente: function () {
 
                     var q = $q.defer();
 
-                    try{
+                    try {
 
 
 
-                    var cliente = $sessionStorage.session.id;
+                        var cliente = $sessionStorage.session.id;
 
-                    $sails.get("/cliente/servicio/pendiente", {clienteId:cliente})
-                            .success(function(servicio, status, headers, jwr) {
-                                q.resolve(servicio);
-                            })
-                            .error(function(err) {
-                                q.reject(err);
-                            });
+                        $sails.get("/cliente/servicio/pendiente", {clienteId: cliente})
+                                .success(function (servicio, status, headers, jwr) {
+                                    q.resolve(servicio);
+                                })
+                                .error(function (err) {
+                                    q.reject(err);
+                                });
 
-                    }catch(e){
+                    } catch (e) {
 
 
                         q.reject(e);
@@ -379,36 +377,36 @@ angular.module('app.services', [])
 
                     return q.promise;
                 },
-                setFormaPago:function(forma_pago) {
+                setFormaPago: function (forma_pago) {
 
-                  var q = $q.defer();
+                    var q = $q.defer();
 
-                  $sails.post("/cliente/pago", {forma_pago:forma_pago})
-                          .success(function(data, status, headers, jwr) {
-                              q.resolve(data);
-                          })
-                          .error(function(data, status, headers, jwr) {
+                    $sails.post("/cliente/pago", {forma_pago: forma_pago})
+                            .success(function (data, status, headers, jwr) {
+                                q.resolve(data);
+                            })
+                            .error(function (data, status, headers, jwr) {
 
-                              q.reject(data);
-                              console.error('Error:' + data);
-                          });
+                                q.reject(data);
+                                console.error('Error:' + data);
+                            });
 
                     return q.promise;
                 },
-                getFormasPago:function() {
+                getFormasPago: function () {
 
                     var q = $q.defer();
 
                     $sails.get("/cliente/pago", {})
 
-                            .success(function(data, status, headers, jwr) {
+                            .success(function (data, status, headers, jwr) {
 
 
                                 q.resolve(data);
 
 
                             })
-                            .error(function(data, status, headers, jwr) {
+                            .error(function (data, status, headers, jwr) {
 
                                 q.reject(data);
                                 console.error('Error:' + data);
@@ -418,36 +416,36 @@ angular.module('app.services', [])
                     return q.promise;
 
                 },
-                getCustomer:function(){
+                getCustomer: function () {
 
-                  var q = $q.defer();
+                    var q = $q.defer();
 
-                  $sails.get("/customer", { servicio: servicio, inicio_viaje: inicio_viaje})
+                    $sails.get("/customer", {servicio: servicio, inicio_viaje: inicio_viaje})
 
-                          .success(function(data, status, headers, jwr) {
-
-
-                              q.resolve(data);
+                            .success(function (data, status, headers, jwr) {
 
 
-                          })
-                          .error(function(data, status, headers, jwr) {
-
-                              q.reject(data);
-                              console.error('Error:' + data);
-                          });
+                                q.resolve(data);
 
 
-                  return q.promise;
+                            })
+                            .error(function (data, status, headers, jwr) {
+
+                                q.reject(data);
+                                console.error('Error:' + data);
+                            });
 
 
-                },
-                saveCustomer:function(){
-
+                    return q.promise;
 
 
                 },
-                createOrder:function(){
+                saveCustomer: function () {
+
+
+
+                },
+                createOrder: function () {
 
 
                 }
@@ -457,10 +455,10 @@ angular.module('app.services', [])
 
 
         })
-        .factory('notificationService', function($http, $q, $sails, $rootScope) {
+        .factory('notificationService', function ($http, $q, $sails, $rootScope) {
 
             return {
-                getDireccion: function(location) {
+                getDireccion: function (location) {
                     var q = $q.defer();
 
                     var config = {
@@ -472,9 +470,9 @@ angular.module('app.services', [])
                         }
                     };
                     $http(config)
-                            .then(function(response) {
+                            .then(function (response) {
                                 q.resolve(response);
-                            }).catch(function(err) {
+                            }).catch(function (err) {
                         q.reject(err);
 
                     });
@@ -486,51 +484,50 @@ angular.module('app.services', [])
 
 
         })
-        .factory('AuthService', function($http, $q, $sails, $rootScope, $localStorage, $sessionStorage) {
+        .factory('AuthService', function ($http, $q, $sails, $rootScope, $localStorage, $sessionStorage) {
             return {
-                isAuthenticated: function() {
+                isAuthenticated: function () {
 
                     var q = $q.defer();
 
 
-                        var config = {
-                            url: $rootScope.serverIp + "/clientes/validate",
-                            method: "POST",
-                            params: {
+                    var config = {
+                        url: $rootScope.serverIp + "/clientes/validate",
+                        method: "POST",
+                        params: {
+                        }
+                    };
 
-                            }
-                        };
-
-                        $http(config)
-                                .then(function(response) {
-
-
-                                    if (response.data.valid) {
-
-                                        q.resolve(response.data);
-
-                                        $sessionStorage.session = response.data.cliente;
+                    $http(config)
+                            .then(function (response) {
 
 
-                                    } else {
+                                if (response.data.valid) {
 
-                                        q.reject('Token no Valido');
+                                    q.resolve(response.data);
+
+                                    $sessionStorage.session = response.data.cliente;
 
 
-                                    }
+                                } else {
+
+                                    q.reject('Token no Valido');
 
 
-                                }).catch(function(err) {
+                                }
 
-                            q.reject(err);
 
-                        });
+                            }).catch(function (err) {
+
+                        q.reject(err);
+
+                    });
 
 
 
                     return q.promise;
                 },
-                login: function(email, password) {
+                login: function (email, password) {
 
                     var q = $q.defer();
                     $localStorage.$reset();
@@ -545,17 +542,17 @@ angular.module('app.services', [])
                     };
 
                     $http(config)
-                            .then(function(response) {
+                            .then(function (response) {
 
                                 $sessionStorage.session = response.data.cliente;
-                               // $localStorage.token = response.data.token;
-                               // $localStorage.cliente = response.data.cliente;
+                                // $localStorage.token = response.data.token;
+                                // $localStorage.cliente = response.data.cliente;
 
                                 q.resolve(response.data.cliente);
 
 //                                q.resolve(response);
 
-                            }).catch(function(err) {
+                            }).catch(function (err) {
 
                         q.reject(err);
 
@@ -564,7 +561,7 @@ angular.module('app.services', [])
                     return q.promise;
 
                 },
-                logout: function() {
+                logout: function () {
 
                     var q = $q.defer();
 
@@ -572,12 +569,11 @@ angular.module('app.services', [])
                         url: $rootScope.serverIp + "/clientes/logout",
                         method: "POST",
                         params: {
-
                         }
                     };
 
-                     $http(config)
-                            .success(function(data, status, headers, jwr) {
+                    $http(config)
+                            .success(function (data, status, headers, jwr) {
 
                                 console.log(data);
 
@@ -586,7 +582,7 @@ angular.module('app.services', [])
                                 q.resolve(data);
                             })
 
-                            .error(function(data, status, headers, jwr) {
+                            .error(function (data, status, headers, jwr) {
 
                                 q.reject(jwr);
 
@@ -595,24 +591,23 @@ angular.module('app.services', [])
 
                     return q.promise;
                 },
-                suscribe: function(cliente) {
+                suscribe: function (cliente) {
 
                     var q = $q.defer();
 
                     var data = {
-
-                        cliente:cliente
+                        cliente: cliente
                     };
 
                     $sails.post("/clientes/suscribe", data)
-                            .success(function(data, status, headers, jwr) {
+                            .success(function (data, status, headers, jwr) {
 
                                 console.log(data);
 
                                 q.resolve(data);
                             })
 
-                            .error(function(data, status, headers, jwr) {
+                            .error(function (data, status, headers, jwr) {
 
                                 q.reject(jwr);
 
@@ -620,7 +615,7 @@ angular.module('app.services', [])
 
                     return q.promise;
                 },
-                registro:function(data){
+                registro: function (data) {
 
                     var q = $q.defer();
 
@@ -630,16 +625,16 @@ angular.module('app.services', [])
                         params: {
                             usuario: data
                         }
-                    }).then(function(response) {
+                    }).then(function (response) {
 
-                            $localStorage.token = response.data.token;
-                            $sessionStorage.session = response.data.cliente;
-                            q.resolve(response.data.cliente);
+                        $localStorage.token = response.data.token;
+                        $sessionStorage.session = response.data.cliente;
+                        q.resolve(response.data.cliente);
 
-                            })
-                            .catch(function(err) {
+                    })
+                            .catch(function (err) {
 
-                               q.reject(err);
+                                q.reject(err);
 
                             })
 

@@ -14,15 +14,14 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $cordovaGoogleAnalytics) {
 
             $ionicPlatform.ready(function () {
-                
+
                 console.log('Se ejecuto google analytics');
-                
+
                 $cordovaGoogleAnalytics.debugMode();
-                
+
                 $cordovaGoogleAnalytics.startTrackerWithId('UA-119817752-1');
-                
-                debugger;
-                
+
+
             });
 
             $rootScope.solicitud = {
@@ -105,7 +104,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                 $state,
                 $ionicLoading,
                 $http,
-                $cordovaGeolocation,
                 $ionicScrollDelegate,
                 $ionicNavBarDelegate,
                 $ionicPlatform,
@@ -410,7 +408,7 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
             $scope.status = 'inicio';
 
 
-            $scope.timeOutGps = 100000;
+            $scope.timeOutGps = 900000;
             $scope.enableHighAccuracy = true;
 
 
@@ -512,54 +510,40 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     });
                 }
 
+                function geolocationSuccess(position) {
 
-                $cordovaGeolocation.getCurrentPosition({timeout: $scope.timeOutGps, enableHighAccuracy: $scope.enableHighAccuracy})
-                        .then(function (position) {
+                    $scope.position = position;
 
-                            $scope.position = position;
+                    $scope.map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
 
-                            $scope.map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+                    $scope.setDireccionOrigen(position).then(function () {
 
-                            $scope.setDireccionOrigen(position).then(function () {
+                        $scope.getChoferes().then(function () {
 
-                                $scope.getChoferes().then(function () {
+                            $scope.renderChoferesMap().then(function () {
 
-                                    $scope.renderChoferesMap().then(function () {
+                                $scope.hideBubble = false;
 
-                                        $scope.hideBubble = false;
+                                $ionicLoading.hide();
 
-                                        $ionicLoading.hide();
+                                /// Actualiza choferes en el mapa cada 60 segundos.
 
-                                        /// Actualiza choferes en el mapa cada 60 segundos.
+                                $scope.intervalUpdateChoferes = $interval(function () {
 
-                                        $scope.intervalUpdateChoferes = $interval(function () {
+                                    //                                    $scope.setDireccionOrigen(position).then(function() {
+                                    $scope.getChoferes().then(function () {
+                                        $scope.renderChoferesMap().then(function () {
 
-                                            //                                    $scope.setDireccionOrigen(position).then(function() {
-                                            $scope.getChoferes().then(function () {
-                                                $scope.renderChoferesMap().then(function () {
+                                            console.log('Actualizo choferes en intervalo');
 
-                                                    console.log('Actualizo choferes en intervalo');
+                                        })
 
-                                                })
-
-                                            })
+                                    })
 
 
-                                            //                                    })
+                                    //                                    })
 
-                                        }, 60000);
-
-                                    }, function (err) {
-
-                                        console.log(err);
-                                    });
-
-
-                                }, function (err) {
-
-                                    console.log(err);
-                                });
-
+                                }, 60000);
 
                             }, function (err) {
 
@@ -567,70 +551,94 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                             });
 
 
-
-                            google.maps.event.addListener($scope.map, "dragend", function () {
-
-                                if ($scope.status == 'inicio' || $scope.status == 'origen' || $scope.status == 'origen_places') {
-
-                                    $scope.hideBubble = true;
-
-                                    $scope.loading = $ionicLoading.show({
-                                        template: 'Buscando Autos...',
-                                        showBackdrop: false
-                                    });
-
-                                    $scope.position = {coords: {latitude: $scope.map.getCenter().lat(), longitude: $scope.map.getCenter().lng()}};
-
-                                    $scope.setDireccionOrigen($scope.position).then(function () {
-
-                                        $scope.getChoferes().then(function () {
-
-                                            $scope.renderChoferesMap().then(function () {
-
-                                                $scope.hidePanels('center_changed');
-                                                $scope.hideBubble = false;
-                                                $ionicLoading.hide();
-                                            })
-
-
-                                        })
-
-
-                                    });
-                                }
-
-
-
-                            });
-
-                            google.maps.event.addListener($scope.map, "zoom_changed", function () {
-
-                                var center = new google.maps.LatLng($scope.position.coords.latitude, $scope.position.coords.longitude);
-
-                                $scope.map.setCenter(center);
-
-
-                            });
-
-
                         }, function (err) {
 
                             console.log(err);
-
-                            $ionicLoading.hide();
-
-                            var alertPopup = $ionicPopup.alert({
-                                title: 'No tenemos acceso al GPS',
-                                template: 'Por favor activa tu GPS!'
-                            });
-
-                            alertPopup.then(function (res) {
-
-                                // ionic.Platform.exitApp();
-
-                            });
                         });
 
+
+                    }, function (err) {
+
+                        console.log(err);
+                    });
+
+
+
+                    google.maps.event.addListener($scope.map, "dragend", function () {
+
+                        if ($scope.status == 'inicio' || $scope.status == 'origen' || $scope.status == 'origen_places') {
+
+                            $scope.hideBubble = true;
+
+                            $scope.loading = $ionicLoading.show({
+                                template: 'Buscando Autos...',
+                                showBackdrop: false
+                            });
+
+                            $scope.position = {coords: {latitude: $scope.map.getCenter().lat(), longitude: $scope.map.getCenter().lng()}};
+
+                            $scope.setDireccionOrigen($scope.position).then(function () {
+
+                                $scope.getChoferes().then(function () {
+
+                                    $scope.renderChoferesMap().then(function () {
+
+                                        $scope.hidePanels('center_changed');
+                                        $scope.hideBubble = false;
+                                        $ionicLoading.hide();
+                                    })
+
+
+                                })
+
+
+                            });
+                        }
+
+
+
+                    });
+
+                    google.maps.event.addListener($scope.map, "zoom_changed", function () {
+
+                        var center = new google.maps.LatLng($scope.position.coords.latitude, $scope.position.coords.longitude);
+
+                        $scope.map.setCenter(center);
+
+
+                    });
+
+
+                }
+                function geolocationError(err) {
+
+                    console.log(err);
+
+                    $ionicLoading.hide();
+
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'No tenemos acceso al GPS',
+                        template: 'Por favor activa tu GPS!'
+                    });
+
+                    alertPopup.then(function (res) {
+
+                        // ionic.Platform.exitApp();
+
+                    });
+                }
+                var geolocationOptions = {
+                    maximumAge: 3000,
+                    timeout: 5000,
+                    enableHighAccuracy: true,
+                    priority: 100,
+                    interval: 6000,
+                    fastInterval: 1000
+                };
+                // cordova.plugins.locationServices.geolocation.getCurrentPosition(geolocationSuccess, geolocationError, {timeout: $scope.timeOutGps, enableHighAccuracy: $scope.enableHighAccuracy});
+
+
+                cordova.plugins.locationServices.geolocation.getCurrentPosition(geolocationSuccess, geolocationError, geolocationOptions);
 
 
             };
@@ -787,8 +795,17 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     showBackdrop: false
                 });
 
+                function geolocationSuccess(position) {
 
-                $cordovaGeolocation.getCurrentPosition({timeout: 100000, enableHighAccuracy: true}).then(function (position) {
+
+                    console.log('Latitude: ' + position.coords.latitude + '\n' +
+                            'Longitude: ' + position.coords.longitude + '\n' +
+                            'Altitude: ' + position.coords.altitude + '\n' +
+                            'Accuracy: ' + position.coords.accuracy + '\n' +
+                            'Altitude Accuracy: ' + position.coords.altitudeAccuracy + '\n' +
+                            'Heading: ' + position.coords.heading + '\n' +
+                            'Speed: ' + position.coords.speed + '\n' +
+                            'Timestamp: ' + position.timestamp + '\n');
 
                     $scope.position = position;
                     $scope.map.setCenter(new google.maps.LatLng($scope.position.coords.latitude, $scope.position.coords.longitude));
@@ -814,12 +831,25 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
                     });
 
 
-                }, function (err) {
+                }
+
+                function geolocationError(err) {
 
                     alert('No se recibio posicion del GPS');
 
                     console.log(err);
-                });
+                }
+
+                var geolocationOptions = {
+                    maximumAge: 3000,
+                    timeout: 5000,
+                    enableHighAccuracy: true,
+                    priority: 100,
+                    interval: 6000,
+                    fastInterval: 1000
+                };
+
+                cordova.plugins.locationServices.geolocation.getCurrentPosition(geolocationSuccess, geolocationError, geolocationOptions);
 
 
             };
@@ -1220,7 +1250,6 @@ angular.module('app.controllers', ['ngSails', 'ngCordova'])
 
                 $rootScope.solicitud.tipodePago = $sessionStorage.session.formaPagoSel;
 
-                debugger;
 
                 if ($rootScope.solicitud.tipodePago == "efectivo") {
 

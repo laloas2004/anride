@@ -1,5 +1,5 @@
 
-var entorno = 4;
+var entorno = 2;
 
 angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
     'app.controllers',
@@ -24,7 +24,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
             case 2:
                 // Desarrollo local sabinas Hgo.
                 console.log('Apuntando entorno num 2');
-                $rootScope.serverIp = "http://192.168.1.74:1337";
+                $rootScope.serverIp = "http://192.168.1.65:1337";
                 console.log($rootScope.serverIp);
                 break;
             case 3:
@@ -313,7 +313,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                 break;
             case 2:
                 // Desarrollo local sabinas Hgo.
-                $sailsProvider.url = "http://192.168.1.74:1337";
+                $sailsProvider.url = "http://192.168.1.65:1337";
                 break;
             case 3:
                 // Server Pruebas Publico.
@@ -327,7 +327,7 @@ angular.module('app', ['ionic', 'ionic-sidemenu', 'ionic.native',
                 $sailsProvider.url = "http://192.168.15.98:1337";
         }
 
-        $sailsProvider.debug = false;
+        $sailsProvider.debug = true;
 
 
     }]);
