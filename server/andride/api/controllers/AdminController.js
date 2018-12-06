@@ -303,67 +303,24 @@ module.exports = {
 
         Chofer.findOne({
             id: choferId
-        }).populate('autos').exec(function (err, chofer) {
+        }).populate('autos')
+                .exec(function (err, chofer) {
 
-            if (err) {
-                return res.json(err.status, {
-                    err: err
-                });
-            }
+                    if (err) {
+                        return res.json(err.status, {
+                            err: err
+                        });
+                    }
 
-            ChoferAuto.find({
-                chofer: chofer.id
-            }).exec(function (err, relations) {
-
-                that.autos = [];
-
-                if (relations.length == 0) {
+                    console.log(chofer);
 
                     return res.view('autos/home', {
                         chofer: chofer,
-                        autos: that.autos
-                    });
-
-                } else {
-
-                    async.forEachOf(relations, function (value, key, callback) {
-
-                        console.log(value);
-
-                        Auto.findOne({
-                            id: value.auto
-                        }).exec(function (err, auto) {
-
-                            that.autos.push(auto);
-
-                            callback();
-
-                        });
-
-
-                    }, function (err) {
-
-
-                        if (err) {
-
-                            return res.json(err.status, {
-                                err: err
-                            });
-                        }
-
-                        return res.view('autos/home', {
-                            chofer: chofer,
-                            autos: that.autos
-                        });
-
+                        autos: chofer.autos
                     });
 
 
-                }
-
-            });
-
-        });
+                });
 
     },
     newAuto: function (req, res) {
@@ -405,7 +362,6 @@ module.exports = {
                 });
             }
 
-
             auto.choferes.add(chofer);
 
             auto.save(function (err) {
@@ -424,63 +380,61 @@ module.exports = {
     indexPagos: function (req, res) {
 
         var moment = require('moment');
-        
+
         var choferes = [];
 
         Cobro.find({
             corte: null
         })
-            .sort('createdAt DESC')
-            .exec(function (err, cobros) {
+                .sort('createdAt DESC')
+                .exec(function (err, cobros) {
 
-                if (err) {
-
-                    console.log(err);
-                }
-                
-                
-                
-                
-                async.forEachOf(cobros, function (value, key, callback) {
-                    
-                 Chofer.findOne({id:value.chofer}).exec(function(err,_chofer){
-                     
-                     if(err){
-                         console.log(err);
-                     }
-                     
-                  choferes.push(_chofer);
-                  
-                  cobros[key].choferObj = _chofer;
-                  
-                  callback();
-                     
-                 });   
-                    
-                        },function(err){
-                    
                     if (err) {
+
+                        console.log(err);
+                    }
+
+
+                    async.forEachOf(cobros, function (value, key, callback) {
+
+                        Chofer.findOne({id: value.chofer}).exec(function (err, _chofer) {
+
+                            if (err) {
+                                console.log(err);
+                            }
+
+                            choferes.push(_chofer);
+
+                            cobros[key].choferObj = _chofer;
+
+                            callback();
+
+                        });
+
+                    }, function (err) {
+
+                        if (err) {
 
                             return res.json(err.status, {
                                 err: err
                             });
                         }
-                        
-                //console.log(cobros);
-                res.view('pagos/home', {
-                    cobros: cobros,
-                    choferes:choferes,
-                    moment: moment
+
+                        //console.log(cobros);
+                        res.view('pagos/home', {
+                            cobros: cobros,
+                            choferes: choferes,
+                            moment: moment
+                        });
+
+
+                    });
+
+
+
+
+
                 });
-  
-                     
-                });
-
-                
-                
-
-
-            });
 
 
     },
@@ -498,28 +452,28 @@ module.exports = {
     saveConfiguracion: function (req, res) {
 
         var params = req.allParams();
-        
-        
+
+
         console.log(params);
-        
-        Saldo_chofer.update({}).set({comision:params.comision_chofer}).exec(function(err,_updated){
-            
-            if(err){
+
+        Saldo_chofer.update({}).set({comision: params.comision_chofer}).exec(function (err, _updated) {
+
+            if (err) {
                 console.log(err);
             }
-            
-            
-            
+
+
+
         });
-        
-        Saldo_delegado.update({}).set({comision:params.comision_delegado}).exec(function(err,_updated){
-            
-            if(err){
+
+        Saldo_delegado.update({}).set({comision: params.comision_delegado}).exec(function (err, _updated) {
+
+            if (err) {
                 console.log(err);
             }
-            
-            
-            
+
+
+
         });
 
         configTaxiapp.save(params).then(function (config) {
@@ -611,41 +565,41 @@ module.exports = {
             Cliente.update({
                 id: cliente.id
             }, {
-                    nombre: cliente.nombre,
-                    apellido: cliente.apellido,
-                    numCel: cliente.numCel
-                }).exec(function (err, cliente) {
+                nombre: cliente.nombre,
+                apellido: cliente.apellido,
+                numCel: cliente.numCel
+            }).exec(function (err, cliente) {
 
-                    if (err) {
-                        return res.json(err.status, {
-                            err: err
-                        });
-                    }
+                if (err) {
+                    return res.json(err.status, {
+                        err: err
+                    });
+                }
 
-                    return res.redirect('/admin/clientes');
+                return res.redirect('/admin/clientes');
 
 
-                });
+            });
         } else {
 
             Cliente.update({
                 id: cliente.id
             }, {
-                    nombre: cliente.nombre,
-                    apellido: cliente.apellido,
-                    numCel: cliente.numCel,
-                    password: cliente.password
-                }).exec(function (err, cliente) {
+                nombre: cliente.nombre,
+                apellido: cliente.apellido,
+                numCel: cliente.numCel,
+                password: cliente.password
+            }).exec(function (err, cliente) {
 
-                    if (err) {
-                        return res.json(err.status, {
-                            err: err
-                        });
-                    }
+                if (err) {
+                    return res.json(err.status, {
+                        err: err
+                    });
+                }
 
-                    return res.redirect('/admin/clientes');
+                return res.redirect('/admin/clientes');
 
-                });
+            });
 
 
         }
@@ -855,11 +809,11 @@ module.exports = {
                 Saldo_chofer.update({
                     chofer: chofer.id
                 }, {
-                        delegado: chofer.delegado
-                    }).exec(function (err) {
+                    delegado: chofer.delegado
+                }).exec(function (err) {
 
-                        console.log(err);
-                    });
+                    console.log(err);
+                });
 
                 return res.redirect('/admin/choferes');
 
@@ -875,11 +829,11 @@ module.exports = {
                 Saldo_chofer.update({
                     chofer: chofer.id
                 }, {
-                        delegado: chofer.delegado
-                    }).exec(function (err) {
+                    delegado: chofer.delegado
+                }).exec(function (err) {
 
-                        console.log(err);
-                    });
+                    console.log(err);
+                });
 
                 return res.redirect('/admin/choferes');
 

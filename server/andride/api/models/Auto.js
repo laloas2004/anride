@@ -27,7 +27,9 @@ module.exports = {
         choferes: {
             collection: 'Chofer',
             via: 'autos',
-            through: 'choferauto'
+        },
+        chofer: {
+            model: 'chofer'
         },
         empSeguro: {
             type: "string"

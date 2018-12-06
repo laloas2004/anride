@@ -37,7 +37,6 @@ module.exports = {
         autos: {
             collection: 'Auto',
             via: 'choferes',
-            through: 'choferauto',
             dominant: true
         },
         status: {
@@ -69,7 +68,7 @@ module.exports = {
             type: 'boolean',
             defaultsTo: false
         },
-        bloqueado:{
+        bloqueado: {
             type: 'boolean',
             defaultsTo: false
         },
@@ -148,30 +147,31 @@ module.exports = {
 
     },
     beforeUpdate: function (attrs, cb) {
-        
-        if(attrs){
-            
-        if (attrs.password) {
 
-            bcrypt.genSalt(10, function (err, salt) {
+        if (attrs) {
 
-                bcrypt.hash(attrs.password, salt, function (err, hash) {
+            if (attrs.password) {
 
-                    if (err) {
-                        console.log(err);
-                        cb(err);
-                    } else {
-                        attrs.password = hash;
-                        cb();
-                    }
+                bcrypt.genSalt(10, function (err, salt) {
+
+                    bcrypt.hash(attrs.password, salt, function (err, hash) {
+
+                        if (err) {
+                            console.log(err);
+                            cb(err);
+                        } else {
+                            attrs.password = hash;
+                            cb();
+                        }
+                    });
                 });
-            });
-        } else {
+            } else {
 
-            cb();
-
-        }}else{
                 cb();
+
+            }
+        } else {
+            cb();
         }
     },
     getChoferesCercanos: function (ClientCoordinates, maxDistance, limitChoferes) {
@@ -190,7 +190,7 @@ module.exports = {
 
         Chofer.native(function (err, collection) {
 
-            if (err){
+            if (err) {
                 return res.serverError(err);
             }
 
